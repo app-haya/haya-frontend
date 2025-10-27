@@ -1,0 +1,15 @@
+.logo {
+  max-height: 300px;
+}
+
+.text-purple {
+  color: #7a3ca0;
+}
+.Welcome{
+    font-weight: 700;
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+.dash{
+  margin-top: -50px;
+}

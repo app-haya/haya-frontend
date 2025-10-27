@@ -1,0 +1,130 @@
+<div class="container my-4">
+  <h2 class="text-center mb-4 text-purple">Edit User</h2>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <!-- Name and Email -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Name</label>
+        <input type="text" class="form-control" placeholder="Name" formControlName="name" />
+        <div class="text-danger" *ngIf="f['name'].invalid && (f['name'].dirty || f['name'].touched)">
+          Name is required
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label>Email</label>
+        <input type="email" class="form-control" placeholder="Email" formControlName="email" />
+        <div class="text-danger" *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)">
+          <div *ngIf="f['email'].errors?.['required']">Email is required</div>
+          <div *ngIf="f['email'].errors?.['email']">Invalid email format</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone and Birth Date -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Phone</label>
+        <input type="text" class="form-control" placeholder="Phone" formControlName="phone" />
+        <div class="text-danger" *ngIf="f['phone'].invalid && (f['phone'].dirty || f['phone'].touched)">
+          Phone is required
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label>Birth Date</label>
+        <input type="date" class="form-control" formControlName="birth_date" />
+        <div class="text-danger" *ngIf="f['birth_date'].invalid && (f['birth_date'].dirty || f['birth_date'].touched)">
+          Birth date is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Country and City -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Country</label>
+        <select class="form-select" formControlName="country_id" (change)="onCountryChange($event)">
+          <option value="">Select Country</option>
+          <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+        </select>
+        <div class="text-danger" *ngIf="f['country_id'].invalid && (f['country_id'].dirty || f['country_id'].touched)">
+          Country is required
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label>City</label>
+        <select class="form-select" formControlName="city_id">
+          <option value="">Select City</option>
+          <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+        </select>
+        <div class="text-danger" *ngIf="f['city_id'].invalid && (f['city_id'].dirty || f['city_id'].touched)">
+          City is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Gender and Account Type -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Gender</label>
+        <select class="form-select" formControlName="gender">
+          <option value="">Select Gender</option>
+          <option value="1">Male</option>
+          <option value="2">Female</option>
+        </select>
+        <div class="text-danger" *ngIf="f['gender'].invalid && (f['gender'].dirty || f['gender'].touched)">
+          Gender is required
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label>Account Type</label>
+        <select class="form-select" formControlName="account_type">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Status and Interests -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Status</label>
+        <select class="form-select" formControlName="is_active">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label>Interests</label>
+        <div class="d-flex flex-wrap">
+          <div class="form-check me-3" *ngFor="let interest of interestsList">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              [value]="interest.id"
+              (change)="onInterestChange($event)"
+              [checked]="userForm.value.interests?.includes(interest.id)"
+            />
+            <label class="form-check-label">{{ interest.name }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="mb-3">
+      <label>User Image</label>
+      <input type="file" class="form-control" (change)="onFileChange($event)" accept="image/*" />
+      <div class="mt-2" *ngIf="userImageUrl || userForm.value.image">
+        <img [src]="userForm.value.image || userImageUrl" alt="User Image" class="img-thumbnail" width="100" />
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-purple w-100 mt-3" [disabled]="loading || userForm.invalid">
+        {{ loading ? 'Updating...' : 'Update User' }}
+      </button>
+    </div>
+  </form>
+</div>

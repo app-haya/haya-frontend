@@ -1,0 +1,17 @@
+.text-purple {
+  color: #7a3ca0;
+}
+
+.btn-outline-purple {
+  color: #7a3ca0;
+  border: 1px solid #7a3ca0;
+}
+
+.btn-outline-purple:hover {
+  background-color: #7a3ca0;
+  color: white;
+}
+.d-grid > div {
+  border: 3px solid white;
+  font-family: 'Poppins', sans-serif;
+}

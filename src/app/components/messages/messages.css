@@ -1,0 +1,178 @@
+/* === Table Container === */
+.table-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* === Table Styling === */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  color: #1f6eb4;
+  font-weight: 600;
+  border: none;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.table td {
+  padding: 12px;
+  border-top: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: #f9f7ff;
+
+}
+
+/* === Buttons === */
+.btn-purple {
+  background-color: #7a3ca0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-purple:hover {
+  background-color: #5b2e7a;
+}
+
+.btn-outline-purple {
+  border: 1px solid #7a3ca0;
+  color: #7a3ca0;
+  border-radius: 6px;
+  padding: 5px 10px;
+  transition: 0.3s;
+}
+
+.btn-outline-purple:hover {
+  background-color: #7a3ca0;
+  color: white;
+}
+
+/* === Search Input === */
+.search-input {
+  max-width: 250px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+}
+
+/* === Pagination Styling === */
+.pagination .page-link {
+  color: #7a3ca0;
+  border-radius: 6px;
+  margin: 0 2px;
+  border: none;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #7a3ca0;
+  border-color: #7a3ca0;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+
+/* Hover effect للـ Pagination */
+.pagination .page-item .page-link:hover:not(.active) {
+  background-color: #f3e5ff;
+}
+
+/* === Spinner === */
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* === Titles & Text === */
+h4.fw-bold {
+  color: #1f6eb4;
+  font-weight: 700;
+}
+.text-muted {
+  color: #6c757d !important;
+}
+/* === Filter Bar === */
+.filter-bar {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-group .form-control {
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  transition: 0.2s;
+}
+
+.filter-group .form-control:focus {
+  border-color: #7a3ca0;
+  box-shadow: 0 0 0 2px rgba(122, 60, 160, 0.15);
+}
+
+/* === Search Input === */
+.search-input {
+  min-width: 260px;
+}
+
+/* === Date Picker === */
+.date-group input[type="date"] {
+  min-width: 160px;
+}
+
+/* === Filter Button === */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #7a3ca0;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 18px;
+  border: none;
+  transition: 0.3s;
+}
+
+.filter-btn:hover {
+  background-color: #5b2e7a;
+  transform: translateY(-1px);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group .form-control,
+  .filter-btn {
+    width: 100%;
+  }
+}
+
+/* باقي التنسيقات الخاصة بالجدول والصفحة اللي عندك تبقى كما هي */

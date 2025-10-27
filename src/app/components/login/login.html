@@ -1,0 +1,36 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-5 border-0" style="max-width: 1000px; width: 100%">
+    <div class="row g-5 align-items-center">
+
+      <!-- Left side -->
+      <div class="col-md-6 text-center">
+        <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Haya Logo" class="img-fluid rounded shadow-sm" style="max-height: 450px; object-fit: cover">
+      </div>
+
+      <!-- Right side (Login Form) -->
+      <div class="col-md-6 px-4">
+        <h3 class="text-center text-purple mb-4 fw-bold">Log In</h3>
+
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+          <div class="mb-3">
+            <input type="email" class="form-control form-control-lg" placeholder="Email" name="email" [(ngModel)]="form.email" required>
+            
+          </div>
+
+          <div class="mb-3">
+            <input type="password" class="form-control form-control-lg" placeholder="Password" name="password" [(ngModel)]="form.password" required>
+          </div>
+   
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-outline-purple btn-lg px-5" [disabled]="!loginForm.valid">LOG IN</button>
+          </div>
+
+          <!-- رسالة الخطأ العامة -->
+      
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

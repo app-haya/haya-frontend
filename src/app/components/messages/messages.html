@@ -1,0 +1,80 @@
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">Messages</h4>
+
+  <!-- 🔍 Search + Date Filter -->
+  <div class="filter-bar mb-3">
+    <div class="filter-group">
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Search by message or sender..."
+        [(ngModel)]="searchTerm"
+        (input)="filterMessages()"
+      />
+
+      <div class="date-group">
+        <input type="date" [(ngModel)]="fromDate" class="form-control" />
+      </div>
+
+      <button class="btn btn-purple filter-btn" (click)="filterMessages()">
+        <i class="fa fa-filter me-1"></i> Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- 🌀 Loading Spinner -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Loading messages...</p>
+  </div>
+
+  <!-- 📋 Table -->
+  <div class="table-container table-responsive" *ngIf="!loading">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Created At</th>
+          <th>Updated At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let msg of messages">
+          <td>{{ msg.message }}</td>
+          <td>{{ msg.sender?.name || "N/A" }}</td>
+          <td>{{ msg.receiver?.name || "N/A" }}</td>
+          <td>{{ msg.created_at | date:'short' }}</td>
+          <td>{{ msg.updated_at | date:'short' }}</td>
+        </tr>
+        <tr *ngIf="messages.length === 0">
+          <td colspan="5" class="text-center text-muted">No messages found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 📄 Pagination -->
+    <div class="d-flex justify-content-center align-items-center mt-4">
+      <nav>
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="prevPage()" tabindex="-1">&laquo; Prev</a>
+          </li>
+
+          <li
+            class="page-item"
+            *ngFor="let page of getPageNumbers()"
+            [class.active]="page === currentPage"
+          >
+            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="currentPage === lastPage">
+            <a class="page-link" (click)="nextPage()">Next &raquo;</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

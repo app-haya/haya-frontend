@@ -1,0 +1,23 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Governments } from './governments';
+
+describe('Governments', () => {
+  let component: Governments;
+  let fixture: ComponentFixture<Governments>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Governments]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(Governments);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

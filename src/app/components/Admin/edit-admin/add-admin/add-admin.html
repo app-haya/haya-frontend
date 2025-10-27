@@ -1,0 +1,61 @@
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="title mb-4 text-center">Add New Admin</h4>
+
+      <form (ngSubmit)="addAdmin()" class="row g-3">
+
+        <!-- Name -->
+        <div class="col-md-6">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" [(ngModel)]="admin.name" name="name" placeholder="Enter name" required>
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" [(ngModel)]="admin.email" name="email" placeholder="Enter email" required>
+        </div>
+
+        <!-- Password -->
+        <div class="col-md-6">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" [(ngModel)]="admin.password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <!-- Phone -->
+        <div class="col-md-6">
+          <label class="form-label">Phone</label>
+          <input type="text" class="form-control" [(ngModel)]="admin.phone" name="phone" placeholder="Enter phone number">
+        </div>
+
+        <!-- Type -->
+        <div class="col-md-6">
+          <label class="form-label">Type</label>
+          <select class="form-select" [(ngModel)]="admin.type" name="type">
+            <option [value]="0">Private Chat</option>
+            <option [value]="1">Public Chat</option>
+            <option [value]="2">Short Video</option>
+            <option [value]="3">Ads</option>
+            <option [value]="4">Deals</option>
+            <option [value]="5">Delivery</option>
+          </select>
+        </div>
+
+        <!-- Image -->
+        <div class="col-md-6">
+          <label class="form-label">Image</label>
+          <input type="file" class="form-control" (change)="onFileChange($event)">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12 text-center mt-3">
+          <button type="submit" class="btn btn-purple mt-2 mt-md-0">
+            <i class="fas fa-user-plus me-2"></i> Add Admin
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

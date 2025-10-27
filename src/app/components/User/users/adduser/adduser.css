@@ -1,0 +1,135 @@
+/* === Page Wrapper === */
+.container-fluid {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 25px;
+}
+
+/* === Headings === */
+h4.fw-bold {
+  color: #1f6eb4;
+  font-weight: 700;
+}
+.text-muted {
+  color: #6c757d !important;
+}
+
+/* === Card Styling === */
+.card {
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* === Form Styling === */
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #7a3ca0;
+  box-shadow: 0 0 0 0.15rem rgba(122, 60, 160, 0.25);
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+/* === Buttons === */
+.btn-purple {
+  background-color: #7a3ca0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-purple:hover {
+  background-color: #5b2e7a;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  color: #fff;
+}
+
+/* === Section Titles === */
+h5 {
+  color: #1f6eb4;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h5:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: #7a3ca0;
+}
+
+/* === Instructions Card === */
+.list-unstyled li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.list-unstyled li:last-child {
+  border-bottom: none;
+}
+
+/* === Responsive === */
+@media (max-width: 992px) {
+  .col-lg-4 {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 15px;
+  }
+  
+  .btn-purple, .btn-secondary {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .d-flex {
+    flex-direction: column;
+  }
+}

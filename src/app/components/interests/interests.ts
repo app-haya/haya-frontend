@@ -1,0 +1,180 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { InterestsService } from '../../services/interests.service';
+import { NotificationService } from '../../services/notification.service';
+
+@Component({
+  selector: 'app-interests',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './interests.html',
+  styleUrls: ['./interests.css']
+})
+export class Interests implements OnInit {
+  interests: any[] = [];
+  filteredInterests: any[] = [];
+  searchTerm = '';
+
+  showModal = false;
+  modalTitle = 'Add Interest';
+  editingInterest: any = null;
+
+  formData = {
+    id: null,
+    name_en: '',
+    name_ar: '',
+    created_at: '',
+    updated_at: ''
+  };
+
+  // ✅ Pagination variables
+  currentPage = 1;
+  lastPage = 1;
+  total = 0;
+  perPage = 10;
+  loading = false;
+  Math = Math;
+
+  constructor(
+    private interestsService: InterestsService,
+    private notification: NotificationService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadInterests();
+  }
+
+  // ✅ Load paginated interests
+  loadInterests(page: number = 1): void {
+    this.loading = true;
+    this.interestsService.getInterests('en', page).subscribe({
+      next: (res) => {
+        this.loading = false;
+        if (res?.errorcode === '0' && res?.data) {
+          this.interests = res.data.data || [];
+          this.filteredInterests = [...this.interests];
+
+          this.currentPage = res.data.current_page || 1;
+          this.lastPage = res.data.last_page || 1;
+          this.total = res.data.total || 0;
+          this.perPage = res.data.per_page || 10;
+        } else {
+          this.interests = [];
+          this.filteredInterests = [];
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error loading interests:', err);
+      },
+    });
+  }
+
+  // ✅ Open Add modal
+  openAddModal(): void {
+    this.modalTitle = 'Add Interest';
+    this.showModal = true;
+    this.editingInterest = null;
+    this.formData = { id: null, name_en: '', name_ar: '', created_at: '', updated_at: '' };
+  }
+
+  // ✅ Open Edit modal
+  openEditModal(interest: any) {
+    this.modalTitle = 'Edit Interest';
+    this.showModal = true;
+    this.editingInterest = interest;
+
+    this.interestsService.showInterest(interest.id).subscribe((res: any) => {
+      if (res.errorcode === "0" && res.data) {
+        this.formData = {
+          id: res.data.id,
+          name_en: res.data.name_en,
+          name_ar: res.data.name_ar,
+          created_at: res.data.created_at,
+          updated_at: res.data.updated_at
+        };
+      }
+    });
+  }
+
+  // ✅ Save (Add or Update)
+  saveInterest(): void {
+    const data = { ...this.formData, lang: 'en' };
+    const request$ = this.editingInterest
+      ? this.interestsService.updateInterest(data)
+      : this.interestsService.addInterest(data);
+
+    request$.subscribe({
+      next: () => {
+        this.notification.success('Interest saved successfully');
+        this.showModal = false;
+        this.loadInterests(this.currentPage);
+      },
+      error: (err) => {
+        console.error('Error saving interest:', err);
+        this.notification.error('Failed to save interest');
+      },
+    });
+  }
+
+  // ✅ Delete interest
+  deleteInterest(id: number): void {
+    if (!confirm('Are you sure you want to delete this interest?')) return;
+    this.interestsService.deleteInterest({ id }).subscribe({
+      next: () => {
+        this.notification.success('Interest deleted successfully');
+        this.loadInterests(this.currentPage);
+      },
+      error: (err) => {
+        console.error('Error deleting interest:', err);
+        this.notification.error('Failed to delete interest');
+      },
+    });
+  }
+
+  // ✅ Filter interests by search term
+  filterInterests(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredInterests = [...this.interests];
+      return;
+    }
+
+    this.filteredInterests = this.interests.filter((i) =>
+      (i.name_en || '').toLowerCase().includes(term) ||
+      (i.name_ar || '').toLowerCase().includes(term)
+    );
+  }
+
+  // ✅ Pagination controls
+  goToPage(page: number) {
+    if (page < 1 || page > this.lastPage) return;
+    this.loadInterests(page);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.lastPage) this.goToPage(this.currentPage + 1);
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.goToPage(this.currentPage - 1);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(this.lastPage, start + maxVisible - 1);
+
+    if (end - start < maxVisible - 1) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+}

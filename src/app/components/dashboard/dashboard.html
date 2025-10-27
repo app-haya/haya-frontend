@@ -1,0 +1,14 @@
+<div class="dashboard-layout">
+  <div class="sidebar-wrapper" [class.collapsed]="isCollapsed">
+    <app-sidebar (collapsedChange)="isCollapsed = $event"></app-sidebar>
+  </div>
+
+  <div class="main-content">
+    <div class="sticky-top">
+      <app-navbar></app-navbar>
+    </div>
+    <div class="content-area p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

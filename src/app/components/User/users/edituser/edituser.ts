@@ -1,0 +1,218 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { UsersService } from '../../../../services/users.service';
+import { NotificationService } from '../../../../services/notification.service';
+
+@Component({
+  selector: 'app-edit-user',
+  standalone: true,
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
+  templateUrl: './edituser.html',
+  styleUrls: ['./edituser.css']
+})
+export class EditUser implements OnInit {
+  userForm!: FormGroup;
+  countries: any[] = [];
+  cities: any[] = [];
+  userId!: number;
+  loading = false;
+  isLoadingCities = false;
+  
+  // Changed to include IDs for proper backend communication
+  interestsList: { id: number; name: string }[] = [
+    { id: 1, name: 'Education' },
+    { id: 2, name: 'Sports' },
+    { id: 3, name: 'Culture' },
+    { id: 4, name: 'Technology' },
+    { id: 5, name: 'Music' },
+    { id: 6, name: 'Travel' },
+    { id: 7, name: 'Reading' }
+  ];
+  
+  userImageUrl: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private fb: FormBuilder,
+    private usersService: UsersService,
+    private notification: NotificationService
+  ) {}
+
+  ngOnInit(): void {
+    this.userId = Number(this.route.snapshot.paramMap.get('id'));
+    this.initForm();
+    this.loadCountries();
+    this.loadUser();
+
+    // Load cities when country changes
+    this.userForm.get('country_id')?.valueChanges.subscribe(countryId => {
+      if (countryId && !isNaN(parseInt(countryId))) {
+        this.loadCities(parseInt(countryId));
+      } else {
+        this.cities = [];
+        this.userForm.patchValue({ city_id: '' });
+      }
+    });
+  }
+
+  initForm() {
+    this.userForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      gender: ['1', Validators.required],
+      birth_date: ['', Validators.required],
+      activity: [''],
+      interests: [[]], // Initialize as array of IDs
+      country_id: ['', Validators.required],
+      city_id: ['', Validators.required],
+      is_private: ['0'],
+      language: ['ar'],
+      sign_in_type: ['normal'],
+      account_type: ['user'],
+      is_active: ['1'],
+      image: ['']
+    });
+  }
+
+  loadUser() {
+    this.loading = true;
+    this.usersService.showUser(this.userId).subscribe({
+      next: (res) => {
+        // API response has user data in "user" property
+        const user = res.user;
+        
+        // Extract interest IDs from the array of objects
+        const interests = user.interests?.map((interest: any) => interest.id) || [];
+        
+        // Store image URL for preview
+        this.userImageUrl = user.image_url || '';
+        
+        // Patch form with user data
+        this.userForm.patchValue({
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          gender: user.gender.toString(),
+          birth_date: user.birth_date,
+          country_id: user.country_id.toString(),
+          city_id: user.city_id.toString(),
+          account_type: user.type,
+          is_active: user.status,
+          is_private: user.is_private,
+          interests: interests,
+          image: '' // Will be set separately if needed
+        });
+        
+        // Load cities if country exists
+        if (user.country_id) {
+          this.loadCities(user.country_id);
+        }
+        
+        this.loading = false;
+      },
+      error: (err) => {
+        this.notification.error('Failed to load user data');
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
+
+  loadCountries() {
+    this.usersService.getCountries('ar').subscribe({
+      next: (res) => this.countries = res.data || res || [],
+      error: () => this.notification.error('Failed to load countries')
+    });
+  }
+
+  loadCities(countryId: number) {
+    this.isLoadingCities = true;
+    this.usersService.getCities(countryId, 'ar').subscribe({
+      next: (res) => {
+        this.cities = res.data || res || [];
+        this.isLoadingCities = false;
+      },
+      error: () => {
+        this.notification.error('Failed to load cities');
+        this.isLoadingCities = false;
+      }
+    });
+  }
+
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.userForm.patchValue({ image: reader.result });
+        this.userImageUrl = reader.result as string; // Update preview immediately
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onInterestChange(event: any): void {
+    const interestId = parseInt(event.target.value);
+    const checked = event.target.checked;
+    const currentInterests = [...(this.userForm.value.interests || [])];
+
+    if (checked) {
+      if (!currentInterests.includes(interestId)) {
+        currentInterests.push(interestId);
+      }
+    } else {
+      const index = currentInterests.indexOf(interestId);
+      if (index !== -1) {
+        currentInterests.splice(index, 1);
+      }
+    }
+    
+    this.userForm.patchValue({ interests: currentInterests });
+  }
+
+  onCountryChange(event: any): void {
+    const countryId = event.target.value;
+    if (countryId && !isNaN(parseInt(countryId))) {
+      this.loadCities(parseInt(countryId));
+    } else {
+      this.cities = [];
+      this.userForm.patchValue({ city_id: '' });
+    }
+  }
+
+  onSubmit() {
+    if (this.userForm.invalid) return;
+
+    // Format interests as JSON string array of IDs for backend
+    const interests = this.userForm.value.interests || [];
+    const interestsString = "['" + interests.join("','") + "']";
+
+    // Prepare form data
+    const formData = { 
+      id: this.userId, 
+      ...this.userForm.value,
+      interests: interestsString // Send as formatted string
+    };
+
+    this.loading = true;
+    this.usersService.updateUser(formData).subscribe({
+      next: () => {
+        this.notification.success('User updated successfully');
+        this.router.navigate(['/users']);
+      },
+      error: (err) => {
+        this.notification.error(err.error?.message || 'Failed to update user');
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
+
+  get f() {
+    return this.userForm.controls;
+  }
+}

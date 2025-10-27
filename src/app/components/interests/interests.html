@@ -1,0 +1,114 @@
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">Interests</h4>
+  <p class="text-muted mb-4">List of All Interests</p>
+
+  <!-- Search + Add -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Search by name..."
+      [(ngModel)]="searchTerm"
+      (input)="filterInterests()"
+    />
+
+    <button class="btn btn-purple mt-2 mt-md-0" (click)="openAddModal()">
+      <i class="fas fa-plus me-2"></i> Add Interest
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Name (EN)</th>
+          <th>Name (AR)</th>
+          <th>Created At</th>
+          <th>Updated At</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let interest of filteredInterests">
+          <td>{{ interest.name_en }}</td>
+          <td>{{ interest.name_ar }}</td>
+          <td>{{ interest.created_at | date: 'short' }}</td>
+          <td>{{ interest.updated_at | date: 'short' }}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-purple me-2" (click)="openEditModal(interest)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteInterest(interest.id)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="filteredInterests.length === 0">
+          <td colspan="5" class="text-center text-muted">No interests found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+<div class="d-flex justify-content-center align-items-center mt-4" *ngIf="total > 0">
+      <nav>
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="prevPage()">&laquo; Prev</a>
+          </li>
+
+          <li
+            class="page-item"
+            *ngFor="let page of getPageNumbers()"
+            [class.active]="page === currentPage"
+          >
+            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="currentPage === lastPage">
+            <a class="page-link" (click)="nextPage()">Next &raquo;</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <ng-template #loadingSpinner>
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Loading interests...</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- ===== Modal Overlay & Popup ===== -->
+<div class="modal-overlay" *ngIf="showModal" (click)="showModal = false"></div>
+
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="close-btn" (click)="showModal = false">✕</button>
+    </div>
+
+    <form (ngSubmit)="saveInterest()" class="city-form">
+      <div class="form-group">
+        <label for="name_en">Name (English)</label>
+        <input type="text" id="name_en" [(ngModel)]="formData.name_en" name="name_en" required />
+      </div>
+
+      <div class="form-group">
+        <label for="name_ar">Name (Arabic)</label>
+        <input type="text" id="name_ar" [(ngModel)]="formData.name_ar" name="name_ar" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-purple">Save</button>
+        <button type="button" class="btn btn-outline" (click)="showModal = false">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
