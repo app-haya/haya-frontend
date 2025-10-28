@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LocationService } from '../../services/location.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-countries',
@@ -23,7 +24,8 @@ export class Countries implements OnInit {
   currentPage = 1;
   lastPage = 1;
 
-  constructor(private locationService: LocationService) {}
+  constructor(private locationService: LocationService,private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadCountries();
@@ -96,10 +98,10 @@ getPageNumbers(): number[] {
         };
         this.editing = true;
         this.showModal = true;
+         this.notification.success('City Updated successfully');
       },
       error: (err) => {
-        console.error('Error fetching country:', err);
-        alert('Failed to load country data.');
+        this.notification.error('Failed to load country data.');
       }
     });
   }
@@ -118,8 +120,11 @@ getPageNumbers(): number[] {
       next: () => {
         this.closeModal();
         this.loadCountries(this.currentPage);
+         this.notification.success('country saved successfully');
+
       },
-      error: (err) => console.error('Error saving country:', err)
+      error: (err) => this.notification.error('City saved failed')
+
     });
   }
 
@@ -127,6 +132,7 @@ getPageNumbers(): number[] {
     if (confirm('Are you sure you want to delete this country?')) {
       this.locationService.deleteCountry({ id }).subscribe(() => {
         this.loadCountries(this.currentPage);
+        this.notification.success('country deleted successfully');
       });
     }
   }
