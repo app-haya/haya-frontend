@@ -14,7 +14,10 @@
   </div>
 
   <!-- Table -->
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
+  <div
+    *ngIf="!loading; else loadingSpinner"
+    class="table-container table-responsive"
+  >
     <table class="table table-hover align-middle text-center">
       <thead>
         <tr>
@@ -39,55 +42,71 @@
 
       <tbody>
         <tr *ngFor="let deal of filteredDeals">
-          <td>{{ deal.title || '-' }}</td>
-          <td>{{ deal.account_number || '-' }}</td>
-          <td>{{ deal.seller_type || '-' }}</td>
+          <td>{{ deal.title || "-" }}</td>
+          <td>
+            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank"
+              >View</a
+            >
+            <span *ngIf="!deal.account_number">-</span>
+          </td>          <td>{{ deal.seller_type || "-" }}</td>
           <td>{{ deal.original_price | currency }}</td>
           <td>{{ deal.total_price | currency }}</td>
           <td>
-            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">View</a>
+            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
+              >View</a
+            >
             <span *ngIf="!deal.invoice">-</span>
           </td>
           <td>{{ deal.tax_value }}</td>
           <td>{{ deal.country_id }}</td>
           <td>{{ deal.city_id }}</td>
           <td>
-            <span class="badge" [ngClass]="deal.is_active ? 'bg-success' : 'bg-danger'">
-              {{ deal.is_active ? 'Active' : 'Inactive' }}
+            <span
+              class="badge"
+              [ngClass]="deal.is_active ? 'bg-success' : 'bg-danger'"
+            >
+              {{ deal.is_active ? "Active" : "Inactive" }}
             </span>
           </td>
-          <td>{{ deal.is_new === 1 ? 'Yes' : 'No' }}</td>
-          <td>{{ deal.description || '-' }}</td>
-          <td>{{ deal.notes || '-' }}</td>
+          <td>{{ deal.is_new === 1 ? "Yes" : "No" }}</td>
+          <td>{{ deal.description || "-" }}</td>
+          <td>{{ deal.notes || "-" }}</td>
           <td>{{ deal.quantity }}</td>
           <td>
-            <span class="badge"
-                  [ngClass]="deal.status === 'pending' ? 'bg-warning text-dark' : 
-                             deal.status === 'approved' ? 'bg-success' : 'bg-danger'">
+            <span
+              class="badge"
+              [ngClass]="
+                deal.status === 'pending'
+                  ? 'bg-warning text-dark'
+                  : deal.status === 'approved'
+                  ? 'bg-success'
+                  : 'bg-danger'
+              "
+            >
               {{ deal.status | titlecase }}
             </span>
           </td>
-     <td class="text-center">
-  <div class="action-icons">
-    <button 
-      class="icon-btn approve" 
-      (click)="approve(deal.id)"
-      [disabled]="deal.status !== 'pending'"
-      title="Approve"
-    >
-      <i class="fas fa-check"></i>
-    </button>
+          <td class="text-center">
+            <div class="action-icons">
+              <button
+                class="icon-btn approve"
+                (click)="approve(deal.id)"
+                [disabled]="deal.status !== 'pending'"
+                title="Approve"
+              >
+                <i class="fas fa-check"></i>
+              </button>
 
-    <button 
-      class="icon-btn reject" 
-      (click)="reject(deal.id)"
-      [disabled]="deal.status !== 'pending'"
-      title="Reject"
-    >
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-</td>
+              <button
+                class="icon-btn reject"
+                (click)="reject(deal.id)"
+                [disabled]="deal.status !== 'pending'"
+                title="Reject"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </td>
         </tr>
 
         <tr *ngIf="filteredDeals.length === 0">
@@ -97,7 +116,10 @@
     </table>
 
     <!-- Pagination -->
-    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
+    <div
+      class="d-flex justify-content-center align-items-center mt-4"
+      *ngIf="lastPage > 0"
+    >
       <nav>
         <ul class="pagination mb-0">
           <li class="page-item" [class.disabled]="currentPage === 1">

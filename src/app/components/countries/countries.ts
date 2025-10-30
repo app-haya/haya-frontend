@@ -42,7 +42,6 @@ export class Countries implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading countries:', err);
         this.loading = false;
       }
     });
@@ -123,7 +122,7 @@ getPageNumbers(): number[] {
          this.notification.success('country saved successfully');
 
       },
-      error: (err) => this.notification.error('City saved failed')
+      error: (err) => this.notification.error('country saved failed')
 
     });
   }
