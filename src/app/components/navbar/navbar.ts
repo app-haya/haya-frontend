@@ -12,6 +12,8 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class Navbar {
 
+  @Output() darkModeChange = new EventEmitter<boolean>(); // ✅ أضفنا الـ Output
+
   showLangDropdown = false;
   isDarkMode = false;
 
@@ -38,5 +40,6 @@ export class Navbar {
   toggleDarkMode() {
     this.theme.toggle();
     this.isDarkMode = this.theme.isDark();
+    this.darkModeChange.emit(this.isDarkMode); 
   }
 }
