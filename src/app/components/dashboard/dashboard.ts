@@ -26,7 +26,6 @@ export class Dashboard {
   }
 
 onDarkModeChange(enabled: boolean) {
-  console.log('📢 Received dark mode change:', enabled);
   this.isDarkMode = enabled;
   this.applyDarkMode(enabled);
 }
