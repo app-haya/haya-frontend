@@ -10,51 +10,48 @@ import { NotificationService } from '../../../../services/notification.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './admins.html',
-  styleUrls: ['./admins.css']
+  styleUrls: ['./admins.css'],
 })
 export class Admins implements OnInit {
   admins: any[] = [];
   filteredAdmins: any[] = [];
   searchTerm = '';
   loading = true;
-  Math = Math;
+  isDark = false;
 
-  // Pagination variables
+
   currentPage = 1;
   lastPage = 1;
   total = 0;
   perPage = 10;
 
-  constructor(private adminService: AdminService,private notification: NotificationService
+  constructor(
+    private adminService: AdminService,
+    private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.fetchAdmins();
+    // const saved = localStorage.getItem('darkMode');
+    // this.isDark = saved === 'true';
   }
 
   fetchAdmins(page: number = 1) {
     this.loading = true;
+
     this.adminService.getAllAdmins(page).subscribe({
       next: (res: any) => {
         if (res.errorcode === '0' && res.data) {
           this.admins = res.data.data || [];
-          this.filteredAdmins = this.admins;
+          this.filteredAdmins = [...this.admins];
 
-          this.currentPage = res.data.current_page || 1;
-          this.lastPage = res.data.last_page || 1;
-          this.total = res.data.total || 0;
-          this.perPage = res.data.per_page || 10;
-        } else {
-          this.admins = [];
-          this.filteredAdmins = [];
+          this.currentPage = res.data.current_page;
+          this.lastPage = res.data.last_page;
         }
 
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error fetching admins:', err);
-        this.loading = false;
-      }
+      error: () => (this.loading = false),
     });
   }
 
@@ -74,13 +71,10 @@ export class Admins implements OnInit {
     this.adminService.deleteAdmin(id).subscribe({
       next: (res: any) => {
         if (res.errorcode === '0') {
-          this.notification.success(' Admin deleted successfully!');
+          this.notification.success('Admin deleted successfully!');
           this.fetchAdmins(this.currentPage);
-        } else {
-          this.notification.error('Failed to delete admin');
         }
       },
-      error: (err) => console.error('Delete error:', err)
     });
   }
 
@@ -103,24 +97,15 @@ export class Admins implements OnInit {
 
   getPageNumbers(): number[] {
     const pages: number[] = [];
-    const maxVisiblePages = 5;
+    const max = 5;
 
-    if (this.lastPage <= maxVisiblePages) {
-      for (let i = 1; i <= this.lastPage; i++) {
-        pages.push(i);
-      }
+    if (this.lastPage <= max) {
+      for (let i = 1; i <= this.lastPage; i++) pages.push(i);
     } else {
-      let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-      let endPage = startPage + maxVisiblePages - 1;
+      let start = Math.max(1, this.currentPage - 2);
+      let end = Math.min(this.lastPage, start + 4);
 
-      if (endPage > this.lastPage) {
-        endPage = this.lastPage;
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
+      for (let i = start; i <= end; i++) pages.push(i);
     }
 
     return pages;

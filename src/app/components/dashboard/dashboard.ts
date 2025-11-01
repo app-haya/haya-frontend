@@ -1,21 +1,40 @@
 import { Component } from '@angular/core';
 import { Navbar } from '../navbar/navbar';
 import { Sidebar } from '../sidebar/sidebar';
-import { RouterLink, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Navbar,Sidebar,RouterModule,CommonModule],
+  standalone: true,
+  imports: [Navbar, Sidebar, RouterModule, CommonModule, TranslateModule],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrls: ['./dashboard.css']
 })
 export class Dashboard {
   isCollapsed = false;
+  isDarkMode = false;
+
+  ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    this.applyDarkMode(this.isDarkMode);
+  }
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+onDarkModeChange(enabled: boolean) {
+  console.log('📢 Received dark mode change:', enabled);
+  this.isDarkMode = enabled;
+  this.applyDarkMode(enabled);
+}
+
+  applyDarkMode(enable: boolean) {
+    const layout = document.querySelector('.dashboard-layout');
+    if (layout) {
+      layout.classList.toggle('dark-mode', enable);
+    }
   }
 }

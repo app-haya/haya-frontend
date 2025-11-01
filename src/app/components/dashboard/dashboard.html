@@ -5,8 +5,9 @@
 
   <div class="main-content">
     <div class="sticky-top">
-      <app-navbar></app-navbar>
+      <app-navbar (darkModeChange)="onDarkModeChange($event)"></app-navbar>
     </div>
+
     <div class="content-area p-4">
       <router-outlet></router-outlet>
     </div>

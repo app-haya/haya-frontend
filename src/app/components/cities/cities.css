@@ -1,12 +1,9 @@
-/* === Table Container === */
-.table-container {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  overflow-x: auto;
+/* === Page Container === */
+.container-fluid {
+  min-height: 100vh;
 }
 
+/* === Heading === */
 h4.fw-bold {
   color: #1f6eb4;
   font-weight: 700;
@@ -16,6 +13,14 @@ h4.fw-bold {
   color: #6c757d !important;
 }
 
+/* === Search === */
+.search-input {
+  width: 250px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 7px 10px;
+}
+
 /* === Buttons === */
 .btn-purple {
   background-color: #7a3ca0;
@@ -23,22 +28,18 @@ h4.fw-bold {
   border: none;
   border-radius: 8px;
   padding: 8px 20px;
-  font-weight: 500;
   transition: 0.3s;
 }
 
 .btn-purple:hover {
   background-color: #5b2e7a;
-  color: #fff;
 }
 
-/* === Outline Purple Button === */
 .btn-outline-purple {
   border: 1px solid #7a3ca0;
   color: #7a3ca0;
   border-radius: 6px;
   padding: 5px 10px;
-  transition: 0.3s;
 }
 
 .btn-outline-purple:hover {
@@ -46,19 +47,26 @@ h4.fw-bold {
   color: white;
 }
 
-/* === Search Input === */
-.search-input {
-  max-width: 250px;
-  border-radius: 8px;
-  padding: 6px 10px;
-  border: 1px solid #ddd;
+.btn-outline-danger {
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  border-radius: 6px;
+  padding: 5px 10px;
 }
 
-/* === Table Styling === */
-.table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 6px;
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* === Table === */
+.table-container {
+  background: #fff;
+  padding: 25px;
+    margin-top: 60px;
+
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .table th {
@@ -69,17 +77,29 @@ h4.fw-bold {
 }
 
 .table td {
+  vertical-align: middle;
   padding: 12px;
   border-top: 1px solid #eee;
-  vertical-align: middle;
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f9f7ff;
+/* === Pagination === */
+.pagination .page-link {
+  color: #7a3ca0;
+  border-radius: 6px;
+  margin: 0 2px;
+  border: none;
 }
 
-/* === Modal Overlay === */
-/* === Edit Modal Overlay === */
+.pagination .page-item.active .page-link {
+  background-color: #7a3ca0;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+
+/* === Modal === */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -88,7 +108,6 @@ h4.fw-bold {
   z-index: 1000;
 }
 
-/* === Edit Modal Container === */
 .modal {
   position: fixed;
   inset: 0;
@@ -101,61 +120,28 @@ h4.fw-bold {
 .modal-content {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 25px;
-  width: 100%;
-  max-width: 400px;
-  animation: slideDown 0.3s ease;
+  width: 400px;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
 }
 
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* === Edit Modal Header === */
+/* Modal Header */
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 15px;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-weight: 600;
-  color: #333;
 }
 
 .close-btn {
+  background: none;
   border: none;
-  background: transparent;
   font-size: 20px;
   cursor: pointer;
-  color: #555;
-  transition: 0.2s;
 }
 
-.close-btn:hover {
-  color: #000;
-}
-
-/* === Form Inside Edit Modal === */
+/* Form */
 .city-form .form-group {
   margin-bottom: 15px;
-}
-
-.city-form label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
-  color: #555;
 }
 
 .city-form input,
@@ -164,50 +150,10 @@ h4.fw-bold {
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
-  transition: 0.2s;
-}
-
-.city-form input:focus,
-.city-form select:focus {
-  outline: none;
-  border-color: #6f42c1;
-  box-shadow: 0 0 4px rgba(111, 66, 193, 0.3);
 }
 
 .city-form .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 15px;
-}
-
-.edit-outline {
-  border: 1px solid #6c757d;
-  color: #6c757d;
-  background: transparent;
-  border-radius: 6px;
-  padding: 8px 16px;
-  transition: 0.3s;
-}
-
-.btn-outline:hover {
-  background-color: #6c757d;
-  color: white;
-}
-/* === Pagination Styling === */
-.pagination .page-link {
-  color: #7a3ca0;
-  border-radius: 6px;
-  margin: 0 2px;
-  border: none;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: #7a3ca0;
-  border-color: #7a3ca0;
-  color: white;
-}
-
-.pagination .page-item.disabled .page-link {
-  color: #6c757d;
 }

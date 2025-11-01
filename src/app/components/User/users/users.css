@@ -1,6 +1,5 @@
 /* === Page Wrapper === */
 .container-fluid {
-  background-color: #f8f9fa;
   min-height: 100vh;
   padding: 25px;
 }
@@ -73,6 +72,7 @@ h4.fw-bold {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 25px;
+  margin-top: 60px;
 }
 .table th {
   background-color: #f8f9fa;
@@ -96,7 +96,7 @@ h4.fw-bold {
 .pagination .page-item.active .page-link {
   background-color: #7a3ca0;
   border-color: #7a3ca0;
-    color: white;
+  color: white;
 }
 
 .pagination .page-item.disabled .page-link {
@@ -131,7 +131,7 @@ h4.fw-bold {
   .table {
     font-size: 14px;
   }
-  
+
   .table-container {
     padding: 15px;
   }

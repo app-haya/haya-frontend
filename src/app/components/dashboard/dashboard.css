@@ -83,3 +83,39 @@
 .content-area table {
   min-width: 1000px; /* أو حسب حجم الجدول */
 }
+/* === Dark Mode === */
+.dashboard-layout {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dashboard-layout.dark-mode {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+.dashboard-layout.dark-mode .sidebar-wrapper {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+.dashboard-layout.dark-mode .main-content {
+  background-color: #181818;
+}
+
+.dashboard-layout.dark-mode .sticky-top {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+.dashboard-layout.dark-mode .card,
+.dashboard-layout.dark-mode table,
+.dashboard-layout.dark-mode th,
+.dashboard-layout.dark-mode td {
+  background-color: #222;
+  color: #fff;
+  border-color: #333;
+}
+
+.dashboard-layout.dark-mode a {
+  color: #b388ff;
+}

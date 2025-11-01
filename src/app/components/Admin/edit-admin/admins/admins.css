@@ -1,6 +1,5 @@
 /* === Page Wrapper === */
 .container-fluid {
-  background-color: #f8f9fa;
   min-height: 100vh;
   padding: 25px;
 }
@@ -73,6 +72,8 @@ h4.fw-bold {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 25px;
+    margin-top: 60px;
+
 }
 .table th {
   background-color: #f8f9fa;
@@ -123,4 +124,36 @@ h4.fw-bold {
 
 .pagination .page-item.disabled .page-link {
   color: #6c757d;
+}
+/* ===============================
+   ✅ DARK MODE — Admins Page
+   يعمل فقط عند وجود .dark-mode على body
+================================*/
+.admins-page.dark-mode {
+  background: #121212;
+  color: #fff;
+}
+
+.admins-page.dark-mode .table-container {
+  background: #1d1d1d;
+  border-color: #333;
+}
+
+.admins-page.dark-mode table thead th {
+  background: #222 !important;
+  color: #b58dff !important;
+}
+
+.admins-page.dark-mode table tbody td {
+  color: #eaeaea !important;
+  border-color: #333 !important;
+}
+
+.admins-page.dark-mode .btn-purple {
+  background: #a46be0 !important;
+}
+
+.admins-page.dark-mode .btn-outline-purple {
+  border-color: #c69eff !important;
+  color: #c69eff !important;
 }

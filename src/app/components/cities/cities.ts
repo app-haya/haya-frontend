@@ -25,6 +25,8 @@ export class Cities implements OnInit {
   editingCity: any = null;
   currentPage = 1;
   lastPage = 1;
+    total: number = 0;
+
 
   formData = {
     id: null,
@@ -59,6 +61,7 @@ loadCities(page: number = 1): void {
       if (this.lastPage === 1) this.lastPage = 3; 
 
       this.loading = false;
+      this.total = res.total;
     },
     error: (err) => {
       console.error('Error loading cities:', err);
