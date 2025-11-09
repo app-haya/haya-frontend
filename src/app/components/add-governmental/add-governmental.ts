@@ -66,7 +66,7 @@ export class AddGovernmental implements OnInit {
   loadCountries() {
     this.usersService.getCountries('en').subscribe({
       next: (res) => (this.countries = res.data || []),
-      error: () => this.notification.error('❌ Failed to load countries'),
+      error: () => this.notification.error(' Failed to load countries'),
     });
   }
 
@@ -75,7 +75,7 @@ export class AddGovernmental implements OnInit {
       next: (res) => {
         this.interestsList = res?.data?.data || res?.data || [];
       },
-      error: () => this.notification.error('❌ Failed to load interests'),
+      error: () => this.notification.error(' Failed to load interests'),
     });
   }
 
@@ -85,7 +85,7 @@ export class AddGovernmental implements OnInit {
     if (countryId) {
       this.usersService.getCities(countryId, 'en').subscribe({
         next: (res) => (this.cities = res.data || []),
-        error: () => this.notification.error('❌ Failed to load cities'),
+        error: () => this.notification.error(' Failed to load cities'),
       });
     }
   }
@@ -149,7 +149,7 @@ export class AddGovernmental implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        const message = err.error?.message || '❌ Failed to add governmental';
+        const message = err.error?.message || ' Failed to add governmental';
         this.notification.error(message);
         this.loading = false;
       },

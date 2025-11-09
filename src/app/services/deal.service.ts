@@ -37,5 +37,26 @@ export class DealService {
     return this.http.get(`${this.apiUrl}admin/deals/${id}/reject`, { headers });
   }
 
+  // 🔹 إضافة الصفقة الجديدة (مع رفع ملفات)
+  addDeal(formData: FormData): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}admin/deals/add`, formData, { headers });
+  }
+
+  // 🔹 تحديث الصفقة
+  updateDeal(id: number, formData: FormData): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}admin/deals/update/${id}`, formData, { headers });
+  }
+
+  // 🔹 حذف الصفقة
+  deleteDeal(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}admin/deals/delete/${id}`, {}, { headers });
+  }
+  getUsersSimpleList(): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.get(`${this.apiUrl}admin/users/list`, { headers });
+}
 
 }

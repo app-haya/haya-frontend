@@ -27,6 +27,7 @@ import { AddMerchant } from './components/add-merchant/add-merchant';
 import { EditMerchant } from './components/edit-merchant/edit-merchant';
 import { AddGovernmental } from './components/add-governmental/add-governmental';
 import { EditGovernmental } from './components/edit-governmental/edit-governmental';
+import { AddDeal } from './components/add-deal/add-deal';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -53,6 +54,7 @@ export const routes: Routes = [
       { path: 'cities', component: Cities },
       { path: 'countries', component: Countries },
       { path: 'deals', component: Deals },
+      { path: 'adddeal', component: AddDeal },
       { path: 'bar-chart', component: BarChart },
       { path: 'pie-chart', component: PieChart },
       { path: 'line-chart', component: LineChart },
