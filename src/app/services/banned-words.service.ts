@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BannedWordsService {
-  private apiUrl = 'http://localhost:8000/api'; 
+  private apiUrl = 'https://hayaapp.online/api'; 
 
   constructor(private http: HttpClient) {}
 
