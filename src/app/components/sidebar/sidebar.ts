@@ -34,6 +34,7 @@ export class Sidebar implements OnInit {
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/countries' },
     { name: 'Deals', icon: 'bi bi-bag-check', path: '/deals' },
+    { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/bannedwords' },
     { name: 'Line Chart', icon: 'bi bi-graph-up', path: '/line-chart' },
     { name: 'Geo Chart', icon: 'bi bi-map', path: '/geo-chart' },
     { name: 'Bar Chart', icon: 'bi bi-bar-chart', path: '/bar-chart' },

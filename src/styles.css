@@ -190,3 +190,14 @@ body.dark-mode .table-container {
     0 0 22px rgba(164, 92, 255, 0.55),
     0 0 35px rgba(164, 92, 255, 0.35);
 }
+/* ===== Placeholder White in Dark Mode ===== */
+body.dark-mode ::placeholder {
+  color: #ddd !important;
+  opacity: 0.6 !important; /* علشان يبقى واضح */
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode select::placeholder {
+  color: #ddd !important;
+}

@@ -11,6 +11,7 @@ import { Interests } from './components/interests/interests';
 import { Cities } from './components/cities/cities';
 import { Countries } from './components/countries/countries';
 import { Deals } from './components/deals/deals';
+
 import { BarChart } from './components/bar-chart/bar-chart';
 import { PieChart } from './components/pie-chart/pie-chart';
 import { LineChart } from './components/line-chart/line-chart';
@@ -28,6 +29,7 @@ import { EditMerchant } from './components/edit-merchant/edit-merchant';
 import { AddGovernmental } from './components/add-governmental/add-governmental';
 import { EditGovernmental } from './components/edit-governmental/edit-governmental';
 import { AddDeal } from './components/add-deal/add-deal';
+import { BannedWords } from './components/banned-words/banned-words';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -54,6 +56,8 @@ export const routes: Routes = [
       { path: 'cities', component: Cities },
       { path: 'countries', component: Countries },
       { path: 'deals', component: Deals },
+            { path: 'bannedwords', component: BannedWords },
+
       { path: 'adddeal', component: AddDeal },
       { path: 'bar-chart', component: BarChart },
       { path: 'pie-chart', component: PieChart },
