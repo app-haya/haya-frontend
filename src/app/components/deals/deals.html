@@ -11,16 +11,14 @@
       [(ngModel)]="searchTerm"
       (input)="search()"
     />
-<a [routerLink]="['/adddeal']" class="btn btn-purple mt-2 mt-md-0">
-  <i class="fas fa-hand-holding-usd me-2"></i> Add Deal
-</a>
+
+    <a [routerLink]="['/adddeal']" class="btn btn-purple mt-2 mt-md-0">
+      <i class="fas fa-hand-holding-usd me-2"></i> Add Deal
+    </a>
   </div>
 
   <!-- Table -->
-  <div
-    *ngIf="!loading; else loadingSpinner"
-    class="table-container table-responsive"
-  >
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
     <table class="table table-hover align-middle text-center">
       <thead>
         <tr>
@@ -46,35 +44,36 @@
       <tbody>
         <tr *ngFor="let deal of filteredDeals">
           <td>{{ deal.title || "-" }}</td>
+
           <td>
-            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank"
-              >View</a
-            >
+            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank">View</a>
             <span *ngIf="!deal.account_number">-</span>
-          </td>          <td>{{ deal.seller_type || "-" }}</td>
+          </td>
+
+          <td>{{ deal.seller_type || "-" }}</td>
           <td>{{ deal.original_price | currency }}</td>
           <td>{{ deal.total_price | currency }}</td>
+
           <td>
-            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
-              >View</a
-            >
+            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">View</a>
             <span *ngIf="!deal.invoice">-</span>
           </td>
+
           <td>{{ deal.tax_value }}</td>
           <td>{{ deal.country_id }}</td>
           <td>{{ deal.city_id }}</td>
+
           <td>
-            <span
-              class="badge"
-              [ngClass]="deal.is_active ? 'bg-success' : 'bg-danger'"
-            >
+            <span class="badge" [ngClass]="deal.is_active ? 'bg-success' : 'bg-danger'">
               {{ deal.is_active ? "Active" : "Inactive" }}
             </span>
           </td>
+
           <td>{{ deal.is_new === 1 ? "Yes" : "No" }}</td>
           <td>{{ deal.description || "-" }}</td>
           <td>{{ deal.notes || "-" }}</td>
           <td>{{ deal.quantity }}</td>
+
           <td>
             <span
               class="badge"
@@ -89,6 +88,7 @@
               {{ deal.status | titlecase }}
             </span>
           </td>
+
           <td class="text-center">
             <div class="action-icons">
               <button
@@ -102,7 +102,7 @@
 
               <button
                 class="icon-btn reject"
-                (click)="reject(deal.id)"
+                (click)="openRejectModal(deal.id)"
                 [disabled]="deal.status !== 'pending'"
                 title="Reject"
               >
@@ -119,10 +119,7 @@
     </table>
 
     <!-- Pagination -->
-    <div
-      class="d-flex justify-content-center align-items-center mt-4"
-      *ngIf="lastPage > 0"
-    >
+    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
       <nav>
         <ul class="pagination mb-0">
           <li class="page-item" [class.disabled]="currentPage === 1">
@@ -152,4 +149,36 @@
       <p class="mt-2">Loading deals...</p>
     </div>
   </ng-template>
+</div>
+
+<!-- ==================== Reject Reason Modal ==================== -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Reject Deal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <label class="form-label fw-bold">Reason for rejection:</label>
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="rejectReason"
+          placeholder="Write the rejection reason..."
+        ></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+        <button class="btn btn-danger" (click)="confirmReject()">
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>

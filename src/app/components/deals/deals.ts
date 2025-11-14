@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-deals',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './deals.html',
   styleUrls: ['./deals.css']
 })
@@ -17,9 +17,13 @@ export class Deals implements OnInit {
   loading: boolean = false;
   searchTerm: string = '';
 
-  // Pagination (اختياري)
+  // Pagination
   currentPage: number = 1;
   lastPage: number = 1;
+
+  // Reject Modal
+  rejectReason: string = '';
+  selectedDealId: number | null = null;
 
   constructor(private dealService: DealService) {}
 
@@ -31,7 +35,6 @@ export class Deals implements OnInit {
     this.loading = true;
     this.dealService.getAllPendingDeals(page).subscribe({
       next: (res: any) => {
-        // لو API ترجع pagination
         if (res.data?.data) {
           this.deals = res.data.data;
           this.currentPage = res.data.current_page;
@@ -41,18 +44,19 @@ export class Deals implements OnInit {
           this.currentPage = 1;
           this.lastPage = 1;
         }
-        this.filteredDeals = [...this.deals]; // النسخة للفلترة
+        this.filteredDeals = [...this.deals];
         this.loading = false;
       },
-      error: () => this.loading = false
+      error: () => (this.loading = false)
     });
   }
 
-  // البحث حسب العنوان أو الحساب
   search() {
     const term = this.searchTerm.toLowerCase();
-    this.filteredDeals = this.deals.filter(d =>
-      (d.title?.toLowerCase().includes(term) || d.account_number?.toLowerCase().includes(term))
+    this.filteredDeals = this.deals.filter(
+      d =>
+        d.title?.toLowerCase().includes(term) ||
+        d.account_number?.toLowerCase().includes(term)
     );
   }
 
@@ -63,19 +67,39 @@ export class Deals implements OnInit {
     });
   }
 
-  reject(id: number) {
-    this.dealService.rejectDeal(id).subscribe(() => {
+  // ---------- Reject Logic ----------
+  openRejectModal(id: number) {
+    this.selectedDealId = id;
+    this.rejectReason = '';
+
+    const modal = new (window as any).bootstrap.Modal(
+      document.getElementById('rejectModal')
+    );
+    modal.show();
+  }
+
+  confirmReject() {
+    if (!this.rejectReason.trim()) {
+      alert('Please enter a rejection reason.');
+      return;
+    }
+
+    this.dealService.rejectDeal(this.selectedDealId!, this.rejectReason).subscribe(() => {
       alert('Deal rejected successfully');
+
+      const modal = (window as any).bootstrap.Modal.getInstance(
+        document.getElementById('rejectModal')
+      );
+      modal.hide();
+
       this.loadDeals(this.currentPage);
     });
   }
 
-  // Pagination Methods
+  // ---------- Pagination ----------
   getPageNumbers(): number[] {
     const pages: number[] = [];
-    for (let i = 1; i <= this.lastPage; i++) {
-      pages.push(i);
-    }
+    for (let i = 1; i <= this.lastPage; i++) pages.push(i);
     return pages;
   }
 

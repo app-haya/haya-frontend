@@ -32,10 +32,12 @@ export class DealService {
   }
 
   // 🔹 رفض صفقة
-  rejectDeal(id: number): Observable<any> {
-    const headers = this.getHeaders();
-    return this.http.get(`${this.apiUrl}admin/deals/${id}/reject`, { headers });
-  }
+rejectDeal(id: number, reason: string): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.post(`${this.apiUrl}admin/deals/${id}/reject`, {
+    reason: reason
+  }, { headers });
+}
 
   // 🔹 إضافة الصفقة الجديدة (مع رفع ملفات)
   addDeal(formData: FormData): Observable<any> {
