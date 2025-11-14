@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DealService } from '../../services/deal.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-deals',
@@ -25,7 +26,8 @@ export class Deals implements OnInit {
   rejectReason: string = '';
   selectedDealId: number | null = null;
 
-  constructor(private dealService: DealService) {}
+  constructor(private dealService: DealService,    private notification: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.loadDeals();
@@ -62,7 +64,8 @@ export class Deals implements OnInit {
 
   approve(id: number) {
     this.dealService.approveDeal(id).subscribe(() => {
-      alert('Deal approved successfully');
+    this.notification.success('Deal approved successfully');
+
       this.loadDeals(this.currentPage);
     });
   }
@@ -80,12 +83,14 @@ export class Deals implements OnInit {
 
   confirmReject() {
     if (!this.rejectReason.trim()) {
-      alert('Please enter a rejection reason.');
+          this.notification.error('Please enter a rejection reason.');
+
       return;
     }
 
     this.dealService.rejectDeal(this.selectedDealId!, this.rejectReason).subscribe(() => {
-      alert('Deal rejected successfully');
+          this.notification.success('Deal rejected successfully');
+
 
       const modal = (window as any).bootstrap.Modal.getInstance(
         document.getElementById('rejectModal')

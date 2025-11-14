@@ -129,3 +129,14 @@ h4.fw-bold {
   cursor: not-allowed;
   opacity: 0.5;
 }
+.modal-body textarea {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  resize: none;
+}
+
+.modal-footer .btn {
+  border-radius: 6px;
+  padding: 6px 15px;
+}
