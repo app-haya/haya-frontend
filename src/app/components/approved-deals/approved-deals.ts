@@ -1,0 +1,95 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { DealService } from '../../services/deal.service';
+
+@Component({
+  selector: 'app-approved-deals',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './approved-deals.html',
+  styleUrls: ['./approved-deals.css']
+})
+export class ApprovedDeals implements OnInit {
+  deals: any[] = [];
+  filteredDeals: any[] = [];
+  loading = false;
+  searchTerm = '';
+
+  currentPage = 1;
+  lastPage = 1;
+
+  rejecting = false;
+
+  constructor(private dealService: DealService) {}
+
+  ngOnInit(): void {
+    this.loadDeals();
+  }
+
+  loadDeals(page: number = 1) {
+    this.loading = true;
+    this.dealService.getAllApprovedDeals(page).subscribe({
+      next: (res: any) => {
+        if (res.data?.data) {
+          this.deals = res.data.data;
+          this.currentPage = res.data.current_page;
+          this.lastPage = res.data.last_page;
+        } else {
+          this.deals = res.data ?? [];
+        }
+        this.filteredDeals = [...this.deals];
+        this.loading = false;
+      },
+      error: () => (this.loading = false)
+    });
+  }
+
+  // 🔎 بحث
+  search() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredDeals = this.deals.filter(
+      d =>
+        d.title?.toLowerCase().includes(term) ||
+        d.account_number?.toLowerCase().includes(term)
+    );
+  }
+
+  // 🔁 زر رفض الصفقة
+  reject(id: number) {
+    const reason = prompt("Enter reject reason:");
+
+    if (!reason) return;
+
+    this.rejecting = true;
+
+    this.dealService.rejectDeal(id, reason).subscribe({
+      next: () => {
+        alert("Deal rejected successfully.");
+        this.loadDeals(this.currentPage); // إعادة تحميل الصفحة الحالية
+        this.rejecting = false;
+      },
+      error: () => {
+        alert("Error rejecting deal.");
+        this.rejecting = false;
+      }
+    });
+  }
+
+  getPageNumbers(): number[] {
+    return Array(this.lastPage).fill(0).map((x, i) => i + 1);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.lastPage) this.loadDeals(page);
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.loadDeals(this.currentPage - 1);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.lastPage) this.loadDeals(this.currentPage + 1);
+  }
+}

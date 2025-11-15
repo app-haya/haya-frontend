@@ -30,6 +30,8 @@ import { AddGovernmental } from './components/add-governmental/add-governmental'
 import { EditGovernmental } from './components/edit-governmental/edit-governmental';
 import { AddDeal } from './components/add-deal/add-deal';
 import { BannedWords } from './components/banned-words/banned-words';
+import { RejectedDeals } from './components/rejected-deals/rejected-deals';
+import { ApprovedDeals } from './components/approved-deals/approved-deals';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -56,7 +58,10 @@ export const routes: Routes = [
       { path: 'cities', component: Cities },
       { path: 'countries', component: Countries },
       { path: 'deals', component: Deals },
-            { path: 'bannedwords', component: BannedWords },
+      { path: 'approved', component: ApprovedDeals },
+      { path: 'rejected', component: RejectedDeals },
+
+      { path: 'bannedwords', component: BannedWords },
 
       { path: 'adddeal', component: AddDeal },
       { path: 'bar-chart', component: BarChart },

@@ -14,6 +14,8 @@ import { AuthService } from '../../services/auth.service';
 export class Sidebar implements OnInit {
   isCollapsed = false;
   user: any = null;
+  selectedChild: string = '';
+
 
   @Output() collapsedChange = new EventEmitter<boolean>();
 
@@ -33,31 +35,38 @@ export class Sidebar implements OnInit {
     { name: 'Interests', icon: 'bi bi-star', path: '/interests' },
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/countries' },
-    { name: 'Deals', icon: 'bi bi-bag-check', path: '/deals' },
+
+    {
+      name: 'Deals',
+      icon: 'bi bi-bag-check',
+      path: '/deals',
+      expanded: true,
+      children: [
+        { name: 'Pending', path: '/deals', icon: 'bi bi-hourglass-split' },
+        { name: 'Approved', path: 'approved', icon: 'bi bi-check-circle' },
+        { name: 'Rejected', path: 'rejected', icon: 'bi bi-x-circle' },
+      ],
+    },
+
     { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/bannedwords' },
     { name: 'Line Chart', icon: 'bi bi-graph-up', path: '/line-chart' },
     { name: 'Geo Chart', icon: 'bi bi-map', path: '/geo-chart' },
     { name: 'Bar Chart', icon: 'bi bi-bar-chart', path: '/bar-chart' },
     { name: 'Pie Chart', icon: 'bi bi-pie-chart', path: '/pie-chart' },
-
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/calendar' },
     { name: 'FAQ Page', icon: 'bi bi-question-circle', path: '/faq' },
   ];
 
   ngOnInit(): void {
     const token = localStorage.getItem('admin_token');
-    if (!token) {
-      console.warn(' No admin token found');
-      return;
-    }
+    if (!token) return;
 
     this.authService.getProfile(token).subscribe({
       next: (res) => {
-        console.log(' Profile response:', res);
         this.user = res.data || res.user || res;
       },
       error: (err) => {
-        console.error(' Error fetching profile:', err);
+        console.error('Error fetching profile:', err);
       },
     });
   }
@@ -67,10 +76,20 @@ export class Sidebar implements OnInit {
     this.collapsedChange.emit(this.isCollapsed);
   }
 
+  // ✅ هذا الجزء الجديد
+  toggleItem(item: any) {
+    if (item.expanded) {
+      item.expanded = false;
+      return;
+    }
+
+    this.menu.forEach(m => (m.expanded = false));
+    item.expanded = true;
+  }
+
   logout() {
     const token = localStorage.getItem('admin_token');
 
-    // Even if there’s no token, navigate directly to login
     if (!token) {
       this.router.navigate(['/admin/login']);
       return;
@@ -83,8 +102,7 @@ export class Sidebar implements OnInit {
           window.location.reload();
         });
       },
-      error: (err) => {
-        console.error('Logout error:', err);
+      error: () => {
         localStorage.removeItem('admin_token');
         this.router.navigateByUrl('/admin/login').then(() => {
           window.location.reload();

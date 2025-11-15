@@ -60,5 +60,16 @@ rejectDeal(id: number, reason: string): Observable<any> {
   const headers = this.getHeaders();
   return this.http.get(`${this.apiUrl}admin/users/list`, { headers });
 }
+// 🔹 جلب الصفقات المعتمدة (approved)
+getAllApprovedDeals(page: number = 1): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.get(`${this.apiUrl}admin/alldealsapproved?page=${page}`, { headers });
+}
+
+// 🔹 جلب الصفقات المرفوضة (rejected)
+getAllRejectedDeals(page: number = 1): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.get(`${this.apiUrl}admin/alldealsrejected?page=${page}`, { headers });
+}
 
 }
