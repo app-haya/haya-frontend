@@ -32,6 +32,8 @@ import { AddDeal } from './components/add-deal/add-deal';
 import { BannedWords } from './components/banned-words/banned-words';
 import { RejectedDeals } from './components/rejected-deals/rejected-deals';
 import { ApprovedDeals } from './components/approved-deals/approved-deals';
+import { PendingUsers } from './components/pending-users/pending-users';
+import { PendingCreators } from './components/pending-creators/pending-creators';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -51,6 +53,9 @@ export const routes: Routes = [
       { path: 'governments', component: Governments },
       { path: 'addgovernmental', component: AddGovernmental },
       { path: 'editgovernmental/:id', component: EditGovernmental },
+            { path: 'verify_account', component: PendingUsers },
+            { path: 'verify_creator', component: PendingCreators },
+
       { path: 'messages', component: Messages },
       { path: 'addadmin', component: AddAdmin },
       { path: 'editadmin/:id', component: EditAdmin },

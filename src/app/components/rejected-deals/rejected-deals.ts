@@ -3,16 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DealService } from '../../services/deal.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-rejected-deals',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './rejected-deals.html',
-  styleUrls: ['./rejected-deals.css']
+  styleUrls: ['./rejected-deals.css'],
 })
 export class RejectedDeals implements OnInit {
-
   deals: any[] = [];
   filteredDeals: any[] = [];
   loading = false;
@@ -21,7 +21,10 @@ export class RejectedDeals implements OnInit {
   currentPage = 1;
   lastPage = 1;
 
-  constructor(private dealService: DealService) {}
+  constructor(
+    private dealService: DealService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadDeals();
@@ -43,21 +46,23 @@ export class RejectedDeals implements OnInit {
         this.filteredDeals = [...this.deals];
         this.loading = false;
       },
-      error: () => (this.loading = false)
+      error: () => (this.loading = false),
     });
   }
 
   search() {
     const term = this.searchTerm.toLowerCase();
     this.filteredDeals = this.deals.filter(
-      d =>
+      (d) =>
         d.title?.toLowerCase().includes(term) ||
         d.account_number?.toLowerCase().includes(term)
     );
   }
 
   getPageNumbers(): number[] {
-    return Array(this.lastPage).fill(0).map((x, i) => i + 1);
+    return Array(this.lastPage)
+      .fill(0)
+      .map((x, i) => i + 1);
   }
 
   goToPage(page: number) {
@@ -74,16 +79,17 @@ export class RejectedDeals implements OnInit {
 
   // ============= زر الموافقة =============
   approveDeal(id: number) {
-    if (!confirm("Are you sure you want to approve this deal?")) return;
+    if (!confirm('Are you sure you want to approve this deal?')) return;
 
     this.dealService.approveDeal(id).subscribe({
       next: () => {
-        alert("Deal approved successfully!");
+        this.notification.success('Deal approved successfully!');
+
         this.loadDeals(this.currentPage);
       },
       error: () => {
-        alert("Failed to approve the deal.");
-      }
+        this.notification.error('Failed to approve the deal.');
+      },
     });
   }
 }

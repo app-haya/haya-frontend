@@ -22,7 +22,7 @@ export class Merchants implements OnInit {
   currentPage = 1;
   lastPage = 1;
 
-  constructor(private merchantService: MerchantService,    private notification: NotificationService,
+  constructor(private merchantService: MerchantService,private notification: NotificationService,
   ) {}
 
   ngOnInit() {

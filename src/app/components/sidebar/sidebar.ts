@@ -31,6 +31,16 @@ export class Sidebar implements OnInit {
     { name: 'Users', icon: 'bi bi-people', path: '/users' },
     { name: 'Merchants', icon: 'bi bi-shop', path: '/merchants' },
     { name: 'Governments', icon: 'bi bi-bank', path: '/governments' },
+        {
+      name: 'Verifycation',
+      icon: 'bi bi-bag-check',
+      path: '/verifycation',
+      expanded: true,
+      children: [
+        { name: 'Verify Account', path: '/verify_account', icon: 'bi bi-hourglass-split' },
+        { name: 'Verify Creator', path: '/verify_creator', icon: 'bi bi-hourglass-split' },
+      ],
+    },
     { name: 'Messages', icon: 'bi bi-chat-dots', path: '/messages' },
     { name: 'Interests', icon: 'bi bi-star', path: '/interests' },
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },

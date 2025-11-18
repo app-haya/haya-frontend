@@ -1,0 +1,84 @@
+.table-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  overflow-x: auto;
+  margin-top: 60px;
+}
+
+h4.fw-bold {
+  color: #1f6eb4;
+  font-weight: 700;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.search-input {
+  max-width: 250px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  color: #1f6eb4;
+  font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f9f7ff;
+}
+
+.action-icons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.icon-btn.approve {
+  color: #28a745;
+}
+
+.icon-btn.reject {
+  color: #dc3545;
+}
+
+.icon-btn.approve:hover:not(:disabled) {
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.icon-btn.reject:hover:not(:disabled) {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.pagination .page-link {
+  color: #7a3ca0;
+  border-radius: 6px;
+  margin: 0 2px;
+  border: none;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #7a3ca0;
+  border-color: #7a3ca0;
+  color: white;
+}
+
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+}

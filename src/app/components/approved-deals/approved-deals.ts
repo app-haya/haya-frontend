@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DealService } from '../../services/deal.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-approved-deals',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './approved-deals.html',
-  styleUrls: ['./approved-deals.css']
+  styleUrls: ['./approved-deals.css'],
 })
 export class ApprovedDeals implements OnInit {
   deals: any[] = [];
@@ -22,7 +23,10 @@ export class ApprovedDeals implements OnInit {
 
   rejecting = false;
 
-  constructor(private dealService: DealService) {}
+  constructor(
+    private dealService: DealService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadDeals();
@@ -42,7 +46,7 @@ export class ApprovedDeals implements OnInit {
         this.filteredDeals = [...this.deals];
         this.loading = false;
       },
-      error: () => (this.loading = false)
+      error: () => (this.loading = false),
     });
   }
 
@@ -50,7 +54,7 @@ export class ApprovedDeals implements OnInit {
   search() {
     const term = this.searchTerm.toLowerCase();
     this.filteredDeals = this.deals.filter(
-      d =>
+      (d) =>
         d.title?.toLowerCase().includes(term) ||
         d.account_number?.toLowerCase().includes(term)
     );
@@ -58,7 +62,7 @@ export class ApprovedDeals implements OnInit {
 
   // 🔁 زر رفض الصفقة
   reject(id: number) {
-    const reason = prompt("Enter reject reason:");
+    const reason = prompt('Enter reject reason:');
 
     if (!reason) return;
 
@@ -66,19 +70,23 @@ export class ApprovedDeals implements OnInit {
 
     this.dealService.rejectDeal(id, reason).subscribe({
       next: () => {
-        alert("Deal rejected successfully.");
+        this.notification.success('Deal rejected successfully.');
+
         this.loadDeals(this.currentPage); // إعادة تحميل الصفحة الحالية
         this.rejecting = false;
       },
       error: () => {
-        alert("Error rejecting deal.");
+        this.notification.error('Error rejecting deal.');
+
         this.rejecting = false;
-      }
+      },
     });
   }
 
   getPageNumbers(): number[] {
-    return Array(this.lastPage).fill(0).map((x, i) => i + 1);
+    return Array(this.lastPage)
+      .fill(0)
+      .map((x, i) => i + 1);
   }
 
   goToPage(page: number) {

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UsersService {
-  private baseUrl = 'https://hayaapp.online/api/admin/user';
+  private baseUrl = 'http://127.0.0.1:8000/api/admin/user';
   private countriesUrl = 'https://hayaapp.online/api/countries';
   private citiesUrl = 'https://hayaapp.online/api/cities';
 
@@ -49,4 +49,38 @@ export class UsersService {
   getCities(countryId: number, lang: string = 'en'): Observable<any> {
     return this.http.get(`${this.citiesUrl}?id=${countryId}&lang=${lang}`, { headers: this.getHeaders() });
   }
+    // 🔹 جلب المستخدمين pending
+  getPendingUsers(page: number = 1): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.baseUrl}/pending?page=${page}`, { headers });
+  }
+
+  // 🔹 الموافقة على المستخدم
+  approveUser(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.baseUrl}/${id}/approve`, {}, { headers });
+  }
+
+  // 🔹 رفض المستخدم
+  rejectUser(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.baseUrl}/${id}/reject`, {}, { headers });
+  }
+  // 🔹 جلب الـ creators pending
+getPendingCreators(page: number = 1): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.get(`${this.baseUrl}/creator/pending?page=${page}`, { headers });
+}
+
+// 🔹 الموافقة على Creator
+approveCreator(id: number): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.post(`${this.baseUrl}/creator/${id}/approve`, {}, { headers });
+}
+
+// 🔹 رفض Creator
+rejectCreator(id: number): Observable<any> {
+  const headers = this.getHeaders();
+  return this.http.post(`${this.baseUrl}/creator/${id}/reject`, {}, { headers });
+}
 }
