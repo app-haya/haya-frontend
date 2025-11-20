@@ -20,23 +20,25 @@ export class Login {
   ) {}
 
   onSubmit() {
-    this.authService.login(this.form.email, this.form.password).subscribe({
-      next: (res: any) => {
-        if (res.data?.token) {
-          localStorage.setItem('admin_token', res.data.token);
-          this.notificationService.success(' Login successful!');
-          this.router.navigate(['/dashboard']);
-        }
-      },
-      error: (err: any) => {
-        console.log('Full error:', err);
+  this.authService.login(this.form.email, this.form.password).subscribe({
+    next: (res: any) => {
+      if (res.data?.token) {
+        // حفظ التوكن
+        localStorage.setItem('admin_token', res.data.token);
+        // حفظ بيانات المستخدم كاملة (بما فيها roles و is_super_admin)
+        localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
 
-        if (err.error?.message) {
-          this.notificationService.error(` ${err.error.message}`);
-        } else {
-          this.notificationService.error(' Login failed!');
-        }
+        this.notificationService.success('Login successful!');
+        this.router.navigate(['/dashboard']); // إعادة توجيه بعد حفظ البيانات
       }
-    });
-  }
+    },
+    error: (err: any) => {
+      if (err.error?.message) {
+        this.notificationService.error(err.error.message);
+      } else {
+        this.notificationService.error('Login failed!');
+      }
+    }
+  });
+}
 }

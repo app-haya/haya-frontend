@@ -34,41 +34,76 @@ import { RejectedDeals } from './components/rejected-deals/rejected-deals';
 import { ApprovedDeals } from './components/approved-deals/approved-deals';
 import { PendingUsers } from './components/pending-users/pending-users';
 import { PendingCreators } from './components/pending-creators/pending-creators';
+import { Roles } from './components/roles/roles';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
     path: '',
     component: Dashboard,
-    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dash },
-      { path: 'admins', component: Admins },
-      { path: 'users', component: Users },
-      { path: 'adduser', component: AddUser },
-      { path: 'edituser/:id', component: EditUser },
-      { path: 'merchants', component: Merchants },
-      { path: 'addmerchant', component: AddMerchant },
-      { path: 'editmerchant/:id', component: EditMerchant },
-      { path: 'governments', component: Governments },
-      { path: 'addgovernmental', component: AddGovernmental },
-      { path: 'editgovernmental/:id', component: EditGovernmental },
-            { path: 'verify_account', component: PendingUsers },
-            { path: 'verify_creator', component: PendingCreators },
+      { path: 'admins', component: Admins, data: { role: 'Admins' } },
+      { path: 'users', component: Users, data: { role: 'Users' } },
+      { path: 'adduser', component: AddUser, data: { role: 'Users' } },
+      { path: 'edituser/:id', component: EditUser, data: { role: 'Users' } },
+      { path: 'merchants', component: Merchants, data: { role: 'Merchants' } },
+      {
+        path: 'addmerchant',
+        component: AddMerchant,
+        data: { role: 'Merchants' },
+      },
+      {
+        path: 'editmerchant/:id',
+        component: EditMerchant,
+        data: { role: 'Merchants' },
+      },
+      {
+        path: 'governments',
+        component: Governments,
+        data: { role: 'Governments' },
+      },
+      {
+        path: 'addgovernmental',
+        component: AddGovernmental,
+        data: { role: 'Governments' },
+      },
+      {
+        path: 'editgovernmental/:id',
+        component: EditGovernmental,
+        data: { role: 'Governments' },
+      },
+      {
+        path: 'verify_account',
+        component: PendingUsers,
+        data: { role: 'verifycation' },
+      },
+      {
+        path: 'verify_creator',
+        component: PendingCreators,
+        data: { role: 'verifycation' },
+      },
 
-      { path: 'messages', component: Messages },
-      { path: 'addadmin', component: AddAdmin },
-      { path: 'editadmin/:id', component: EditAdmin },
-      { path: 'interests', component: Interests },
-      { path: 'cities', component: Cities },
-      { path: 'countries', component: Countries },
-      { path: 'deals', component: Deals },
-      { path: 'approved', component: ApprovedDeals },
-      { path: 'rejected', component: RejectedDeals },
+      { path: 'messages', component: Messages, data: { role: 'Messages' } },
+      { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
+      { path: 'roles', component: Roles, data: { role: 'Admins' } },
 
-      { path: 'bannedwords', component: BannedWords },
+      { path: 'editadmin/:id', component: EditAdmin, data: { role: 'Admins' } },
+      { path: 'interests', component: Interests, data: { role: 'Interests' } },
+      { path: 'cities', component: Cities, data: { role: 'Cities' } },
+      { path: 'countries', component: Countries, data: { role: 'Countries' } },
+      { path: 'deals', component: Deals, data: { role: 'Deals' } },
+      { path: 'approved', component: ApprovedDeals, data: { role: 'Deals' } },
+      { path: 'rejected', component: RejectedDeals, data: { role: 'Deals' } },
 
-      { path: 'adddeal', component: AddDeal },
+      {
+        path: 'bannedwords',
+        component: BannedWords,
+        data: { role: 'Banned_Words' },
+      },
+
+      { path: 'adddeal', component: AddDeal, data: { role: 'Deals' } },
       { path: 'bar-chart', component: BarChart },
       { path: 'pie-chart', component: PieChart },
       { path: 'line-chart', component: LineChart },

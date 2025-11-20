@@ -1,20 +1,35 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivateChild, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { NotificationService } from '../services/notification.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
-  constructor(private router: Router) {}
+export class AuthGuard implements CanActivateChild {
+  constructor(private router: Router, private notification: NotificationService) {}
 
-  canActivate(): boolean {
+  canActivateChild(route: ActivatedRouteSnapshot): boolean {
     const token = localStorage.getItem('admin_token');
+    const userStr = localStorage.getItem('admin_user');
+    const user = userStr ? JSON.parse(userStr) : null;
 
-    if (token) {
-      return true; 
+    if (!token || !user) {
+      this.router.navigate(['/login']);
+      return false;
     }
 
-    this.router.navigate(['/login']);
-    return false;
+    const requiredRole = route.data['role'];
+
+    if (user.is_super_admin === 1) {
+      return true;
+    }
+
+    if (requiredRole && !user.roles?.some((r: any) => r.name === requiredRole)) {
+      this.notification.error('Access denied');
+      this.router.navigate(['/dashboard']);
+      return false;
+    }
+
+    return true;
   }
 }
