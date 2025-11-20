@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class MerchantService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/admin'; 
+  private apiUrl = 'https://hayaapp.online/api/admin'; 
 
   constructor(private http: HttpClient) {}
 

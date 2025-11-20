@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AdminService {
-  private baseUrl = 'http://127.0.0.1:8000/api/admin';
+  private baseUrl = 'https://hayaapp.online/api/admin';
 
   constructor(private http: HttpClient) {}
 
