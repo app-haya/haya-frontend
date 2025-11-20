@@ -35,6 +35,7 @@ import { ApprovedDeals } from './components/approved-deals/approved-deals';
 import { PendingUsers } from './components/pending-users/pending-users';
 import { PendingCreators } from './components/pending-creators/pending-creators';
 import { Roles } from './components/roles/roles';
+import { Dashcount } from './components/dashcount/dashcount';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -44,6 +45,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dash },
+      { path: 'dashboardcount', component: Dashcount},
       { path: 'admins', component: Admins, data: { role: 'Admins' } },
       { path: 'users', component: Users, data: { role: 'Users' } },
       { path: 'adduser', component: AddUser, data: { role: 'Users' } },

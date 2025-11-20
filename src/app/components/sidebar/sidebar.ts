@@ -26,7 +26,7 @@ export class Sidebar implements OnInit {
   ) {}
 
   menu = [
-    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/dash' },
+    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/dashboardcount' },
     { name: 'Admins', icon: 'bi bi-person-gear', path: '/admins' },
     { name: 'Users', icon: 'bi bi-people', path: '/users' },
     { name: 'Merchants', icon: 'bi bi-shop', path: '/merchants' },

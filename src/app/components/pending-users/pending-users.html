@@ -53,15 +53,9 @@
           <td>{{ user.subscription_type || '-' }}</td>
           <td>{{ user.number_verify || '-' }}</td>
 
-          <td>
-            <img
-              *ngIf="user.verify_image"
-              [src]="user.verify_image"
-              width="60"
-              height="60"
-              class="rounded"
-              alt="verify"
-            />
+   
+                 <td>
+            <a *ngIf="user.verify_image" [href]="user.verify_image" target="_blank">View</a>
             <span *ngIf="!user.verify_image">-</span>
           </td>
 
