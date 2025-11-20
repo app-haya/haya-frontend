@@ -201,3 +201,61 @@ body.dark-mode textarea::placeholder,
 body.dark-mode select::placeholder {
   color: #ddd !important;
 }
+
+/* الوجين  */
+:root {
+  --purple: #7a3ca0;
+  --dark-bg: #0a0a0a;
+  --dark-card: #1a1a1a;
+  --dark-text: #f1f1f1;
+  --input-bg: #252525;
+  --input-border: #333;
+  --accent: #a855f7;
+}
+
+/* Background */
+body {
+  background: var(--dark-bg);
+  font-family: 'Poppins', sans-serif;
+  color: var(--dark-text);
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(122,60,160,0.2) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(168,85,247,0.15) 0%, transparent 50%),
+              radial-gradient(circle at 40% 20%, rgba(139,92,246,0.1) 0%, transparent 50%);
+  z-index: -2;
+  animation: bgPulse 15s infinite ease-in-out;
+}
+
+@keyframes bgPulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Particles */
+.particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+}
+.particle {
+  position: absolute;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: floatUp 15s linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: .2; }
+  90% { opacity: .2; }
+  100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+}

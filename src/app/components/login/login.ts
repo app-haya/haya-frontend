@@ -18,27 +18,47 @@ export class Login {
     private router: Router,
     private notificationService: NotificationService
   ) {}
+ngOnInit() {
+  const particlesContainer = document.getElementById('particles');
+  const count = 30;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    const size = Math.random() * 5 + 3;
+
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.top = `${Math.random() * 100}%`;
+    p.style.animationDuration = `${Math.random() * 10 + 10}s`;
+    p.style.animationDelay = `${Math.random() * 5}s`;
+
+    particlesContainer?.appendChild(p);
+  }
+}
 
   onSubmit() {
-  this.authService.login(this.form.email, this.form.password).subscribe({
-    next: (res: any) => {
-      if (res.data?.token) {
-        // حفظ التوكن
-        localStorage.setItem('admin_token', res.data.token);
-        // حفظ بيانات المستخدم كاملة (بما فيها roles و is_super_admin)
-        localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
+    this.authService.login(this.form.email, this.form.password).subscribe({
+      next: (res: any) => {
+        if (res.data?.token) {
+          // حفظ التوكن
+          localStorage.setItem('admin_token', res.data.token);
 
-        this.notificationService.success('Login successful!');
-        this.router.navigate(['/dashboard']); // إعادة توجيه بعد حفظ البيانات
+          // حفظ بيانات المستخدم بالكامل
+          localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
+
+          this.notificationService.success('Login successful!');
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error: (err: any) => {
+        if (err.error?.message) {
+          this.notificationService.error(err.error.message);
+        } else {
+          this.notificationService.error('Login failed!');
+        }
       }
-    },
-    error: (err: any) => {
-      if (err.error?.message) {
-        this.notificationService.error(err.error.message);
-      } else {
-        this.notificationService.error('Login failed!');
-      }
-    }
-  });
-}
+    });
+  }
 }
