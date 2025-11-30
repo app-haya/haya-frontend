@@ -46,7 +46,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dash },
       { path: 'dashboardcount', component: Dashcount},
-      { path: 'admins', component: Admins, data: { role: 'Admins' } },
+      { path: 'admins', component: Admins },
       { path: 'users', component: Users, data: { role: 'Users' } },
       { path: 'adduser', component: AddUser, data: { role: 'Users' } },
       { path: 'edituser/:id', component: EditUser, data: { role: 'Users' } },

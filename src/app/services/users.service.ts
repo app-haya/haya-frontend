@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UsersService {
-  private baseUrl = 'https://hayaapp.online/api/admin/user';
-  private countriesUrl = 'https://hayaapp.online/api/countries';
-  private citiesUrl = 'https://hayaapp.online/api/cities';
+  private baseUrl = 'http://127.0.0.1:8000/api/admin/user';
+  private countriesUrl = 'http://127.0.0.1:8000/api/countries';
+  private citiesUrl = 'http://127.0.0.1:8000/api/cities';
 
   constructor(private http: HttpClient) {}
 

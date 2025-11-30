@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DealService {
-  private apiUrl = 'https://hayaapp.online/api/'; // رابط الـ API
+  private apiUrl = 'http://127.0.0.1:8000/api/'; // رابط الـ API
 
   constructor(private http: HttpClient) {}
 
