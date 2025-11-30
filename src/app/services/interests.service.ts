@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InterestsService {
-  private apiUrl = 'http://127.0.0.1:8000/api'; // backend URL
+  private apiUrl = 'https://hayaapp.online/api'; // backend URL
 
   constructor(private http: HttpClient) {}
 

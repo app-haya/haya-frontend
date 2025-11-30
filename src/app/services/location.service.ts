@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class LocationService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api'; // change this to your backend URL
+  private apiUrl = 'https://hayaapp.online/api'; // change this to your backend URL
 
   constructor(private http: HttpClient) {}
 

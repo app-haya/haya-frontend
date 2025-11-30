@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class GovernmentalService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/admin'; // نفس مسار Laravel API
+  private apiUrl = 'https://hayaapp.online/api/admin'; // نفس مسار Laravel API
 
   constructor(private http: HttpClient) {}
 
