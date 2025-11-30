@@ -88,10 +88,10 @@ export const routes: Routes = [
       },
 
       { path: 'messages', component: Messages, data: { role: 'Messages' } },
-      { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
+      { path: 'addadmin', component: AddAdmin },
       { path: 'roles', component: Roles, data: { role: 'Admins' } },
 
-      { path: 'editadmin/:id', component: EditAdmin, data: { role: 'Admins' } },
+      { path: 'editadmin/:id', component: EditAdmin },
       { path: 'interests', component: Interests, data: { role: 'Interests' } },
       { path: 'cities', component: Cities, data: { role: 'Cities' } },
       { path: 'countries', component: Countries, data: { role: 'Countries' } },
