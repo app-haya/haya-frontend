@@ -46,7 +46,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dash },
       { path: 'dashboardcount', component: Dashcount},
-      { path: 'admins', component: Admins },
+      { path: 'admins', component: Admins, data: { role: 'Admins' } },
       { path: 'users', component: Users, data: { role: 'Users' } },
       { path: 'adduser', component: AddUser, data: { role: 'Users' } },
       { path: 'edituser/:id', component: EditUser, data: { role: 'Users' } },
@@ -88,10 +88,10 @@ export const routes: Routes = [
       },
 
       { path: 'messages', component: Messages, data: { role: 'Messages' } },
-      { path: 'addadmin', component: AddAdmin },
+      { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
       { path: 'roles', component: Roles, data: { role: 'Admins' } },
 
-      { path: 'editadmin/:id', component: EditAdmin },
+      { path: 'editadmin/:id', component: EditAdmin, data: { role: 'Admins' } },
       { path: 'interests', component: Interests, data: { role: 'Interests' } },
       { path: 'cities', component: Cities, data: { role: 'Cities' } },
       { path: 'countries', component: Countries, data: { role: 'Countries' } },
