@@ -36,6 +36,7 @@ import { PendingUsers } from './components/pending-users/pending-users';
 import { PendingCreators } from './components/pending-creators/pending-creators';
 import { Roles } from './components/roles/roles';
 import { Dashcount } from './components/dashcount/dashcount';
+import { DealDetails } from './components/deals/deal-details/deal-details';
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
@@ -45,7 +46,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dash },
-      { path: 'dashboardcount', component: Dashcount},
+      { path: 'dashboardcount', component: Dashcount },
       { path: 'admins', component: Admins, data: { role: 'Admins' } },
       { path: 'users', component: Users, data: { role: 'Users' } },
       { path: 'adduser', component: AddUser, data: { role: 'Users' } },
@@ -106,6 +107,7 @@ export const routes: Routes = [
       },
 
       { path: 'adddeal', component: AddDeal, data: { role: 'Deals' } },
+      { path: 'deal-details/:id', component: DealDetails, data: { role: 'Deals' } },
       { path: 'bar-chart', component: BarChart },
       { path: 'pie-chart', component: PieChart },
       { path: 'line-chart', component: LineChart },

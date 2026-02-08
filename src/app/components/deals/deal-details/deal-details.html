@@ -1,0 +1,228 @@
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Deal Details</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a routerLink="/deals">Deals</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Show Details</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" routerLink="/deals">
+            <i class="fas fa-arrow-left me-2"></i> Back to List
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-purple" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Retrieving deal information...</p>
+    </div>
+
+    <div *ngIf="!loading && deal" class="row g-4">
+        <!-- Main Info Card -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="card-title fw-bold mb-0">General Information</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6 text-center text-md-start">
+                            <div class="image-preview-container rounded-3 border bg-light d-flex align-items-center justify-content-center overflow-hidden"
+                                style="height: 300px;">
+                                <img *ngIf="deal.image" [src]="deal.image"
+                                    class="img-fluid h-100 w-100 object-fit-cover" alt="Deal Image">
+                                <div *ngIf="!deal.image" class="text-muted text-center">
+                                    <i class="fas fa-image fa-4x mb-2 opacity-25"></i>
+                                    <p class="mb-0">No Image Available</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Title</label>
+                                <div class="h5 fw-bold text-dark">{{ deal.title || '-' }}</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Description</label>
+                                <p class="text-secondary">{{ deal.description || 'No description provided.' }}</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-4">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Original
+                                        Price</label>
+                                    <div class="fw-bold text-dark fs-5">{{ deal.original_price | currency }}</div>
+                                </div>
+                                <div class="col-6 mb-4">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Total
+                                        Price</label>
+                                    <div class="fw-bold text-purple fs-5">{{ deal.total_price | currency }}</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <span class="badge px-3 py-2 rounded-pill"
+                                    [ngClass]="deal.is_active ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                                    <i class="fas"
+                                        [ngClass]="deal.is_active ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                                    {{ deal.is_active ? 'Active' : 'Inactive' }}
+                                </span>
+                                <span
+                                    class="badge px-3 py-2 rounded-pill bg-purple-subtle text-purple border border-purple">
+                                    {{ deal.seller_type || 'Unknown Type' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="card-title fw-bold mb-0">Transaction Details</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-barcode text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Account Number</label>
+                                <div class="fw-medium">
+                                    <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank"
+                                        class="text-decoration-none">
+                                        Click to View <i class="fas fa-external-link-alt ms-1 small"></i>
+                                    </a>
+                                    <span *ngIf="!deal.account_number">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-file-invoice-dollar text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Invoice</label>
+                                <div class="fw-medium">
+                                    <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
+                                        class="text-decoration-none">
+                                        Click to Download <i class="fas fa-download ms-1 small"></i>
+                                    </a>
+                                    <span *ngIf="!deal.invoice">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-coins text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Tax Value</label>
+                                <div class="fw-medium">{{ deal.tax_value || '0' }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-globe text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Country/City ID</label>
+                                <div class="fw-medium">{{ deal.country_id || '-' }} / {{ deal.city_id || '-' }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-layer-group text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Quantity</label>
+                                <div class="fw-medium">{{ deal.quantity || '0' }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <i class="fas fa-star text-purple mb-2"></i>
+                                <label class="text-muted small fw-bold d-block">Condition</label>
+                                <div class="fw-medium">{{ deal.is_new === 1 ? 'New Item' : 'Used Item' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <label class="text-muted small fw-bold text-uppercase mb-2 d-block">Notes</label>
+                        <div class="p-3 bg-light rounded-3 text-secondary italic">
+                            {{ deal.notes || 'No internal notes for this deal.' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar / Actions -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="card-title fw-bold mb-0">Status Management</h5>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <div class="status-indicator mb-3">
+                        <div class="display-6 fw-bold mb-1" [ngClass]="
+                deal.status === 'pending' ? 'text-warning' : 
+                deal.status === 'approved' ? 'text-success' : 'text-danger'">
+                            {{ deal.status | titlecase }}
+                        </div>
+                        <p class="text-muted small">Current deal status</p>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-grid gap-2">
+                        <button *ngIf="deal.status === 'pending'" (click)="approve()"
+                            class="btn btn-success btn-lg rounded-3">
+                            <i class="fas fa-check-circle me-2"></i> Approve Deal
+                        </button>
+
+                        <button *ngIf="deal.status === 'pending'" (click)="reject()"
+                            class="btn btn-outline-danger btn-lg rounded-3">
+                            <i class="fas fa-times-circle me-2"></i> Reject Deal
+                        </button>
+
+                        <button class="btn btn-light btn-lg rounded-3 border">
+                            <i class="fas fa-edit me-2"></i> Edit Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="card-title fw-bold mb-0">History Log</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="timeline-small">
+                        <div class="timeline-item d-flex mb-3">
+                            <div class="timeline-dot bg-success mt-1"></div>
+                            <div class="ms-3">
+                                <div class="fw-bold small">Created</div>
+                                <div class="text-muted smaller">{{ deal.created_at | date:'medium' }}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item d-flex">
+                            <div class="timeline-dot bg-primary mt-1"></div>
+                            <div class="ms-3">
+                                <div class="fw-bold small">Last Updated</div>
+                                <div class="text-muted smaller">{{ deal.updated_at | date:'medium' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!loading && !deal" class="text-center py-5">
+        <div class="alert alert-warning d-inline-block px-5">
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h4>Deal Not Found</h4>
+            <p class="mb-0">The requested deal could not be found or has been removed.</p>
+            <button class="btn btn-purple mt-3" routerLink="/deals">Explore All Deals</button>
+        </div>
+    </div>
+</div>

@@ -4,20 +4,12 @@
 
   <!-- Search -->
   <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input
-      type="text"
-      class="form-control search-input"
-      placeholder="Search by title, account number..."
-      [(ngModel)]="searchTerm"
-      (input)="search()"
-    />
+    <input type="text" class="form-control search-input" placeholder="Search by title, account number..."
+      [(ngModel)]="searchTerm" (input)="search()" />
   </div>
 
   <!-- Table -->
-  <div
-    *ngIf="!loading; else loadingSpinner"
-    class="table-container table-responsive"
-  >
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
     <table class="table table-hover align-middle text-center">
       <thead>
         <tr>
@@ -45,12 +37,7 @@
           <td>{{ deal.title || "-" }}</td>
 
           <td>
-            <a
-              *ngIf="deal.account_number"
-              [href]="deal.account_number"
-              target="_blank"
-              >View</a
-            >
+            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank">View</a>
             <span *ngIf="!deal.account_number">-</span>
           </td>
 
@@ -59,9 +46,7 @@
           <td>{{ deal.total_price | currency }}</td>
 
           <td>
-            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
-              >View</a
-            >
+            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">View</a>
             <span *ngIf="!deal.invoice">-</span>
           </td>
 
@@ -84,11 +69,11 @@
 
           <!-- Reject Button -->
           <td>
-            <button
-              class="reject-x-btn"
-              (click)="reject(deal.id)"
-              [disabled]="rejecting"
-            >
+            <button class="btn btn-sm btn-outline-primary me-1" [routerLink]="['/deal-details', deal.id]"
+              title="Details">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="reject-x-btn" (click)="reject(deal.id)" [disabled]="rejecting">
               <i class="fas fa-times"></i>
             </button>
           </td>
@@ -103,21 +88,14 @@
     </table>
 
     <!-- Pagination -->
-    <div
-      class="d-flex justify-content-center align-items-center mt-4"
-      *ngIf="lastPage > 0"
-    >
+    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
       <nav>
         <ul class="pagination mb-0">
           <li class="page-item" [class.disabled]="currentPage === 1">
             <a class="page-link" (click)="prevPage()">&laquo; Prev</a>
           </li>
 
-          <li
-            class="page-item"
-            *ngFor="let page of getPageNumbers()"
-            [class.active]="page === currentPage"
-          >
+          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
             <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
           </li>
 

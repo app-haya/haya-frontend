@@ -4,7 +4,7 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
   padding: 20px;
   overflow-x: auto;
-    margin-top: 60px;
+  margin-top: 60px;
 
 }
 
@@ -12,6 +12,7 @@ h4.fw-bold {
   color: #1f6eb4;
   font-weight: 700;
 }
+
 .btn-purple {
   background-color: #7a3ca0;
   color: white;
@@ -21,6 +22,7 @@ h4.fw-bold {
   font-weight: 500;
   transition: 0.3s;
 }
+
 .btn-purple:hover {
   background-color: #5b2e7a;
   color: #fff;
@@ -47,7 +49,8 @@ h4.fw-bold {
   background-color: #f9f7ff;
 }
 
-.btn-outline-success, .btn-outline-danger {
+.btn-outline-success,
+.btn-outline-danger {
   border-radius: 6px;
   padding: 5px 10px;
   transition: 0.3s;
@@ -87,16 +90,29 @@ h4.fw-bold {
 }
 
 /* Badges */
-.bg-success { background-color: #28a745 !important; }
-.bg-danger { background-color: #dc3545 !important; }
-.bg-warning { background-color: #ffc107 !important; color: #212529; }
-.text-dark { color: #212529 !important; }
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529;
+}
+
+.text-dark {
+  color: #212529 !important;
+}
 
 /* Action Icons (Approve / Reject) */
 .action-icons {
   display: flex;
   justify-content: center;
-  gap: 8px; /* المسافة بين الأيقونات */
+  gap: 8px;
+  /* المسافة بين الأيقونات */
 }
 
 .icon-btn {
@@ -125,10 +141,19 @@ h4.fw-bold {
   background-color: rgba(220, 53, 69, 0.1);
 }
 
+.icon-btn.info {
+  color: #17a2b8;
+}
+
+.icon-btn.info:hover:not(:disabled) {
+  background-color: rgba(23, 162, 184, 0.1);
+}
+
 .icon-btn:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
+
 .modal-body textarea {
   border-radius: 8px;
   border: 1px solid #ddd;

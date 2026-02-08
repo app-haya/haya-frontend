@@ -25,6 +25,12 @@ export class DealService {
     return this.http.get(`${this.apiUrl}admin/deals?page=${page}`, { headers });
   }
 
+  // 🔹 جلب تفاصيل صفقة واحدة
+  getDealById(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}admin/deals/${id}`, { headers });
+  }
+
   // 🔹 الموافقة على صفقة
   approveDeal(id: number): Observable<any> {
     const headers = this.getHeaders();
