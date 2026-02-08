@@ -25,7 +25,7 @@
         <!-- Main Info Card -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-                <div class="card-header bg-white py-3 border-bottom border-light">
+                <div class="card-header py-3 border-bottom border-light">
                     <h5 class="card-title fw-bold mb-0">General Information</h5>
                 </div>
                 <div class="card-body p-4">
@@ -44,7 +44,7 @@
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Title</label>
-                                <div class="h5 fw-bold text-dark">{{ deal.title || '-' }}</div>
+                                <div class="h5 fw-bold">{{ deal.title || '-' }}</div>
                             </div>
 
                             <div class="mb-4">
@@ -56,7 +56,7 @@
                                 <div class="col-6 mb-4">
                                     <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Original
                                         Price</label>
-                                    <div class="fw-bold text-dark fs-5">{{ deal.original_price | currency }}</div>
+                                    <div class="fw-bold fs-5">{{ deal.original_price | currency }}</div>
                                 </div>
                                 <div class="col-6 mb-4">
                                     <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Total
@@ -84,63 +84,91 @@
 
             <!-- Additional Details -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom border-light">
-                    <h5 class="card-title fw-bold mb-0">Transaction Details</h5>
+                <div class="card-header py-3 border-bottom border-light">
+                    <h5 class="card-title fw-bold mb-0">Transaction & Documents</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-4">
-                        <div class="col-md-4">
-                            <div class="detail-item">
+                        <!-- Account Number / Image -->
+                        <div class="col-md-6">
+                            <div class="detail-item p-3 border rounded-3 bg-light-subtle h-100">
                                 <i class="fas fa-barcode text-purple mb-2"></i>
-                                <label class="text-muted small fw-bold d-block">Account Number</label>
-                                <div class="fw-medium">
-                                    <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank"
-                                        class="text-decoration-none">
-                                        Click to View <i class="fas fa-external-link-alt ms-1 small"></i>
-                                    </a>
-                                    <span *ngIf="!deal.account_number">-</span>
+                                <label class="text-muted small fw-bold d-block text-uppercase">Account Proof /
+                                    Number</label>
+                                <div class="mt-2">
+                                    <div *ngIf="deal.account_number"
+                                        class="document-preview rounded-2 border overflow-hidden mb-2">
+                                        <a [href]="deal.account_number" target="_blank"
+                                            class="d-block position-relative">
+                                            <img [src]="deal.account_number" class="img-fluid w-100" alt="Account Proof"
+                                                style="max-height: 150px; object-fit: cover;">
+                                            <div
+                                                class="preview-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 bg-dark bg-opacity-50 text-white">
+                                                <i class="fas fa-search-plus"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="fw-medium">
+                                        <span *ngIf="!deal.account_number" class="text-muted">No account proof
+                                            provided</span>
+                                        <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank"
+                                            class="text-decoration-none small text-purple">
+                                            Open Full Document <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="detail-item">
+
+                        <!-- Invoice / Image -->
+                        <div class="col-md-6">
+                            <div class="detail-item p-3 border rounded-3 bg-light-subtle h-100">
                                 <i class="fas fa-file-invoice-dollar text-purple mb-2"></i>
-                                <label class="text-muted small fw-bold d-block">Invoice</label>
-                                <div class="fw-medium">
-                                    <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
-                                        class="text-decoration-none">
-                                        Click to Download <i class="fas fa-download ms-1 small"></i>
-                                    </a>
-                                    <span *ngIf="!deal.invoice">-</span>
+                                <label class="text-muted small fw-bold d-block text-uppercase">Invoice Document</label>
+                                <div class="mt-2">
+                                    <div *ngIf="deal.invoice"
+                                        class="document-preview rounded-2 border overflow-hidden mb-2">
+                                        <a [href]="deal.invoice" target="_blank" class="d-block position-relative">
+                                            <img [src]="deal.invoice" class="img-fluid w-100" alt="Invoice"
+                                                style="max-height: 150px; object-fit: cover;">
+                                            <div
+                                                class="preview-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 bg-dark bg-opacity-50 text-white">
+                                                <i class="fas fa-search-plus"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="fw-medium">
+                                        <span *ngIf="!deal.invoice" class="text-muted">No invoice provided</span>
+                                        <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank"
+                                            class="text-decoration-none small text-purple">
+                                            Open Full Invoice <i class="fas fa-download ms-1 small"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Other Details -->
                         <div class="col-md-4">
-                            <div class="detail-item">
+                            <div class="detail-item p-3 border rounded-3 bg-light-subtle">
                                 <i class="fas fa-coins text-purple mb-2"></i>
                                 <label class="text-muted small fw-bold d-block">Tax Value</label>
-                                <div class="fw-medium">{{ deal.tax_value || '0' }}</div>
+                                <div class="h5 fw-bold mb-0">{{ deal.tax_value || '0' }}</div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="detail-item">
+                            <div class="detail-item p-3 border rounded-3 bg-light-subtle">
                                 <i class="fas fa-globe text-purple mb-2"></i>
-                                <label class="text-muted small fw-bold d-block">Country/City ID</label>
-                                <div class="fw-medium">{{ deal.country_id || '-' }} / {{ deal.city_id || '-' }}</div>
+                                <label class="text-muted small fw-bold d-block">Location Details</label>
+                                <div class="fw-medium">ID: {{ deal.country_id || '-' }} / {{ deal.city_id || '-' }}
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="detail-item">
+                            <div class="detail-item p-3 border rounded-3 bg-light-subtle">
                                 <i class="fas fa-layer-group text-purple mb-2"></i>
                                 <label class="text-muted small fw-bold d-block">Quantity</label>
-                                <div class="fw-medium">{{ deal.quantity || '0' }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="detail-item">
-                                <i class="fas fa-star text-purple mb-2"></i>
-                                <label class="text-muted small fw-bold d-block">Condition</label>
-                                <div class="fw-medium">{{ deal.is_new === 1 ? 'New Item' : 'Used Item' }}</div>
+                                <div class="h5 fw-bold mb-0">{{ deal.quantity || '0' }}</div>
                             </div>
                         </div>
                     </div>
@@ -158,7 +186,7 @@
         <!-- Sidebar / Actions -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-                <div class="card-header bg-white py-3 border-bottom border-light">
+                <div class="card-header py-3 border-bottom border-light">
                     <h5 class="card-title fw-bold mb-0">Status Management</h5>
                 </div>
                 <div class="card-body p-4 text-center">
@@ -192,7 +220,7 @@
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom border-light">
+                <div class="card-header py-3 border-bottom border-light">
                     <h5 class="card-title fw-bold mb-0">History Log</h5>
                 </div>
                 <div class="card-body p-4">
