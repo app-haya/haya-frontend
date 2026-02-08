@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DealService } from '../../../services/deal.service';
 import { NotificationService } from '../../../services/notification.service';
 
@@ -17,36 +17,36 @@ export class DealDetails implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private dealService: DealService,
         private notification: NotificationService
     ) { }
 
     ngOnInit(): void {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-            this.loadDealDetails(+id);
-        }
-    }
-
-    loadDealDetails(id: number) {
-        this.loading = true;
-        this.dealService.getDealById(id).subscribe({
-            next: (res: any) => {
-                this.deal = res.data;
-                this.loading = false;
-            },
-            error: (err) => {
-                this.notification.error('Failed to load deal details');
-                this.loading = false;
+        // Try to get deal from router state first
+        const stateDeal = history.state.deal;
+        if (stateDeal) {
+            this.deal = stateDeal;
+            this.loading = false;
+        } else {
+            // If no state (e.g. refresh), we might need to fetch, 
+            // but user said the endpoint doesn't exist.
+            const id = this.route.snapshot.paramMap.get('id');
+            if (id) {
+                this.notification.error('Deal data lost on refresh. Navigating back...');
+                setTimeout(() => {
+                    window.history.back();
+                }, 2000);
             }
-        });
+        }
     }
 
     approve() {
         this.dealService.approveDeal(this.deal.id).subscribe({
             next: () => {
                 this.notification.success('Deal approved successfully');
-                this.loadDealDetails(this.deal.id);
+                this.deal.status = 'approved';
+                setTimeout(() => this.router.navigate(['/deals']), 1500);
             }
         });
     }
@@ -57,7 +57,8 @@ export class DealDetails implements OnInit {
             this.dealService.rejectDeal(this.deal.id, reason).subscribe({
                 next: () => {
                     this.notification.success('Deal rejected successfully');
-                    this.loadDealDetails(this.deal.id);
+                    this.deal.status = 'rejected';
+                    setTimeout(() => this.router.navigate(['/deals']), 1500);
                 }
             });
         }

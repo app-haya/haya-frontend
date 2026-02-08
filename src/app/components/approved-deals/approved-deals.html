@@ -70,7 +70,7 @@
           <!-- Reject Button -->
           <td>
             <button class="btn btn-sm btn-outline-primary me-1" [routerLink]="['/deal-details', deal.id]"
-              title="Details">
+              [state]="{ deal: deal }" title="Details">
               <i class="fas fa-eye"></i>
             </button>
             <button class="reject-x-btn" (click)="reject(deal.id)" [disabled]="rejecting">

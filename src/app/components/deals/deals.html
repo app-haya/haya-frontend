@@ -88,7 +88,8 @@
                 <i class="fas fa-check"></i>
               </button>
 
-              <button class="icon-btn info" [routerLink]="['/deal-details', deal.id]" title="View Details">
+              <button class="icon-btn info" [routerLink]="['/deal-details', deal.id]" [state]="{ deal: deal }"
+                title="View Details">
                 <i class="fas fa-eye text-primary"></i>
               </button>
 

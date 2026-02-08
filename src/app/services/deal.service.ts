@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class DealService {
   private apiUrl = 'https://hayaapp.online/api/'; // رابط الـ API
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // 🛡️ إعداد الهيدر مع التوكن
   private getHeaders(): HttpHeaders {
@@ -25,12 +25,6 @@ export class DealService {
     return this.http.get(`${this.apiUrl}admin/deals?page=${page}`, { headers });
   }
 
-  // 🔹 جلب تفاصيل صفقة واحدة
-  getDealById(id: number): Observable<any> {
-    const headers = this.getHeaders();
-    return this.http.get(`${this.apiUrl}admin/deals/${id}`, { headers });
-  }
-
   // 🔹 الموافقة على صفقة
   approveDeal(id: number): Observable<any> {
     const headers = this.getHeaders();
@@ -38,12 +32,12 @@ export class DealService {
   }
 
   // 🔹 رفض صفقة
-rejectDeal(id: number, reason: string): Observable<any> {
-  const headers = this.getHeaders();
-  return this.http.post(`${this.apiUrl}admin/deals/${id}/reject`, {
-    reason: reason
-  }, { headers });
-}
+  rejectDeal(id: number, reason: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}admin/deals/${id}/reject`, {
+      reason: reason
+    }, { headers });
+  }
 
   // 🔹 إضافة الصفقة الجديدة (مع رفع ملفات)
   addDeal(formData: FormData): Observable<any> {
@@ -63,19 +57,19 @@ rejectDeal(id: number, reason: string): Observable<any> {
     return this.http.post(`${this.apiUrl}admin/deals/delete/${id}`, {}, { headers });
   }
   getUsersSimpleList(): Observable<any> {
-  const headers = this.getHeaders();
-  return this.http.get(`${this.apiUrl}admin/users/list`, { headers });
-}
-// 🔹 جلب الصفقات المعتمدة (approved)
-getAllApprovedDeals(page: number = 1): Observable<any> {
-  const headers = this.getHeaders();
-  return this.http.get(`${this.apiUrl}admin/alldealsapproved?page=${page}`, { headers });
-}
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}admin/users/list`, { headers });
+  }
+  // 🔹 جلب الصفقات المعتمدة (approved)
+  getAllApprovedDeals(page: number = 1): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}admin/alldealsapproved?page=${page}`, { headers });
+  }
 
-// 🔹 جلب الصفقات المرفوضة (rejected)
-getAllRejectedDeals(page: number = 1): Observable<any> {
-  const headers = this.getHeaders();
-  return this.http.get(`${this.apiUrl}admin/alldealsrejected?page=${page}`, { headers });
-}
+  // 🔹 جلب الصفقات المرفوضة (rejected)
+  getAllRejectedDeals(page: number = 1): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}admin/alldealsrejected?page=${page}`, { headers });
+  }
 
 }
