@@ -30,52 +30,61 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-4">
-                        <div class="col-md-6 text-center text-md-start">
-                            <div class="image-preview-container rounded-3 border bg-light d-flex align-items-center justify-content-center overflow-hidden"
-                                style="height: 300px;">
-                                <img *ngIf="deal.image" [src]="deal.image"
-                                    class="img-fluid h-100 w-100 object-fit-cover" alt="Deal Image">
-                                <div *ngIf="!deal.image" class="text-muted text-center">
-                                    <i class="fas fa-image fa-4x mb-2 opacity-25"></i>
-                                    <p class="mb-0">No Image Available</p>
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                                <div class="bg-purple-subtle p-3 rounded-circle me-3">
+                                    <i class="fas fa-tag text-purple fa-lg"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small fw-bold text-uppercase mb-0 d-block">Deal
+                                        Title</label>
+                                    <h4 class="fw-bold mb-0">{{ deal.title || '-' }}</h4>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Title</label>
-                                <div class="h5 fw-bold">{{ deal.title || '-' }}</div>
-                            </div>
-
-                            <div class="mb-4">
                                 <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Description</label>
-                                <p class="text-secondary">{{ deal.description || 'No description provided.' }}</p>
+                                <p class="text-secondary mb-0 lead-sm">{{ deal.description || 'No description provided.'
+                                    }}</p>
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-6 mb-4">
-                                    <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Original
-                                        Price</label>
-                                    <div class="fw-bold fs-5">{{ deal.original_price | currency }}</div>
+                        <div class="col-md-6">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="p-3 border rounded-3 bg-light-subtle">
+                                        <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Original
+                                            Price</label>
+                                        <div class="fw-bold fs-4">{{ deal.original_price | currency }}</div>
+                                    </div>
                                 </div>
-                                <div class="col-6 mb-4">
-                                    <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Total
-                                        Price</label>
-                                    <div class="fw-bold text-purple fs-5">{{ deal.total_price | currency }}</div>
+                                <div class="col-6">
+                                    <div class="p-3 border rounded-3 bg-light-subtle">
+                                        <label class="text-muted small fw-bold text-uppercase mb-1 d-block">Total
+                                            Price</label>
+                                        <div class="fw-bold text-purple fs-4">{{ deal.total_price | currency }}</div>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <span class="badge px-3 py-2 rounded-pill"
-                                    [ngClass]="deal.is_active ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
-                                    <i class="fas"
-                                        [ngClass]="deal.is_active ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                                    {{ deal.is_active ? 'Active' : 'Inactive' }}
-                                </span>
-                                <span
-                                    class="badge px-3 py-2 rounded-pill bg-purple-subtle text-purple border border-purple">
-                                    {{ deal.seller_type || 'Unknown Type' }}
-                                </span>
+                                <div class="col-12 mt-3">
+                                    <div class="d-flex gap-2">
+                                        <span class="badge px-3 py-2 rounded-pill shadow-sm"
+                                            [ngClass]="deal.is_active ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                                            <i class="fas me-1"
+                                                [ngClass]="deal.is_active ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                                            {{ deal.is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                        <span
+                                            class="badge px-3 py-2 rounded-pill bg-purple-subtle text-purple border border-purple shadow-sm">
+                                            <i class="fas fa-user-tag me-1"></i> {{ deal.seller_type || 'Unknown' }}
+                                        </span>
+                                        <span
+                                            class="badge px-3 py-2 rounded-pill bg-info-subtle text-info border border-info shadow-sm">
+                                            <i class="fas fa-star me-1"></i> {{ deal.is_new === 1 ? 'New' : 'Used' }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -190,30 +199,31 @@
                     <h5 class="card-title fw-bold mb-0">Status Management</h5>
                 </div>
                 <div class="card-body p-4 text-center">
-                    <div class="status-indicator mb-3">
-                        <div class="display-6 fw-bold mb-1" [ngClass]="
-                deal.status === 'pending' ? 'text-warning' : 
-                deal.status === 'approved' ? 'text-success' : 'text-danger'">
+                    <div class="status-indicator mb-3 p-4 rounded-4" [ngClass]="
+                        deal.status === 'pending' ? 'bg-warning-subtle' : 
+                        deal.status === 'approved' ? 'bg-success-subtle' : 'bg-danger-subtle'">
+                        <div class="display-5 fw-bold mb-1" [ngClass]="
+                            deal.status === 'pending' ? 'text-warning' : 
+                            deal.status === 'approved' ? 'text-success' : 'text-danger'">
+                            <i class="fas mb-2 d-xl-block" [ngClass]="
+                                deal.status === 'pending' ? 'fa-clock' : 
+                                deal.status === 'approved' ? 'fa-check-circle' : 'fa-times-circle'"></i>
                             {{ deal.status | titlecase }}
                         </div>
-                        <p class="text-muted small">Current deal status</p>
+                        <p class="text-muted small mb-0 fw-bold">Current Deal Status</p>
                     </div>
 
-                    <hr class="my-4">
+                    <hr class="my-4 opacity-25">
 
-                    <div class="d-grid gap-2">
+                    <div class="d-grid gap-3">
                         <button *ngIf="deal.status === 'pending'" (click)="approve()"
-                            class="btn btn-success btn-lg rounded-3">
+                            class="btn btn-success btn-lg rounded-3 shadow-sm py-3">
                             <i class="fas fa-check-circle me-2"></i> Approve Deal
                         </button>
 
                         <button *ngIf="deal.status === 'pending'" (click)="reject()"
-                            class="btn btn-outline-danger btn-lg rounded-3">
+                            class="btn btn-outline-danger btn-lg rounded-3 shadow-sm py-3">
                             <i class="fas fa-times-circle me-2"></i> Reject Deal
-                        </button>
-
-                        <button class="btn btn-light btn-lg rounded-3 border">
-                            <i class="fas fa-edit me-2"></i> Edit Details
                         </button>
                     </div>
                 </div>
