@@ -1,121 +1,1 @@
-.dashboard-layout {
-  display: flex;
-  height: 100vh;
-  overflow: hidden; /* يمنع scroll الكلي */
-}
-
-/* Sidebar */
-.sidebar-wrapper {
-  width: 250px;
-  background-color: rgba(122, 60, 160, 0.9);
-  color: white;
-  transition: width 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.sidebar-wrapper.collapsed {
-  width: 80px;
-}
-
-/* خلي sidebar scrollable داخلياً */
-.sidebar-wrapper app-sidebar {
-  flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-}
-
-/* Main content */
-.main-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  min-width: 0; /* مهم للـ flexbox عشان scroll يظهر */
-}
-
-/* Navbar ثابت */
-.sticky-top {
-  position: sticky;
-  top: 0;
-  z-index: 1020;
-  background: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  flex-shrink: 0;
-}
-
-/* Content scroll رأسي + أفقي */
-.content-area {
-  flex-grow: 1;
-  overflow-y: auto;  /* scroll رأسي */
-  overflow-x: auto;  /* scroll أفقي */
-  background-color: #f8f9fa;
-  padding: 1rem;
-  min-width: 0; /* مهم جداً */
-}
-
-/* Scrollbar مخصص */
-.content-area::-webkit-scrollbar {
-  height: 10px;
-  background: transparent;
-}
-
-.content-area::-webkit-scrollbar-thumb {
-  background-color: rgba(122, 60, 160, 0.7);
-  border-radius: 8px;
-}
-
-.content-area::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.05);
-  border-radius: 8px;
-}
-
-/* Firefox */
-.content-area {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(122, 60, 160, 0.7) rgba(0,0,0,0.05);
-}
-
-/* الجداول الكبيرة */
-.content-area table {
-  min-width: 1000px; /* أو حسب حجم الجدول */
-}
-/* === Dark Mode === */
-.dashboard-layout {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dashboard-layout.dark-mode {
-  background-color: #121212;
-  color: #f5f5f5;
-}
-
-.dashboard-layout.dark-mode .sidebar-wrapper {
-  background-color: #1e1e1e;
-  color: #fff;
-}
-
-.dashboard-layout.dark-mode .main-content {
-  background-color: #181818;
-}
-
-.dashboard-layout.dark-mode .sticky-top {
-  background-color: #1e1e1e;
-  color: #fff;
-}
-
-.dashboard-layout.dark-mode .card,
-.dashboard-layout.dark-mode table,
-.dashboard-layout.dark-mode th,
-.dashboard-layout.dark-mode td {
-  background-color: #222;
-  color: #fff;
-  border-color: #333;
-}
-
-.dashboard-layout.dark-mode a {
-  color: #b388ff;
-}
+.dashboard-layout {  display: flex;  height: 100vh;  overflow: hidden; }.sidebar-wrapper {  width: 250px;  background-color: rgba(122, 60, 160, 0.9);  color: white;  transition: width 0.3s ease;  display: flex;  flex-direction: column;  flex-shrink: 0;  overflow: hidden;}.sidebar-wrapper.collapsed {  width: 80px;}.sidebar-wrapper app-sidebar {  flex-grow: 1;  overflow-y: auto;  overflow-x: hidden;  height: 100%;}.main-content {  flex-grow: 1;  display: flex;  flex-direction: column;  height: 100vh;  min-width: 0; }.sticky-top {  position: sticky;  top: 0;  z-index: 1020;  background: white;  box-shadow: 0 2px 5px rgba(0,0,0,0.1);  flex-shrink: 0;}.content-area {  flex-grow: 1;  overflow-y: auto;    overflow-x: auto;    background-color: #f8f9fa;  padding: 1rem;  min-width: 0; }.content-area::-webkit-scrollbar {  height: 10px;  background: transparent;}.content-area::-webkit-scrollbar-thumb {  background-color: rgba(122, 60, 160, 0.7);  border-radius: 8px;}.content-area::-webkit-scrollbar-track {  background: rgba(0,0,0,0.05);  border-radius: 8px;}.content-area {  scrollbar-width: thin;  scrollbar-color: rgba(122, 60, 160, 0.7) rgba(0,0,0,0.05);}.content-area table {  min-width: 1000px; }.dashboard-layout {  transition: background-color 0.3s ease, color 0.3s ease;}.dashboard-layout.dark-mode {  background-color: #121212;  color: #f5f5f5;}.dashboard-layout.dark-mode .sidebar-wrapper {  background-color: #1e1e1e;  color: #fff;}.dashboard-layout.dark-mode .main-content {  background-color: #181818;}.dashboard-layout.dark-mode .sticky-top {  background-color: #1e1e1e;  color: #fff;}.dashboard-layout.dark-mode .card,.dashboard-layout.dark-mode table,.dashboard-layout.dark-mode th,.dashboard-layout.dark-mode td {  background-color: #222;  color: #fff;  border-color: #333;}.dashboard-layout.dark-mode a {  color: #b388ff;}

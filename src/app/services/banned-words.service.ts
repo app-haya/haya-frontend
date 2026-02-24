@@ -1,32 +1,1 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class BannedWordsService {
-  private apiUrl = 'https://hayaapp.online/api'; 
-
-  constructor(private http: HttpClient) {}
-
-  // ✅ Get all banned words
-  getAll(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/banned-words`);
-  }
-
-  // ✅ Add new word
-  add(word: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/banned-words`, { word });
-  }
-
-  // ✅ Update word
-  update(id: number, word: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/banned-words/${id}`, { word });
-  }
-
-  // ✅ Delete word
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/banned-words/${id}`);
-  }
-}
+import { Injectable } from '@angular/core';import { environment } from '../../environments/environment';import { HttpClient } from '@angular/common/http';import { Observable } from 'rxjs';@Injectable({  providedIn: 'root'})export class BannedWordsService {  private apiUrl = environment.apiUrl;  constructor(private http: HttpClient) { }  getAll(): Observable<any> {    return this.http.get(`${this.apiUrl}/banned-words`);  }  add(word: string): Observable<any> {    return this.http.post(`${this.apiUrl}/banned-words`, { word });  }  update(id: number, word: string): Observable<any> {    return this.http.put(`${this.apiUrl}/banned-words/${id}`, { word });  }  delete(id: number): Observable<any> {    return this.http.delete(`${this.apiUrl}/banned-words/${id}`);  }}

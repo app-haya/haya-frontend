@@ -1,79 +1,1 @@
-<div class="sidebar bg-purple text-white vh-100 p-3" [class.collapsed]="isCollapsed">
-
-  <!-- زر طي السايدبار -->
-  <button class="togle btn btn-sm mb-3" (click)="toggleSidebar()">
-    <i class="bi" [ngClass]="isCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
-  </button>
-
-  <!-- صورة المستخدم -->
-  <div class="text-center mb-5">
-    <div class="position-relative d-inline-block">
-      <img
-        *ngIf="user?.image_url"
-        [src]="user.image_url"
-        alt="Admin Image"
-        width="60"
-        height="60"
-        class="rounded-circle mb-2 border border-3 border-white shadow-sm"
-        style="object-fit:contain;"
-      />
-      <span
-        class="position-absolute bottom-0 end-0 translate-middle bg-success border border-white rounded-circle"
-        style="width: 14px; height: 14px;"
-      ></span>
-    </div>
-
-    <h6 *ngIf="!isCollapsed">{{ user?.name || 'Admin' }}</h6>
-
-    <button class="btn btn-light btn-sm w-50" *ngIf="!isCollapsed" (click)="logout()">
-      {{ 'LOGOUT' | translate }}
-    </button>
-  </div>
-
-  <!-- القائمة -->
-  <ul class="nav flex-column">
-
-    <li *ngFor="let item of menu" class="mb-1">
-
-      <!-- العناصر بدون children -->
-      <div *ngIf="!item.children">
-        <a [routerLink]="item.path"
-           routerLinkActive="active"
-           class="nav-link text-white d-flex align-items-center py-2">
-          <i [class]="item.icon" class="me-2"></i>
-          <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>
-        </a>
-      </div>
-
-      <!-- العناصر التي تحتوي children -->
-      <div *ngIf="item.children" class="nav-item dropdown">
-
-        <a 
-          href="javascript:void(0)"
-          class="nav-link text-white d-flex align-items-center py-2"
-          (click)="toggleItem(item)">
-
-          <i [class]="item.icon" class="me-2"></i>
-          <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>
-
-          <i *ngIf="!isCollapsed"
-             class="bi ms-auto"
-             [ngClass]="item.expanded ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
-        </a>
-
-        <!-- children -->
-        <ul *ngIf="item.expanded && !isCollapsed" class="nav flex-column ms-3">
-          <li *ngFor="let child of item.children" class="mb-1">
-            <a [routerLink]="child.path" routerLinkActive="active"
-               class="nav-link text-white py-1 d-flex align-items-center child-link">
-              <i [class]="child.icon" class="me-2"></i>
-              {{ child.name | translate }}
-            </a>
-          </li>
-        </ul>
-
-      </div>
-    </li>
-  </ul>
-
-</div>
+<div class="sidebar bg-purple text-white vh-100 p-3" [class.collapsed]="isCollapsed">  <button class="togle btn btn-sm mb-3" (click)="toggleSidebar()">    <i class="bi" [ngClass]="isCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>  </button>  <div class="text-center mb-5">    <div class="position-relative d-inline-block">      <img        *ngIf="user?.image_url"        [src]="user.image_url"        alt="Admin Image"        width="60"        height="60"        class="rounded-circle mb-2 border border-3 border-white shadow-sm"        style="object-fit:contain;"      />      <span        class="position-absolute bottom-0 end-0 translate-middle bg-success border border-white rounded-circle"        style="width: 14px; height: 14px;"      ></span>    </div>    <h6 *ngIf="!isCollapsed">{{ user?.name || 'Admin' }}</h6>    <button class="btn btn-light btn-sm w-50" *ngIf="!isCollapsed" (click)="logout()">      {{ 'LOGOUT' | translate }}    </button>  </div>  <ul class="nav flex-column">    <li *ngFor="let item of menu" class="mb-1">      <div *ngIf="!item.children">        <a [routerLink]="item.path"           routerLinkActive="active"           class="nav-link text-white d-flex align-items-center py-2">          <i [class]="item.icon" class="me-2"></i>          <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>        </a>      </div>      <div *ngIf="item.children" class="nav-item dropdown">        <a           href="javascript:void(0)"          class="nav-link text-white d-flex align-items-center py-2"          (click)="toggleItem(item)">          <i [class]="item.icon" class="me-2"></i>          <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>          <i *ngIf="!isCollapsed"             class="bi ms-auto"             [ngClass]="item.expanded ? 'bi-chevron-down' : 'bi-chevron-right'"></i>        </a>        <ul *ngIf="item.expanded && !isCollapsed" class="nav flex-column ms-3">          <li *ngFor="let child of item.children" class="mb-1">            <a [routerLink]="child.path" routerLinkActive="active"               class="nav-link text-white py-1 d-flex align-items-center child-link">              <i [class]="child.icon" class="me-2"></i>              {{ child.name | translate }}            </a>          </li>        </ul>      </div>    </li>  </ul></div>

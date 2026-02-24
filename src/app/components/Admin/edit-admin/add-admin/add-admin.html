@@ -1,105 +1,1 @@
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h4 class="title mb-4 text-center">Add New Admin</h4>
-
-      <form (ngSubmit)="addAdmin()" class="row g-3">
-        <!-- Name -->
-        <div class="col-md-6">
-          <label class="form-label">Name</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="admin.name"
-            name="name"
-            required
-          />
-        </div>
-
-        <!-- Email -->
-        <div class="col-md-6">
-          <label class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            [(ngModel)]="admin.email"
-            name="email"
-            required
-          />
-        </div>
-
-        <!-- Password -->
-        <div class="col-md-6">
-          <label class="form-label">Password</label>
-          <input
-            type="password"
-            class="form-control"
-            [(ngModel)]="admin.password"
-            name="password"
-            required
-          />
-        </div>
-
-        <!-- Phone -->
-        <div class="col-md-6">
-          <label class="form-label">Phone</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="admin.phone"
-            name="phone"
-          />
-        </div>
-
-        <!-- Is Super Admin -->
-        <div class="col-md-6 mt-3">
-          <label class="form-label">Super Admin</label>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              [(ngModel)]="admin.is_super_admin"
-              name="is_super_admin"
-              (ngModelChange)="toggleSuperAdmin($event)"
-            />
-            <label class="form-check-label">Is Super Admin?</label>
-          </div>
-        </div>
-
-        <!-- Roles -->
-        <div class="col-md-6 mt-3" *ngIf="!admin.is_super_admin">
-          <label class="form-label">Roles</label>
-
-          <div *ngFor="let role of roles" class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              (change)="toggleRole(role.id, $event.target.checked)"
-              [checked]="admin.roles.includes(role.id)"
-            />
-            <label class="form-check-label">
-              {{ role.name }}
-            </label>
-          </div>
-        </div>
-
-        <!-- Image -->
-        <div class="col-md-6 mt-3">
-          <label class="form-label">Profile Image</label>
-          <input
-            type="file"
-            class="form-control"
-            (change)="onFileChange($event)"
-          />
-        </div>
-
-        <!-- Submit Button -->
-        <div class="col-12 text-center mt-4">
-          <button type="submit" class="btn btn-purple">
-            <i class="fas fa-user-plus me-2"></i> Add Admin
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<div class="container mt-5">  <div class="card shadow-sm">    <div class="card-body">      <h4 class="title mb-4 text-center">{{ 'Add New Admin' | translate }}</h4>      <form (ngSubmit)="addAdmin()" class="row g-3">        <div class="col-md-6">          <label class="form-label">{{ 'Name' | translate }}</label>          <input            type="text"            class="form-control"            [(ngModel)]="admin.name"            name="name"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Email' | translate }}</label>          <input            type="email"            class="form-control"            [(ngModel)]="admin.email"            name="email"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Password' | translate }}</label>          <input            type="password"            class="form-control"            [(ngModel)]="admin.password"            name="password"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Phone' | translate }}</label>          <input            type="text"            class="form-control"            [(ngModel)]="admin.phone"            name="phone"          />        </div>        <div class="col-md-6 mt-3">          <label class="form-label">{{ 'Super Admin' | translate }}</label>          <div class="form-check">            <input              class="form-check-input"              type="checkbox"              [(ngModel)]="admin.is_super_admin"              name="is_super_admin"              (ngModelChange)="toggleSuperAdmin($event)"            />            <label class="form-check-label">{{ 'Is Super Admin?' | translate }}</label>          </div>        </div>        <div class="col-md-6 mt-3" *ngIf="!admin.is_super_admin">          <label class="form-label">{{ 'Roles' | translate }}</label>          <div *ngFor="let role of roles" class="form-check">            <input              class="form-check-input"              type="checkbox"              (change)="toggleRole(role.id, $event.target.checked)"              [checked]="admin.roles.includes(role.id)"            />            <label class="form-check-label">              {{ role.name }}            </label>          </div>        </div>        <div class="col-md-6 mt-3">          <label class="form-label">{{ 'Profile Image' | translate }}</label>          <input            type="file"            class="form-control"            (change)="onFileChange($event)"          />        </div>        <div class="col-12 text-center mt-4">          <button type="submit" class="btn btn-purple">            <i class="fas fa-user-plus me-2"></i>{{ 'Add Admin' | translate }}          </button>        </div>      </form>    </div>  </div></div>

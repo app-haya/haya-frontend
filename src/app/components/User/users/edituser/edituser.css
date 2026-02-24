@@ -1,46 +1,1 @@
-.styled-input {
-  height: 48px !important;
-  border-radius: 10px !important;
-  border: 1px solid #d1d5db;
-  padding-left: 12px;
-  transition: all 0.2s ease-in-out;
-}
-
-.styled-input:focus {
-  border-color: #6a11cb;
-  box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.15);
-}
-
-.form-label {
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-.text-purple {
-  color: #6a11cb;
-}
-
-.btn-purple {
-  background: linear-gradient(90deg, #6a11cb, #9b3df9);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  border-radius: 12px;
-  transition: 0.25s;
-}
-
-.btn-purple:hover {
-  opacity: 0.85;
-  transform: scale(1.02);
-}
-
-.form-check-label {
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.form-check-input {
-  cursor: pointer;
-  transform: scale(1.2);
-}
+.styled-input {  height: 48px !important;  border-radius: 10px !important;  border: 1px solid #d1d5db;  padding-left: 12px;  transition: all 0.2s ease-in-out;}.styled-input:focus {  border-color: #6a11cb;  box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.15);}.form-label {  font-weight: 600;  margin-bottom: 6px;  color: #333;}.text-purple {  color: #6a11cb;}.btn-purple {  background: linear-gradient(90deg, #6a11cb, #9b3df9);  border: none;  color: #fff;  font-weight: 600;  border-radius: 12px;  transition: 0.25s;}.btn-purple:hover {  opacity: 0.85;  transform: scale(1.02);}.form-check-label {  font-weight: 500;  cursor: pointer;}.form-check-input {  cursor: pointer;  transform: scale(1.2);}

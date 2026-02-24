@@ -1,41 +1,3 @@
-import { Component, OnInit } from '@angular/core';
-
-declare var google: any;
-
-@Component({
-  selector: 'app-geo-chart',
-  templateUrl: './geo-chart.html',
-  styleUrls: ['./geo-chart.css']
-})
-export class GeoChart implements OnInit {
-
-  ngOnInit() {
-    this.loadGeoChart();
-  }
-
-  loadGeoChart() {
-    google.charts.load('current', {
-      packages: ['geochart'],
-    });
-    google.charts.setOnLoadCallback(this.drawChart.bind(this));
-  }
-
-  drawChart() {
-    const data = google.visualization.arrayToDataTable([
-      ['Country', 'Popularity'],
-      ['Germany', 200],
-      ['United States', 300],
-      ['Brazil', 400],
-      ['Canada', 500],
-      ['France', 600],
-      ['RU', 700]
-    ]);
-
-    const options = {
-      colorAxis: { colors: ['#fde725', '#7ad151', '#22a884', '#2a788e', '#414487', '#440154'] }
-    };
-
-    const chart = new google.visualization.GeoChart(document.getElementById('geo-chart'));
-    chart.draw(data, options);
-  }
-}
+import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';declare var google: any;@Component({
+  imports: [TranslateModule],  selector: 'app-geo-chart',  templateUrl: './geo-chart.html',  styleUrls: ['./geo-chart.css']})export class GeoChart implements OnInit {  ngOnInit() {    this.loadGeoChart();  }  loadGeoChart() {    google.charts.load('current', {      packages: ['geochart'],    });    google.charts.setOnLoadCallback(this.drawChart.bind(this));  }  drawChart() {    const data = google.visualization.arrayToDataTable([      ['Country', 'Popularity'],      ['Germany', 200],      ['United States', 300],      ['Brazil', 400],      ['Canada', 500],      ['France', 600],      ['RU', 700]    ]);    const options = {      colorAxis: { colors: ['#fde725', '#7ad151', '#22a884', '#2a788e', '#414487', '#440154'] }    };    const chart = new google.visualization.GeoChart(document.getElementById('geo-chart'));    chart.draw(data, options);  }}

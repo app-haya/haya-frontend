@@ -1,201 +1,2 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { LocationService } from '../../services/location.service';
-import { NotificationService } from '../../services/notification.service';
-
-@Component({
-  selector: 'app-cities',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './cities.html',
-  styleUrls: ['./cities.css'],
-})
-export class Cities implements OnInit {
-  cities: any[] = [];
-  filteredCities: any[] = [];
-  countries: any[] = [];
-
-  loading = false;
-  searchTerm = '';
-  selectedCountryId: number | null = null;
-
-  showModal = false;
-  modalTitle = 'Add City';
-  editingCity: any = null;
-  currentPage = 1;
-  lastPage = 1;
-    total: number = 0;
-
-
-  formData = {
-    id: null,
-    name_en: '',
-    name_ar: '',
-    country_id: null,
-  };
-
-  constructor(
-    private locationService: LocationService,
-    private notification: NotificationService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadCities();
-    this.loadCountries();
-  }
-
-loadCities(page: number = 1): void {
-  this.loading = true;
-  const body: any = { lang: 'en' };
-  if (this.selectedCountryId) body['country_id'] = this.selectedCountryId;
-
-  this.locationService.getCities(body).subscribe({
-    next: (res) => {
-      this.cities = res?.data?.data || [];
-      this.filteredCities = [...this.cities];
-      this.currentPage = res?.data?.current_page || 1;
-
-      // Pagination
-      this.lastPage = res?.data?.last_page || 1;
-      if (this.lastPage === 1) this.lastPage = 3; 
-
-      this.loading = false;
-      this.total = res.total;
-    },
-    error: (err) => {
-      console.error('Error loading cities:', err);
-      this.loading = false;
-    },
-  });
-}
-
-  loadCountries(): void {
-    this.locationService.getCountries('en').subscribe({
-      next: (res) => {
-        this.countries = res?.data?.data || [];
-      },
-      error: (err) => console.error('Error loading countries:', err),
-    });
-  }
-
-  openAddModal(): void {
-    this.modalTitle = 'Add City';
-    this.showModal = true;
-    this.editingCity = null;
-    this.formData = { id: null, name_en: '', name_ar: '', country_id: null };
-  }
-
-  openEditModal(city: any): void {
-    this.modalTitle = 'Edit City';
-    this.showModal = true;
-    this.editingCity = city;
-
-    this.locationService.showCity(city.id).subscribe({
-      next: (res) => {
-        const c = res?.city;
-        if (c) {
-          this.formData = {
-            id: c.id,
-            name_en: c.name_en,
-            name_ar: c.name_ar,
-            country_id: c.country_id,
-          };
-        }
-      },
-      error: (err) => {
-        console.error('Error loading city details:', err);
-        this.notification.error('Failed to load city details');
-      },
-    });
-  }
-
-  saveCity(): void {
-    const data = { ...this.formData, lang: 'en' };
-    const request$ = this.editingCity
-      ? this.locationService.updateCity(data)
-      : this.locationService.addCity(data);
-
-    request$.subscribe({
-      next: (res) => {
-        this.notification.success('City saved successfully');
-        this.showModal = false;
-        this.loadCities();
-      },
-      error: (err) => {
-        console.error('Error saving city:', err);
-        this.notification.error('Failed to save city');
-      },
-    });
-  }
-
-  deleteCity(id: number): void {
-    console.log('Deleting city id:', id);
-
-    if (!confirm('Are you sure you want to delete this city?')) return;
-
-    this.locationService.deleteCity({ id }).subscribe({
-      next: (res) => {
-        console.log('Delete response:', res);
-        this.notification.success(res?.message || 'City deleted successfully');
-        this.filteredCities = this.filteredCities.filter(
-          (city) => city.id !== id
-        );
-        this.cities = this.cities.filter((city) => city.id !== id);
-      },
-      error: (err) => {
-        console.error('Error deleting city:', err);
-        this.notification.error(err?.error?.message || 'Failed to delete city');
-      },
-    });
-  }
-
-  filterCities(): void {
-    const term = this.searchTerm.trim().toLowerCase();
-    if (!term) {
-      this.filteredCities = [...this.cities];
-      return;
-    }
-
-    this.filteredCities = this.cities.filter((city) => {
-      const nameEn = (city.name_en || city.name || '').toLowerCase();
-      const nameAr = (city.name_ar || '').toLowerCase();
-      const countryName = (
-        city.country?.name_en ||
-        city.country?.name_ar ||
-        ''
-      ).toLowerCase();
-
-      return (
-        nameEn.includes(term) ||
-        nameAr.includes(term) ||
-        countryName.includes(term)
-      );
-    });
-  }
-  // Pagination methods
-nextPage(): void {
-  if (this.currentPage < this.lastPage) {
-    this.currentPage++;
-    this.loadCities(this.currentPage);
-  }
-}
-
-prevPage(): void {
-  if (this.currentPage > 1) {
-    this.currentPage--;
-    this.loadCities(this.currentPage);
-  }
-}
-
-goToPage(page: number): void {
-  if (page !== this.currentPage) {
-    this.loadCities(page);
-  }
-}
-
-getPageNumbers(): number[] {
-  const pages = Array.from({ length: this.lastPage || 1 }, (_, i) => i + 1);
-  return pages.length ? pages : [1]; 
-}
-}
+import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';import { CommonModule } from '@angular/common';import { FormsModule } from '@angular/forms';import { LocationService } from '../../services/location.service';import { NotificationService } from '../../services/notification.service';@Component({  selector: 'app-cities',  standalone: true,  imports: [CommonModule, FormsModule, TranslateModule],  templateUrl: './cities.html',  styleUrls: ['./cities.css'],})export class Cities implements OnInit {  cities: any[] = [];  filteredCities: any[] = [];  countries: any[] = [];  loading = false;  searchTerm = '';  selectedCountryId: number | null = null;  showModal = false;  modalTitle = 'Add City';  editingCity: any = null;  currentPage = 1;  lastPage = 1;    total: number = 0;  formData = {    id: null,    name_en: '',    name_ar: '',    country_id: null,  };  constructor(    private locationService: LocationService,    private notification: NotificationService  ) {}  ngOnInit(): void {    this.loadCities();    this.loadCountries();  }loadCities(page: number = 1): void {  this.loading = true;  const body: any = { lang: 'en' };  if (this.selectedCountryId) body['country_id'] = this.selectedCountryId;  this.locationService.getCities(body).subscribe({    next: (res) => {      this.cities = res?.data?.data || [];      this.filteredCities = [...this.cities];      this.currentPage = res?.data?.current_page || 1;      this.lastPage = res?.data?.last_page || 1;      if (this.lastPage === 1) this.lastPage = 3;       this.loading = false;      this.total = res.total;    },    error: (err) => {      console.error('Error loading cities:', err);      this.loading = false;    },  });}  loadCountries(): void {    this.locationService.getCountries('en').subscribe({      next: (res) => {        this.countries = res?.data?.data || [];      },      error: (err) => console.error('Error loading countries:', err),    });  }  openAddModal(): void {    this.modalTitle = 'Add City';    this.showModal = true;    this.editingCity = null;    this.formData = { id: null, name_en: '', name_ar: '', country_id: null };  }  openEditModal(city: any): void {    this.modalTitle = 'Edit City';    this.showModal = true;    this.editingCity = city;    this.locationService.showCity(city.id).subscribe({      next: (res) => {        const c = res?.city;        if (c) {          this.formData = {            id: c.id,            name_en: c.name_en,            name_ar: c.name_ar,            country_id: c.country_id,          };        }      },      error: (err) => {        console.error('Error loading city details:', err);        this.notification.error('Failed to load city details');      },    });  }  saveCity(): void {    const data = { ...this.formData, lang: 'en' };    const request$ = this.editingCity      ? this.locationService.updateCity(data)      : this.locationService.addCity(data);    request$.subscribe({      next: (res) => {        this.notification.success('City saved successfully');        this.showModal = false;        this.loadCities();      },      error: (err) => {        console.error('Error saving city:', err);        this.notification.error('Failed to save city');      },    });  }  deleteCity(id: number): void {    console.log('Deleting city id:', id);    if (!confirm('Are you sure you want to delete this city?')) return;    this.locationService.deleteCity({ id }).subscribe({      next: (res) => {        console.log('Delete response:', res);        this.notification.success(res?.message || 'City deleted successfully');        this.filteredCities = this.filteredCities.filter(          (city) => city.id !== id        );        this.cities = this.cities.filter((city) => city.id !== id);      },      error: (err) => {        console.error('Error deleting city:', err);        this.notification.error(err?.error?.message || 'Failed to delete city');      },    });  }  filterCities(): void {    const term = this.searchTerm.trim().toLowerCase();    if (!term) {      this.filteredCities = [...this.cities];      return;    }    this.filteredCities = this.cities.filter((city) => {      const nameEn = (city.name_en || city.name || '').toLowerCase();      const nameAr = (city.name_ar || '').toLowerCase();      const countryName = (        city.country?.name_en ||        city.country?.name_ar ||        ''      ).toLowerCase();      return (        nameEn.includes(term) ||        nameAr.includes(term) ||        countryName.includes(term)      );    });  }nextPage(): void {  if (this.currentPage < this.lastPage) {    this.currentPage++;    this.loadCities(this.currentPage);  }}prevPage(): void {  if (this.currentPage > 1) {    this.currentPage--;    this.loadCities(this.currentPage);  }}goToPage(page: number): void {  if (page !== this.currentPage) {    this.loadCities(page);  }}getPageNumbers(): number[] {  const pages = Array.from({ length: this.lastPage || 1 }, (_, i) => i + 1);  return pages.length ? pages : [1]; }}

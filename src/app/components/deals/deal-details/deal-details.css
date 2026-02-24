@@ -1,248 +1,1 @@
-.bg-purple-subtle {
-    background-color: #f3e8ff;
-}
-
-.text-purple {
-    color: #7c3aed;
-}
-
-.btn-purple {
-    background-color: #7c3aed;
-    color: white;
-}
-
-.btn-purple:hover {
-    background-color: #6d28d9;
-    color: white;
-}
-
-.border-purple {
-    border-color: #7c3aed !important;
-}
-
-.object-fit-cover {
-    object-fit: cover;
-}
-
-.detail-item i {
-    font-size: 1.25rem;
-}
-
-.smaller {
-    font-size: 0.75rem;
-}
-
-.timeline-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.timeline-item {
-    position: relative;
-    padding-bottom: 1rem;
-}
-
-.timeline-item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 10px;
-    bottom: 0px;
-    width: 2px;
-    background-color: #e5e7eb;
-}
-
-.card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-}
-
-.breadcrumb-item+.breadcrumb-item::before {
-    content: "/";
-}
-
-.italic {
-    font-style: italic;
-}
-
-.lead-sm {
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-
-/* Base Subtle Backgrounds */
-.bg-warning-subtle {
-    background-color: rgba(255, 193, 7, 0.1) !important;
-    color: #856404 !important;
-}
-
-.bg-success-subtle {
-    background-color: rgba(25, 135, 84, 0.1) !important;
-    color: #0f5132 !important;
-}
-
-.bg-danger-subtle {
-    background-color: rgba(220, 53, 69, 0.1) !important;
-    color: #842029 !important;
-}
-
-.bg-info-subtle {
-    background-color: rgba(13, 202, 240, 0.1) !important;
-    color: #055160 !important;
-}
-
-/* Document & Image Previews */
-.document-preview {
-    transition: all 0.3s ease;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6 !important;
-    cursor: pointer;
-}
-
-.document-preview:hover {
-    transform: scale(1.02);
-}
-
-.document-preview a:hover .preview-overlay {
-    opacity: 1 !important;
-}
-
-.preview-overlay {
-    transition: opacity 0.3s ease;
-}
-
-/* ========================================================= */
-/* ====================== DARK MODE ========================= */
-/* ========================================================= */
-
-/* Force overrides when body has .dark-mode class */
-body.dark-mode .deal-details-container {
-    color: #e5e7eb !important;
-}
-
-body.dark-mode .deal-details-container .card {
-    background-color: #1e1e1e !important;
-    border-color: #333 !important;
-    color: #e6e6e6 !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
-}
-
-body.dark-mode .deal-details-container .card-header {
-    background-color: #242424 !important;
-    border-color: #333 !important;
-    color: #ffffff !important;
-}
-
-body.dark-mode .deal-details-container .h2,
-body.dark-mode .deal-details-container .h4,
-body.dark-mode .deal-details-container .h5,
-body.dark-mode .deal-details-container .fw-bold,
-body.dark-mode .deal-details-container .card-title {
-    color: #ffffff !important;
-}
-
-body.dark-mode .deal-details-container .bg-light,
-body.dark-mode .deal-details-container .bg-light-subtle {
-    background-color: #282828 !important;
-    border-color: #444 !important;
-}
-
-body.dark-mode .deal-details-container .text-purple {
-    color: #a78bfa !important;
-    /* Lighter purple for dark mode */
-}
-
-body.dark-mode .deal-details-container .text-secondary {
-    color: #b0b0b0 !important;
-}
-
-body.dark-mode .deal-details-container .text-muted {
-    color: #999 !important;
-}
-
-body.dark-mode .deal-details-container .border,
-body.dark-mode .deal-details-container .border-light {
-    border-color: #404040 !important;
-}
-
-body.dark-mode .deal-details-container .bg-purple-subtle {
-    background-color: rgba(124, 58, 237, 0.25) !important;
-    color: #c4b5fd !important;
-    border-color: rgba(124, 58, 237, 0.4) !important;
-}
-
-body.dark-mode .deal-details-container .bg-warning-subtle {
-    background-color: rgba(255, 193, 7, 0.2) !important;
-    color: #ffca2c !important;
-}
-
-body.dark-mode .deal-details-container .bg-success-subtle {
-    background-color: rgba(25, 135, 84, 0.2) !important;
-    color: #75b798 !important;
-}
-
-body.dark-mode .deal-details-container .bg-danger-subtle {
-    background-color: rgba(220, 53, 69, 0.2) !important;
-    color: #ea868f !important;
-}
-
-body.dark-mode .deal-details-container .bg-info-subtle {
-    background-color: rgba(13, 202, 240, 0.2) !important;
-    color: #6edff6 !important;
-}
-
-body.dark-mode .deal-details-container .text-success {
-    color: #75b798 !important;
-}
-
-body.dark-mode .deal-details-container .text-danger {
-    color: #ea868f !important;
-}
-
-body.dark-mode .deal-details-container .text-info {
-    color: #6edff6 !important;
-}
-
-body.dark-mode .deal-details-container .text-warning {
-    color: #ffca2c !important;
-}
-
-body.dark-mode .deal-details-container .document-preview {
-    background-color: #1a1a1a !important;
-    border-color: #444 !important;
-}
-
-body.dark-mode .deal-details-container .btn-light {
-    background-color: #333 !important;
-    border-color: #444 !important;
-    color: #fff !important;
-}
-
-body.dark-mode .deal-details-container .breadcrumb-item a {
-    color: #a78bfa !important;
-}
-
-body.dark-mode .deal-details-container .timeline-item::after {
-    background-color: #444 !important;
-}
-
-/* Specific fix for the "invisible dates" in History Log */
-body.dark-mode .deal-details-container .smaller.text-muted {
-    color: #cccccc !important;
-}
-
-/* Ensure detail-item icons stay vibrant */
-body.dark-mode .deal-details-container .detail-item i.text-purple {
-    color: #a78bfa !important;
-}
-
-/* Fix for the white-on-white text visibility issue */
-body.dark-mode .deal-details-container div.fw-bold,
-body.dark-mode .deal-details-container .fw-bold {
-    color: #ffffff !important;
-}
+.bg-purple-subtle {    background-color: #f3e8ff;}.text-purple {    color: #7c3aed;}.btn-purple {    background-color: #7c3aed;    color: white;}.btn-purple:hover {    background-color: #6d28d9;    color: white;}.border-purple {    border-color: #7c3aed !important;}.object-fit-cover {    object-fit: cover;}.detail-item i {    font-size: 1.25rem;}.smaller {    font-size: 0.75rem;}.timeline-dot {    width: 10px;    height: 10px;    border-radius: 50%;    flex-shrink: 0;}.timeline-item {    position: relative;    padding-bottom: 1rem;}.timeline-item:not(:last-child)::after {    content: '';    position: absolute;    left: 4px;    top: 10px;    bottom: 0px;    width: 2px;    background-color: #e5e7eb;}.card {    transition: transform 0.2s ease, box-shadow 0.2s ease;}.card:hover {    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;}.breadcrumb-item+.breadcrumb-item::before {    content: "/";}.italic {    font-style: italic;}.lead-sm {    font-size: 1.1rem;    line-height: 1.6;}.bg-warning-subtle {    background-color: rgba(255, 193, 7, 0.1) !important;    color: #856404 !important;}.bg-success-subtle {    background-color: rgba(25, 135, 84, 0.1) !important;    color: #0f5132 !important;}.bg-danger-subtle {    background-color: rgba(220, 53, 69, 0.1) !important;    color: #842029 !important;}.bg-info-subtle {    background-color: rgba(13, 202, 240, 0.1) !important;    color: #055160 !important;}.document-preview {    transition: all 0.3s ease;    background-color: #f8f9fa;    border: 1px solid #dee2e6 !important;    cursor: pointer;}.document-preview:hover {    transform: scale(1.02);}.document-preview a:hover .preview-overlay {    opacity: 1 !important;}.preview-overlay {    transition: opacity 0.3s ease;}body.dark-mode .deal-details-container {    color: #e5e7eb !important;}body.dark-mode .deal-details-container .card {    background-color: #1e1e1e !important;    border-color: #333 !important;    color: #e6e6e6 !important;    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;}body.dark-mode .deal-details-container .card-header {    background-color: #242424 !important;    border-color: #333 !important;    color: #ffffff !important;}body.dark-mode .deal-details-container .h2,body.dark-mode .deal-details-container .h4,body.dark-mode .deal-details-container .h5,body.dark-mode .deal-details-container .fw-bold,body.dark-mode .deal-details-container .card-title {    color: #ffffff !important;}body.dark-mode .deal-details-container .bg-light,body.dark-mode .deal-details-container .bg-light-subtle {    background-color: #282828 !important;    border-color: #444 !important;}body.dark-mode .deal-details-container .text-purple {    color: #a78bfa !important;}body.dark-mode .deal-details-container .text-secondary {    color: #b0b0b0 !important;}body.dark-mode .deal-details-container .text-muted {    color: #999 !important;}body.dark-mode .deal-details-container .border,body.dark-mode .deal-details-container .border-light {    border-color: #404040 !important;}body.dark-mode .deal-details-container .bg-purple-subtle {    background-color: rgba(124, 58, 237, 0.25) !important;    color: #c4b5fd !important;    border-color: rgba(124, 58, 237, 0.4) !important;}body.dark-mode .deal-details-container .bg-warning-subtle {    background-color: rgba(255, 193, 7, 0.2) !important;    color: #ffca2c !important;}body.dark-mode .deal-details-container .bg-success-subtle {    background-color: rgba(25, 135, 84, 0.2) !important;    color: #75b798 !important;}body.dark-mode .deal-details-container .bg-danger-subtle {    background-color: rgba(220, 53, 69, 0.2) !important;    color: #ea868f !important;}body.dark-mode .deal-details-container .bg-info-subtle {    background-color: rgba(13, 202, 240, 0.2) !important;    color: #6edff6 !important;}body.dark-mode .deal-details-container .text-success {    color: #75b798 !important;}body.dark-mode .deal-details-container .text-danger {    color: #ea868f !important;}body.dark-mode .deal-details-container .text-info {    color: #6edff6 !important;}body.dark-mode .deal-details-container .text-warning {    color: #ffca2c !important;}body.dark-mode .deal-details-container .document-preview {    background-color: #1a1a1a !important;    border-color: #444 !important;}body.dark-mode .deal-details-container .btn-light {    background-color: #333 !important;    border-color: #444 !important;    color: #fff !important;}body.dark-mode .deal-details-container .breadcrumb-item a {    color: #a78bfa !important;}body.dark-mode .deal-details-container .timeline-item::after {    background-color: #444 !important;}body.dark-mode .deal-details-container .smaller.text-muted {    color: #cccccc !important;}body.dark-mode .deal-details-container .detail-item i.text-purple {    color: #a78bfa !important;}body.dark-mode .deal-details-container div.fw-bold,body.dark-mode .deal-details-container .fw-bold {    color: #ffffff !important;}

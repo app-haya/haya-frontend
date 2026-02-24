@@ -1,140 +1,1 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">Users</h4>
-  <p class="text-muted mb-4">List of All Users</p>
-
-  <!-- Search bar and Add Button -->
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input
-      type="text"
-      class="form-control search-input"
-      placeholder="Search..."
-      [(ngModel)]="searchTerm"
-      (input)="search()"
-    />
-
-    <a [routerLink]="['/adduser']" class="btn btn-purple mt-2 mt-md-0">
-      <i class="fas fa-user-plus me-2"></i> Add User
-    </a>
-  </div>
-
-  <!-- Table -->
-  <div
-    *ngIf="!loading; else loadingSpinner"
-    class="table-container table-responsive"
-  >
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Sign_In</th>
-          <th>Gender</th>
-          <th>Activity</th>
-          <th>Privacy</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Verification</th>
-          <th class="text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of filteredUsers">
-          <td>
-            <img
-              *ngIf="user.image"
-              [src]="user.image"
-              alt="Profile Image"
-              class="img-thumbnail"
-              style="max-width: 50px"
-            />
-          </td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.phone }}</td>
-          <td>{{ user.sign_in_type }}</td>
-          <td>{{ user.gender === 1 ? "Male" : "Female" }}</td>
-          <td>
-            {{ user.status !== "1" ? "Inactive" : user.activity || "-" }}
-          </td>
-          <td>{{ user.is_private === "1" ? "Private" : "Public" }}</td>
-          <td>{{ user.created_at | date : "short" }}</td>
-          <td>{{ user.updated_at | date : "short" }}</td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="{
-                'bg-success': user.is_verified,
-                'bg-secondary': !user.is_verified
-              }"
-            >
-              {{ user.is_verified ? "Verified" : "Not Verified" }}
-            </span>
-          </td>
-<td class="text-center">
-  <div class="action-buttons">
-    <a 
-      [routerLink]="['/edituser', user.id]" 
-      class="btn btn-sm btn-outline-purple"
-      title="Edit"
-    >
-      <i class="fas fa-edit"></i>
-    </a>
-
-    <button
-      class="btn btn-sm btn-outline-danger"
-      (click)="deleteUser(user.id)"
-      title="Delete"
-    >
-      <i class="fas fa-trash"></i>
-    </button>
-  </div>
-</td>
-        </tr>
-
-        <tr *ngIf="filteredUsers.length === 0">
-          <td colspan="12" class="text-center text-muted">No users found.</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <!-- إضافة واجهة ترقيم الصفحات -->
-    <nav aria-label="Page navigation" *ngIf="lastPage > 1" class="mt-4">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" href="javascript:void(0)" (click)="prevPage()" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        
-        <!-- عرض أرقام الصفحات -->
-        <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="currentPage === page">
-          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
-        </li>
-        
-        <li class="page-item" [class.disabled]="currentPage === lastPage">
-          <a class="page-link" href="javascript:void(0)" (click)="nextPage()" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-      
-      <!-- عرض معلومات الترقيم -->
-      <div class="d-flex justify-content-between align-items-center mt-2">
-        <div>
-          Showing {{ (currentPage - 1) * perPage + 1 }} to 
-          {{ Math.min(currentPage * perPage, total) }} of {{ total }} entries
-        </div>
-      </div>
-    </nav>
-  </div>
-
-  <!-- Loading Spinner -->
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">Loading users...</p>
-    </div>
-  </ng-template>
-</div>
+<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Users' | translate }}</h4>  <p class="text-muted mb-4">{{ 'List of All Users' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">    <input      type="text"      class="form-control search-input"      [placeholder]="'Search...' | translate"      [(ngModel)]="searchTerm"      (input)="search()"    />    <a [routerLink]="['/adduser']" class="btn btn-purple mt-2 mt-md-0">      <i class="fas fa-user-plus me-2"></i>{{ 'Add User' | translate }}    </a>  </div>  <div    *ngIf="!loading; else loadingSpinner"    class="table-container table-responsive"  >    <table class="table table-hover align-middle">      <thead>        <tr>          <th>{{ 'Image' | translate }}</th>          <th>{{ 'Name' | translate }}</th>          <th>{{ 'Email' | translate }}</th>          <th>{{ 'Phone' | translate }}</th>          <th>{{ 'Sign_In' | translate }}</th>          <th>{{ 'Gender' | translate }}</th>          <th>{{ 'Activity' | translate }}</th>          <th>{{ 'Privacy' | translate }}</th>          <th>{{ 'Created At' | translate }}</th>          <th>{{ 'Updated At' | translate }}</th>          <th>{{ 'Verification' | translate }}</th>          <th class="text-center">{{ 'Actions' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let user of filteredUsers">          <td>            <img              *ngIf="user.image"              [src]="user.image"              alt="Profile Image"              class="img-thumbnail"              style="max-width: 50px"            />          </td>          <td>{{ user.name }}</td>          <td>{{ user.email }}</td>          <td>{{ user.phone }}</td>          <td>{{ user.sign_in_type }}</td>          <td>{{ user.gender === 1 ? ('Male' | translate) : ('Female' | translate) }}</td>          <td>            {{ user.status !== "1" ? "Inactive" : user.activity || "-" }}          </td>          <td>{{ user.is_private === "1" ? ('Private' | translate) : ('Public' | translate) }}</td>          <td>{{ user.created_at | date : "short" }}</td>          <td>{{ user.updated_at | date : "short" }}</td>          <td>            <span              class="badge"              [ngClass]="{                'bg-success': user.is_verified,                'bg-secondary': !user.is_verified              }"            >              {{ user.is_verified ? ('Verified' | translate) : ('Not Verified' | translate) }}            </span>          </td><td class="text-center">  <div class="action-buttons">    <a       [routerLink]="['/edituser', user.id]"       class="btn btn-sm btn-outline-purple"      title="Edit"    >      <i class="fas fa-edit"></i>    </a>    <button      class="btn btn-sm btn-outline-danger"      (click)="deleteUser(user.id)"      title="Delete"    >      <i class="fas fa-trash"></i>    </button>  </div></td>        </tr>        <tr *ngIf="filteredUsers.length === 0">          <td colspan="12" class="text-center text-muted">{{ 'No users found.' | translate }}</td>        </tr>      </tbody>    </table>    <nav aria-label="Page navigation" *ngIf="lastPage > 1" class="mt-4">      <ul class="pagination justify-content-center">        <li class="page-item" [class.disabled]="currentPage === 1">          <a class="page-link" href="javascript:void(0)" (click)="prevPage()" aria-label="Previous">            <span aria-hidden="true">{{ '&laquo;' | translate }}</span>          </a>        </li>        <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="currentPage === page">          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>        </li>        <li class="page-item" [class.disabled]="currentPage === lastPage">          <a class="page-link" href="javascript:void(0)" (click)="nextPage()" aria-label="Next">            <span aria-hidden="true">{{ '&raquo;' | translate }}</span>          </a>        </li>      </ul>      <div class="d-flex justify-content-between align-items-center mt-2">        <div>          Showing {{ (currentPage - 1) * perPage + 1 }} to           {{ Math.min(currentPage * perPage, total) }} of {{ total }} entries        </div>      </div>    </nav>  </div>  <ng-template #loadingSpinner>    <div class="text-center my-5">      <div class="spinner-border text-primary"></div>      <p class="mt-2">{{ 'Loading users...' | translate }}</p>    </div>  </ng-template></div>

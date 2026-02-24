@@ -1,17 +1,1 @@
-.btn-purple {
-  background-color: #7a3ca0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-weight: 500;
-  transition: 0.3s;
-}
-.btn-purple:hover {
-  background-color: #5b2e7a;
-  color: #fff;
-}
-.title{
-  color: #1f6eb4;
-  font-weight: 700;
-}
+.btn-purple {  background-color: #7a3ca0;  color: white;  border: none;  border-radius: 8px;  padding: 8px 20px;  font-weight: 500;  transition: 0.3s;}.btn-purple:hover {  background-color: #5b2e7a;  color: #fff;}.title{  color: #1f6eb4;  font-weight: 700;}

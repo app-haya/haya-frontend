@@ -1,28 +1,2 @@
-import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../../services/dashboard.service';
-import { CommonModule } from '@angular/common';
-@Component({
-  selector: 'app-dashcount',
-  imports: [CommonModule ],
-  templateUrl: './dashcount.html',
-  styleUrl: './dashcount.css',
-})
-export class Dashcount {
-
-  counts: any = {};
-  loading: boolean = true;
-
-  constructor(private dashboardService: DashboardService) {}
-
-  ngOnInit(): void {
-    this.dashboardService.getAll().subscribe({
-      next: (res) => {
-        this.counts = res.data;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
-  }
-}
+import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';import { DashboardService } from '../../services/dashboard.service';import { CommonModule } from '@angular/common';@Component({  selector: 'app-dashcount',  imports: [CommonModule, TranslateModule],  templateUrl: './dashcount.html',  styleUrl: './dashcount.css',})export class Dashcount {  counts: any = {};  loading: boolean = true;  constructor(private dashboardService: DashboardService) {}  ngOnInit(): void {    this.dashboardService.getAll().subscribe({      next: (res) => {        this.counts = res.data;        this.loading = false;      },      error: () => {        this.loading = false;      }    });  }}

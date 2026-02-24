@@ -1,99 +1,2 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
-import { GovernmentalService } from '../../services/governmental.service';
-import { NotificationService } from '../../services/notification.service';
-
-@Component({
-  selector: 'app-governments',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './governments.html',
-  styleUrls: ['./governments.css'],
-})
-export class Governments implements OnInit {
-  governmentals: any[] = [];
-  filteredGovernmentals: any[] = [];
-  searchTerm = '';
-  loading = false;
-
-  currentPage = 1;
-  lastPage = 1;
-  perPage = 10;
-
-  constructor(
-    private governmentalService: GovernmentalService,
-    private notification: NotificationService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.loadGovernmentals();
-  }
-
-  // 🔹 تحميل كل الجهات الحكومية
-loadGovernmentals(page: number = 1) {
-  this.loading = true;
-
-  this.governmentalService.getAll(page).subscribe({
-    next: (res) => {
-      const pagination = res?.data;
-      this.governmentals = pagination?.data || [];
-      this.filteredGovernmentals = this.governmentals;
-      this.currentPage = pagination?.current_page || 1;
-      this.lastPage = pagination?.last_page || 1;
-      this.loading = false;
-    },
-    error: () => {
-      this.notification.error(' Failed to load governmentals');
-      this.loading = false;
-    },
-  });
-}
-
-  // 🔍 البحث
-  search() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredGovernmentals = this.governmentals.filter(
-      (g) =>
-        g.name?.toLowerCase().includes(term) ||
-        g.email?.toLowerCase().includes(term) ||
-        g.phone?.toLowerCase().includes(term)
-    );
-  }
-
-  // 🗑️ حذف
-  deleteGovernmental(id: number) {
-    if (!confirm('Are you sure you want to delete this governmental?')) return;
-
-    this.governmentalService.delete(id).subscribe({
-      next: (res) => {
-        if (res.errorcode === '0') {
-          this.notification.success('Governmental deleted successfully');
-          this.loadGovernmentals();
-        } else {
-          this.notification.error(res.message || 'Delete failed');
-        }
-      },
-      error: () => this.notification.error('Failed to delete'),
-    });
-  }
-
-  // 📄 Pagination
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.lastPage }, (_, i) => i + 1);
-  }
-
-  goToPage(page: number) {
-    if (page !== this.currentPage) this.loadGovernmentals(page);
-  }
-
-  nextPage() {
-    if (this.currentPage < this.lastPage) this.loadGovernmentals(this.currentPage + 1);
-  }
-
-  prevPage() {
-    if (this.currentPage > 1) this.loadGovernmentals(this.currentPage - 1);
-  }
-}
+import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';import { CommonModule } from '@angular/common';import { FormsModule } from '@angular/forms';import { RouterModule, Router } from '@angular/router';import { GovernmentalService } from '../../services/governmental.service';import { NotificationService } from '../../services/notification.service';@Component({  selector: 'app-governments',  standalone: true,  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],  templateUrl: './governments.html',  styleUrls: ['./governments.css'],})export class Governments implements OnInit {  governmentals: any[] = [];  filteredGovernmentals: any[] = [];  searchTerm = '';  loading = false;  currentPage = 1;  lastPage = 1;  perPage = 10;  constructor(    private governmentalService: GovernmentalService,    private notification: NotificationService,    private router: Router  ) {}  ngOnInit(): void {    this.loadGovernmentals();  }loadGovernmentals(page: number = 1) {  this.loading = true;  this.governmentalService.getAll(page).subscribe({    next: (res) => {      const pagination = res?.data;      this.governmentals = pagination?.data || [];      this.filteredGovernmentals = this.governmentals;      this.currentPage = pagination?.current_page || 1;      this.lastPage = pagination?.last_page || 1;      this.loading = false;    },    error: () => {      this.notification.error(' Failed to load governmentals');      this.loading = false;    },  });}  search() {    const term = this.searchTerm.toLowerCase();    this.filteredGovernmentals = this.governmentals.filter(      (g) =>        g.name?.toLowerCase().includes(term) ||        g.email?.toLowerCase().includes(term) ||        g.phone?.toLowerCase().includes(term)    );  }  deleteGovernmental(id: number) {    if (!confirm('Are you sure you want to delete this governmental?')) return;    this.governmentalService.delete(id).subscribe({      next: (res) => {        if (res.errorcode === '0') {          this.notification.success('Governmental deleted successfully');          this.loadGovernmentals();        } else {          this.notification.error(res.message || 'Delete failed');        }      },      error: () => this.notification.error('Failed to delete'),    });  }  getPageNumbers(): number[] {    return Array.from({ length: this.lastPage }, (_, i) => i + 1);  }  goToPage(page: number) {    if (page !== this.currentPage) this.loadGovernmentals(page);  }  nextPage() {    if (this.currentPage < this.lastPage) this.loadGovernmentals(this.currentPage + 1);  }  prevPage() {    if (this.currentPage > 1) this.loadGovernmentals(this.currentPage - 1);  }}

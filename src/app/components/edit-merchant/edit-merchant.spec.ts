@@ -1,23 +1,1 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { EditMerchant } from './edit-merchant';
-
-describe('EditMerchant', () => {
-  let component: EditMerchant;
-  let fixture: ComponentFixture<EditMerchant>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [EditMerchant]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(EditMerchant);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+import { ComponentFixture, TestBed } from '@angular/core/testing';import { EditMerchant } from './edit-merchant';describe('EditMerchant', () => {  let component: EditMerchant;  let fixture: ComponentFixture<EditMerchant>;  beforeEach(async () => {    await TestBed.configureTestingModule({      imports: [EditMerchant]    })    .compileComponents();    fixture = TestBed.createComponent(EditMerchant);    component = fixture.componentInstance;    fixture.detectChanges();  });  it('should create', () => {    expect(component).toBeTruthy();  });});

@@ -1,127 +1,1 @@
-<div class="container my-4">
-  <h2 class="text-center mb-4 text-purple">Add User</h2>
-
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>Name</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Name"
-          formControlName="name"
-        />
-      </div>
-      <div class="col-md-6">
-        <label>Email</label>
-        <input
-          type="email"
-          class="form-control"
-          placeholder="Email"
-          formControlName="email"
-        />
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>Phone</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Phone"
-          formControlName="phone"
-        />
-      </div>
-      <div class="col-md-6">
-        <label>Birth Date</label>
-        <input type="date" class="form-control" formControlName="birth_date" />
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>Country</label>
-        <select
-          class="form-select"
-          formControlName="country_id"
-          (change)="onCountryChange($event)"
-        >
-          <option value="">Select Country</option>
-          <option *ngFor="let country of countries" [value]="country.id">
-            {{ country.name }}
-          </option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label>City</label>
-        <select class="form-select" formControlName="city_id">
-          <option value="">Select a country first</option>
-          <option *ngFor="let city of cities" [value]="city.id">
-            {{ city.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>Gender</label>
-        <select class="form-select" formControlName="gender">
-          <option value="">Select Gender</option>
-          <option value="1">Male</option>
-          <option value="2">Female</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label>Account Type</label>
-        <select class="form-select" formControlName="account_type">
-          <option value="">Account Type</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>is Active</label>
-        <select class="form-select" formControlName="is_active">
-          <option value="">Select type</option>
-          <option value="1">Active</option>
-          <option value="0">Inactive</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label>Interests</label>
-        <div class="d-flex flex-wrap">
-          <div class="form-check me-3" *ngFor="let interest of interestsList">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              [value]="interest.id"
-              (change)="onInterestChange($event)"
-              [checked]="userForm.value.interests.includes(interest.id)"
-            />
-            <label class="form-check-label">{{ interest.name }}</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label>User Image</label>
-      <input type="file" class="form-control" (change)="onFileChange($event)" />
-    </div>
-
-    <div class="text-center">
-      <button
-        type="submit"
-        class="btn btn-purple w-100 mt-3"
-        [disabled]="loading"
-      >
-        {{ loading ? "Loading..." : "ADD" }}
-      </button>
-    </div>
-  </form>
-</div>
+<div class="container my-4">  <h2 class="text-center mb-4 text-purple">{{ 'Add User' | translate }}</h2>  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">    <div class="row mb-3">      <div class="col-md-6">        <label>{{ 'Name' | translate }}</label>        <input          type="text"          class="form-control"          [placeholder]="'Name' | translate"          formControlName="name"        />      </div>      <div class="col-md-6">        <label>{{ 'Email' | translate }}</label>        <input          type="email"          class="form-control"          [placeholder]="'Email' | translate"          formControlName="email"        />      </div>    </div>    <div class="row mb-3">      <div class="col-md-6">        <label>{{ 'Phone' | translate }}</label>        <input          type="text"          class="form-control"          [placeholder]="'Phone' | translate"          formControlName="phone"        />      </div>      <div class="col-md-6">        <label>{{ 'Birth Date' | translate }}</label>        <input type="date" class="form-control" formControlName="birth_date" />      </div>    </div>    <div class="row mb-3">      <div class="col-md-6">        <label>{{ 'Country' | translate }}</label>        <select          class="form-select"          formControlName="country_id"          (change)="onCountryChange($event)"        >          <option value="">{{ 'Select Country' | translate }}</option>          <option *ngFor="let country of countries" [value]="country.id">            {{ country.name }}          </option>        </select>      </div>      <div class="col-md-6">        <label>{{ 'City' | translate }}</label>        <select class="form-select" formControlName="city_id">          <option value="">{{ 'Select a country first' | translate }}</option>          <option *ngFor="let city of cities" [value]="city.id">            {{ city.name }}          </option>        </select>      </div>    </div>    <div class="row mb-3">      <div class="col-md-6">        <label>{{ 'Gender' | translate }}</label>        <select class="form-select" formControlName="gender">          <option value="">{{ 'Select Gender' | translate }}</option>          <option value="1">{{ 'Male' | translate }}</option>          <option value="2">{{ 'Female' | translate }}</option>        </select>      </div>      <div class="col-md-6">        <label>{{ 'Account Type' | translate }}</label>        <select class="form-select" formControlName="account_type">          <option value="">{{ 'Account Type' | translate }}</option>          <option value="user">{{ 'User' | translate }}</option>          <option value="admin">{{ 'Admin' | translate }}</option>        </select>      </div>    </div>    <div class="row mb-3">      <div class="col-md-6">        <label>{{ 'is Active' | translate }}</label>        <select class="form-select" formControlName="is_active">          <option value="">{{ 'Select type' | translate }}</option>          <option value="1">{{ 'Active' | translate }}</option>          <option value="0">{{ 'Inactive' | translate }}</option>        </select>      </div>      <div class="col-md-6">        <label>{{ 'Interests' | translate }}</label>        <div class="d-flex flex-wrap">          <div class="form-check me-3" *ngFor="let interest of interestsList">            <input              type="checkbox"              class="form-check-input"              [value]="interest.id"              (change)="onInterestChange($event)"              [checked]="userForm.value.interests.includes(interest.id)"            />            <label class="form-check-label">{{ interest.name }}</label>          </div>        </div>      </div>    </div>    <div class="mb-3">      <label>{{ 'User Image' | translate }}</label>      <input type="file" class="form-control" (change)="onFileChange($event)" />    </div>    <div class="text-center">      <button        type="submit"        class="btn btn-purple w-100 mt-3"        [disabled]="loading"      >        {{ loading ? ('Loading...' | translate) : ('ADD' | translate) }}      </button>    </div>  </form></div>

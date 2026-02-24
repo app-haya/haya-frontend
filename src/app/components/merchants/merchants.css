@@ -1,127 +1,1 @@
-.table-container {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  overflow-x: auto;
-    margin-top: 60px;
-
-}
-
-h4.fw-bold {
-  color: #1f6eb4;
-  font-weight: 700;
-}
-
-.text-muted {
-  color: #6c757d !important;
-}
-
-.btn-purple {
-  background-color: #7a3ca0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.btn-purple:hover {
-  background-color: #5b2e7a;
-  color: #fff;
-}
-
-.btn-outline-purple {
-  border: 1px solid #7a3ca0;
-  color: #7a3ca0;
-  border-radius: 6px;
-  padding: 5px 10px;
-  transition: 0.3s;
-}
-
-.btn-outline-purple:hover {
-  background-color: #7a3ca0;
-  color: white;
-}
-
-.search-input {
-  max-width: 250px;
-  border-radius: 8px;
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-}
-
-.profile-img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ddd;
-}
-
-.register-img {
-  width: 60px;
-  height: 45px;
-  border-radius: 6px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-}
-
-.table th {
-  background-color: #f8f9fa;
-  color: #1f6eb4;
-  font-weight: 600;
-}
-
-.table-hover tbody tr:hover {
-  background-color: #f9f7ff;
-}
-
-.spinner-border {
-  width: 2.5rem;
-  height: 2.5rem;
-}
-/* === Pagination Styling === */
-.pagination .page-link {
-  color: #7a3ca0;
-  border-radius: 6px;
-  margin: 0 2px;
-  border: none;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: #7a3ca0;
-  border-color: #7a3ca0;
-  color: white;
-}
-
-.pagination .page-item.disabled .page-link {
-  color: #6c757d;
-}
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px; /* المسافة بين الأزرار */
-}
-
-.action-buttons .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: 0.2s;
-}
-
-.action-buttons .btn-outline-purple:hover {
-  background-color: #7a3ca0;
-  color: white;
-}
-
-.action-buttons .btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: white;
-}
+.table-container {  background: #fff;  border-radius: 16px;  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);  padding: 20px;  overflow-x: auto;    margin-top: 60px;}h4.fw-bold {  color: #1f6eb4;  font-weight: 700;}.text-muted {  color: #6c757d !important;}.btn-purple {  background-color: #7a3ca0;  color: white;  border: none;  border-radius: 8px;  padding: 8px 20px;  font-weight: 500;  transition: 0.3s;}.btn-purple:hover {  background-color: #5b2e7a;  color: #fff;}.btn-outline-purple {  border: 1px solid #7a3ca0;  color: #7a3ca0;  border-radius: 6px;  padding: 5px 10px;  transition: 0.3s;}.btn-outline-purple:hover {  background-color: #7a3ca0;  color: white;}.search-input {  max-width: 250px;  border-radius: 8px;  padding: 6px 10px;  border: 1px solid #ddd;}.profile-img {  width: 45px;  height: 45px;  border-radius: 50%;  object-fit: cover;  border: 2px solid #ddd;}.register-img {  width: 60px;  height: 45px;  border-radius: 6px;  object-fit: cover;  border: 1px solid #ccc;}.table th {  background-color: #f8f9fa;  color: #1f6eb4;  font-weight: 600;}.table-hover tbody tr:hover {  background-color: #f9f7ff;}.spinner-border {  width: 2.5rem;  height: 2.5rem;}.pagination .page-link {  color: #7a3ca0;  border-radius: 6px;  margin: 0 2px;  border: none;}.pagination .page-item.active .page-link {  background-color: #7a3ca0;  border-color: #7a3ca0;  color: white;}.pagination .page-item.disabled .page-link {  color: #6c757d;}.action-buttons {  display: flex;  justify-content: center;  align-items: center;  gap: 6px; }.action-buttons .btn {  display: inline-flex;  align-items: center;  justify-content: center;  padding: 5px 10px;  border-radius: 6px;  font-size: 0.9rem;  transition: 0.2s;}.action-buttons .btn-outline-purple:hover {  background-color: #7a3ca0;  color: white;}.action-buttons .btn-outline-danger:hover {  background-color: #dc3545;  color: white;}

@@ -1,116 +1,1 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">Approved Deals</h4>
-  <p class="text-muted mb-4">List of Approved Deals</p>
-
-  <!-- Search -->
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input type="text" class="form-control search-input" placeholder="Search by title, account number..."
-      [(ngModel)]="searchTerm" (input)="search()" />
-  </div>
-
-  <!-- Table -->
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle text-center">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Account Number</th>
-          <th>Seller Type</th>
-          <th>Original Price</th>
-          <th>Total Price</th>
-          <th>Invoice</th>
-          <th>Tax Value</th>
-          <th>Country ID</th>
-          <th>City ID</th>
-          <th>Activity</th>
-          <th>Is New</th>
-          <th>Description</th>
-          <th>Notes</th>
-          <th>Quantity</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let deal of filteredDeals">
-          <td>{{ deal.title || "-" }}</td>
-
-          <td>
-            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank">View</a>
-            <span *ngIf="!deal.account_number">-</span>
-          </td>
-
-          <td>{{ deal.seller_type || "-" }}</td>
-          <td>{{ deal.original_price | currency }}</td>
-          <td>{{ deal.total_price | currency }}</td>
-
-          <td>
-            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">View</a>
-            <span *ngIf="!deal.invoice">-</span>
-          </td>
-
-          <td>{{ deal.tax_value }}</td>
-          <td>{{ deal.country_id }}</td>
-          <td>{{ deal.city_id }}</td>
-
-          <td>
-            <span class="badge bg-success">Active</span>
-          </td>
-
-          <td>{{ deal.is_new === 1 ? "Yes" : "No" }}</td>
-          <td>{{ deal.description || "-" }}</td>
-          <td>{{ deal.notes || "-" }}</td>
-          <td>{{ deal.quantity }}</td>
-
-          <td>
-            <span class="badge bg-success">Approved</span>
-          </td>
-
-          <!-- Reject Button -->
-          <td>
-            <button class="btn btn-sm btn-outline-primary me-1" [routerLink]="['/deal-details', deal.id]"
-              [state]="{ deal: deal }" title="Details">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="reject-x-btn" (click)="reject(deal.id)" [disabled]="rejecting">
-              <i class="fas fa-times"></i>
-            </button>
-          </td>
-        </tr>
-
-        <tr *ngIf="filteredDeals.length === 0">
-          <td colspan="16" class="text-center text-muted">
-            No approved deals found.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
-      <nav>
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="prevPage()">&laquo; Prev</a>
-          </li>
-
-          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
-            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-          </li>
-
-          <li class="page-item" [class.disabled]="currentPage === lastPage">
-            <a class="page-link" (click)="nextPage()">Next &raquo;</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </div>
-
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">Loading deals...</p>
-    </div>
-  </ng-template>
-</div>
+<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Approved Deals' | translate }}</h4>  <p class="text-muted mb-4">{{ 'List of Approved Deals' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">    <input type="text" class="form-control search-input" [placeholder]="'Search by title, account number...' | translate"      [(ngModel)]="searchTerm" (input)="search()" />  </div>  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">    <table class="table table-hover align-middle text-center">      <thead>        <tr>          <th>{{ 'Name' | translate }}</th>          <th>{{ 'Account Number' | translate }}</th>          <th>{{ 'Seller Type' | translate }}</th>          <th>{{ 'Original Price' | translate }}</th>          <th>{{ 'Total Price' | translate }}</th>          <th>{{ 'Invoice' | translate }}</th>          <th>{{ 'Tax Value' | translate }}</th>          <th>{{ 'Country ID' | translate }}</th>          <th>{{ 'City ID' | translate }}</th>          <th>{{ 'Activity' | translate }}</th>          <th>{{ 'Is New' | translate }}</th>          <th>{{ 'Description' | translate }}</th>          <th>{{ 'Notes' | translate }}</th>          <th>{{ 'Quantity' | translate }}</th>          <th>{{ 'Status' | translate }}</th>          <th>{{ 'Action' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let deal of filteredDeals">          <td>{{ deal.title || "-" }}</td>          <td>            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank">{{ 'View' | translate }}</a>            <span *ngIf="!deal.account_number">-</span>          </td>          <td>{{ deal.seller_type || "-" }}</td>          <td>{{ deal.original_price | currency }}</td>          <td>{{ deal.total_price | currency }}</td>          <td>            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">{{ 'View' | translate }}</a>            <span *ngIf="!deal.invoice">-</span>          </td>          <td>{{ deal.tax_value }}</td>          <td>{{ deal.country_id }}</td>          <td>{{ deal.city_id }}</td>          <td>            <span class="badge bg-success">{{ 'Active' | translate }}</span>          </td>          <td>{{ deal.is_new === 1 ? ('Yes' | translate) : ('No' | translate) }}</td>          <td>{{ deal.description || "-" }}</td>          <td>{{ deal.notes || "-" }}</td>          <td>{{ deal.quantity }}</td>          <td>            <span class="badge bg-success">{{ 'Approved' | translate }}</span>          </td>          <td>            <button class="btn btn-sm btn-outline-primary me-1" [routerLink]="['/deal-details', deal.id]"              [state]="{ deal: deal }" title="Details">              <i class="fas fa-eye"></i>            </button>            <button class="reject-x-btn" (click)="reject(deal.id)" [disabled]="rejecting">              <i class="fas fa-times"></i>            </button>          </td>        </tr>        <tr *ngIf="filteredDeals.length === 0">          <td colspan="16" class="text-center text-muted">{{ 'No approved deals found.' | translate }}          </td>        </tr>      </tbody>    </table>    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">      <nav>        <ul class="pagination mb-0">          <li class="page-item" [class.disabled]="currentPage === 1">            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>          </li>          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>          </li>          <li class="page-item" [class.disabled]="currentPage === lastPage">            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>          </li>        </ul>      </nav>    </div>  </div>  <ng-template #loadingSpinner>    <div class="text-center my-5">      <div class="spinner-border text-primary"></div>      <p class="mt-2">{{ 'Loading deals...' | translate }}</p>    </div>  </ng-template></div>
