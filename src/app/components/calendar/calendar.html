@@ -1,1 +1,107 @@
-<div class="calendar-container">  <div class="events-sidebar">    <div class="sidebar-header">      <h3>All Events ({{ events.length }})</h3>    </div>    <div class="events-list">      <div *ngIf="events.length === 0" class="no-events">{{ 'No events found' | translate }}      </div>      <div *ngFor="let event of events" class="event-item">        <div class="event-date">          <div class="event-day">{{ event.date.getDate() }}</div>          <div class="event-month">{{ getMonthName().substring(0, 3) }}</div>        </div>        <div class="event-details">          <div class="event-title">{{ event.title }}</div>        </div>        <div class="event-actions"><button class="delete-event-btn" (click)="deleteEvent(event.id, $event)">  <i class="fas fa-xmark"></i></button>        </div>      </div>    </div>  </div>  <div class="main-content">    <div class="calendar-header">      <div class="calendar-nav">        <button class="nav-btn" (click)="prevMonth()">{{ '&lt;' | translate }}</button>        <h2>{{ getMonthName() }} {{ currentYear }}</h2>        <button class="nav-btn" (click)="nextMonth()">{{ '&gt;' | translate }}</button>        <button class="today-btn" (click)="goToToday()">{{ 'Today' | translate }}</button>      </div>      <div class="view-toggle">        <button class="view-btn" [class.active]="viewMode === 'month'" (click)="setViewMode('month')">{{ 'Month' | translate }}</button>        <button class="view-btn" [class.active]="viewMode === 'week'" (click)="setViewMode('week')">{{ 'Week' | translate }}</button>        <button class="view-btn" [class.active]="viewMode === 'day'" (click)="setViewMode('day')">{{ 'Day' | translate }}</button>      </div>    </div>    <div class="calendar-grid">      <div class="weekday-header">{{ 'Sun' | translate }}</div>      <div class="weekday-header">{{ 'Mon' | translate }}</div>      <div class="weekday-header">{{ 'Tue' | translate }}</div>      <div class="weekday-header">{{ 'Wed' | translate }}</div>      <div class="weekday-header">{{ 'Thu' | translate }}</div>      <div class="weekday-header">{{ 'Fri' | translate }}</div>      <div class="weekday-header">{{ 'Sat' | translate }}</div>      <div *ngFor="let dayInfo of daysInMonth"            class="calendar-day"            [class.other-month]="!dayInfo.isCurrentMonth"           [class.today]="dayInfo.isToday"           [class.selected]="selectedDate && dayInfo.date && selectedDate.getDate() === dayInfo.date.getDate()"           [class.has-event]="dayInfo.hasEvents"           (click)="selectDate(dayInfo)">        <div class="day-number">{{ dayInfo.day || '' }}</div>        <div *ngIf="dayInfo.hasEvents" class="event-list-day">          <div *ngFor="let event of dayInfo.events" class="event-day-item" (click)="openEventDetails(event, $event)">            {{ event.title }}          </div>        </div>      </div>    </div>  </div></div><div *ngIf="showEventModal" class="modal-overlay">  <div class="modal-content">    <div class="modal-header">      <h3>{{ 'Please enter a new title for your event' | translate }}</h3>    </div>    <div class="modal-body">      <div class="form-group">        <input type="text" [(ngModel)]="eventTitle" [placeholder]="'Event title' | translate" autofocus>      </div>    </div>    <div class="modal-footer">      <button class="cancel-btn" (click)="closeEventModal()">{{ 'Cancel' | translate }}</button>      <button class="save-btn" (click)="saveEvent()">{{ 'OK' | translate }}</button>    </div>  </div></div><div *ngIf="showEventDetailsModal" class="modal-overlay">  <div class="modal-content">    <div class="modal-header">      <h3>{{ 'Event Details' | translate }}</h3>    </div>    <div class="modal-body">      <div class="event-detail-item">        <div class="event-detail-label">{{ 'Title:' | translate }}</div>        <div class="event-detail-value">{{ selectedEventForDetails.title }}</div>      </div>      <div class="event-detail-item">        <div class="event-detail-label">{{ 'Date:' | translate }}</div>        <div class="event-detail-value">{{ selectedEventForDetails.date | date:'fullDate' }}</div>      </div>    </div>    <div class="modal-footer">      <button class="cancel-btn" (click)="closeEventDetailsModal()">{{ 'Close' | translate }}</button>      <button class="delete-btn" (click)="deleteEventFromDetails()">{{ 'Delete Event' | translate }}</button>    </div>  </div></div>
+<div class="calendar-container">
+  <!-- Events Sidebar -->
+  <div class="events-sidebar">
+    <div class="sidebar-header">
+      <h3>{{ 'All Events' | translate }} ({{ events.length }})</h3>
+    </div>
+
+    <div class="events-list">
+      <div *ngIf="events.length === 0" class="no-events">
+        {{ 'No events found' | translate }}
+      </div>
+
+      <div *ngFor="let event of events" class="event-item" (click)="openEventDetails(event, $event)">
+        <div class="event-date-box">
+          <span class="event-item-day">{{ event.date.getDate() }}</span>
+          <span class="event-item-month">{{ months[event.date.getMonth()].substring(0, 3) | translate }}</span>
+        </div>
+        <div class="event-item-title">{{ event.title }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Calendar Content -->
+  <div class="main-content">
+    <div class="calendar-header">
+      <div class="month-nav">
+        <button class="nav-arrow-btn" (click)="prevMonth()" title="{{ 'Previous' | translate }}">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <h2 class="current-month-display">{{ getMonthName() | translate }} {{ currentYear }}</h2>
+        <button class="nav-arrow-btn" (click)="nextMonth()" title="{{ 'Next' | translate }}">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="header-actions">
+        <button class="action-btn today-btn" (click)="goToToday()">{{ 'Today' | translate }}</button>
+        <button class="action-btn primary add-event-btn" (click)="openQuickAdd()">
+          <i class="fas fa-plus"></i> {{ 'Add Event' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="calendar-grid-container">
+      <div class="weekdays-bar">
+        <div class="weekday-label" *ngFor="let day of weekdays">{{ day | translate }}</div>
+      </div>
+
+      <div class="days-grid">
+        <div *ngFor="let dayInfo of daysInMonth" class="day-cell" [class.other-month]="!dayInfo.isCurrentMonth"
+          [class.is-today]="dayInfo.isToday" (click)="selectDate(dayInfo)">
+
+          <div class="day-num" *ngIf="dayInfo.day">{{ dayInfo.day }}</div>
+
+          <div class="day-events" *ngIf="dayInfo.hasEvents">
+            <div *ngFor="let event of dayInfo.events" class="mini-event" (click)="openEventDetails(event, $event)">
+              {{ event.title }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Adding Event -->
+<div *ngIf="showEventModal" class="modal-overlay" (click)="closeEventModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-top">
+      <h3>{{ 'Add New Event' | translate }}</h3>
+    </div>
+
+    <div class="modal-mid">
+      <label class="d-block mb-3 fw-bold text-dark">{{ 'Event Title' | translate }}</label>
+      <input type="text" class="input-box" [(ngModel)]="eventTitle" [placeholder]="'What are you planning?' | translate"
+        (keyup.enter)="saveEvent()" autoFocus>
+    </div>
+
+    <div class="modal-bottom">
+      <button class="btn-full btn-cancel action-btn" (click)="closeEventModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-full btn-save action-btn primary" (click)="saveEvent()">{{ 'Save Event' | translate }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Event Details -->
+<div *ngIf="showEventDetailsModal" class="modal-overlay" (click)="closeEventDetailsModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-top">
+      <h3>{{ 'Event Details' | translate }}</h3>
+    </div>
+
+    <div class="modal-mid text-dark">
+      <h4 class="mb-2 fw-bold">{{ selectedEventForDetails.title }}</h4>
+      <p class="mb-0 text-muted">{{ selectedEventForDetails.date | date:'fullDate' }}</p>
+    </div>
+
+    <div class="modal-bottom">
+      <button class="btn-full btn-cancel action-btn" (click)="closeEventDetailsModal()">{{ 'Close' | translate
+        }}</button>
+      <button class="btn-full btn-save action-btn"
+        style="background: #ff7675 !important; border-color: #ff7675 !important;" (click)="deleteEventFromDetails()">
+        {{ 'Delete' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

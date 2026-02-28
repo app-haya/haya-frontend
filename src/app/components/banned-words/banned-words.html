@@ -1,1 +1,95 @@
-<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Banned Words' | translate }}</h4>  <p class="text-muted mb-4">{{ 'Manage all blocked words' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">    <input      type="text"      class="form-control search-input"      [placeholder]="'Enter a new word...' | translate"      [(ngModel)]="newWord"    />    <button class="btn btn-purple mt-2 mt-md-0" (click)="addWord()">      <i class="fas fa-plus me-2"></i>{{ 'Add Word' | translate }}    </button>  </div>  <div *ngIf="editMode" class="card p-3 mb-3">    <h5>{{ 'Edit Word' | translate }}</h5>    <input [(ngModel)]="editWord" class="form-control mb-2" />    <div class="d-flex gap-2">      <button class="btn btn-success" (click)="updateWord()">        <i class="fas fa-save me-1"></i>{{ 'Save' | translate }}      </button>      <button class="btn btn-secondary" (click)="editMode = false">        <i class="fas fa-times me-1"></i>{{ 'Cancel' | translate }}      </button>    </div>  </div>  <div class="table-container table-responsive">    <table class="table table-hover align-middle">      <thead>        <tr>          <th>{{ 'ID' | translate }}</th>          <th>{{ 'Word' | translate }}</th>          <th>{{ 'Created At' | translate }}</th>          <th>{{ 'Updated At' | translate }}</th>          <th class="text-center">{{ 'Actions' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let word of bannedWords">          <td>{{ word.id }}</td>          <td>{{ word.word }}</td>          <td>{{ word.created_at | date : 'short' }}</td>          <td>{{ word.updated_at | date : 'short' }}</td>          <td class="text-center">            <button class="btn btn-sm btn-outline-purple me-2" (click)="startEdit(word)">              <i class="fas fa-edit"></i>            </button>            <button class="btn btn-sm btn-outline-danger" (click)="deleteWord(word.id)">              <i class="fas fa-trash"></i>            </button>          </td>        </tr>        <tr *ngIf="bannedWords.length === 0">          <td colspan="5" class="text-center text-muted">{{ 'No banned words found.' | translate }}</td>        </tr>      </tbody>    </table>  </div></div>
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">{{ 'Banned Words' | translate }}</h4>
+  <p class="text-muted mb-4">{{ 'Manage all blocked words' | translate }}</p>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <div class="search-container">
+      <input type="text" class="form-control search-input" [placeholder]="'Search words...' | translate"
+        [(ngModel)]="searchTerm" (input)="applyFilter()" />
+    </div>
+    <button class="btn btn-purple mt-2 mt-md-0" (click)="openAddModal()">
+      <i class="fas fa-plus me-2"></i>{{ 'Add Word' | translate }}
+    </button>
+  </div>
+
+  <div class="table-container table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>{{ 'ID' | translate }}</th>
+          <th>{{ 'Word' | translate }}</th>
+          <th>{{ 'Created At' | translate }}</th>
+          <th>{{ 'Updated At' | translate }}</th>
+          <th class="text-center">{{ 'Actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let word of filteredWords">
+          <td>{{ word.id }}</td>
+          <td>{{ word.word }}</td>
+          <td>{{ word.created_at | date : 'short' }}</td>
+          <td>{{ word.updated_at | date : 'short' }}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-purple me-2" (click)="startEdit(word)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteWord(word.id)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredWords.length === 0">
+          <td colspan="5" class="text-center text-muted">{{ 'No banned words found.' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="showAddModal = false"></div>
+<div class="modal" *ngIf="showAddModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'Add New Word' | translate }}</h3>
+      <button class="close-btn" (click)="showAddModal = false">✕</button>
+    </div>
+
+    <form (ngSubmit)="addWord()" class="city-form">
+      <div class="form-group">
+        <label>{{ 'Word' | translate }}</label>
+        <input type="text" [(ngModel)]="newWord" name="newWord" required
+          [placeholder]="'e.g. offensive word' | translate" #addInput />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-purple" type="submit">{{ 'Add' | translate }}</button>
+        <button class="btn btn-outline" type="button" (click)="showAddModal = false">{{ 'Cancel' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" *ngIf="editMode" (click)="editMode = false"></div>
+<div class="modal" *ngIf="editMode">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'Edit Word' | translate }}</h3>
+      <button class="close-btn" (click)="editMode = false">✕</button>
+    </div>
+
+    <form (ngSubmit)="updateWord()" class="city-form">
+      <div class="form-group">
+        <label>{{ 'Banned Word' | translate }}</label>
+        <input type="text" [(ngModel)]="editWord" name="editWord" required
+          [placeholder]="'e.g. offensive word' | translate" />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-purple" type="submit">{{ 'Save' | translate }}</button>
+        <button class="btn btn-outline" type="button" (click)="editMode = false">{{ 'Cancel' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</div>
