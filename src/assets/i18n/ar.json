@@ -168,6 +168,7 @@
     "List of All Governmental Entities": "قائمة جميع الجهات الحكومية",
     "No governmentals found.": "لم يتم العثور على جهات حكومية.",
     "Loading governmentals...": "جاري تحميل الجهات الحكومية...",
+    "Governmental Users": "المستخدمين الحكوميين",
     "List of All Interests": "قائمة جميع الاهتمامات",
     "No interests found.": "لم يتم العثور على اهتمامات.",
     "Loading interests...": "جاري تحميل الاهتمامات...",
@@ -304,5 +305,11 @@
     "Internal Notes": "ملاحظات داخلية",
     "Condition": "الحالة (جديد/مستعمل)",
     "Location": "الموقع",
-    "Deal ID": "رقم الصفقة"
+    "Deal ID": "رقم الصفقة",
+    "Since last month": "منذ الشهر الماضي",
+    "Users & Merchants": "المستخدمين والتجار",
+    "Total Members": "إجمالي الأعضاء",
+    "Deals Statistics": "إحصائيات العروض",
+    "Total Deals": "إجمالي العروض",
+    "Member": "عضو"
 }

@@ -1,1 +1,133 @@
-<div class="dashboard-container" *ngIf="!loading; else loadingTpl">  <h2 class="mb-4 fw-bold title">{{ 'Admin Dashboard' | translate }}</h2>  <div class="row g-4">    <div class="col-md-3" *ngFor="let item of [{ label: 'Language', value: 2, icon: 'bi-translate' },      {label:'Pending Deals',       value: counts.pending_deals, icon:'bi-hourglass-split'},      {label:'Approved Deals',      value: counts.approved_deals, icon:'bi-check-circle'},      {label:'Rejected Deals',      value: counts.rejected_deals, icon:'bi-x-circle'},      {label:'Users',               value: counts.users, icon:'bi-people'},      {label:'Merchants',           value: counts.merchants, icon:'bi-shop'},      {label:'Governmental Users',  value: counts.governmentals, icon:'bi-bank'},      {label:'Cities',              value: counts.cities, icon:'bi-geo'},      {label:'Countries',           value: counts.countries, icon:'bi-flag'},      {label:'Interests',           value: counts.interests, icon:'bi-heart'},    ]">      <div class="stat-card shadow-sm">        <div class="icon-box">          <i class="bi" [ngClass]="item.icon"></i>        </div>        <div>          <h4 class="value">{{ item.value }}</h4>          <p class="label">{{ item.label }}</p>        </div>      </div>    </div>  </div></div><ng-template #loadingTpl>  <div class="loading text-center py-5">    <div class="spinner-border"></div>    <p class="mt-3">{{ 'Loading...' | translate }}</p>  </div></ng-template>
+<div class="dashboard-container" *ngIf="!loading; else loadingTpl">
+  <h2 class="mb-4 fw-bold title">{{ 'Admin Dashboard' | translate }}</h2>
+
+  <div class="row g-4">
+    <div class="col-md-3" *ngFor="let item of [
+      { label: 'Pending Deals',       value: counts.pending_deals,  icon: 'bi-hourglass-split', color: 'teal', trend: '+12.5%' },
+      { label: 'Approved Deals',      value: counts.approved_deals, icon: 'bi-check-circle',    color: 'green', trend: '+8.2%' },
+      { label: 'Users',               value: counts.users,          icon: 'bi-people',          color: 'blue', trend: '+15.4%' },
+      { label: 'Merchants',           value: counts.merchants,      icon: 'bi-shop',            color: 'yellow', trend: '+2.1%' },
+      { label: 'Governmental Users',  value: counts.governmentals,   icon: 'bi-bank',            color: 'indigo', trend: '0%' },
+      { label: 'Cities',              value: counts.cities,         icon: 'bi-geo',             color: 'purple', trend: '+1' },
+      { label: 'Countries',           value: counts.countries,      icon: 'bi-flag',            color: 'orange', trend: '0' },
+      { label: 'Interests',           value: counts.interests,      icon: 'bi-heart',           color: 'green', trend: '+3' }
+    ]">
+      <div class="stat-card shadow-sm" [ngClass]="item.color">
+        <!-- Top: Label & Menu -->
+        <div class="card-top">
+          <p class="label">{{ item.label | translate }}</p>
+          <div class="menu-dots">
+            <i class="bi bi-three-dots-vertical"></i>
+          </div>
+        </div>
+
+        <!-- Middle: Icon, Value & Trend -->
+        <div class="card-middle">
+          <div class="icon-circle">
+            <i class="bi" [ngClass]="item.icon"></i>
+          </div>
+          <div class="value-group">
+            <h4 class="value">{{ item.value }}</h4>
+            <span class="trend" *ngIf="item.trend !== '0' && item.trend !== '0%'">
+              <i class="bi bi-arrow-up-short"></i> {{ item.trend }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Bottom: Metadata -->
+        <div class="card-bottom">
+          {{ 'Since last month' | translate }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📊 Charts Section -->
+  <div class="row g-4 mt-4">
+    <!-- Area Chart Card (Users & Merchants) -->
+    <div class="col-lg-6">
+      <div class="chart-card shadow-sm">
+        <div class="chart-header">
+          <div class="menu-dots"><i class="bi bi-three-dots-vertical"></i></div>
+          <h4 class="chart-title">
+            <i class="bi bi-people me-2"></i>
+            {{ 'Users & Merchants' | translate }}
+          </h4>
+        </div>
+
+        <!-- Mini Stats Row -->
+        <div class="chart-stats">
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Users' | translate }}</span>
+            <span class="stat-value">{{ revenueHeader.paid }}</span>
+          </div>
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Total Members' | translate }}</span>
+            <span class="stat-value text-green">{{ revenueHeader.total }} {{ 'Member' | translate }}</span>
+          </div>
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Merchants' | translate }}</span>
+            <span class="stat-value text-red">{{ revenueHeader.unpaid }}</span>
+          </div>
+        </div>
+
+        <!-- Chart Canvas -->
+        <div class="chart-body">
+          <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
+          </canvas>
+        </div>
+
+        <!-- Legend -->
+        <div class="chart-legend">
+          <div class="legend-item"><span class="dot green"></span> {{ 'Users' | translate }}</div>
+          <div class="legend-item"><span class="dot cyan"></span> {{ 'Merchants' | translate }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar Chart Card (Deals Statistics) -->
+    <div class="col-lg-6">
+      <div class="chart-card shadow-sm">
+        <div class="chart-header">
+          <div class="menu-dots"><i class="bi bi-three-dots-vertical"></i></div>
+          <h4 class="chart-title">{{ 'Deals Statistics' | translate }}</h4>
+        </div>
+
+        <!-- Mini Stats Row -->
+        <div class="chart-stats">
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Approved Deals' | translate }}</span>
+            <span class="stat-value">{{ statsHeader.completed }}</span>
+          </div>
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Total Deals' | translate }}</span>
+            <span class="stat-value text-green">{{ statsHeader.totalBookings }}</span>
+          </div>
+          <div class="stat-item text-end">
+            <span class="stat-label">{{ 'Pending Deals' | translate }}</span>
+            <span class="stat-value text-red">{{ statsHeader.pending }}</span>
+          </div>
+        </div>
+
+        <!-- Chart Canvas -->
+        <div class="chart-body">
+          <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+          </canvas>
+        </div>
+
+        <!-- Legend -->
+        <div class="chart-legend">
+          <div class="legend-item"><span class="dot cyan"></span> {{ 'Approved' | translate }}</div>
+          <div class="legend-item"><span class="dot purple"></span> {{ 'Pending' | translate }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading text-center py-5">
+    <div class="spinner-border text-purple"></div>
+    <p class="mt-3 text-muted fw-bold">{{ 'Loading...' | translate }}</p>
+  </div>
+</ng-template>

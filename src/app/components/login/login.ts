@@ -1,2 +1,166 @@
 import { TranslateModule } from '@ngx-translate/core';
-import { Component } from '@angular/core';import { AuthService } from '../../services/auth.service';import { Router } from '@angular/router';import { FormsModule } from '@angular/forms';import { NotificationService } from '../../services/notification.service';@Component({  selector: 'app-login',  imports: [FormsModule, TranslateModule],  templateUrl: './login.html',  styleUrls: ['./login.css']})export class Login {  form = { email: '', password: '' };  constructor(    private authService: AuthService,    private router: Router,    private notificationService: NotificationService  ) {}ngOnInit() {  const particlesContainer = document.getElementById('particles');  const count = 30;  for (let i = 0; i < count; i++) {    const p = document.createElement('div');    p.classList.add('particle');    const size = Math.random() * 5 + 3;    p.style.width = `${size}px`;    p.style.height = `${size}px`;    p.style.left = `${Math.random() * 100}%`;    p.style.top = `${Math.random() * 100}%`;    p.style.animationDuration = `${Math.random() * 10 + 10}s`;    p.style.animationDelay = `${Math.random() * 5}s`;    particlesContainer?.appendChild(p);  }}  onSubmit() {    this.authService.login(this.form.email, this.form.password).subscribe({      next: (res: any) => {        if (res.data?.token) {          localStorage.setItem('admin_token', res.data.token);          localStorage.setItem('admin_user', JSON.stringify(res.data.admin));          this.notificationService.success('Login successful!');          this.router.navigate(['/dashboard']);        }      },      error: (err: any) => {        if (err.error?.message) {          this.notificationService.error(err.error.message);        } else {          this.notificationService.error('Login failed!');        }      }    });  }}
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../services/notification.service';
+
+declare var particlesJS: any;
+
+@Component({
+  selector: 'app-login',
+  imports: [FormsModule, TranslateModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css']
+})
+export class Login implements OnInit, OnDestroy, AfterViewInit {
+  form = { email: '', password: '' };
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
+
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    this.initParticles();
+  }
+
+  ngOnDestroy() {
+    const pJS = (window as any).pJSDom;
+    if (pJS && pJS.length > 0) {
+      pJS[0].pJS.fn.vendors.destroypJS();
+      (window as any).pJSDom = [];
+    }
+  }
+
+  private initParticles() {
+    if (typeof particlesJS !== 'undefined') {
+      particlesJS('particles-js', {
+        "particles": {
+          "number": {
+            "value": 110,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#00e5ff"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 0.8,
+            "random": false,
+            "anim": {
+              "enable": false,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 4.5,
+            "random": true,
+            "anim": {
+              "enable": false,
+              "speed": 40,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#00e5ff",
+            "opacity": 0.6,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 5,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "grab"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 140,
+              "line_linked": {
+                "opacity": 1
+              }
+            },
+            "bubble": {
+              "distance": 400,
+              "size": 40,
+              "duration": 2,
+              "opacity": 8,
+              "speed": 3
+            },
+            "repulse": {
+              "distance": 200,
+              "duration": 0.4
+            },
+            "push": {
+              "particles_nb": 4
+            },
+            "remove": {
+              "particles_nb": 2
+            }
+          }
+        },
+        "retina_detect": true
+      });
+    }
+  }
+
+  onSubmit() {
+    this.authService.login(this.form.email, this.form.password).subscribe({
+      next: (res: any) => {
+        if (res.data?.token) {
+          localStorage.setItem('admin_token', res.data.token);
+          localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
+          this.notificationService.success('Login successful!');
+          this.router.navigate(['/dashboardcount']);
+        }
+      },
+      error: (err: any) => {
+        if (err.error?.message) {
+          this.notificationService.error(err.error.message);
+        } else {
+          this.notificationService.error('Login failed!');
+        }
+      }
+    });
+  }
+}

@@ -1,1 +1,44 @@
-<div class="particles" id="particles"></div><div class="container d-flex justify-content-center align-items-center vh-100">  <div class="card shadow-lg p-5 border-0 login-card">    <div class="row g-5 align-items-center">      <div class="col-md-6 text-center">        <img           src="/images/HayaLogo-DhdEv8BC.jpg"          alt="Haya Logo"          class="img-fluid rounded shadow-sm login-image"        />      </div>      <div class="col-md-6 px-4">        <h3 class="text-center text-purple mb-4 fw-bold">{{ 'Log In' | translate }}</h3>        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">          <div class="mb-4">            <div class="input-group">              <span class="input-group-text bg-transparent border-end-0">                <i class="fas fa-envelope text-purple"></i>              </span>              <input                type="email"                name="email"                class="form-control form-control-lg border-start-0"                [placeholder]="'Email' | translate"                [(ngModel)]="form.email"                required              />            </div>          </div>          <div class="mb-4">            <div class="input-group">              <span class="input-group-text bg-transparent border-end-0">                <i class="fas fa-lock text-purple"></i>              </span>              <input                type="password"                name="password"                class="form-control form-control-lg border-start-0"                [placeholder]="'Password' | translate"                [(ngModel)]="form.password"                required              />            </div>          </div>          <div class="text-center mt-5">            <button               type="submit"              class="btn btn-outline-purple btn-lg w-100"              [disabled]="!loginForm.valid">{{ 'LOG IN' | translate }}            </button>          </div>        </form>      </div>    </div>  </div></div>
+<div class="login-page">
+  <div id="particles-js" class="particles"></div>
+  <div class="login-wrapper shadow-lg">
+    <!-- Left Form Side -->
+    <div class="login-form-side" dir="rtl">
+      <h2 class="login-title">{{ 'تسجيل الدخول' }}</h2>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+
+        <!-- Email Input -->
+        <div class="input-container">
+          <input type="email" name="email" class="custom-input" placeholder="admin@example.com" [(ngModel)]="form.email"
+            required dir="ltr" />
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-container">
+          <input type="password" name="password" class="custom-input" placeholder="........."
+            [(ngModel)]="form.password" required dir="ltr" />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="remember-me">
+          <label class="remember-label">
+            <span class="remember-text">تذكرني</span>
+            <input type="checkbox" name="remember" class="remember-checkbox">
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" [disabled]="!loginForm.valid">
+          {{ 'تسجيل الدخول' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Image Side -->
+    <div class="login-image-side">
+      <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Logo" class="logo-img" />
+    </div>
+  </div>
+</div>

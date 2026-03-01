@@ -12,7 +12,7 @@ import { Countries } from './components/countries/countries';
 import { Deals } from './components/deals/deals';
 import { Calendar } from './components/calendar/calendar';
 import { Faq } from './components/faq/faq';
-import { Dash } from './components/dash/dash';
+
 import { AuthGuard } from './guards/auth.guard';
 import { AddAdmin } from './components/Admin/edit-admin/add-admin/add-admin';
 import { EditAdmin } from './components/Admin/edit-admin/edit-admin';
@@ -39,8 +39,7 @@ export const routes: Routes = [
     component: Dashboard,
     canActivateChild: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dash },
+      { path: '', redirectTo: 'dashboardcount', pathMatch: 'full' },
       { path: 'dashboardcount', component: Dashcount },
       { path: 'admins', component: Admins, data: { role: 'Admins' } },
       { path: 'users', component: Users, data: { role: 'Users' } },

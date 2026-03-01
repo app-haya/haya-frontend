@@ -168,6 +168,7 @@
     "List of All Governmental Entities": "List of All Governmental Entities",
     "No governmentals found.": "No governmentals found.",
     "Loading governmentals...": "Loading governmentals...",
+    "Governmental Users": "Governmental Users",
     "List of All Interests": "List of All Interests",
     "No interests found.": "No interests found.",
     "Loading interests...": "Loading interests...",
@@ -304,5 +305,11 @@
     "Internal Notes": "Internal Notes",
     "Condition": "Condition",
     "Location": "Location",
-    "Deal ID": "Deal ID"
+    "Deal ID": "Deal ID",
+    "Since last month": "Since last month",
+    "Users & Merchants": "Users & Merchants",
+    "Total Members": "Total Members",
+    "Deals Statistics": "Deals Statistics",
+    "Total Deals": "Total Deals",
+    "Member": "Member"
 }

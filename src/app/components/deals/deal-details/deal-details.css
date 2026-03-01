@@ -368,50 +368,107 @@
 }
 
 /* 🌑 DARK MODE ADAPTATION 🌑 */
-body.dark-mode .deal-details-page {
-    background-color: #111;
-    color: #eee;
+:host-context(body.dark-mode) .deal-details-page {
+    background-color: transparent !important;
+    color: #c9d1d9 !important;
 }
 
-body.dark-mode .main-card,
-body.dark-mode .sidebar-card {
-    background: #1e1e1e;
-    border-color: #333;
+:host-context(body.dark-mode) .text-dark,
+:host-context(body.dark-mode) h1,
+:host-context(body.dark-mode) h5 {
+    color: #ffffff !important;
 }
 
-body.dark-mode .info-tile {
-    background-color: #252525;
-    border-color: #333;
+:host-context(body.dark-mode) .main-card,
+:host-context(body.dark-mode) .sidebar-card {
+    background: #161b22 !important;
+    border-color: #30363d !important;
 }
 
-body.dark-mode .tile-content .value {
-    color: white;
+:host-context(body.dark-mode) .card-header-custom {
+    border-color: #30363d !important;
+    background-color: transparent !important;
 }
 
-body.dark-mode .card-header-custom span {
-    color: white;
+:host-context(body.dark-mode) .card-header-custom span {
+    color: #ffffff !important;
 }
 
-body.dark-mode .document-card,
-body.dark-mode .notes-container {
-    background: #2a2a2a;
-    color: #ddd;
+:host-context(body.dark-mode) .info-tile {
+    background-color: #0b0e14 !important;
+    border-color: #30363d !important;
 }
 
-body.dark-mode .current-status-box.pending {
-    background: rgba(255, 193, 7, 0.1);
+:host-context(body.dark-mode) .info-tile.premium {
+    background: linear-gradient(135deg, #161b22 0%, #0b0e14 100%) !important;
+    border-left: 4px solid #00cfd5 !important;
 }
 
-body.dark-mode .current-status-box.approved {
-    background: rgba(72, 187, 120, 0.1);
+:host-context(body.dark-mode) .tile-icon {
+    background-color: #21262d !important;
+    color: #00cfd5 !important;
 }
 
-body.dark-mode .current-status-box.rejected {
-    background: rgba(245, 101, 101, 0.1);
+:host-context(body.dark-mode) .tile-content label,
+:host-context(body.dark-mode) .section-label {
+    color: #8b949e !important;
 }
 
-body.dark-mode .display-5 {
-    color: white !important;
+:host-context(body.dark-mode) .tile-content .value,
+:host-context(body.dark-mode) .description-text {
+    color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .document-card {
+    background: #0b0e14 !important;
+    border-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .doc-label {
+    color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .notes-container {
+    background: #21262d !important;
+    border-color: #00cfd5 !important;
+    color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .current-status-box.pending {
+    background: rgba(246, 173, 85, 0.1) !important;
+}
+
+:host-context(body.dark-mode) .current-status-box.approved {
+    background: rgba(72, 187, 120, 0.1) !important;
+}
+
+:host-context(body.dark-mode) .current-status-box.rejected {
+    background: rgba(245, 101, 101, 0.1) !important;
+}
+
+:host-context(body.dark-mode) .event-label,
+:host-context(body.dark-mode) .metadata-row strong {
+    color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .event-dot {
+    background: #161b22 !important;
+    border-color: #30363d !important;
+    box-shadow: 0 0 0 1px #30363d !important;
+}
+
+:host-context(body.dark-mode) .event-dot.active {
+    background: #00cfd5 !important;
+    box-shadow: 0 0 0 1px #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .modern-timeline .timeline-event:not(:last-child)::after {
+    background: #30363d !important;
+}
+
+:host-context(body.dark-mode) .bg-light-subtle,
+:host-context(body.dark-mode) .bg-light {
+    background-color: transparent !important;
 }
 
 /* 📱 RESPONSIVE 📱 */
