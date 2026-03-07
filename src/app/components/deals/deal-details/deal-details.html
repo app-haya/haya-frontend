@@ -156,19 +156,86 @@
                 </div>
             </div>
 
-            <!-- Notes Card -->
-            <div class="details-card main-card">
-                <div class="card-header-custom border-0">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>{{ 'Internal Notes' | translate }}</span>
+            <!-- Participants Section (Orders) -->
+            <div class="details-card main-card mb-4 overflow-hidden">
+                <div class="card-header-custom bg-light">
+                    <i class="fas fa-users"></i>
+                    <span>{{ 'Participants' | translate }}</span>
                 </div>
-                <div class="card-body-custom p-4 pt-0">
-                    <div class="notes-container">
-                        {{ deal.notes || 'No internal notes recorded for this deal.' }}
+                <div class="card-body-custom p-0">
+                    <div *ngIf="loadingOrders" class="text-center py-4">
+                        <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+                        <p class="small text-muted mt-2 mb-0">{{ 'Loading participants...' | translate }}</p>
+                    </div>
+
+                    <div *ngIf="!loadingOrders && orders.length === 0" class="text-center py-5 empty-participants">
+                        <i class="fas fa-user-friends fa-3x text-light mb-3"></i>
+                        <h6 class="text-muted">{{ 'No participants yet' | translate }}</h6>
+                    </div>
+
+                    <div *ngIf="!loadingOrders && orders.length > 0" class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light-subtle">
+                                <tr>
+                                    <th class="ps-4 py-3">{{ 'Participant' | translate }}</th>
+                                    <th class="py-3">{{ 'Quantity' | translate }}</th>
+                                    <th class="py-3">{{ 'Price' | translate }}</th>
+                                    <th class="py-3 text-center">{{ 'Payment Status' | translate }}</th>
+                                    <th class="py-3 text-center">{{ 'Order Status' | translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let order of orders">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="participant-avatar me-3">
+                                                <img *ngIf="order.user.image" [src]="order.user.image"
+                                                    [alt]="order.user.name" class="rounded-circle" width="36"
+                                                    height="36" onerror="this.src='assets/images/default-user.png'">
+                                                <div *ngIf="!order.user.image" class="avatar-placeholder">
+                                                    {{ order.user.name?.charAt(0) | uppercase }}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">{{ order.user.name }}</div>
+                                                <div class="small text-muted">{{ order.user.phone }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark fw-normal border px-2 py-1">{{
+                                            order.quantity }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="price-value">
+                                            <span class="small text-muted">{{ 'SAR_SYMBOL' | translate }}</span>
+                                            {{ order.total_price | number }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill px-3" [ngClass]="{
+                                                'bg-success-subtle text-success border border-success-subtle': order.payment_status === 'paid',
+                                                'bg-warning-subtle text-warning border border-warning-subtle': order.payment_status === 'pending',
+                                                'bg-danger-subtle text-danger border border-danger-subtle': order.payment_status === 'failed'
+                                              }">
+                                            {{ (order.payment_status | titlecase) | translate }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                            <span class="status-dot" [ngClass]="order.status"></span>
+                                            <span class="small">{{ (order.status | titlecase) | translate }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+
         </div>
+
 
         <!-- Right Column: Sidebar -->
         <div class="col-lg-4">
@@ -239,7 +306,21 @@
                     <strong>#{{ deal.id }}</strong>
                 </div>
             </div>
+
+            <!-- Internal Notes (Moved to sidebar) -->
+            <div class="details-card sidebar-card mt-4">
+                <div class="card-header-custom border-0 pb-0">
+                    <i class="fas fa-sticky-note text-warning"></i>
+                    <span>{{ 'Internal Notes' | translate }}</span>
+                </div>
+                <div class="card-body-custom p-4 pt-2">
+                    <div class="notes-container border-0 bg-light-subtle shadow-none p-3 rounded-4 small">
+                        {{ deal.notes || ('No internal notes' | translate) }}
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <!-- Error State -->

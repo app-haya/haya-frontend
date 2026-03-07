@@ -462,13 +462,156 @@
     box-shadow: 0 0 0 1px #00cfd5 !important;
 }
 
+:host-context(body.dark-mode) .status-dot.pending { background-color: #e3b341 !important; }
+:host-context(body.dark-mode) .status-dot.completed { background-color: #56d364 !important; }
+:host-context(body.dark-mode) .status-dot.paid { background-color: #79c0ff !important; }
+:host-context(body.dark-mode) .status-dot.cancelled { background-color: #ff7b72 !important; }
+
+:host-context(body.dark-mode) .status-badge.pending {
+    background-color: rgba(187, 128, 9, 0.15) !important;
+    color: #e3b341 !important;
+    border-color: rgba(187, 128, 9, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .status-badge.approved {
+    background-color: rgba(63, 185, 80, 0.15) !important;
+    color: #56d364 !important;
+    border-color: rgba(63, 185, 80, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .status-badge.rejected {
+    background-color: rgba(248, 81, 73, 0.15) !important;
+    color: #ff7b72 !important;
+    border-color: rgba(248, 81, 73, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .type-badge {
+    background-color: rgba(56, 139, 253, 0.15) !important;
+    color: #79c0ff !important;
+    border-color: rgba(56, 139, 253, 0.2) !important;
+}
+
 :host-context(body.dark-mode) .modern-timeline .timeline-event:not(:last-child)::after {
     background: #30363d !important;
 }
 
 :host-context(body.dark-mode) .bg-light-subtle,
 :host-context(body.dark-mode) .bg-light {
-    background-color: transparent !important;
+    background-color: #0d1117 !important;
+}
+
+:host-context(body.dark-mode) .breadcrumb-item a {
+    color: #79c0ff !important;
+}
+
+:host-context(body.dark-mode) .breadcrumb-item.active,
+:host-context(body.dark-mode) .text-muted {
+    color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .metadata-row span {
+    color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .metadata-row strong {
+    color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .badge.bg-light {
+    background-color: #21262d !important;
+    color: #c9d1d9 !important;
+    border-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .bg-success-subtle {
+    background-color: rgba(63, 185, 80, 0.15) !important;
+    color: #56d364 !important;
+    border-color: rgba(63, 185, 80, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .bg-warning-subtle {
+    background-color: rgba(187, 128, 9, 0.15) !important;
+    color: #e3b341 !important;
+    border-color: rgba(187, 128, 9, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .bg-danger-subtle {
+    background-color: rgba(248, 81, 73, 0.15) !important;
+    color: #ff7b72 !important;
+    border-color: rgba(248, 81, 73, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .bg-purple-subtle {
+    background-color: rgba(188, 142, 255, 0.15) !important;
+    color: #d2a8ff !important;
+}
+
+/* 👥 PARTICIPANTS SECTION 👥 */
+.participant-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #7a3ca0;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.price-value {
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-dot.pending { background-color: #f6ad55; }
+.status-dot.completed { background-color: #48bb78; }
+.status-dot.paid { background-color: #3182ce; }
+.status-dot.cancelled { background-color: #f56565; }
+
+.empty-participants {
+    color: #cbd5e0;
+}
+
+:host-context(body.dark-mode) .price-value {
+    color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .table {
+    color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .table thead th {
+    background-color: #21262d !important;
+    border-bottom: 1px solid #30363d !important;
+    color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .table tbody td {
+    border-bottom: 1px solid #30363d !important;
+}
+
+:host-context(body.dark-mode) .avatar-placeholder {
+    background: #00cfd5 !important;
 }
 
 /* 📱 RESPONSIVE 📱 */
@@ -477,4 +620,4 @@
         flex-direction: column;
         gap: 20px;
     }
-}
+}
