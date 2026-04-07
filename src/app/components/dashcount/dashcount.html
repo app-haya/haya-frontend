@@ -2,7 +2,7 @@
   <h2 class="mb-4 fw-bold title">{{ 'Admin Dashboard' | translate }}</h2>
 
   <div class="row g-4">
-    <div class="col-md-3" *ngFor="let item of [
+    <div class="col-md-3 col-6" *ngFor="let item of [
       { label: 'Pending Deals',       value: counts.pending_deals,  icon: 'bi-hourglass-split', color: 'teal', trend: '+12.5%' },
       { label: 'Approved Deals',      value: counts.approved_deals, icon: 'bi-check-circle',    color: 'green', trend: '+8.2%' },
       { label: 'Users',               value: counts.users,          icon: 'bi-people',          color: 'blue', trend: '+15.4%' },

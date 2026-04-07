@@ -365,7 +365,36 @@
   }
 
   .stat-card {
-    padding: 16px;
+    padding: 15px;
+  }
+
+  .label {
+    font-size: 0.65rem;
+    margin-bottom: 15px;
+  }
+
+  .card-middle {
+    gap: 10px;
+    flex-wrap: wrap; /* Allow wrapping if needed */
+  }
+
+  .icon-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .value {
+    font-size: 1.4rem;
+  }
+
+  .trend {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+  }
+
+  .card-top {
+    margin-bottom: 15px;
   }
 
   .chart-stats {
