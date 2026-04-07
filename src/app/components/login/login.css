@@ -193,11 +193,23 @@
 
 @media (max-width: 768px) {
   .login-wrapper {
-    flex-direction: column-reverse;
+    width: 480px;
+    max-width: 92%;
     height: auto;
+    border-radius: 40px; /* Much larger border radius as requested */
   }
 
   .login-form-side {
-    padding: 40px;
+    padding: 70px 45px; /* Added more padding */
+    border-radius: 40px;
+  }
+
+  .login-image-side {
+    display: none;
+  }
+
+  .login-title {
+    font-size: 32px;
+    margin-bottom: 50px;
   }
 }

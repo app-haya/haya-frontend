@@ -1,4 +1,5 @@
 <div class="dashboard-layout">
+  <div class="sidebar-backdrop" [class.show]="!isCollapsed" (click)="toggleSidebar()"></div>
   <div class="sidebar-wrapper" [class.collapsed]="isCollapsed">
     <app-sidebar [isCollapsed]="isCollapsed" (collapsedChange)="isCollapsed = $event"></app-sidebar>
   </div>
@@ -10,4 +11,5 @@
       <router-outlet></router-outlet>
     </div>
   </div>
+  <app-confirm-dialog></app-confirm-dialog>
 </div>

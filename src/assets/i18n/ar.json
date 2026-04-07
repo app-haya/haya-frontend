@@ -323,5 +323,17 @@
     "Loading participants...": "جاري تحميل المشاركين...",
     "No participants yet": "لا يوجد مشاركين بعد",
     "Payment Status": "حالة الدفع",
-    "Order Status": "حالة الطلب"
+    "Order Status": "حالة الطلب",
+    "Confirm Delete": "تأكيد الحذف",
+    "Confirmation": "تأكيد",
+    "Confirm": "تأكيد",
+    "Are you sure you want to delete this city?": "هل أنت متأكد من حذف هذه المدينة؟",
+    "Are you sure you want to delete this admin?": "هل أنت متأكد من حذف هذا المدير؟",
+    "Are you sure you want to delete this user?": "هل أنت متأكد من حذف هذا المستخدم؟",
+    "Are you sure you want to delete this word?": "هل أنت متأكد من حذف هذه الكلمة؟",
+    "Are you sure you want to delete this interest?": "هل أنت متأكد من حذف هذا الاهتمام؟",
+    "Are you sure you want to delete this country?": "هل أنت متأكد من حذف هذه الدولة؟",
+    "Are you sure you want to delete this government?": "هل أنت متأكد من حذف هذه الجهة الحكومية؟",
+    "Are you sure you want to delete this merchant?": "هل أنت متأكد من حذف هذا التاجر؟",
+    "Are you sure you want to delete this role?": "هل أنت متأكد من حذف هذه الصلاحية؟"
 }

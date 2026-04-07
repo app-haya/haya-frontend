@@ -4,6 +4,7 @@ import { BannedWordsService } from '../../services/banned-words.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-banned-words',
@@ -27,7 +28,8 @@ export class BannedWords implements OnInit {
 
   constructor(
     private bannedWordsService: BannedWordsService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private dialogService: DialogService
   ) { }
 
   ngOnInit(): void {
@@ -112,17 +114,24 @@ export class BannedWords implements OnInit {
   }
 
   deleteWord(id: number): void {
-    if (!confirm('Are you sure you want to delete this word?')) return;
-    this.bannedWordsService.delete(id).subscribe({
-      next: (res) => {
-        if (res.errorcode === '0') {
-          this.notification.success('Word deleted successfully!');
-          this.loadWords();
-        } else {
-          this.notification.error(res.message || 'Word delete failed!');
-        }
-      },
-      error: (err) => console.error(err),
+    this.dialogService.confirm({
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete this word?',
+      confirmText: 'Delete',
+      type: 'danger',
+      onConfirm: () => {
+        this.bannedWordsService.delete(id).subscribe({
+          next: (res) => {
+            if (res.errorcode === '0') {
+              this.notification.success('Word deleted successfully!');
+              this.loadWords();
+            } else {
+              this.notification.error(res.message || 'Word delete failed!');
+            }
+          },
+          error: (err) => console.error(err),
+        });
+      }
     });
   }
 }
