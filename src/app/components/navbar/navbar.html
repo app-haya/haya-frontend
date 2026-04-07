@@ -1,1 +1,51 @@
-<nav class="navbar navbar-expand bg-purple p-2 px-3">  <div class="container-fluid d-flex justify-content-between align-items-center">    <div class="search-box d-flex align-items-center">      <i class="bi bi-search text-white me-2"></i>      <input        type="text"        [placeholder]="'SEARCH' | translate"        class="form-control form-control-sm"      />    </div>    <div class="icons text-white d-flex align-items-center position-relative">      <button class="btn btn-sm btn-outline-light me-3 rounded-circle"              (click)="toggleDarkMode()"              title="Toggle Dark Mode">        <i [ngClass]="isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>      </button>      <i class="bi bi-bell me-3"></i>      <i class="bi bi-gear me-3"></i>      <i class="bi bi-person me-3"></i>      <div class="dropdown">        <button class="btn btn-light btn-sm" (click)="toggleDropdown()">          {{ translate.currentLang === 'en' ? ('ENGLISH' | translate) : ('عربي' | translate) }}        </button>        <ul *ngIf="showLangDropdown" class="dropdown-menu show" style="position:absolute; right:0;">          <li><a class="dropdown-item" (click)="changeLang('en')">{{ 'ENGLISH' | translate }}</a></li>          <li><a class="dropdown-item" (click)="changeLang('ar')">{{ 'عربي' | translate }}</a></li>        </ul>      </div>    </div>  </div></nav>
+<nav class="navbar navbar-expand p-2 px-3">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+
+    <!-- Sidebar Toggle Button (At the beginning) -->
+    <div class="d-flex align-items-center">
+      <button class="icon-action" (click)="toggleSidebar()" title="Toggle Sidebar">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+    
+
+    
+    <!-- Icons Container -->
+    <div class="icons-container position-relative">
+      
+      <!-- Language Dropdown -->
+      <div class="dropdown m-0 p-0 position-relative">
+        <button class="icon-action" (click)="toggleDropdown()" title="Language">
+          <i class="bi bi-globe"></i>
+        </button>
+        <ul *ngIf="showLangDropdown" class="dropdown-menu show" style="position:absolute; right:0; top: 120%; z-index: 1000;">
+          <li><a class="dropdown-item" style="cursor: pointer" (click)="changeLang('en')">{{ 'ENGLISH' | translate }}</a></li>
+          <li><a class="dropdown-item" style="cursor: pointer" (click)="changeLang('ar')">{{ 'عربي' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Settings -->
+      <button class="icon-action" title="Settings">
+        <i class="bi bi-gear"></i>
+      </button>
+
+      <!-- Notifications -->
+      <button class="icon-action" title="Notifications">
+        <i class="bi bi-bell"></i>
+      </button>
+
+      <!-- Dark Mode -->
+      <button class="icon-action" (click)="toggleDarkMode()" title="Toggle Dark Mode">
+        <i [ngClass]="isDarkMode ? 'bi bi-moon-stars' : 'bi bi-sun'"></i>
+      </button>
+
+      <!-- User Profile Pill -->
+      <button class="user-pill d-flex align-items-center">
+        <i class="bi bi-person-circle fs-5 mx-1"></i>
+        <span class="mx-1 fs-6">{{ translate.currentLang === 'en' ? 'Admin' : 'المدير' }}</span>
+        <i class="bi bi-chevron-down mx-1" style="font-size: 10px;"></i>
+      </button>
+
+    </div>
+  </div>
+</nav>

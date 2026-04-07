@@ -5,7 +5,7 @@ import { Admins } from './components/Admin/edit-admin/admins/admins';
 import { Users } from './components/User/users/users';
 import { Merchants } from './components/merchants/merchants';
 import { Governments } from './components/governments/governments';
-import { Messages } from './components/messages/messages';
+
 import { Interests } from './components/interests/interests';
 import { Cities } from './components/cities/cities';
 import { Countries } from './components/countries/countries';
@@ -81,7 +81,7 @@ export const routes: Routes = [
         component: PendingCreators,
         data: { role: 'verifycation' },
       },
-      { path: 'messages', component: Messages, data: { role: 'Messages' } },
+
       { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
       { path: 'roles', component: Roles, data: { role: 'Admins' } },
       { path: 'editadmin/:id', component: EditAdmin, data: { role: 'Admins' } },

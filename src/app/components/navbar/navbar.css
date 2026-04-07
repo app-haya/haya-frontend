@@ -1,1 +1,66 @@
-.bg-purple {  background-color: #7a3ca0;}.search-box input {  width: 200px;background-color: rgba(122, 60, 160, 0.6);    border: 1px solid #ccc;  color: white;}.search-box input::placeholder {  color: #ddd;}.navbar {  background-color: #7a3ca0;  color: white;  height: 70px;  padding: 30px 20px;  display: flex;  justify-content: space-between;  align-items: center;}.icons .dropdown-menu.show {  display: block;  min-width: 30px;  z-index: 1000;}
+.bg-purple {
+  background-color: #7a3ca0;
+}
+
+
+
+.navbar {
+  background-color: #7a3ca0;
+  color: white;
+  min-height: 70px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.icons-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px; /* Rounded rectangle box style */
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  padding: 0;
+  font-size: 18px;
+}
+
+.icon-action:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255,255,255, 0.1);
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  border-radius: 30px; /* Pill style */
+  padding: 4px 12px;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  height: 40px;
+}
+
+.user-pill:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-menu.show {
+  display: block;
+  min-width: 120px;
+  z-index: 1000;
+}

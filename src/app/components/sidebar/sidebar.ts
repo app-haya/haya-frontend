@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf, NgClass } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./sidebar.css'],
 })
 export class Sidebar implements OnInit {
-  isCollapsed = false;
+  @Input() isCollapsed = false;
   user: any = null;
   selectedChild: string = '';
   @Output() collapsedChange = new EventEmitter<boolean>();
@@ -39,7 +39,7 @@ export class Sidebar implements OnInit {
         { name: 'Verify Creator', path: '/verify_creator', icon: 'bi bi-hourglass-split' },
       ],
     },
-    { name: 'Messages', icon: 'bi bi-chat-dots', path: '/messages' },
+
     { name: 'Interests', icon: 'bi bi-star', path: '/interests' },
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/countries' },

@@ -1,2 +1,54 @@
-import { Component, Output, EventEmitter } from '@angular/core';import { CommonModule } from '@angular/common';import { TranslateModule, TranslateService } from '@ngx-translate/core';import { ThemeService } from '../../services/theme.service';@Component({  selector: 'app-navbar',  standalone: true,  imports: [CommonModule, TranslateModule],  templateUrl: './navbar.html',  styleUrls: ['./navbar.css']})export class Navbar {  @Output() darkModeChange = new EventEmitter<boolean>();
-  showLangDropdown = false;  isDarkMode = false;  constructor(    public translate: TranslateService,    private theme: ThemeService  ) { }  ngOnInit() {    this.isDarkMode = this.theme.isDark();  }  toggleDropdown() {    this.showLangDropdown = !this.showLangDropdown;  }  changeLang(lang: string) {    this.translate.use(lang);    localStorage.setItem('lang', lang);    document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');    const bsLink = document.getElementById('bootstrap-css') as HTMLLinkElement;    if (bsLink) {      bsLink.href = lang === 'ar'        ? 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'        : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';    }    this.showLangDropdown = false;  }  toggleDarkMode() {    this.theme.toggle();    this.isDarkMode = this.theme.isDark();    this.darkModeChange.emit(this.isDarkMode);  }}
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ThemeService } from '../../services/theme.service';
+
+@Component({
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  templateUrl: './navbar.html',
+  styleUrls: ['./navbar.css']
+})
+export class Navbar implements OnInit {
+  @Output() darkModeChange = new EventEmitter<boolean>();
+  @Output() sidebarToggle = new EventEmitter<void>();
+  showLangDropdown = false;
+  isDarkMode = false;
+
+  constructor(
+    public translate: TranslateService,
+    private theme: ThemeService
+  ) {}
+
+  ngOnInit() {
+    this.isDarkMode = this.theme.isDark();
+  }
+
+  toggleDropdown() {
+    this.showLangDropdown = !this.showLangDropdown;
+  }
+
+  changeLang(lang: string) {
+    this.translate.use(lang);
+    localStorage.setItem('lang', lang);
+    document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    const bsLink = document.getElementById('bootstrap-css') as HTMLLinkElement;
+    if (bsLink) {
+      bsLink.href = lang === 'ar'
+        ? 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
+        : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+    }
+    this.showLangDropdown = false;
+  }
+
+  toggleDarkMode() {
+    this.theme.toggle();
+    this.isDarkMode = this.theme.isDark();
+    this.darkModeChange.emit(this.isDarkMode);
+  }
+
+  toggleSidebar() {
+    this.sidebarToggle.emit();
+  }
+}
