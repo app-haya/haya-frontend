@@ -1,0 +1,132 @@
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">{{ 'Wallet Transactions' | translate }}</h4>
+  <p class="text-muted mb-4">{{ 'List of All Wallet Transactions' | translate }}</p>
+
+  <!-- Filters -->
+  <div class="table-container p-4 mb-4">
+    <div class="row g-3">
+      <div class="col-md-3 position-relative">
+        <label class="form-label small fw-bold">{{ 'User' | translate }}</label>
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="userSearchTerm" 
+                 (input)="onUserSearchChange()" 
+                 [placeholder]="'Search by Name or Email' | translate">
+          <button class="btn btn-outline-secondary btn-sm" *ngIf="userSearchTerm" (click)="clearUserSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <!-- Suggestions Dropdown -->
+        <div class="suggestions-list shadow" *ngIf="showSuggestions">
+          <div class="suggestion-item p-2" *ngFor="let user of userSuggestions" (click)="selectUser(user)">
+            <div class="fw-bold small">{{ user.name }}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">ID: {{ user.id }} | {{ user.email }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small fw-bold">{{ 'Type' | translate }}</label>
+        <select class="form-select" [(ngModel)]="filters.type">
+          <option value="">{{ 'All Types' | translate }}</option>
+          <option value="deposit">{{ 'Deposit' | translate }}</option>
+          <option value="withdraw">{{ 'Withdraw' | translate }}</option>
+          <option value="transfer">{{ 'Transfer' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small fw-bold">{{ 'From Date' | translate }}</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.from_date">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small fw-bold">{{ 'To Date' | translate }}</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.to_date">
+      </div>
+      <div class="col-md-3 d-flex align-items-end gap-2">
+        <button class="btn btn-purple flex-grow-1" (click)="applyFilters()">
+          <i class="fas fa-filter me-2"></i>{{ 'Filter' | translate }}
+        </button>
+        <button class="btn btn-outline-secondary" (click)="resetFilters()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>{{ 'ID' | translate }}</th>
+          <th>{{ 'User' | translate }}</th>
+          <th>{{ 'Amount' | translate }}</th>
+          <th>{{ 'Type' | translate }}</th>
+          <th>{{ 'Description' | translate }}</th>
+          <th>{{ 'Date' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tx of transactions">
+          <td><span class="text-muted small">#{{ tx.id }}</span></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="user-avatar-sm me-2 bg-light d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px;">
+                <i class="fas fa-user text-muted small"></i>
+              </div>
+              <div>
+                <div class="fw-bold small">{{ tx.user?.name || 'User #' + tx.user_id }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">ID: {{ tx.user_id }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="fw-bold" [ngClass]="tx.type === 'deposit' ? 'text-success' : 'text-danger'">
+              {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount | number:'1.2-2' }}
+            </span>
+          </td>
+          <td>
+            <span class="badge rounded-pill" 
+                  [ngClass]="{
+                    'bg-success-subtle text-success': tx.type === 'deposit',
+                    'bg-danger-subtle text-danger': tx.type === 'withdraw',
+                    'bg-info-subtle text-info': tx.type === 'transfer'
+                  }">
+              {{ tx.type | translate }}
+            </span>
+          </td>
+          <td><span class="text-muted small">{{ tx.description || '-' }}</span></td>
+          <td><span class="small">{{ tx.created_at | date:'short' }}</span></td>
+        </tr>
+        <tr *ngIf="transactions.length === 0">
+          <td colspan="6" class="text-center text-muted py-5">
+            <i class="fas fa-receipt fs-1 mb-3 d-block opacity-25"></i>
+            {{ 'No transactions found.' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="total > 0">
+      <nav>
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="prevPage()" role="button">{{ '&laquo; Prev' | translate }}</a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+            <a class="page-link" (click)="goToPage(page)" role="button">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === lastPage">
+            <a class="page-link" (click)="nextPage()" role="button">{{ 'Next &raquo;' | translate }}</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <ng-template #loadingSpinner>
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2 text-muted">{{ 'Loading transactions...' | translate }}</p>
+    </div>
+  </ng-template>
+</div>

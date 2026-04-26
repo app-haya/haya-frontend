@@ -55,6 +55,8 @@ export class Sidebar implements OnInit {
       ],
     },
     { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/bannedwords' },
+    { name: 'Gifts', icon: 'bi bi-gift', path: '/gifts' },
+    { name: 'Wallet', icon: 'bi bi-wallet2', path: '/wallet' },
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/calendar' },
     { name: 'FAQ Page', icon: 'bi bi-question-circle', path: '/faq' },
   ];

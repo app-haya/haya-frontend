@@ -1,0 +1,227 @@
+.container-fluid {
+  min-height: 100vh;
+  padding: 25px;
+}
+
+h4.fw-bold {
+  color: #1f6eb4;
+  font-weight: 700;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.search-input {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: 0.3s;
+}
+
+.search-input:focus {
+  border-color: #7a3ca0;
+  box-shadow: 0 0 0 0.15rem rgba(122, 60, 160, 0.25);
+}
+
+.btn-purple {
+  background-color: #7a3ca0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-purple:hover {
+  background-color: #5b2e7a;
+  color: #fff;
+}
+
+.btn-outline-purple {
+  border: 1px solid #7a3ca0;
+  color: #7a3ca0;
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+.btn-outline-purple:hover {
+  background-color: #7a3ca0;
+  color: #fff;
+}
+
+.btn-outline-danger {
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  margin-top: 20px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  color: #1f6eb4;
+  font-weight: 600;
+  border: none;
+}
+
+.table td {
+  vertical-align: middle;
+  border-top: 1px solid #e9ecef;
+}
+
+.custom-switch {
+  width: 2.2em;
+  height: 1.1em;
+}
+
+.bg-success-subtle {
+  background-color: #d1e7dd;
+}
+
+.bg-danger-subtle {
+  background-color: #f8d7da;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 95%;
+  max-width: 450px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: modalIn 0.3s ease-out;
+}
+
+.modal-header {
+  padding: 15px 25px;
+  background: #7a3ca0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.image-upload-box {
+  border: 1px dashed #ced4da !important;
+  transition: 0.3s;
+}
+
+.image-upload-box:hover {
+  border-color: #7a3ca0 !important;
+}
+
+.btn-outline {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  color: #666;
+}
+
+/* Dark Mode Overrides */
+:host-context(body.dark-mode) .table-container,
+:host-context(body.dark-mode) .modal-content {
+  background: #161b22 !important;
+  color: #c9d1d9 !important;
+  border: 1px solid #30363d !important;
+}
+
+:host-context(body.dark-mode) .modal-header {
+  background: #11161d !important;
+  border-bottom: 1px solid #30363d !important;
+}
+
+:host-context(body.dark-mode) .image-upload-box {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .image-upload-box p,
+:host-context(body.dark-mode) .image-upload-box i {
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .form-label,
+:host-context(body.dark-mode) label {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .form-control,
+:host-context(body.dark-mode) .form-select,
+:host-context(body.dark-mode) select,
+:host-context(body.dark-mode) input {
+  background-color: #0d1117 !important;
+  border: 1px solid #30363d !important;
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .btn-purple {
+  background-color: #00cfd5 !important;
+  color: #0b0e14 !important;
+}
+
+:host-context(body.dark-mode) .btn-outline {
+  background-color: #21262d !important;
+  color: #c9d1d9 !important;
+  border: 1px solid #30363d !important;
+}
+
+:host-context(body.dark-mode) .bg-success-subtle {
+  background-color: rgba(35, 134, 54, 0.15) !important;
+  color: #3fb950 !important;
+}
+
+:host-context(body.dark-mode) .bg-danger-subtle {
+  background-color: rgba(248, 81, 73, 0.15) !important;
+  color: #f85149 !important;
+}
+
+:host-context(body.dark-mode) .text-purple {
+  color: #00cfd5 !important;
+}
+
+@keyframes modalIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

@@ -1,0 +1,59 @@
+.text-purple {
+  color: #6f42c1;
+}
+
+.btn-purple {
+  background-color: #6f42c1;
+  color: white;
+  border: none;
+}
+
+.btn-purple:hover {
+  background-color: #5a32a3;
+  color: white;
+}
+
+.image-upload-container {
+  border-style: dashed !important;
+  transition: all 0.3s ease;
+}
+
+.image-upload-container:hover {
+  border-color: #6f42c1 !important;
+  background-color: #f8f9fa !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+}
+
+.card {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode .text-purple {
+  color: #00cfd5 !important;
+}
+
+body.dark-mode .card-header {
+  background-color: #11161d !important;
+  border-bottom: 1px solid #30363d !important;
+}
+
+body.dark-mode .image-upload-container {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
+}
+
+body.dark-mode .image-upload-container p {
+  color: #8b949e !important;
+}
+
+body.dark-mode .btn-light {
+  background-color: #21262d !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
