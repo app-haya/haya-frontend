@@ -10,6 +10,7 @@ export class UsersService {
   private baseUrl = environment.apiUrl + '/admin/user';
   private countriesUrl = environment.apiUrl + '/countries';
   private citiesUrl = environment.apiUrl + '/cities';
+  private pointsUrl = environment.apiUrl + '/admin/points';
 
   constructor(private http: HttpClient) { }
 
@@ -81,5 +82,15 @@ export class UsersService {
   rejectCreator(id: number): Observable<any> {
     const headers = this.getHeaders();
     return this.http.post(`${this.baseUrl}/creator/${id}/reject`, {}, { headers });
+  }
+
+  getTopUsersWithNotes(page: number = 1, perPage: number = 30): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.pointsUrl}/top-with-notes?page=${page}&per_page=${perPage}`, { headers });
+  }
+
+  updateUserNote(userId: number, data: { status: string, note: string }): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.pointsUrl}/top-notes/${userId}`, data, { headers });
   }
 }

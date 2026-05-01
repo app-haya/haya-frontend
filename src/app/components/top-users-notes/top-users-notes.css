@@ -1,0 +1,41 @@
+.table-container {
+  background-color: var(--card-bg, #fff);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.subtitle-text {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.btn-purple {
+  background-color: #6f42c1;
+  color: #fff;
+  border: none;
+}
+
+.btn-purple:hover {
+  background-color: #5936a2;
+  color: #fff;
+}
+
+.btn-outline-purple {
+  color: #6f42c1;
+  border-color: #6f42c1;
+}
+
+.btn-outline-purple:hover {
+  color: #fff;
+  background-color: #6f42c1;
+}
+
+/* Modal specific fixes if needed */
+.modal {
+  z-index: 1050;
+}

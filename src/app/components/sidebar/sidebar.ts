@@ -27,6 +27,7 @@ export class Sidebar implements OnInit {
     { name: 'Dashboard', icon: 'bi bi-house-door', path: '/dashboardcount' },
     { name: 'Admins', icon: 'bi bi-person-gear', path: '/admins' },
     { name: 'Users', icon: 'bi bi-people', path: '/users' },
+    { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/top-users-notes' },
     { name: 'Merchants', icon: 'bi bi-shop', path: '/merchants' },
     { name: 'Governments', icon: 'bi bi-bank', path: '/governments' },
     {
@@ -58,7 +59,7 @@ export class Sidebar implements OnInit {
     { name: 'Gifts', icon: 'bi bi-gift', path: '/gifts' },
     { name: 'Wallet', icon: 'bi bi-wallet2', path: '/wallet' },
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/calendar' },
-    { name: 'FAQ Page', icon: 'bi bi-question-circle', path: '/faq' },
+    { name: 'SETTINGS', icon: 'bi bi-gear', path: '/policy-settings' },
   ];
 
   ngOnInit(): void {

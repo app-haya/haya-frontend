@@ -11,7 +11,6 @@ import { Cities } from './components/cities/cities';
 import { Countries } from './components/countries/countries';
 import { Deals } from './components/deals/deals';
 import { Calendar } from './components/calendar/calendar';
-import { Faq } from './components/faq/faq';
 
 import { AuthGuard } from './guards/auth.guard';
 import { AddAdmin } from './components/Admin/edit-admin/add-admin/add-admin';
@@ -33,6 +32,8 @@ import { Dashcount } from './components/dashcount/dashcount';
 import { DealDetails } from './components/deals/deal-details/deal-details';
 import { Gifts } from './components/gifts/gifts';
 import { WalletTransactions } from './components/wallet-transactions/wallet-transactions';
+import { Settings } from './components/settings/settings';
+import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -101,9 +102,10 @@ export const routes: Routes = [
       { path: 'adddeal', component: AddDeal, data: { role: 'Deals' } },
       { path: 'deal-details/:id', component: DealDetails, data: { role: 'Deals' } },
       { path: 'calendar', component: Calendar },
-      { path: 'faq', component: Faq },
       { path: 'gifts', component: Gifts, data: { role: 'Gifts' } },
       { path: 'wallet', component: WalletTransactions, data: { role: 'Wallet' } },
+      { path: 'policy-settings', component: Settings },
+      { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'Users' } },
     ],
   },
   { path: '**', redirectTo: '' },

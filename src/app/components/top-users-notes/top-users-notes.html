@@ -1,0 +1,106 @@
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">{{ 'Top Users Notes' | translate }}</h4>
+  <p class="subtitle-text mb-4">{{ 'Manage top 30 users and their notes' | translate }}</p>
+
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>{{ 'Rank' | translate }}</th>
+          <th>{{ 'Image' | translate }}</th>
+          <th>{{ 'Name' | translate }}</th>
+          <th>{{ 'Points' | translate }}</th>
+          <th>{{ 'Status' | translate }}</th>
+          <th>{{ 'Note' | translate }}</th>
+          <th>{{ 'Last Updated' | translate }}</th>
+          <th class="text-center">{{ 'Actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of users">
+          <td>{{ item.rank }}</td>
+          <td>
+            <img *ngIf="item.user?.image" [src]="item.user.image" alt="Profile Image" class="img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
+          </td>
+          <td>{{ item.user?.name }}</td>
+          <td>{{ item.total_points }}</td>
+          <td>
+            <span class="badge" [ngClass]="{'bg-warning': item.status === 'waiting' || !item.status, 'bg-success': item.status === 'completed'}">
+              {{ item.status === 'completed' ? ('Completed' | translate) : ('Waiting' | translate) }}
+            </span>
+          </td>
+          <td>{{ item.note || '-' }}</td>
+          <td>{{ item.note_updated_at ? (item.note_updated_at | date: 'short') : '-' }}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-purple" (click)="openModal(item)">
+              <i class="fas fa-edit me-1"></i> {{ 'Edit/Complete' | translate }}
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="8" class="text-center text-muted">{{ 'No users found.' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav aria-label="Page navigation" *ngIf="lastPage > 1" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" href="javascript:void(0)" (click)="prevPage()" aria-label="Previous">
+            <span aria-hidden="true">{{ '&laquo;' | translate }}</span>
+          </a>
+        </li>
+        <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="currentPage === page">
+          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === lastPage">
+          <a class="page-link" href="javascript:void(0)" (click)="nextPage()" aria-label="Next">
+            <span aria-hidden="true">{{ '&raquo;' | translate }}</span>
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <div class="text-muted small">
+          {{ 'Showing' | translate }} {{ (currentPage - 1) * perPage + 1 }} {{ 'to' | translate }} 
+          {{ Math.min(currentPage * perPage, total) }} {{ 'of' | translate }} {{ total }} {{ 'entries' | translate }}
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <ng-template #loadingSpinner>
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">{{ 'Loading...' | translate }}</p>
+    </div>
+  </ng-template>
+
+  <!-- Modal -->
+  <div class="modal fade show" tabindex="-1" *ngIf="isModalOpen" style="display: block; background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'Update Note and Status' | translate }}</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">{{ 'Status' | translate }}</label>
+            <select class="form-select" [(ngModel)]="statusSelection">
+              <option value="waiting">{{ 'Waiting' | translate }}</option>
+              <option value="completed">{{ 'Completed' | translate }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{{ 'Note' | translate }}</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="noteText" placeholder="{{ 'Write your note here...' | translate }}"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">{{ 'Cancel' | translate }}</button>
+          <button type="button" class="btn btn-purple" (click)="saveNote()">{{ 'Save' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
