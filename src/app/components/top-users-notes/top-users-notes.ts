@@ -22,10 +22,15 @@ export class TopUsersNotes implements OnInit {
   total = 0;
   perPage = 30;
 
+  // Filter State
+  months = Array.from({length: 12}, (_, i) => i + 1);
+  years = Array.from({length: 10}, (_, i) => new Date().getFullYear() - i);
+  selectedMonth = new Date().getMonth() + 1;
+  selectedYear = new Date().getFullYear();
+
   // Modal State
   selectedUser: any = null;
   noteText: string = '';
-  statusSelection: string = 'waiting';
   isModalOpen: boolean = false;
 
   constructor(
@@ -37,9 +42,14 @@ export class TopUsersNotes implements OnInit {
     this.fetchUsers();
   }
 
+  onDateChange() {
+    this.currentPage = 1;
+    this.fetchUsers(this.currentPage);
+  }
+
   fetchUsers(page: number = 1) {
     this.loading = true;
-    this.usersService.getTopUsersWithNotes(page, this.perPage).subscribe({
+    this.usersService.getTopUsersWithNotes(page, this.perPage, this.selectedMonth, this.selectedYear).subscribe({
       next: (res: any) => {
         this.users = res.data || [];
         this.currentPage = res.meta?.page || 1;
@@ -97,7 +107,6 @@ export class TopUsersNotes implements OnInit {
   openModal(item: any) {
     this.selectedUser = item;
     this.noteText = item.note || '';
-    this.statusSelection = item.status || 'waiting';
     this.isModalOpen = true;
   }
 
@@ -105,7 +114,33 @@ export class TopUsersNotes implements OnInit {
     this.isModalOpen = false;
     this.selectedUser = null;
     this.noteText = '';
-    this.statusSelection = 'waiting';
+  }
+
+  toggleStatus(item: any, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const newStatus = isChecked ? 'completed' : 'waiting';
+    const oldStatus = item.status;
+    
+    // Optimistically update
+    item.status = newStatus;
+
+    this.usersService.updateUserNote(item.user_id, { 
+      status: newStatus,
+      month: this.selectedMonth,
+      year: this.selectedYear 
+    }).subscribe({
+      next: () => {
+        this.notification.success('Status updated successfully');
+      },
+      error: (err: any) => {
+        this.notification.error('Failed to update status');
+        // Revert
+        item.status = oldStatus;
+        if (event.target) {
+          (event.target as HTMLInputElement).checked = oldStatus === 'completed';
+        }
+      }
+    });
   }
 
   saveNote() {
@@ -113,15 +148,15 @@ export class TopUsersNotes implements OnInit {
     
     const userId = this.selectedUser.user_id;
     const data = {
-      status: this.statusSelection,
-      note: this.noteText
+      note: this.noteText,
+      month: this.selectedMonth,
+      year: this.selectedYear
     };
 
     this.usersService.updateUserNote(userId, data).subscribe({
       next: (res: any) => {
-        this.notification.success('Note and status updated successfully');
+        this.notification.success('Note updated successfully');
         // Update local data
-        this.selectedUser.status = this.statusSelection;
         this.selectedUser.note = this.noteText;
         this.selectedUser.note_updated_at = new Date().toISOString();
         this.closeModal();
