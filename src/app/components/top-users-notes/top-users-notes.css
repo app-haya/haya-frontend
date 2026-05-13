@@ -39,3 +39,16 @@
 .modal {
   z-index: 1050;
 }
+
+/* Custom Toggle Switch */
+.form-switch .form-check-input.custom-status-switch {
+  background-color: #1a1a1a !important;
+  border-color: #333 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e") !important;
+}
+
+.form-switch .form-check-input.custom-status-switch:checked {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e") !important;
+}

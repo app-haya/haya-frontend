@@ -84,12 +84,15 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/creator/${id}/reject`, {}, { headers });
   }
 
-  getTopUsersWithNotes(page: number = 1, perPage: number = 30): Observable<any> {
+  getTopUsersWithNotes(page: number = 1, perPage: number = 30, month?: number, year?: number): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get(`${this.pointsUrl}/top-with-notes?page=${page}&per_page=${perPage}`, { headers });
+    let url = `${this.pointsUrl}/top-with-notes?page=${page}&per_page=${perPage}`;
+    if (month) url += `&month=${month}`;
+    if (year) url += `&year=${year}`;
+    return this.http.get(url, { headers });
   }
 
-  updateUserNote(userId: number, data: { status: string, note: string }): Observable<any> {
+  updateUserNote(userId: number, data: any): Observable<any> {
     const headers = this.getHeaders();
     return this.http.post(`${this.pointsUrl}/top-notes/${userId}`, data, { headers });
   }
