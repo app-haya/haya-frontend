@@ -1,1 +1,182 @@
-<div class="container py-4">  <h3 class="mb-4 fw-bold text-center text-pule">{{ 'Add Deal' | translate }}</h3>  <form [formGroup]="dealForm" (ngSubmit)="submit()" enctype="multipart/form-data">    <div class="row g-4">      <div class="col-md-6">        <label class="form-label">{{ 'User' | translate }}</label>        <select formControlName="user_id" class="form-select styled-input">          <option value="">{{ 'Select User' | translate }}</option>          <option *ngFor="let user of usersList" [value]="user.id">{{ user.name }}</option>        </select>      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Title' | translate }}</label>        <input formControlName="title" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Business?' | translate }}</label>        <select formControlName="is_business" class="form-select styled-input">          <option [value]="1">{{ 'Business' | translate }}</option>          <option [value]="0">{{ 'Personal' | translate }}</option>        </select>      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Account File' | translate }}</label>        <input type="file" (change)="onFileChange($event, 'account_number')" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Original Price' | translate }}</label>        <input type="number" formControlName="original_price" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Total Price' | translate }}</label>        <input type="number" formControlName="total_price" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Invoice File' | translate }}</label>        <input type="file" (change)="onFileChange($event, 'invoice')" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Country' | translate }}</label>        <select formControlName="country_id" (change)="onCountryChange($event)" class="form-select styled-input">          <option value="">{{ 'Select Country' | translate }}</option>          <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>        </select>      </div>      <div class="col-md-6">        <label class="form-label">{{ 'City' | translate }}</label>        <select formControlName="city_id" class="form-select styled-input">          <option value="">{{ 'Select City' | translate }}</option>          <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>        </select>      </div>      <div class="col-12">        <label class="form-label">{{ 'Description' | translate }}</label>        <textarea formControlName="description" class="form-control styled-input"></textarea>      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Quantity' | translate }}</label>        <input type="number" formControlName="quantity" class="form-control styled-input" />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Is New?' | translate }}</label>        <select formControlName="is_new" class="form-select styled-input">          <option [value]="1">{{ 'Yes' | translate }}</option>          <option [value]="0">{{ 'No' | translate }}</option>        </select>      </div>      <div class="col-12">        <label class="form-label">{{ 'Notes' | translate }}</label>        <textarea formControlName="notes" class="form-control styled-input"></textarea>      </div>      <div class="col-12">        <label class="form-label">{{ 'Features' | translate }}</label>        <div formArrayName="features" class="d-flex flex-column gap-2">          <div *ngFor="let feature of features.controls; let i = index" class="d-flex gap-2">            <input [formControlName]="i" [placeholder]="'Feature' | translate" class="form-control styled-input" />            <button type="button" class="btn btn-danger" (click)="removeFeature(i)" *ngIf="features.length > 1">{{ 'Remove' | translate }}</button>          </div>          <button type="button" class="btn btn-secondary mt-2 w-25" (click)="addFeature()">{{ 'Add Feature' | translate }}</button>        </div>      </div>      <div class="col-12">        <label class="form-label">{{ 'Images' | translate }}</label>        <input type="file" multiple (change)="onFileChange($event, 'images')" class="form-control styled-input" />      </div>      <div class="col-12 text-center mt-3">        <button type="submit" class="btn btn-primary px-5 py-2" [disabled]="loading">          {{ loading ? ('Adding Deal...' | translate) : ('Add Deal' | translate) }}        </button>      </div>    </div>  </form></div>
+<div class="container-fluid py-4">
+  <div class="add-deal-card">
+    <div class="card-header-gradient text-center">
+      <h3 class="mb-0 fw-bold"><i class="bi bi-plus-circle-dotted me-2"></i>{{ 'Add Deal' | translate }}</h3>
+      <p class="small opacity-75 mb-0">{{ 'Fill in the details below to create a new deal' | translate }}</p>
+    </div>
+
+    <form [formGroup]="dealForm" (ngSubmit)="submit()" enctype="multipart/form-data" class="form-group-container">
+      
+      <!-- Section 1: Basic Information -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-info-circle"></i>
+          {{ 'Basic Information' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'User' | translate }}</label>
+            <select formControlName="user_id" class="form-select styled-input">
+              <option value="">{{ 'Select User' | translate }}</option>
+              <option *ngFor="let user of usersList" [value]="user.id">{{ user.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Title' | translate }}</label>
+            <input formControlName="title" class="form-control styled-input" [placeholder]="'Enter deal title' | translate" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Type' | translate }}</label>
+            <select formControlName="is_business" class="form-select styled-input">
+              <option [value]="true">{{ 'Business' | translate }}</option>
+              <option [value]="false">{{ 'Personal' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Condition' | translate }}</label>
+            <select formControlName="is_new" class="form-select styled-input">
+              <option [value]="true">{{ 'New' | translate }}</option>
+              <option [value]="false">{{ 'Used' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'Description' | translate }}</label>
+            <textarea formControlName="description" class="form-control styled-input" [placeholder]="'Describe the deal...' | translate" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Pricing & Quantity -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-tags"></i>
+          {{ 'Pricing & Inventory' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Original Price' | translate }}</label>
+            <div class="input-group">
+              <input type="number" formControlName="original_price" class="form-control styled-input" placeholder="0.00" />
+              <span class="input-group-text bg-light border-start-0 styled-input h-auto">SAR</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Total Price' | translate }}</label>
+            <div class="input-group">
+              <input type="number" formControlName="total_price" class="form-control styled-input" placeholder="0.00" />
+              <span class="input-group-text bg-light border-start-0 styled-input h-auto">SAR</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Quantity' | translate }}</label>
+            <input type="number" formControlName="quantity" class="form-control styled-input" placeholder="1" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Location -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-geo-alt"></i>
+          {{ 'Location' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Country' | translate }}</label>
+            <select formControlName="country_id" (change)="onCountryChange($event)" class="form-select styled-input">
+              <option value="">{{ 'Select Country' | translate }}</option>
+              <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'City' | translate }}</label>
+            <select formControlName="city_id" class="form-select styled-input">
+              <option value="">{{ 'Select City' | translate }}</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Media & Files -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-cloud-upload"></i>
+          {{ 'Media & Documentation' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Account File' | translate }}</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'account_number')" class="form-control d-none" #accountInput />
+              <button type="button" class="btn btn-outline-secondary w-100 py-2 border-0" (click)="accountInput.click()">
+                <i class="bi bi-file-earmark-text me-2"></i>
+                {{ accountFile ? accountFile.name : ('Upload Account File' | translate) }}
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Invoice File' | translate }}</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'invoice')" class="form-control d-none" #invoiceInput />
+              <button type="button" class="btn btn-outline-secondary w-100 py-2 border-0" (click)="invoiceInput.click()">
+                <i class="bi bi-receipt me-2"></i>
+                {{ invoiceFile ? invoiceFile.name : ('Upload Invoice File' | translate) }}
+              </button>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'Images' | translate }}</label>
+            <div class="file-input-wrapper">
+              <input type="file" multiple (change)="onFileChange($event, 'images')" class="form-control d-none" #imagesInput />
+              <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="imagesInput.click()">
+                <i class="bi bi-images fs-4 d-block mb-1"></i>
+                {{ imagesFiles.length > 0 ? (imagesFiles.length + ' ' + ('images selected' | translate)) : ('Click to upload deal images' | translate) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Features -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-list-check"></i>
+          {{ 'Features & Notes' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-12">
+            <label class="form-label">{{ 'Features' | translate }}</label>
+            <div formArrayName="features" class="d-flex flex-column gap-3">
+              <div *ngFor="let feature of features.controls; let i = index" class="feature-item d-flex gap-2">
+                <input [formControlName]="i" [placeholder]="'Enter feature (e.g. Warranty included)' | translate" class="form-control border-0 bg-transparent shadow-none" />
+                <button type="button" class="btn btn-link text-danger p-0 px-2" (click)="removeFeature(i)" *ngIf="features.length > 1">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+              <button type="button" class="btn btn-add-feature py-2 w-auto px-4 align-self-start" (click)="addFeature()">
+                <i class="bi bi-plus-lg me-1"></i>
+                {{ 'Add Another Feature' | translate }}
+              </button>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'Administrative Notes' | translate }}</label>
+            <textarea formControlName="notes" class="form-control styled-input" [placeholder]="'Internal notes for administrators...' | translate" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center pt-4">
+        <button type="submit" class="submit-btn px-5 py-3 fs-5" [disabled]="loading || dealForm.invalid">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? ('Processing...' | translate) : ('Create New Deal' | translate) }}
+        </button>
+        <div class="mt-3" *ngIf="dealForm.invalid && dealForm.touched">
+          <small class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>{{ 'Please ensure all required fields are filled correctly' | translate }}</small>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

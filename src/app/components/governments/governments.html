@@ -1,1 +1,137 @@
-<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Governmentals' | translate }}</h4>  <p class="text-muted mb-4">{{ 'List of All Governmental Entities' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">    <input      type="text"      class="form-control search-input"      [placeholder]="'Search by name, email, or phone...' | translate"      [(ngModel)]="searchTerm"      (input)="search()"    />    <a [routerLink]="['/addgovernmental']" class="btn btn-purple mt-2 mt-md-0">      <i class="fas fa-plus me-2"></i>{{ 'Add Governmental' | translate }}    </a>  </div>  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">    <table class="table table-hover align-middle text-center">      <thead>        <tr>          <th>{{ 'Logo' | translate }}</th>          <th>{{ 'Government Name' | translate }}</th>          <th>{{ 'Owner Name' | translate }}</th>          <th>{{ 'Commercial Register' | translate }}</th>          <th>{{ 'Email' | translate }}</th>          <th>{{ 'Phone' | translate }}</th>          <th>{{ 'Sign In Type' | translate }}</th>          <th>{{ 'Activity' | translate }}</th>          <th>{{ 'Privacy' | translate }}</th>          <th>{{ 'Created At' | translate }}</th>          <th>{{ 'Updated At' | translate }}</th>          <th>{{ 'Verification' | translate }}</th>          <th class="text-center">{{ 'Actions' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let g of filteredGovernmentals">          <td>            <img              [src]="g.Store_logo || g.image || 'assets/images/user.jpg'"              alt="Logo"              class="profile-img"            />          </td>          <td>{{ g.name || '-' }}</td>          <td>{{ g.owner_name || '-' }}</td>          <td>            <img              *ngIf="g.commercial_register"              [src]="g.commercial_register"              alt="register"              class="register-img"            />            <span *ngIf="!g.commercial_register">-</span>          </td>          <td>{{ g.email || '-' }}</td>          <td>{{ g.phone || '-' }}</td>          <td>            <span class="badge bg-info text-dark">              {{ g.sign_in_type || 'normal' }}            </span>          </td>          <td>{{ g.activity || '-' }}</td>          <td>            <span              class="badge"              [ngClass]="g.is_private == '1' ? 'bg-secondary' : 'bg-light text-dark'"            >              {{ g.is_private == '1' ? ('Private' | translate) : ('Public' | translate) }}            </span>          </td>          <td>{{ g.created_at | date : 'short' }}</td>          <td>{{ g.updated_at | date : 'short' }}</td>          <td>            <span              class="badge"              [ngClass]="g.is_verified == 1 ? 'bg-success' : 'bg-warning text-dark'"            >              {{ g.is_verified == 1 ? ('Verified' | translate) : ('Pending' | translate) }}            </span>          </td>     <td class="text-center">  <div class="action-buttons">    <a       [routerLink]="['/editgovernmental', g.id]"       class="btn btn-sm btn-outline-purple"      title="Edit"    >      <i class="fas fa-edit"></i>    </a>    <button      class="btn btn-sm btn-outline-danger"      (click)="deleteGovernmental(g.id)"      title="Delete"    >      <i class="fas fa-trash"></i>    </button>  </div></td>        </tr>        <tr *ngIf="filteredGovernmentals.length === 0">          <td colspan="13" class="text-center text-muted">{{ 'No governmentals found.' | translate }}</td>        </tr>      </tbody>    </table>    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 1">      <nav>        <ul class="pagination mb-0">          <li class="page-item" [class.disabled]="currentPage === 1">            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>          </li>          <li            class="page-item"            *ngFor="let page of getPageNumbers()"            [class.active]="page === currentPage"          >            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>          </li>          <li class="page-item" [class.disabled]="currentPage === lastPage">            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>          </li>        </ul>      </nav>    </div>  </div>  <ng-template #loadingSpinner>    <div class="text-center my-5">      <div class="spinner-border text-primary"></div>      <p class="mt-2">{{ 'Loading governmentals...' | translate }}</p>    </div>  </ng-template></div>
+<div class="container-fluid p-3">
+  <h4 class="fw-bold mb-3">{{ 'Governmentals' | translate }}</h4>
+  <p class="text-muted mb-4">{{ 'List of All Governmental Entities' | translate }}</p>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <input
+      type="text"
+      class="form-control search-input"
+      [placeholder]="'Search by name, email, or phone...' | translate"
+      [(ngModel)]="searchTerm"
+      (input)="search()"
+    />
+    <a [routerLink]="['/addgovernmental']" class="btn btn-purple mt-2 mt-md-0">
+      <i class="fas fa-plus me-2"></i>{{ 'Add Governmental' | translate }}
+    </a>
+  </div>
+
+  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
+    <table class="table table-hover align-middle text-center">
+      <thead>
+        <tr>
+          <th>{{ 'Logo' | translate }}</th>
+          <th>{{ 'Government Name' | translate }}</th>
+          <th>{{ 'Owner Name' | translate }}</th>
+          <th>{{ 'Commercial Register' | translate }}</th>
+          <th>{{ 'Email' | translate }}</th>
+          <th>{{ 'Phone' | translate }}</th>
+          <th>{{ 'Sign In Type' | translate }}</th>
+          <th>{{ 'Activity' | translate }}</th>
+          <th>{{ 'Privacy' | translate }}</th>
+          <th>{{ 'Created At' | translate }}</th>
+          <th>{{ 'Updated At' | translate }}</th>
+          <th>{{ 'Verification' | translate }}</th>
+          <th class="text-center">{{ 'Actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let g of filteredGovernmentals">
+          <td>
+            <img
+              [src]="g.Store_logo || g.image || 'assets/images/user.jpg'"
+              alt="Logo"
+              class="profile-img"
+            />
+          </td>
+          <td class="truncate-text" [title]="g.name || ''">{{ g.name || '-' }}</td>
+          <td class="truncate-text" [title]="g.owner_name || ''">{{ g.owner_name || '-' }}</td>
+          <td>
+            <img
+              *ngIf="g.commercial_register"
+              [src]="g.commercial_register"
+              alt="register"
+              class="register-img"
+            />
+            <span *ngIf="!g.commercial_register">-</span>
+          </td>
+          <td class="truncate-text" [title]="g.email || ''">{{ g.email || '-' }}</td>
+          <td>{{ g.phone || '-' }}</td>
+          <td>
+            <span class="badge bg-info text-dark">
+              {{ g.sign_in_type || 'normal' }}
+            </span>
+          </td>
+          <td class="truncate-text" [title]="g.activity || ''">{{ g.activity || '-' }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="g.is_private == '1' ? 'bg-secondary' : 'bg-light text-dark'"
+            >
+              {{ g.is_private == '1' ? ('Private' | translate) : ('Public' | translate) }}
+            </span>
+          </td>
+          <td>{{ g.created_at | date : 'short' }}</td>
+          <td>{{ g.updated_at | date : 'short' }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="g.is_verified == 1 ? 'bg-success' : 'bg-warning text-dark'"
+            >
+              {{ g.is_verified == 1 ? ('Verified' | translate) : ('Pending' | translate) }}
+            </span>
+          </td>
+          <td class="text-center">
+            <div class="action-buttons">
+              <a
+                [routerLink]="['/editgovernmental', g.id]"
+                class="btn btn-sm btn-outline-purple"
+                title="Edit"
+              >
+                <i class="fas fa-edit"></i>
+              </a>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteGovernmental(g.id)"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredGovernmentals.length === 0">
+          <td colspan="13" class="text-center text-muted">
+            {{ 'No governmentals found.' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 1">
+      <nav>
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>
+          </li>
+          <li
+            class="page-item"
+            *ngFor="let page of getPageNumbers()"
+            [class.active]="page === currentPage"
+          >
+            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === lastPage">
+            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <ng-template #loadingSpinner>
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">{{ 'Loading governmentals...' | translate }}</p>
+    </div>
+  </ng-template>
+</div>

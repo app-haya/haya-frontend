@@ -1,1 +1,142 @@
-<div class="container py-4">  <h3 class="mb-4 fw-bold text-center text-pule">{{ 'Add Governmental' | translate }}</h3>  <form    [formGroup]="governmentalForm"    (ngSubmit)="onSubmit()"    enctype="multipart/form-data"  >    <div class="row g-4">      <div class="col-md-4">        <label class="form-label">{{ 'Government Name' | translate }}</label>        <input formControlName="name" class="form-control styled-input" />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Owner Name' | translate }}</label>        <input formControlName="owner_name" class="form-control styled-input" />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Email' | translate }}</label>        <input          type="email"          formControlName="email"          class="form-control styled-input"        />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Phone' | translate }}</label>        <input formControlName="phone" class="form-control styled-input" />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Activity' | translate }}</label>        <input formControlName="activity" class="form-control styled-input" />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'ID Number' | translate }}</label>        <input formControlName="id_num" class="form-control styled-input" />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Birth Date' | translate }}</label>        <input          type="date"          formControlName="birth_date"          class="form-control styled-input"        />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Expiration Date' | translate }}</label>        <input          type="date"          formControlName="expiration_date"          class="form-control styled-input"        />      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Account Type' | translate }}</label>        <select formControlName="account_type" class="form-select styled-input">          <option value="governmental">{{ 'Governmental' | translate }}</option>          <option value="merchant">{{ 'Merchant' | translate }}</option>          <option value="doctor">{{ 'Doctor' | translate }}</option>          <option value="patient">{{ 'Patient' | translate }}</option>        </select>      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Is Active' | translate }}</label>        <select formControlName="is_active" class="form-select styled-input">          <option value="1">{{ 'Active' | translate }}</option>          <option value="0">{{ 'Inactive' | translate }}</option>        </select>      </div>      <div class="col-md-4">        <label class="form-label">{{ 'Country' | translate }}</label>        <select          class="form-select styled-input"          formControlName="country_id"          (change)="onCountryChange($event)"        >          <option value="">{{ 'Select Country' | translate }}</option>          <option *ngFor="let country of countries" [value]="country.id">            {{ country.name }}          </option>        </select>      </div>      <div class="col-md-4">        <label class="form-label">{{ 'City' | translate }}</label>        <select class="form-select styled-input" formControlName="city_id">          <option value="">{{ 'Select City' | translate }}</option>          <option *ngFor="let city of cities" [value]="city.id">            {{ city.name }}          </option>        </select>      </div>      <div class="col-12">        <label class="form-label d-block mb-2">{{ 'Interests' | translate }}</label>        <div class="d-flex flex-wrap gap-3">          <div *ngFor="let interest of interestsList" class="form-check me-4">            <input              class="form-check-input"              type="checkbox"              [value]="interest.id"              (change)="onInterestChange($event)"              id="interest-{{ interest.id }}"            />            <label class="form-check-label" for="interest-{{ interest.id }}">              {{ interest.name_en }} ({{ interest.name_ar }})            </label>          </div>        </div>      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Store Logo' | translate }}</label>        <input          type="file"          (change)="onFileChange($event, 'Store_logo')"          class="form-control styled-input"        />      </div>      <div class="col-md-6">        <label class="form-label">{{ 'Commercial Register' | translate }}</label>        <input          type="file"          (change)="onFileChange($event, 'commercial_register')"          class="form-control styled-input"        />      </div>      <div class="col-12 text-center mt-3">        <button type="submit" class="btn btn-primary px-5 py-2" [disabled]="loading">          {{ loading ? ('Saving...' | translate) : ('Add Governmental' | translate) }}        </button>      </div>    </div>  </form></div>
+<div class="container-fluid py-4">
+  <div class="add-gov-card mx-auto">
+    <div class="card-header-gradient text-center">
+      <h3 class="mb-0 fw-bold"><i class="bi bi-bank2 me-2"></i>{{ 'Add Governmental Entity' | translate }}</h3>
+      <p class="small opacity-75 mb-0">{{ 'Register a new governmental partner to the platform' | translate }}</p>
+    </div>
+
+    <form [formGroup]="governmentalForm" (ngSubmit)="onSubmit()" class="form-group-container">
+      
+      <!-- Section 1: Entity Identity -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-info-circle"></i>
+          {{ 'Entity Identity' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Government Name' | translate }}</label>
+            <input formControlName="name" class="form-control styled-input" [placeholder]="'Enter entity name' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Owner Name' | translate }}</label>
+            <input formControlName="owner_name" class="form-control styled-input" [placeholder]="'Enter owner name' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Email' | translate }}</label>
+            <input type="email" formControlName="email" class="form-control styled-input" [placeholder]="'contact@gov.sa' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Phone' | translate }}</label>
+            <input formControlName="phone" class="form-control styled-input" [placeholder]="'+966...' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Account Type' | translate }}</label>
+            <select formControlName="account_type" class="form-select styled-input">
+              <option value="governmental">{{ 'Governmental' | translate }}</option>
+              <option value="merchant">{{ 'Merchant' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Status' | translate }}</label>
+            <select formControlName="is_active" class="form-select styled-input">
+              <option value="1">{{ 'Active' | translate }}</option>
+              <option value="0">{{ 'Inactive' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Location & Legal -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-geo-alt"></i>
+          {{ 'Location & Legal' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Country' | translate }}</label>
+            <select class="form-select styled-input" formControlName="country_id" (change)="onCountryChange($event)">
+              <option value="">{{ 'Select Country' | translate }}</option>
+              <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'City' | translate }}</label>
+            <select class="form-select styled-input" formControlName="city_id">
+              <option value="">{{ 'Select City' | translate }}</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Birth Date' | translate }}</label>
+            <input type="date" formControlName="birth_date" class="form-control styled-input" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Entity Activity' | translate }}</label>
+            <input formControlName="activity" class="form-control styled-input" [placeholder]="'Business Type' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'ID Number' | translate }}</label>
+            <input formControlName="id_num" class="form-control styled-input" [placeholder]="'Enter registration number' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Expiration Date' | translate }}</label>
+            <input type="date" formControlName="expiration_date" class="form-control styled-input" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Interests & Documents -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-file-earmark-text"></i>
+          {{ 'Interests & Documents' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-12">
+            <label class="form-label mb-3">{{ 'Interests' | translate }}</label>
+            <div class="d-flex flex-wrap gap-2">
+              <div class="interest-tag" *ngFor="let interest of interestsList" 
+                   [class.active]="governmentalForm.value.interests?.includes(interest.id)"
+                   (click)="toggleInterest(interest.id)">
+                <i class="bi" [class.bi-check2]="governmentalForm.value.interests?.includes(interest.id)" 
+                   [class.bi-plus]="!governmentalForm.value.interests?.includes(interest.id)"></i>
+                {{ interest.name_ar }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Entity Logo' | translate }}</label>
+            <div class="file-input-wrapper">
+              <input type="file" class="form-control d-none" #logoInput (change)="onFileChange($event, 'Store_logo')" />
+              <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="logoInput.click()">
+                <i class="bi bi-image fs-4 d-block mb-1"></i>
+                {{ logoName ? logoName : ('Click to upload logo' | translate) }}
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Commercial Register' | translate }}</label>
+            <div class="file-input-wrapper">
+              <input type="file" class="form-control d-none" #registerInput (change)="onFileChange($event, 'commercial_register')" />
+              <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="registerInput.click()">
+                <i class="bi bi-file-earmark-pdf fs-4 d-block mb-1"></i>
+                {{ registerName ? registerName : ('Click to upload register document' | translate) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center pt-4">
+        <button type="submit" class="submit-btn px-5 py-3 fs-5 w-100" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <i class="bi bi-plus-circle me-2" *ngIf="!loading"></i>
+          {{ loading ? ('Processing...' | translate) : ('Register Governmental Entity' | translate) }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

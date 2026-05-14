@@ -1,1 +1,98 @@
-<div class="container mt-5">  <div class="card shadow-sm">    <div class="card-body">      <h4 class="title mb-4 text-center">{{ 'Add New Admin' | translate }}</h4>      <form (ngSubmit)="addAdmin()" class="row g-3">        <div class="col-md-6">          <label class="form-label">{{ 'Name' | translate }}</label>          <input            type="text"            class="form-control"            [(ngModel)]="admin.name"            name="name"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Email' | translate }}</label>          <input            type="email"            class="form-control"            [(ngModel)]="admin.email"            name="email"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Password' | translate }}</label>          <input            type="password"            class="form-control"            [(ngModel)]="admin.password"            name="password"            required          />        </div>        <div class="col-md-6">          <label class="form-label">{{ 'Phone' | translate }}</label>          <input            type="text"            class="form-control"            [(ngModel)]="admin.phone"            name="phone"          />        </div>        <div class="col-md-6 mt-3">          <label class="form-label">{{ 'Super Admin' | translate }}</label>          <div class="form-check">            <input              class="form-check-input"              type="checkbox"              [(ngModel)]="admin.is_super_admin"              name="is_super_admin"              (ngModelChange)="toggleSuperAdmin($event)"            />            <label class="form-check-label">{{ 'Is Super Admin?' | translate }}</label>          </div>        </div>        <div class="col-md-6 mt-3" *ngIf="!admin.is_super_admin">          <label class="form-label">{{ 'Roles' | translate }}</label>          <div *ngFor="let role of roles" class="form-check">            <input              class="form-check-input"              type="checkbox"              (change)="toggleRole(role.id, $event.target.checked)"              [checked]="admin.roles.includes(role.id)"            />            <label class="form-check-label">              {{ role.name }}            </label>          </div>        </div>        <div class="col-md-6 mt-3">          <label class="form-label">{{ 'Profile Image' | translate }}</label>          <input            type="file"            class="form-control"            (change)="onFileChange($event)"          />        </div>        <div class="col-12 text-center mt-4">          <button type="submit" class="btn btn-purple">            <i class="fas fa-user-plus me-2"></i>{{ 'Add Admin' | translate }}          </button>        </div>      </form>    </div>  </div></div>
+<div class="container-fluid py-4">
+  <div class="add-admin-card mx-auto">
+    <div class="card-header-gradient text-center">
+      <h3 class="mb-0 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>{{ 'Add New Admin' | translate }}</h3>
+      <p class="small opacity-75 mb-0">{{ 'Grant administrative access to a new user' | translate }}</p>
+    </div>
+
+    <form (ngSubmit)="addAdmin()" class="form-group-container">
+      
+      <!-- Section 1: Admin Identity -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-person-badge"></i>
+          {{ 'Identity' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Name' | translate }}</label>
+            <input type="text" class="form-control styled-input" [(ngModel)]="admin.name" name="name" [placeholder]="'Enter full name' | translate" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Email' | translate }}</label>
+            <input type="email" class="form-control styled-input" [(ngModel)]="admin.email" name="email" [placeholder]="'admin@haya.com' | translate" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Password' | translate }}</label>
+            <input type="password" class="form-control styled-input" [(ngModel)]="admin.password" name="password" [placeholder]="'Set secure password' | translate" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'Phone' | translate }}</label>
+            <input type="text" class="form-control styled-input" [(ngModel)]="admin.phone" name="phone" [placeholder]="'+966...' | translate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Permissions & Roles -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-key"></i>
+          {{ 'Permissions & Roles' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="role-tag" [class.active]="admin.is_super_admin" (click)="admin.is_super_admin = !admin.is_super_admin; toggleSuperAdmin(admin.is_super_admin)">
+              <i class="bi" [class.bi-shield-check]="admin.is_super_admin" [class.bi-shield]="!admin.is_super_admin"></i>
+              {{ 'Super Admin' | translate }}
+            </div>
+            <p class="small text-muted mt-2 ps-2" *ngIf="admin.is_super_admin">
+              <i class="bi bi-info-circle me-1"></i>
+              {{ 'Super admins have full access to all system modules' | translate }}
+            </p>
+          </div>
+
+          <div class="col-12" *ngIf="!admin.is_super_admin">
+            <label class="form-label mb-3">{{ 'Specific Module Access' | translate }}</label>
+            <div class="role-checkbox-group">
+              <div class="role-tag" *ngFor="let role of roles" 
+                   [class.active]="admin.roles.includes(role.id)"
+                   (click)="toggleRoleTag(role.id)">
+                <i class="bi" [class.bi-check-circle-fill]="admin.roles.includes(role.id)" 
+                   [class.bi-circle]="!admin.roles.includes(role.id)"></i>
+                {{ role.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Profile Image -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-camera"></i>
+          {{ 'Profile Image' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="file-input-wrapper">
+              <input type="file" class="form-control d-none" #fileInput (change)="onFileChange($event)" />
+              <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="fileInput.click()">
+                <i class="bi bi-image fs-4 d-block mb-1"></i>
+                {{ adminImageName ? adminImageName : ('Click to upload admin profile image' | translate) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center pt-4">
+        <button type="submit" class="submit-btn px-5 py-3 fs-5 w-100" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <i class="bi bi-person-plus-fill me-2" *ngIf="!loading"></i>
+          {{ loading ? ('Processing...' | translate) : ('Create Admin Account' | translate) }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
