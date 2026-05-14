@@ -30,7 +30,7 @@ import { PendingCreators } from './components/pending-creators/pending-creators'
 import { Roles } from './components/roles/roles';
 import { Dashcount } from './components/dashcount/dashcount';
 import { DealDetails } from './components/deals/deal-details/deal-details';
-import { Gifts } from './components/gifts/gifts';
+
 import { WalletTransactions } from './components/wallet-transactions/wallet-transactions';
 import { Settings } from './components/settings/settings';
 import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
@@ -102,7 +102,7 @@ export const routes: Routes = [
       { path: 'adddeal', component: AddDeal, data: { role: 'Deals' } },
       { path: 'deal-details/:id', component: DealDetails, data: { role: 'Deals' } },
       { path: 'calendar', component: Calendar },
-      { path: 'gifts', component: Gifts, data: { role: 'Gifts' } },
+
       { path: 'wallet', component: WalletTransactions, data: { role: 'Wallet' } },
       { path: 'policy-settings', component: Settings },
       { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'Users' } },
