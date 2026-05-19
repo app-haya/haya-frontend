@@ -370,5 +370,9 @@
     "Update Note and Status": "تحديث الملاحظة والحالة",
     "Write your note here...": "اكتب ملاحظتك هنا...",
     "Gifts": "الهدايا",
-    "Wallet": "المحفظة"
+    "Wallet": "المحفظة",
+    "Reject Request": "رفض الطلب",
+    "Rejection Reason (Optional)": "سبب الرفض (اختياري)",
+    "Write the rejection reason here...": "اكتب سبب الرفض هنا...",
+    "Reject": "رفض"
 }

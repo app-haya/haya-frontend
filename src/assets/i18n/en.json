@@ -370,5 +370,9 @@
     "Update Note and Status": "Update Note and Status",
     "Write your note here...": "Write your note here...",
     "Gifts": "Gifts",
-    "Wallet": "Wallet"
+    "Wallet": "Wallet",
+    "Reject Request": "Reject Request",
+    "Rejection Reason (Optional)": "Rejection Reason (Optional)",
+    "Write the rejection reason here...": "Write the rejection reason here...",
+    "Reject": "Reject"
 }

@@ -373,3 +373,127 @@ body.dark-mode .riyal-icon {
   margin-left: 0.25rem;
   margin-right: 0;
 }
+
+/* Custom Modal Styles */
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.custom-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.custom-modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  width: 95%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal-body {
+  padding: 20px;
+}
+
+.custom-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-danger-muted {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-danger-muted:hover {
+  background-color: #bd2130;
+}
+
+/* Dark Mode Modal Styles */
+body.dark-mode .custom-modal-content {
+  background-color: #161b22 !important;
+  border: 1px solid #30363d !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .custom-modal-header,
+body.dark-mode .custom-modal-footer {
+  border-color: #30363d !important;
+  background-color: #11161d !important;
+}
+
+body.dark-mode .btn-danger-muted {
+  background-color: rgba(198, 40, 40, 0.85) !important;
+  border: 1px solid rgba(198, 40, 40, 0.4) !important;
+  color: #ffcccc !important;
+}
+
+body.dark-mode .btn-danger-muted:hover {
+  background-color: rgba(198, 40, 40, 1) !important;
+}
+
+/* Muted Green and Red Row Buttons for Dark Mode */
+body.dark-mode .icon-btn.approve {
+  background-color: rgba(46, 125, 50, 0.2) !important;
+  border: 1px solid rgba(46, 125, 50, 0.4) !important;
+  color: #81c784 !important;
+}
+body.dark-mode .icon-btn.approve:hover {
+  background-color: rgba(46, 125, 50, 0.35) !important;
+}
+
+body.dark-mode .icon-btn.reject {
+  background-color: rgba(198, 40, 40, 0.2) !important;
+  border: 1px solid rgba(198, 40, 40, 0.4) !important;
+  color: #e57373 !important;
+}
+body.dark-mode .icon-btn.reject:hover {
+  background-color: rgba(198, 40, 40, 0.35) !important;
+}

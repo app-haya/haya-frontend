@@ -64,9 +64,9 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/${id}/approve`, {}, { headers });
   }
 
-  rejectUser(id: number): Observable<any> {
+  rejectUser(id: number, reason?: string): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.post(`${this.baseUrl}/${id}/reject`, {}, { headers });
+    return this.http.post(`${this.baseUrl}/${id}/reject`, { reason }, { headers });
   }
 
   getPendingCreators(page: number = 1): Observable<any> {
@@ -79,9 +79,9 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/creator/${id}/approve`, {}, { headers });
   }
 
-  rejectCreator(id: number): Observable<any> {
+  rejectCreator(id: number, reason?: string): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.post(`${this.baseUrl}/creator/${id}/reject`, {}, { headers });
+    return this.http.post(`${this.baseUrl}/creator/${id}/reject`, { reason }, { headers });
   }
 
   getTopUsersWithNotes(page: number = 1, perPage: number = 30, month?: number, year?: number): Observable<any> {
