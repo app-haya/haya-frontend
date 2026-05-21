@@ -374,5 +374,8 @@
     "Reject Request": "Reject Request",
     "Rejection Reason (Optional)": "Rejection Reason (Optional)",
     "Write the rejection reason here...": "Write the rejection reason here...",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Gift Type": "Gift Type",
+    "Update Gift Type": "Update Gift Type",
+    "Enter gift type here...": "Enter gift type here..."
 }

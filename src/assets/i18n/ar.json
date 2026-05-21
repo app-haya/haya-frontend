@@ -374,5 +374,8 @@
     "Reject Request": "رفض الطلب",
     "Rejection Reason (Optional)": "سبب الرفض (اختياري)",
     "Write the rejection reason here...": "اكتب سبب الرفض هنا...",
-    "Reject": "رفض"
+    "Reject": "رفض",
+    "Gift Type": "نوع الهدية",
+    "Update Gift Type": "تعديل نوع الهدية",
+    "Enter gift type here...": "أدخل نوع الهدية هنا..."
 }

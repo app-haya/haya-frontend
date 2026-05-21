@@ -27,10 +27,11 @@
           <th>{{ 'Rank' | translate }}</th>
           <th>{{ 'Image' | translate }}</th>
           <th>{{ 'Name' | translate }}</th>
+          <th>{{ 'Phone' | translate }}</th>
           <th>{{ 'Points' | translate }}</th>
-          <th>{{ 'Note' | translate }}</th>
           <th>{{ 'Last Updated' | translate }}</th>
           <th>{{ 'Status' | translate }}</th>
+          <th>{{ 'Gift Type' | translate }}</th>
           <th class="text-center">{{ 'Actions' | translate }}</th>
         </tr>
       </thead>
@@ -41,8 +42,8 @@
             <img *ngIf="item.user?.image" [src]="item.user.image" alt="Profile Image" class="img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
           </td>
           <td>{{ item.user?.name }}</td>
+          <td>{{ item.user?.phone || '-' }}</td>
           <td>{{ item.total_points }}</td>
-          <td>{{ item.note || '-' }}</td>
           <td>{{ item.note_updated_at ? (item.note_updated_at | date: 'short') : '-' }}</td>
           <td>
             <div class="d-flex align-items-center gap-2">
@@ -56,14 +57,15 @@
               </div>
             </div>
           </td>
+          <td>{{ item.note || '-' }}</td>
           <td class="text-center">
             <button class="btn btn-sm btn-outline-purple" (click)="openModal(item)">
-              <i class="fas fa-edit me-1"></i> {{ 'ملاحظة' | translate }}
+              <i class="fas fa-edit me-1"></i> {{ 'Gift Type' | translate }}
             </button>
           </td>
         </tr>
         <tr *ngIf="users.length === 0">
-          <td colspan="8" class="text-center text-muted">{{ 'No users found.' | translate }}</td>
+          <td colspan="9" class="text-center text-muted">{{ 'No users found.' | translate }}</td>
         </tr>
       </tbody>
     </table>
@@ -105,13 +107,13 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ 'Update Note and Status' | translate }}</h5>
+          <h5 class="modal-title">{{ 'Update Gift Type' | translate }}</h5>
           <button type="button" class="btn-close" (click)="closeModal()"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">{{ 'Note' | translate }}</label>
-            <textarea class="form-control" rows="4" [(ngModel)]="noteText" placeholder="{{ 'Write your note here...' | translate }}"></textarea>
+            <label class="form-label">{{ 'Gift Type' | translate }}</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="noteText" placeholder="{{ 'Enter gift type here...' | translate }}"></textarea>
           </div>
         </div>
         <div class="modal-footer">
