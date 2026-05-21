@@ -1,9 +1,10 @@
-import { TranslateModule } from '@ngx-translate/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DealService } from '../../services/deal.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DealService } from '../../services/deal.service';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
@@ -16,44 +17,93 @@ import { NotificationService } from '../../services/notification.service';
 export class Deals implements OnInit {
   deals: any[] = [];
   filteredDeals: any[] = [];
-  loading: boolean = false;
-  searchTerm: string = '';
-  currentPage: number = 1;
-  lastPage: number = 1;
-  rejectReason: string = '';
+  loading = false;
+  searchTerm = '';
+  currentPage = 1;
+  lastPage = 1;
+  total = 0;
+  perPage = 20;
+
+  activeTab: 'pending' | 'approved' | 'rejected' = 'pending';
+
+  // Reject modal
+  showRejectModal = false;
+  rejectReason = '';
   selectedDealId: number | null = null;
+  rejectLoading = false;
+
+  // Image preview modal
+  showImageModal = false;
+  previewImageUrl = '';
+  previewSafeUrl: SafeResourceUrl | null = null;
+  isPreviewPdf = false;
+  previewModalTitle = '';
+
+  // Actions loading states
+  approvingId: number | null = null;
+  rejectingId: number | null = null;
 
   constructor(
     private dealService: DealService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
     this.loadDeals();
   }
 
-  loadDeals(page: number = 1) {
+  loadDeals(page: number = 1): void {
     this.loading = true;
-    this.dealService.getAllPendingDeals(page).subscribe({
+    this.deals = [];
+    this.filteredDeals = [];
+
+    let apiObservable$;
+    if (this.activeTab === 'pending') {
+      apiObservable$ = this.dealService.getAllPendingDeals(page);
+    } else if (this.activeTab === 'approved') {
+      apiObservable$ = this.dealService.getAllApprovedDeals(page);
+    } else {
+      apiObservable$ = this.dealService.getAllRejectedDeals(page);
+    }
+
+    apiObservable$.subscribe({
       next: (res: any) => {
         if (res.data?.data) {
           this.deals = res.data.data;
           this.currentPage = res.data.current_page;
           this.lastPage = res.data.last_page;
+          this.total = res.data.total;
         } else {
           this.deals = res.data ?? [];
           this.currentPage = 1;
           this.lastPage = 1;
+          this.total = this.deals.length;
         }
-        this.filteredDeals = [...this.deals];
+        this.search();
         this.loading = false;
       },
-      error: () => (this.loading = false)
+      error: () => {
+        this.loading = false;
+        this.notification.error('Failed to load deals');
+      }
     });
   }
 
-  search() {
+  switchTab(tab: 'pending' | 'approved' | 'rejected'): void {
+    if (this.activeTab === tab) return;
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.searchTerm = '';
+    this.loadDeals(1);
+  }
+
+  search(): void {
     const term = this.searchTerm.toLowerCase();
+    if (!term) {
+      this.filteredDeals = [...this.deals];
+      return;
+    }
     this.filteredDeals = this.deals.filter(
       d =>
         d.title?.toLowerCase().includes(term) ||
@@ -61,76 +111,137 @@ export class Deals implements OnInit {
     );
   }
 
-  approve(id: number) {
-    // التحديث الفوري (Optimistic Update)
-    this.deals = this.deals.filter(d => d.id !== id);
-    this.filteredDeals = [...this.deals];
-
+  approve(id: number): void {
+    this.approvingId = id;
     this.dealService.approveDeal(id).subscribe({
-      next: (res: any) => {
+      next: () => {
+        this.approvingId = null;
         this.notification.success('تم قبول الصفقة بنجاح');
         this.loadDeals(this.currentPage);
       },
       error: (err: any) => {
-        this.notification.error('حدث خطأ أثناء القبول');
-        this.loadDeals(this.currentPage);
+        this.approvingId = null;
+        const msg = err?.error?.message || 'حدث خطأ أثناء القبول';
+        this.notification.error(msg);
       }
     });
   }
 
-  openRejectModal(id: number) {
+  openRejectModal(id: number): void {
     this.selectedDealId = id;
     this.rejectReason = '';
-    const modalElement = document.getElementById('rejectModal');
-    if (modalElement) {
-      const modal = new (window as any).bootstrap.Modal(modalElement);
-      modal.show();
-    }
+    this.showRejectModal = true;
   }
 
-  confirmReject() {
+  closeRejectModal(): void {
+    this.showRejectModal = false;
+    this.selectedDealId = null;
+    this.rejectLoading = false;
+  }
+
+  confirmReject(): void {
+    if (this.selectedDealId === null) return;
     if (!this.rejectReason.trim()) {
       this.notification.error('برجاء كتابة سبب الرفض');
       return;
     }
-    const id = this.selectedDealId!;
-    
-    // التحديث الفوري (Optimistic Update)
-    this.deals = this.deals.filter(d => d.id !== id);
-    this.filteredDeals = [...this.deals];
 
-    this.dealService.rejectDeal(id, this.rejectReason).subscribe({
-      next: (res: any) => {
+    this.rejectLoading = true;
+    this.dealService.rejectDeal(this.selectedDealId, this.rejectReason).subscribe({
+      next: () => {
+        this.rejectLoading = false;
         this.notification.success('تم رفض الصفقة بنجاح');
-        const modalElement = document.getElementById('rejectModal');
-        if (modalElement) {
-          const modal = (window as any).bootstrap.Modal.getInstance(modalElement);
-          if (modal) modal.hide();
-        }
+        this.closeRejectModal();
         this.loadDeals(this.currentPage);
       },
       error: (err: any) => {
-        this.notification.error('حدث خطأ أثناء الرفض');
-        this.loadDeals(this.currentPage);
+        this.rejectLoading = false;
+        const msg = err?.error?.message || 'حدث خطأ أثناء الرفض';
+        this.notification.error(msg);
       }
     });
   }
 
+  openImageModal(url: string, title: string, event: Event): void {
+    event.preventDefault();
+    const formattedUrl = this.formatImageUrl(url);
+    this.previewImageUrl = formattedUrl;
+    
+    // Check if PDF
+    this.isPreviewPdf = formattedUrl.toLowerCase().endsWith('.pdf');
+    if (this.isPreviewPdf) {
+      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
+    } else {
+      this.previewSafeUrl = null;
+    }
+    
+    this.previewModalTitle = title;
+    this.showImageModal = true;
+  }
+
+  closeImageModal(): void {
+    this.showImageModal = false;
+    this.previewImageUrl = '';
+    this.previewSafeUrl = null;
+    this.isPreviewPdf = false;
+    this.previewModalTitle = '';
+  }
+
+  formatImageUrl(url: string): string {
+    if (!url) return '';
+    
+    // Check if it's already an absolute URL
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (url.includes('/api/uploads/')) {
+        return url.replace('/api/uploads/', '/uploads/');
+      }
+      if (url.includes('/api/storage/')) {
+        return url.replace('/api/storage/', '/storage/');
+      }
+      return url;
+    }
+    
+    let cleanPath = url.trim();
+    if (cleanPath.startsWith('/')) {
+      cleanPath = cleanPath.substring(1);
+    }
+    
+    // If the path already has "storage/"
+    if (cleanPath.startsWith('storage/')) {
+      return `https://hayaapp.online/${cleanPath}`;
+    }
+    // If it starts with "uploads/" or "deals_files/"
+    if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('deals_files/')) {
+      return `https://hayaapp.online/storage/${cleanPath}`;
+    }
+    
+    // Fallback: assume it is under storage/
+    return `https://hayaapp.online/storage/${cleanPath}`;
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.loadDeals(this.currentPage - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.lastPage) {
+      this.loadDeals(this.currentPage + 1);
+    }
+  }
+
   getPageNumbers(): number[] {
     const pages: number[] = [];
-    for (let i = 1; i <= this.lastPage; i++) pages.push(i);
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(this.lastPage, this.currentPage + 2);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
     return pages;
   }
 
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.lastPage) this.loadDeals(page);
-  }
-
-  prevPage() {
-    if (this.currentPage > 1) this.loadDeals(this.currentPage - 1);
-  }
-
-  nextPage() {
-    if (this.currentPage < this.lastPage) this.loadDeals(this.currentPage + 1);
+  getActivityLabel(isActive: any): string {
+    return isActive ? 'نشط' : 'غير نشط';
   }
 }

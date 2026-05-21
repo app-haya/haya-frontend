@@ -1,131 +1,318 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">{{ 'Pending Deals' | translate }}</h4>
-  <p class="text-muted mb-4">{{ 'List of Pending Deals' | translate }}</p>
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input type="text" class="form-control search-input"
-      [placeholder]="'Search by title, account number...' | translate" [(ngModel)]="searchTerm" (input)="search()" />
-    <a [routerLink]="['/adddeal']" class="btn btn-purple mt-2 mt-md-0">
-      <i class="bi bi-plus-circle me-2"></i>{{ 'Add Deal' | translate }}
-    </a>
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-bag-check"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Deals' | translate }}</h4>
+        <p class="page-subtitle">مراجعة وإدارة جميع الصفقات</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="total-badge" *ngIf="!loading">
+        <span>{{ total }} صفقة</span>
+      </div>
+      <a [routerLink]="['/adddeal']" class="btn-add-deal">
+        <i class="bi bi-plus-circle"></i>
+        {{ 'Add Deal' | translate }}
+      </a>
+    </div>
   </div>
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle text-center">
-      <thead>
-        <tr>
-          <th>{{ 'Name' | translate }}</th>
-          <th>{{ 'Account Number' | translate }}</th>
-          <th>{{ 'Seller Type' | translate }}</th>
-          <th>{{ 'Original Price' | translate }}</th>
-          <th>{{ 'Total Price' | translate }}</th>
-          <th>{{ 'Invoice' | translate }}</th>
-          <th>{{ 'Tax Value' | translate }}</th>
-          <th>{{ 'Country ID' | translate }}</th>
-          <th>{{ 'City ID' | translate }}</th>
-          <th>{{ 'Activity' | translate }}</th>
-          <th>{{ 'Is New' | translate }}</th>
-          <th>{{ 'Quantity' | translate }}</th>
-          <th>{{ 'Status' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let deal of filteredDeals">
-          <td>{{ deal.title || "-" }}</td>
-          <td>
-            <a *ngIf="deal.account_number" [href]="deal.account_number" target="_blank">{{ 'View' | translate }}</a>
-            <span *ngIf="!deal.account_number">-</span>
-          </td>
-          <td>{{ deal.seller_type || "-" }}</td>
-          <td>{{ deal.original_price | currency }}</td>
-          <td>{{ deal.total_price | currency }}</td>
-          <td>
-            <a *ngIf="deal.invoice" [href]="deal.invoice" target="_blank">{{ 'View' | translate }}</a>
-            <span *ngIf="!deal.invoice">-</span>
-          </td>
-          <td>{{ deal.tax_value }}</td>
-          <td>{{ deal.country_id }}</td>
-          <td>{{ deal.city_id }}</td>
-          <td>
-            <span class="badge" [ngClass]="deal.is_active ? 'bg-success' : 'bg-danger'">
-              {{ deal.is_active ? ('Active' | translate) : ('Inactive' | translate) }}
-            </span>
-          </td>
-          <td>{{ deal.is_new === 1 ? ('Yes' | translate) : ('No' | translate) }}</td>
-          <td>{{ deal.quantity }}</td>
-          <td>
-            <span class="badge" [ngClass]="
-                deal.status === 'pending'
-                  ? 'bg-warning text-dark'
-                  : deal.status === 'approved'
-                  ? 'bg-success'
-                  : 'bg-danger'
-              ">
-              {{ deal.status | titlecase }}
-            </span>
-          </td>
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-2">
-              <button class="btn-action approve" (click)="approve(deal.id)" [disabled]="deal.status !== 'pending'"
-                [title]="'Approve' | translate">
-                <i class="bi bi-check-lg"></i>
-              </button>
-              <a class="btn-action view" [routerLink]="['/deal-details', deal.id]" [state]="{ deal: deal }"
-                [title]="'View Details' | translate">
-                <i class="bi bi-eye"></i>
+
+  <!-- Search & Tabs Control Row -->
+  <div class="controls-row">
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'pending'"
+        (click)="switchTab('pending')"
+      >
+        <i class="bi bi-hourglass-split"></i>
+        قيد المراجعة
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'approved'"
+        (click)="switchTab('approved')"
+      >
+        <i class="bi bi-check-circle"></i>
+        مقبولة
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'rejected'"
+        (click)="switchTab('rejected')"
+      >
+        <i class="bi bi-x-circle"></i>
+        مرفوضة
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-wrap">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        type="text"
+        class="form-control search-input"
+        [placeholder]="'Search by title, account number...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="search()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>جاري تحميل الصفقات...</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>الصفقة</th>
+            <th>رقم الحساب</th>
+            <th>نوع البائع</th>
+            <th>السعر الأصلي (ر.س)</th>
+            <th>السعر الإجمالي (ر.س)</th>
+            <th>الفاتورة</th>
+            <th>الضريبة</th>
+            <th>الدولة</th>
+            <th>المدينة</th>
+            <th>النشاط</th>
+            <th>جديد</th>
+            <th>الكمية</th>
+            <th>الحالة</th>
+            <th class="text-center">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let deal of filteredDeals" class="table-row">
+            
+            <!-- Deal Title -->
+            <td>
+              <div class="title-cell">
+                <span class="deal-title-text" [title]="deal.title || ''">{{ deal.title || '—' }}</span>
+                <span class="deal-id-tag">#{{ deal.id }}</span>
+              </div>
+            </td>
+
+            <!-- Account Number -->
+            <td>
+              <a *ngIf="deal.account_number" [href]="formatImageUrl(deal.account_number)" target="_blank" class="view-link-btn" (click)="openImageModal(deal.account_number, 'إثبات الحساب', $event)">
+                <i class="bi bi-link-45deg"></i> عرض
               </a>
-              <button class="btn-action reject" (click)="openRejectModal(deal.id)"
-                [disabled]="deal.status !== 'pending'" [title]="'Reject' | translate">
-                <i class="bi bi-x-lg"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="filteredDeals.length === 0">
-          <td colspan="14" class="text-center text-muted">{{ 'No deals found.' | translate }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
-      <nav>
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>
-          </li>
-          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
-            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === lastPage">
-            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>
-          </li>
-        </ul>
-      </nav>
+              <span *ngIf="!deal.account_number" class="text-muted">—</span>
+            </td>
+
+            <!-- Seller Type -->
+            <td>
+              <span class="seller-type-badge">{{ deal.seller_type || '—' }}</span>
+            </td>
+
+            <!-- Original Price -->
+            <td>
+              <div class="amount-cell">
+                <span class="amount-value">{{ deal.original_price | number:'1.0-2' }}</span>
+              </div>
+            </td>
+
+            <!-- Total Price -->
+            <td>
+              <div class="amount-cell">
+                <span class="amount-value">{{ deal.total_price | number:'1.0-2' }}</span>
+              </div>
+            </td>
+
+            <!-- Invoice -->
+            <td>
+              <a *ngIf="deal.invoice" [href]="formatImageUrl(deal.invoice)" target="_blank" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'مستند الفاتورة', $event)">
+                <i class="bi bi-file-earmark-pdf"></i> عرض
+              </a>
+              <span *ngIf="!deal.invoice" class="text-muted">—</span>
+            </td>
+
+            <!-- Tax Value -->
+            <td>
+              <span class="tax-value">{{ deal.tax_value !== null ? deal.tax_value + '%' : '—' }}</span>
+            </td>
+
+            <!-- Country ID -->
+            <td>
+              <span class="geo-id">{{ deal.country_id || '—' }}</span>
+            </td>
+
+            <!-- City ID -->
+            <td>
+              <span class="geo-id">{{ deal.city_id || '—' }}</span>
+            </td>
+
+            <!-- Activity -->
+            <td>
+              <span class="status-badge" [ngClass]="deal.is_active ? 'badge-approved' : 'badge-rejected'">
+                {{ getActivityLabel(deal.is_active) }}
+              </span>
+            </td>
+
+            <!-- Is New -->
+            <td>
+              <span class="new-badge" [ngClass]="deal.is_new === 1 ? 'yes' : 'no'">
+                {{ deal.is_new === 1 ? 'نعم' : 'لا' }}
+              </span>
+            </td>
+
+            <!-- Quantity -->
+            <td>
+              <span class="qty-badge">{{ deal.quantity }}</span>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="status-badge" [ngClass]="
+                deal.status === 'pending'
+                  ? 'badge-pending'
+                  : deal.status === 'approved'
+                  ? 'badge-approved'
+                  : 'badge-rejected'
+              ">
+                {{ deal.status === 'pending' ? 'قيد الانتظار' : deal.status === 'approved' ? 'مقبول' : 'مرفوض' }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="action-group">
+                <!-- Approve Button (visible in Pending or Rejected states) -->
+                <button
+                  *ngIf="deal.status === 'pending' || deal.status === 'rejected'"
+                  class="btn-action approve"
+                  (click)="approve(deal.id)"
+                  [disabled]="approvingId === deal.id"
+                  title="قبول الصفقة"
+                >
+                  <span *ngIf="approvingId !== deal.id"><i class="bi bi-check-lg"></i></span>
+                  <span *ngIf="approvingId === deal.id" class="btn-spinner"></span>
+                </button>
+
+                <!-- View Details -->
+                <a
+                  class="btn-action view"
+                  [routerLink]="['/deal-details', deal.id]"
+                  [state]="{ deal: deal }"
+                  title="تفاصيل الصفقة"
+                >
+                  <i class="bi bi-eye"></i>
+                </a>
+
+                <!-- Reject Button (visible in Pending or Approved states) -->
+                <button
+                  *ngIf="deal.status === 'pending' || deal.status === 'approved'"
+                  class="btn-action reject"
+                  (click)="openRejectModal(deal.id)"
+                  title="رفض الصفقة"
+                >
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="filteredDeals.length === 0">
+            <td colspan="14" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>لا توجد صفقات مطابقة</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let p of getPageNumbers()"
+        [class.active]="p === currentPage"
+        (click)="loadDeals(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
     </div>
   </div>
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">{{ 'Loading deals...' | translate }}</p>
-    </div>
-  </ng-template>
+
 </div>
 
-<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ 'Reject Deal' | translate }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- ===================== REJECT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="closeRejectModal()">
+  <div class="modal-box reject-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-x-circle-fill text-danger"></i>
+        <h5>رفض الصفقة</h5>
       </div>
-      <div class="modal-body">
-        <label class="form-label fw-bold">{{ 'Reason for rejection:' | translate }}</label>
-        <textarea class="form-control" rows="4" [(ngModel)]="rejectReason"
-          [placeholder]="'Write the rejection reason...' | translate"></textarea>
+      <button class="modal-close" (click)="closeRejectModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+      <div class="form-group">
+        <label class="form-lbl">سبب الرفض <span class="required">*</span></label>
+        <textarea
+          class="form-textarea"
+          rows="4"
+          [(ngModel)]="rejectReason"
+          placeholder="اكتب سبب الرفض هنا..."
+        ></textarea>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel' | translate }}</button>
-        <button class="btn btn-danger" (click)="confirmReject()">{{ 'Submit' | translate }}
-        </button>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeRejectModal()">إلغاء</button>
+      <button class="btn-reject-confirm" (click)="confirmReject()" [disabled]="rejectLoading || !rejectReason.trim()">
+        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> تأكيد الرفض</span>
+        <span *ngIf="rejectLoading" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== IMAGE PREVIEW MODAL ===================== -->
+<div class="modal-overlay image-preview-overlay" *ngIf="showImageModal" (click)="closeImageModal()">
+  <div class="modal-box image-preview-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-image text-purple"></i>
+        <h5>{{ previewModalTitle }}</h5>
       </div>
+      <button class="modal-close" (click)="closeImageModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom image-preview-body">
+      <div class="preview-img-container" [class.pdf-container]="isPreviewPdf">
+        <iframe *ngIf="isPreviewPdf" [src]="previewSafeUrl" class="preview-pdf-frame"></iframe>
+        <img *ngIf="!isPreviewPdf" [src]="previewImageUrl" alt="Document Preview" class="preview-img">
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <a [href]="previewImageUrl" target="_blank" class="btn-open-full">
+        <i class="bi bi-box-arrow-up-right"></i> فتح في علامة تبويب جديدة
+      </a>
+      <button class="btn-cancel" (click)="closeImageModal()">إغلاق</button>
     </div>
   </div>
 </div>

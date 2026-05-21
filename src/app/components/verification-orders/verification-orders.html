@@ -1,0 +1,368 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-shield-check"></i>
+      </div>
+      <div>
+        <h4 class="page-title">طلبات التوثيق المدفوعة</h4>
+        <p class="page-subtitle">مراجعة وإدارة طلبات التحقق من الهوية</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ total }} طلب</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'pending_review'"
+      (click)="switchTab('pending_review')"
+    >
+      <i class="bi bi-hourglass-split"></i>
+      قيد المراجعة
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'approved'"
+      (click)="switchTab('approved')"
+    >
+      <i class="bi bi-check-circle"></i>
+      مقبولة
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'rejected'"
+      (click)="switchTab('rejected')"
+    >
+      <i class="bi bi-x-circle"></i>
+      مرفوضة
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>المستخدم</th>
+            <th>الاتصال</th>
+            <th>الخطة</th>
+            <th>المبلغ</th>
+            <th>رقم العملية</th>
+            <th>تاريخ الطلب</th>
+            <th>الحالة</th>
+            <th *ngIf="activeTab === 'pending_review'" class="text-center">الإجراءات</th>
+            <th *ngIf="activeTab !== 'pending_review'" class="text-center">التفاصيل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders" class="table-row">
+
+            <!-- User -->
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <img
+                    *ngIf="order.user?.image_url"
+                    [src]="order.user.image_url"
+                    [alt]="order.user?.name"
+                    class="avatar-img"
+                  />
+                  <div *ngIf="!order.user?.image_url" class="avatar-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <span class="verified-dot" *ngIf="order.user?.is_verified === '1'"></span>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ order.user?.name || '—' }}</span>
+                  <span class="user-id">#{{ order.user?.id }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Contact -->
+            <td>
+              <div class="contact-cell">
+                <span class="contact-email">{{ order.user?.email || '—' }}</span>
+                <span class="contact-phone">{{ order.user?.phone || '—' }}</span>
+              </div>
+            </td>
+
+            <!-- Plan -->
+            <td>
+              <span class="plan-badge">{{ getPlanLabel(order.plan) }}</span>
+            </td>
+
+            <!-- Amount -->
+            <td>
+              <div class="amount-cell">
+                <span class="amount-value">{{ order.amount_paid }}</span>
+                <span class="amount-currency">{{ order.edfapay_payment?.currency || 'SAR' }}</span>
+              </div>
+            </td>
+
+            <!-- Transaction ID -->
+            <td>
+              <span class="tx-id">{{ order.transaction_id || '—' }}</span>
+            </td>
+
+            <!-- Date -->
+            <td>
+              <span class="date-cell">{{ order.created_at | date:'dd/MM/yyyy' }}</span>
+              <span class="time-cell">{{ order.created_at | date:'HH:mm' }}</span>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
+
+            <!-- Actions (Pending) -->
+            <td *ngIf="activeTab === 'pending_review'" class="text-center">
+              <div class="action-group">
+                <button
+                  class="action-btn approve-btn"
+                  (click)="approve(order.id)"
+                  [disabled]="approvingId === order.id"
+                  title="قبول الطلب"
+                >
+                  <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> قبول</span>
+                  <span *ngIf="approvingId === order.id" class="btn-spinner"></span>
+                </button>
+                <button
+                  class="action-btn reject-btn"
+                  (click)="openRejectModal(order.id)"
+                  [disabled]="approvingId === order.id"
+                  title="رفض الطلب"
+                >
+                  <i class="bi bi-x-lg"></i> رفض
+                </button>
+              </div>
+            </td>
+
+            <!-- Details (Approved/Rejected) -->
+            <td *ngIf="activeTab !== 'pending_review'" class="text-center">
+              <button class="detail-btn" (click)="openDetail(order)">
+                <i class="bi bi-eye"></i> عرض
+              </button>
+            </td>
+
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="orders.length === 0">
+            <td colspan="8" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>لا توجد طلبات</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let p of getPageNumbers()"
+        [class.active]="p === currentPage"
+        (click)="loadOrders(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== REJECT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="closeRejectModal()">
+  <div class="modal-box reject-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-x-circle-fill text-danger"></i>
+        <h5>رفض الطلب</h5>
+      </div>
+      <button class="modal-close" (click)="closeRejectModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+      <div class="form-group">
+        <label class="form-lbl">سبب الرفض <span class="optional">(اختياري)</span></label>
+        <textarea
+          class="form-textarea"
+          rows="4"
+          [(ngModel)]="rejectReason"
+          placeholder="اكتب سبب الرفض هنا..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">مرفق <span class="optional">(اختياري - PDF أو صورة بحد أقصى 5MB)</span></label>
+
+        <div *ngIf="!rejectAttachmentName" class="file-drop-zone" (click)="fileInput.click()">
+          <input
+            #fileInput
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp,.pdf"
+            (change)="onFileChange($event)"
+            style="display:none"
+          />
+          <i class="bi bi-cloud-upload"></i>
+          <span>اضغط لرفع ملف</span>
+        </div>
+
+        <div *ngIf="rejectAttachmentName" class="file-preview">
+          <i class="bi bi-file-earmark-check"></i>
+          <span>{{ rejectAttachmentName }}</span>
+          <button class="file-remove" (click)="clearAttachment()">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+
+        <p *ngIf="attachmentError" class="file-error">{{ attachmentError }}</p>
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeRejectModal()">إلغاء</button>
+      <button class="btn-reject-confirm" (click)="submitReject()" [disabled]="rejectLoading || !!attachmentError">
+        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> تأكيد الرفض</span>
+        <span *ngIf="rejectLoading" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DETAIL MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetail()">
+  <div class="modal-box detail-modal" (click)="$event.stopPropagation()" *ngIf="selectedOrder">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i
+          class="bi"
+          [ngClass]="selectedOrder.status === 'approved' ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'"
+        ></i>
+        <h5>تفاصيل الطلب #{{ selectedOrder.id }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeDetail()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom detail-body">
+
+      <!-- User Info -->
+      <div class="detail-section">
+        <h6 class="section-title">معلومات المستخدم</h6>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="detail-lbl">الاسم</span>
+            <span class="detail-val">{{ selectedOrder.user?.name || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">الإيميل</span>
+            <span class="detail-val">{{ selectedOrder.user?.email || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">الهاتف</span>
+            <span class="detail-val">{{ selectedOrder.user?.phone || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Info -->
+      <div class="detail-section">
+        <h6 class="section-title">معلومات الطلب</h6>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="detail-lbl">الخطة</span>
+            <span class="detail-val">{{ getPlanLabel(selectedOrder.plan) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">المبلغ المدفوع</span>
+            <span class="detail-val">
+              {{ selectedOrder.amount_paid }} {{ selectedOrder.edfapay_payment?.currency || 'SAR' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">رقم العملية</span>
+            <span class="detail-val tx-mono">{{ selectedOrder.transaction_id || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">تاريخ الطلب</span>
+            <span class="detail-val">{{ selectedOrder.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approved Details -->
+      <div class="detail-section" *ngIf="selectedOrder.status === 'approved'">
+        <h6 class="section-title success-title"><i class="bi bi-check-circle-fill"></i> بيانات القبول</h6>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="detail-lbl">ينتهي في</span>
+            <span class="detail-val highlight-success">{{ selectedOrder.expires_at | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">راجعه</span>
+            <span class="detail-val">{{ selectedOrder.reviewed_by || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">تاريخ المراجعة</span>
+            <span class="detail-val">{{ selectedOrder.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rejected Details -->
+      <div class="detail-section" *ngIf="selectedOrder.status === 'rejected'">
+        <h6 class="section-title danger-title"><i class="bi bi-x-circle-fill"></i> بيانات الرفض</h6>
+        <div class="detail-grid">
+          <div class="detail-row" *ngIf="selectedOrder.rejection_reason">
+            <span class="detail-lbl">سبب الرفض</span>
+            <span class="detail-val">{{ selectedOrder.rejection_reason }}</span>
+          </div>
+          <div class="detail-row" *ngIf="selectedOrder.admin_attachment_url">
+            <span class="detail-lbl">المرفق</span>
+            <a [href]="selectedOrder.admin_attachment_url" target="_blank" class="attachment-link">
+              <i class="bi bi-paperclip"></i> عرض المرفق
+            </a>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">راجعه</span>
+            <span class="detail-val">{{ selectedOrder.reviewed_by || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">تاريخ المراجعة</span>
+            <span class="detail-val">{{ selectedOrder.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeDetail()">إغلاق</button>
+    </div>
+  </div>
+</div>

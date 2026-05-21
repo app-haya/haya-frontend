@@ -1,337 +1,411 @@
-<div class="container py-5 deal-details-page">
-    <!-- Header Section -->
-    <div class="header-section mb-5 d-flex justify-content-between align-items-start">
-        <div class="title-meta">
-            <nav aria-label="breadcrumb" class="mb-2">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a routerLink="/deals" class="text-decoration-none">{{ 'Deals' |
-                            translate }}</a></li>
-                    <li class="breadcrumb-item active">{{ 'Show Details' | translate }}</li>
-                </ol>
-            </nav>
-            <h1 class="display-5 fw-bold text-dark mb-0">{{ deal?.title || 'Deal Information' }}</h1>
-            <div class="d-flex align-items-center gap-2 mt-3">
-                <span class="status-badge" [ngClass]="deal?.status">
-                    <i class="fas" [ngClass]="{
-            'fa-clock': deal?.status === 'pending',
-            'fa-check-circle': deal?.status === 'approved',
-            'fa-times-circle': deal?.status === 'rejected'
-          }"></i>
-                    {{ (deal?.status | titlecase) | translate }}
-                </span>
-                <span class="type-badge">
-                    <i class="fas fa-tag"></i> {{ deal?.seller_type || 'General' }}
-                </span>
-            </div>
-        </div>
-        <div class="header-actions">
-            <button class="btn btn-outline-secondary rounded-pill px-4" routerLink="/deals">
-                <i class="fas fa-chevron-left me-2"></i> {{ 'Back to List' | translate }}
-            </button>
-        </div>
-    </div>
+<div class="dd-page" *ngIf="deal || loading">
 
-    <div *ngIf="loading" class="loading-state text-center py-5">
-        <div class="spinner-grow text-purple" role="status"></div>
-        <p class="mt-3 text-muted fw-bold">{{ 'Retrieving deal information...' | translate }}</p>
-    </div>
+  <!-- ═══════════════════════════════════════════
+       HERO HEADER
+  ═══════════════════════════════════════════ -->
+  <div class="dd-hero">
+    <div class="dd-hero-inner">
 
-    <div *ngIf="!loading && deal" class="row g-4">
-        <!-- Left Column: Details -->
-        <div class="col-lg-8">
-            <!-- Description Card -->
-            <div class="details-card main-card glass-morphism mb-4">
-                <div class="card-header-custom">
-                    <i class="fas fa-info-circle"></i>
-                    <span>{{ 'General Information' | translate }}</span>
-                </div>
-                <div class="card-body-custom p-4">
-                    <div class="description-box mb-4">
-                        <label class="section-label">{{ 'Description' | translate }}</label>
-                        <p class="description-text">{{ deal.description || 'No detailed description provided for this
-                            deal.' }}</p>
-                    </div>
+      <!-- Breadcrumb -->
+      <nav class="dd-breadcrumb">
+        <a routerLink="/deals" class="bc-link">
+          <i class="bi bi-bag-check"></i>
+          {{ 'Deals' | translate }}
+        </a>
+        <i class="bi bi-chevron-left bc-sep"></i>
+        <span class="bc-current">{{ 'Show Details' | translate }}</span>
+      </nav>
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="info-tile">
-                                <div class="tile-icon price-icon"><i class="fas fa-tag"></i></div>
-                                <div class="tile-content">
-                                    <label>{{ 'Original Price' | translate }}</label>
-                                    <div class="value">
-                                        <span class="riyal-icon">{{ 'SAR_SYMBOL' | translate }}</span>
-                                        {{ deal.original_price | number }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-tile premium">
-                                <div class="tile-icon total-icon"><i class="fas fa-wallet"></i></div>
-                                <div class="tile-content">
-                                    <label>{{ 'Total Price' | translate }}</label>
-                                    <div class="value">
-                                        <span class="riyal-icon">{{ 'SAR_SYMBOL' | translate }}</span>
-                                        {{ deal.total_price | number }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-tile">
-                                <div class="tile-icon"><i class="fas fa-boxes"></i></div>
-                                <div class="tile-content">
-                                    <label>{{ 'Quantity' | translate }}</label>
-                                    <div class="value">{{ deal.quantity || '0' }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-tile">
-                                <div class="tile-icon"><i class="fas fa-percent"></i></div>
-                                <div class="tile-content">
-                                    <label>{{ 'Tax Value' | translate }}</label>
-                                    <div class="value">{{ deal.tax_value || '0' }}%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-tile">
-                                <div class="tile-icon"><i class="fas fa-star"></i></div>
-                                <div class="tile-content">
-                                    <label>{{ 'Condition' | translate }}</label>
-                                    <div class="value">{{ (deal.is_new === 1 ? 'New' : 'Used') | translate }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- Loading skeleton -->
+      <div *ngIf="loading" class="hero-skeleton">
+        <div class="sk-title"></div>
+        <div class="sk-badges"></div>
+      </div>
 
-            <!-- Documents Section -->
-            <div class="details-card main-card mb-4 overflow-hidden">
-                <div class="card-header-custom bg-light">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <span>{{ 'Transaction & Documents' | translate }}</span>
-                </div>
-                <div class="card-body-custom p-4">
-                    <div class="row g-4">
-                        <!-- Account Proof -->
-                        <div class="col-md-6">
-                            <div class="document-card">
-                                <label class="doc-label">Account Proof / Image</label>
-                                <div *ngIf="deal.account_number" class="doc-preview">
-                                    <img [src]="deal.account_number" alt="Account Proof">
-                                    <div class="hover-actions">
-                                        <a [href]="deal.account_number" target="_blank" class="btn btn-sm btn-light">
-                                            <i class="fas fa-expand"></i> {{ 'View Full' | translate }}
-                                        </a>
-                                    </div>
-                                </div>
-                                <div *ngIf="!deal.account_number" class="no-doc">
-                                    <i class="fas fa-image-slash"></i>
-                                    <span>{{ 'No document provided' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Invoice -->
-                        <div class="col-md-6">
-                            <div class="document-card">
-                                <label class="doc-label">{{ 'Invoice Document' | translate }}</label>
-                                <div *ngIf="deal.invoice" class="doc-preview">
-                                    <img [src]="deal.invoice" alt="Invoice">
-                                    <div class="hover-actions">
-                                        <a [href]="deal.invoice" target="_blank" class="btn btn-sm btn-light">
-                                            <i class="fas fa-expand"></i> {{ 'View Full' | translate }}
-                                        </a>
-                                    </div>
-                                </div>
-                                <div *ngIf="!deal.invoice" class="no-doc">
-                                    <i class="fas fa-image-slash"></i>
-                                    <span>{{ 'No invoice provided' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Participants Section (Orders) -->
-            <div class="details-card main-card mb-4 overflow-hidden">
-                <div class="card-header-custom bg-light">
-                    <i class="fas fa-users"></i>
-                    <span>{{ 'Participants' | translate }}</span>
-                </div>
-                <div class="card-body-custom p-0">
-                    <div *ngIf="loadingOrders" class="text-center py-4">
-                        <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
-                        <p class="small text-muted mt-2 mb-0">{{ 'Loading participants...' | translate }}</p>
-                    </div>
-
-                    <div *ngIf="!loadingOrders && orders.length === 0" class="text-center py-5 empty-participants">
-                        <i class="fas fa-user-friends fa-3x text-light mb-3"></i>
-                        <h6 class="text-muted">{{ 'No participants yet' | translate }}</h6>
-                    </div>
-
-                    <div *ngIf="!loadingOrders && orders.length > 0" class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="bg-light-subtle">
-                                <tr>
-                                    <th class="ps-4 py-3">{{ 'Participant' | translate }}</th>
-                                    <th class="py-3">{{ 'Quantity' | translate }}</th>
-                                    <th class="py-3">{{ 'Price' | translate }}</th>
-                                    <th class="py-3 text-center">{{ 'Payment Status' | translate }}</th>
-                                    <th class="py-3 text-center">{{ 'Order Status' | translate }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let order of orders">
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="participant-avatar me-3">
-                                                <img *ngIf="order.user.image" [src]="order.user.image"
-                                                    [alt]="order.user.name" class="rounded-circle" width="36"
-                                                    height="36" onerror="this.src='assets/images/default-user.png'">
-                                                <div *ngIf="!order.user.image" class="avatar-placeholder">
-                                                    {{ order.user.name?.charAt(0) | uppercase }}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold text-dark">{{ order.user.name }}</div>
-                                                <div class="small text-muted">{{ order.user.phone }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-light text-dark fw-normal border px-2 py-1">{{
-                                            order.quantity }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="price-value">
-                                            <span class="small text-muted">{{ 'SAR_SYMBOL' | translate }}</span>
-                                            {{ order.total_price | number }}
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge rounded-pill px-3" [ngClass]="{
-                                                'bg-success-subtle text-success border border-success-subtle': order.payment_status === 'paid',
-                                                'bg-warning-subtle text-warning border border-warning-subtle': order.payment_status === 'pending',
-                                                'bg-danger-subtle text-danger border border-danger-subtle': order.payment_status === 'failed'
-                                              }">
-                                            {{ (order.payment_status | titlecase) | translate }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="d-flex align-items-center justify-content-center gap-2">
-                                            <span class="status-dot" [ngClass]="order.status"></span>
-                                            <span class="small">{{ (order.status | titlecase) | translate }}</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-        <!-- Right Column: Sidebar -->
-        <div class="col-lg-4">
-            <!-- Actions Card -->
-            <div class="details-card sidebar-card mb-4 text-center p-4">
-                <h5 class="fw-bold mb-4">{{ 'Status Management' | translate }}</h5>
-
-                <div class="current-status-box mb-4" [ngClass]="deal.status">
-                    <div class="status-icon">
-                        <i class="fas" [ngClass]="{
-              'fa-clock': deal.status === 'pending',
-              'fa-check-double': deal.status === 'approved',
-              'fa-ban': deal.status === 'rejected'
+      <!-- Deal Title & Badges -->
+      <div *ngIf="!loading && deal" class="hero-content">
+        <h1 class="dd-title">{{ deal?.title || '—' }}</h1>
+        <div class="dd-badges">
+          <span class="hbadge hbadge-status" [ngClass]="deal?.status">
+            <i class="fas" [ngClass]="{
+              'fa-clock': deal?.status === 'pending',
+              'fa-check-circle': deal?.status === 'approved',
+              'fa-times-circle': deal?.status === 'rejected'
             }"></i>
-                    </div>
-                    <div class="status-text fw-bold">{{ (deal.status | titlecase) | translate }}</div>
-                    <p class="small text-muted mb-0">{{ 'Current Deal Status' | translate }}</p>
-                </div>
+            {{ (deal?.status | titlecase) | translate }}
+          </span>
+          <span class="hbadge hbadge-type">
+            <i class="bi bi-shop"></i>
+            {{ deal?.seller_type || 'General' }}
+          </span>
+          <span class="hbadge hbadge-id">
+            <i class="bi bi-hash"></i>
+            {{ deal?.id }}
+          </span>
+        </div>
+      </div>
 
-                <div class="d-grid gap-3" *ngIf="deal.status === 'pending'">
-                    <button (click)="approve()" class="btn btn-success-modern py-3">
-                        <i class="fas fa-check-circle me-2"></i> {{ 'Approve Deal' | translate }}
-                    </button>
-                    <button (click)="reject()" class="btn btn-reject-modern py-3">
-                        <i class="fas fa-times-circle me-2"></i> {{ 'Reject Deal' | translate }}
-                    </button>
-                </div>
+      <!-- Back Button -->
+      <a routerLink="/deals" class="dd-back-btn">
+        <i class="bi bi-arrow-right"></i>
+        {{ 'Back to List' | translate }}
+      </a>
+    </div>
+  </div>
 
-                <div class="status-locked text-center py-2" *ngIf="deal.status !== 'pending'">
-                    <span class="badge bg-light text-muted p-2 rounded-pill border">
-                        <i class="fas fa-lock me-1"></i> {{ 'Action Completed' | translate }}
+  <!-- Loading State -->
+  <div *ngIf="loading" class="dd-loading">
+    <div class="dd-spinner"></div>
+    <p>{{ 'Retrieving deal information...' | translate }}</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════ -->
+  <div *ngIf="!loading && deal" class="dd-body">
+
+    <!-- ── STATS ROW ── -->
+    <div class="dd-stats-row">
+      <div class="dd-stat-card dd-stat-price">
+        <div class="stat-icon"><i class="bi bi-tag-fill"></i></div>
+        <div class="stat-body">
+          <span class="stat-label">{{ 'Original Price' | translate }}</span>
+          <span class="stat-value">{{ deal.original_price | number }} <em>SAR</em></span>
+        </div>
+      </div>
+      <div class="dd-stat-card dd-stat-total">
+        <div class="stat-icon"><i class="bi bi-wallet2"></i></div>
+        <div class="stat-body">
+          <span class="stat-label">{{ 'Total Price' | translate }}</span>
+          <span class="stat-value">{{ deal.total_price | number }} <em>SAR</em></span>
+        </div>
+      </div>
+      <div class="dd-stat-card dd-stat-qty">
+        <div class="stat-icon"><i class="bi bi-boxes"></i></div>
+        <div class="stat-body">
+          <span class="stat-label">{{ 'Quantity' | translate }}</span>
+          <span class="stat-value">{{ deal.quantity || '0' }}</span>
+        </div>
+      </div>
+      <div class="dd-stat-card dd-stat-tax">
+        <div class="stat-icon"><i class="bi bi-percent"></i></div>
+        <div class="stat-body">
+          <span class="stat-label">{{ 'Tax Value' | translate }}</span>
+          <span class="stat-value">{{ deal.tax_value || '0' }}%</span>
+        </div>
+      </div>
+      <div class="dd-stat-card dd-stat-cond">
+        <div class="stat-icon"><i class="bi bi-stars"></i></div>
+        <div class="stat-body">
+          <span class="stat-label">{{ 'Condition' | translate }}</span>
+          <span class="stat-value">{{ (deal.is_new === 1 ? 'New' : 'Used') | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TWO-COLUMN LAYOUT ── -->
+    <div class="dd-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="dd-col-main">
+
+        <!-- Description Card -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <span class="card-head-icon"><i class="bi bi-info-circle-fill"></i></span>
+            <h3>{{ 'General Information' | translate }}</h3>
+          </div>
+          <div class="dd-card-body">
+            <div class="desc-block" *ngIf="deal.description">
+              <p class="desc-text">{{ deal.description }}</p>
+            </div>
+            <div class="desc-empty" *ngIf="!deal.description">
+              <i class="bi bi-chat-square-dots"></i>
+              <span>لا يوجد وصف للعرض</span>
+            </div>
+
+            <!-- Location info -->
+            <div class="info-grid">
+              <div class="info-item" *ngIf="deal.country_id">
+                <span class="info-item-icon"><i class="bi bi-globe2"></i></span>
+                <div>
+                  <span class="info-item-label">{{ 'Location' | translate }}</span>
+                  <span class="info-item-val">{{ deal.country_id }} / {{ deal.city_id || '—' }}</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="info-item-icon"><i class="bi bi-activity"></i></span>
+                <div>
+                  <span class="info-item-label">{{ 'Activity Status' | translate }}</span>
+                  <span class="info-item-val">
+                    <span class="act-badge" [class.act-active]="deal.is_active" [class.act-inactive]="!deal.is_active">
+                      {{ deal.is_active ? 'نشط' : 'غير نشط' }}
                     </span>
+                  </span>
                 </div>
+              </div>
             </div>
-
-            <!-- History Card -->
-            <div class="details-card sidebar-card p-4">
-                <h5 class="fw-bold mb-4 d-flex align-items-center">
-                    <i class="fas fa-history me-2 text-purple"></i> {{ 'History Log' | translate }}
-                </h5>
-
-                <div class="modern-timeline">
-                    <div class="timeline-event">
-                        <div class="event-dot active"></div>
-                        <div class="event-info">
-                            <div class="event-label">{{ 'Created' | translate }}</div>
-                            <div class="event-date">{{ deal.created_at | date:'d MMMM yyyy, h:mm a' }}</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event">
-                        <div class="event-dot" [class.active]="deal.updated_at !== deal.created_at"></div>
-                        <div class="event-info">
-                            <div class="event-label">{{ 'Last Updated' | translate }}</div>
-                            <div class="event-date">{{ deal.updated_at | date:'d MMMM yyyy, h:mm a' }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Metadata Card -->
-            <div class="details-card sidebar-card mt-4 p-4 bg-light-subtle">
-                <div class="metadata-row">
-                    <span><i class="fas fa-map-marker-alt"></i> {{ 'Location' | translate }}</span>
-                    <strong>{{ deal.country_id || '-' }} / {{ deal.city_id || '-' }}</strong>
-                </div>
-                <div class="metadata-row mt-3">
-                    <span><i class="fas fa-hashtag"></i> {{ 'Deal ID' | translate }}</span>
-                    <strong>#{{ deal.id }}</strong>
-                </div>
-            </div>
-
-            <!-- Internal Notes (Moved to sidebar) -->
-            <div class="details-card sidebar-card mt-4">
-                <div class="card-header-custom border-0 pb-0">
-                    <i class="fas fa-sticky-note text-warning"></i>
-                    <span>{{ 'Internal Notes' | translate }}</span>
-                </div>
-                <div class="card-body-custom p-4 pt-2">
-                    <div class="notes-container border-0 bg-light-subtle shadow-none p-3 rounded-4 small">
-                        {{ deal.notes || ('No internal notes' | translate) }}
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
 
-    </div>
+        <!-- Documents Card -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <span class="card-head-icon"><i class="bi bi-file-earmark-text-fill"></i></span>
+            <h3>{{ 'Transaction & Documents' | translate }}</h3>
+          </div>
+          <div class="dd-card-body">
+            <div class="docs-grid">
 
-    <!-- Error State -->
-    <div *ngIf="!loading && !deal" class="error-state text-center py-5">
-        <div class="error-illustration mb-4">
-            <i class="fas fa-search fa-4x text-muted opacity-25"></i>
+              <!-- Account Proof -->
+              <div class="doc-slot">
+                <div class="doc-slot-label">
+                  <i class="bi bi-person-badge"></i>
+                  Account Proof / Image
+                </div>
+                <div *ngIf="deal.account_number" class="doc-preview-wrap">
+                  <iframe *ngIf="isPdf(deal.account_number)" [src]="getSafeUrl(deal.account_number)" class="doc-pdf-frame"></iframe>
+                  <img *ngIf="!isPdf(deal.account_number)" [src]="formatImageUrl(deal.account_number)" alt="Account Proof" class="doc-img">
+                  <div class="doc-overlay">
+                    <a [href]="formatImageUrl(deal.account_number)" target="_blank" class="doc-view-btn">
+                      <i class="bi bi-box-arrow-up-right"></i>
+                      {{ 'View Full' | translate }}
+                    </a>
+                  </div>
+                </div>
+                <div *ngIf="!deal.account_number" class="doc-empty">
+                  <i class="bi bi-image-alt"></i>
+                  <span>{{ 'No document provided' | translate }}</span>
+                </div>
+              </div>
+
+              <!-- Invoice -->
+              <div class="doc-slot">
+                <div class="doc-slot-label">
+                  <i class="bi bi-receipt"></i>
+                  {{ 'Invoice Document' | translate }}
+                </div>
+                <div *ngIf="deal.invoice" class="doc-preview-wrap">
+                  <iframe *ngIf="isPdf(deal.invoice)" [src]="getSafeUrl(deal.invoice)" class="doc-pdf-frame"></iframe>
+                  <img *ngIf="!isPdf(deal.invoice)" [src]="formatImageUrl(deal.invoice)" alt="Invoice" class="doc-img">
+                  <div class="doc-overlay">
+                    <a [href]="formatImageUrl(deal.invoice)" target="_blank" class="doc-view-btn">
+                      <i class="bi bi-box-arrow-up-right"></i>
+                      {{ 'View Full' | translate }}
+                    </a>
+                  </div>
+                </div>
+                <div *ngIf="!deal.invoice" class="doc-empty">
+                  <i class="bi bi-file-earmark-x"></i>
+                  <span>{{ 'No invoice provided' | translate }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
-        <h3 class="fw-bold">{{ 'Deal Not Found' | translate }}</h3>
-        <p class="text-muted">{{ 'The deal you are looking for might have been removed.' | translate }}</p>
-        <button class="btn btn-purple mt-3 px-5 py-2 rounded-pill shadow-sm" routerLink="/deals">
-            {{ 'Explore All Deals' | translate }}
-        </button>
+
+        <!-- Participants Card -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <span class="card-head-icon"><i class="bi bi-people-fill"></i></span>
+            <h3>{{ 'Participants' | translate }}</h3>
+            <span class="head-count" *ngIf="orders.length > 0">{{ orders.length }}</span>
+          </div>
+          <div class="dd-card-body p-0">
+
+            <div *ngIf="loadingOrders" class="participants-loading">
+              <div class="dd-spinner dd-spinner-sm"></div>
+              <span>{{ 'Loading participants...' | translate }}</span>
+            </div>
+
+            <div *ngIf="!loadingOrders && orders.length === 0" class="participants-empty">
+              <i class="bi bi-person-x"></i>
+              <p>{{ 'No participants yet' | translate }}</p>
+            </div>
+
+            <div *ngIf="!loadingOrders && orders.length > 0" class="participants-table-wrap">
+              <table class="participants-table">
+                <thead>
+                  <tr>
+                    <th>{{ 'Participant' | translate }}</th>
+                    <th>{{ 'Quantity' | translate }}</th>
+                    <th>{{ 'Price' | translate }}</th>
+                    <th>{{ 'Payment Status' | translate }}</th>
+                    <th>{{ 'Order Status' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of orders">
+                    <td>
+                      <div class="p-user">
+                        <div class="p-avatar">
+                          <img *ngIf="order.user.image" [src]="order.user.image" [alt]="order.user.name"
+                            onerror="this.src='assets/images/default-user.png'">
+                          <div *ngIf="!order.user.image" class="p-avatar-letter">
+                            {{ order.user.name?.charAt(0) | uppercase }}
+                          </div>
+                        </div>
+                        <div class="p-info">
+                          <span class="p-name">{{ order.user.name }}</span>
+                          <span class="p-phone">{{ order.user.phone }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="p-qty">{{ order.quantity }}</span></td>
+                    <td>
+                      <span class="p-price">{{ order.total_price | number }} <em>SAR</em></span>
+                    </td>
+                    <td>
+                      <span class="p-pay-badge" [ngClass]="{
+                        'pay-paid': order.payment_status === 'paid',
+                        'pay-pending': order.payment_status === 'pending',
+                        'pay-failed': order.payment_status === 'failed'
+                      }">
+                        {{ (order.payment_status | titlecase) | translate }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="p-status">
+                        <span class="p-status-dot" [ngClass]="order.status"></span>
+                        <span>{{ (order.status | titlecase) | translate }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+      <!-- /LEFT COLUMN -->
+
+      <!-- RIGHT COLUMN (SIDEBAR) -->
+      <div class="dd-col-side">
+
+        <!-- Status Management Card -->
+        <div class="dd-card dd-card-status">
+          <div class="dd-card-head">
+            <span class="card-head-icon"><i class="bi bi-shield-check"></i></span>
+            <h3>{{ 'Status Management' | translate }}</h3>
+          </div>
+          <div class="dd-card-body">
+
+            <!-- Current Status Box -->
+            <div class="cs-box" [ngClass]="deal.status">
+              <div class="cs-glow"></div>
+              <div class="cs-icon-wrap">
+                <i class="fas fa-3x" [ngClass]="{
+                  'fa-clock': deal.status === 'pending',
+                  'fa-check-double': deal.status === 'approved',
+                  'fa-ban': deal.status === 'rejected'
+                }"></i>
+              </div>
+              <div class="cs-label">{{ (deal.status | titlecase) | translate }}</div>
+              <div class="cs-sublabel">{{ 'Current Deal Status' | translate }}</div>
+            </div>
+
+            <!-- Action Buttons (Pending) -->
+            <div class="cs-actions" *ngIf="deal.status === 'pending'">
+              <button (click)="approve()" class="cs-btn cs-btn-approve">
+                <i class="bi bi-check-circle-fill"></i>
+                {{ 'Approve Deal' | translate }}
+              </button>
+              <button (click)="reject()" class="cs-btn cs-btn-reject">
+                <i class="bi bi-x-circle"></i>
+                {{ 'Reject Deal' | translate }}
+              </button>
+            </div>
+
+            <!-- Locked (non-pending) -->
+            <div class="cs-locked" *ngIf="deal.status !== 'pending'">
+              <i class="bi bi-lock-fill"></i>
+              <span>{{ 'Action Completed' | translate }}</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Timeline Card -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <span class="card-head-icon"><i class="bi bi-clock-history"></i></span>
+            <h3>{{ 'History Log' | translate }}</h3>
+          </div>
+          <div class="dd-card-body">
+            <div class="tl-wrap">
+              <div class="tl-event">
+                <div class="tl-dot tl-dot-active"></div>
+                <div class="tl-line"></div>
+                <div class="tl-info">
+                  <span class="tl-label">{{ 'Created' | translate }}</span>
+                  <span class="tl-date">{{ deal.created_at | date:'d MMM yyyy · h:mm a' }}</span>
+                </div>
+              </div>
+              <div class="tl-event">
+                <div class="tl-dot" [class.tl-dot-active]="deal.updated_at !== deal.created_at"></div>
+                <div class="tl-info">
+                  <span class="tl-label">{{ 'Last Updated' | translate }}</span>
+                  <span class="tl-date">{{ deal.updated_at | date:'d MMM yyyy · h:mm a' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metadata Card -->
+        <div class="dd-card dd-card-meta">
+          <div class="dd-card-body">
+            <div class="meta-list">
+              <div class="meta-item">
+                <span class="meta-icon"><i class="bi bi-hash"></i></span>
+                <span class="meta-key">{{ 'Deal ID' | translate }}</span>
+                <span class="meta-val">#{{ deal.id }}</span>
+              </div>
+              <div class="meta-item" *ngIf="deal.country_id">
+                <span class="meta-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                <span class="meta-key">{{ 'Country' | translate }}</span>
+                <span class="meta-val">{{ deal.country_id }}</span>
+              </div>
+              <div class="meta-item" *ngIf="deal.city_id">
+                <span class="meta-icon"><i class="bi bi-building"></i></span>
+                <span class="meta-key">{{ 'City' | translate }}</span>
+                <span class="meta-val">{{ deal.city_id }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon"><i class="bi bi-person-circle"></i></span>
+                <span class="meta-key">{{ 'Seller Type' | translate }}</span>
+                <span class="meta-val">{{ deal.seller_type || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="dd-card" *ngIf="deal.notes">
+          <div class="dd-card-head">
+            <span class="card-head-icon notes-icon"><i class="bi bi-sticky-fill"></i></span>
+            <h3>{{ 'Internal Notes' | translate }}</h3>
+          </div>
+          <div class="dd-card-body">
+            <div class="notes-box">{{ deal.notes }}</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /RIGHT COLUMN -->
+
     </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && !deal" class="dd-error">
+    <i class="bi bi-search"></i>
+    <h3>{{ 'Deal Not Found' | translate }}</h3>
+    <p>{{ 'The deal you are looking for might have been removed.' | translate }}</p>
+    <a routerLink="/deals" class="dd-back-btn">{{ 'Explore All Deals' | translate }}</a>
+  </div>
+
 </div>

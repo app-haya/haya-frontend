@@ -23,10 +23,9 @@ import { AddGovernmental } from './components/add-governmental/add-governmental'
 import { EditGovernmental } from './components/edit-governmental/edit-governmental';
 import { AddDeal } from './components/add-deal/add-deal';
 import { BannedWords } from './components/banned-words/banned-words';
-import { RejectedDeals } from './components/rejected-deals/rejected-deals';
-import { ApprovedDeals } from './components/approved-deals/approved-deals';
 import { PendingUsers } from './components/pending-users/pending-users';
 import { PendingCreators } from './components/pending-creators/pending-creators';
+import { VerificationOrders } from './components/verification-orders/verification-orders';
 import { Roles } from './components/roles/roles';
 import { Dashcount } from './components/dashcount/dashcount';
 import { DealDetails } from './components/deals/deal-details/deal-details';
@@ -84,6 +83,11 @@ export const routes: Routes = [
         component: PendingCreators,
         data: { role: 'verifycation' },
       },
+      {
+        path: 'verification-orders',
+        component: VerificationOrders,
+        data: { role: 'verifycation' },
+      },
 
       { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
       { path: 'roles', component: Roles, data: { role: 'Admins' } },
@@ -92,8 +96,6 @@ export const routes: Routes = [
       { path: 'cities', component: Cities, data: { role: 'Cities' } },
       { path: 'countries', component: Countries, data: { role: 'Countries' } },
       { path: 'deals', component: Deals, data: { role: 'Deals' } },
-      { path: 'approved', component: ApprovedDeals, data: { role: 'Deals' } },
-      { path: 'rejected', component: RejectedDeals, data: { role: 'Deals' } },
       {
         path: 'bannedwords',
         component: BannedWords,

@@ -38,23 +38,14 @@ export class Sidebar implements OnInit {
       children: [
         { name: 'Verify Account', path: '/verify_account', icon: 'bi bi-hourglass-split' },
         { name: 'Verify Creator', path: '/verify_creator', icon: 'bi bi-hourglass-split' },
+        { name: 'طلبات التوثيق المدفوعة', path: '/verification-orders', icon: 'bi bi-credit-card-2-front' },
       ],
     },
 
     { name: 'Interests', icon: 'bi bi-star', path: '/interests' },
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/countries' },
-    {
-      name: 'Deals',
-      icon: 'bi bi-bag-check',
-      path: '/deals',
-      expanded: true,
-      children: [
-        { name: 'Pending', path: '/deals', icon: 'bi bi-hourglass-split' },
-        { name: 'Approved', path: 'approved', icon: 'bi bi-check-circle' },
-        { name: 'Rejected', path: 'rejected', icon: 'bi bi-x-circle' },
-      ],
-    },
+    { name: 'Deals', icon: 'bi bi-bag-check', path: '/deals' },
     { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/bannedwords' },
     { name: 'Wallet', icon: 'bi bi-wallet2', path: '/wallet' },
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/calendar' },
