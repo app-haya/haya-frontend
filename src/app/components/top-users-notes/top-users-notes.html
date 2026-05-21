@@ -43,7 +43,9 @@
           </td>
           <td>{{ item.user?.name }}</td>
           <td>{{ item.user?.phone || '-' }}</td>
-          <td>{{ item.total_points }}</td>
+          <td>
+            <span class="points-value">{{ item.total_points }}</span>
+          </td>
           <td>{{ item.note_updated_at ? (item.note_updated_at | date: 'short') : '-' }}</td>
           <td>
             <div class="d-flex align-items-center gap-2">
