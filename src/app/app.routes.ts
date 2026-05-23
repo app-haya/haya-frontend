@@ -35,9 +35,10 @@ import { Settings } from './components/settings/settings';
 import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 
 export const routes: Routes = [
+  { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
   { path: 'login', component: Login },
   {
-    path: '',
+    path: 'admin',
     component: Dashboard,
     canActivateChild: [AuthGuard],
     children: [

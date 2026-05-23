@@ -1,7 +1,7 @@
 import { TranslateModule } from '@ngx-translate/core';
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
 
@@ -19,6 +19,7 @@ export class Login implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private notificationService: NotificationService
   ) { }
 
@@ -151,7 +152,8 @@ export class Login implements OnInit, OnDestroy, AfterViewInit {
           localStorage.setItem('admin_token', res.data.token);
           localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
           this.notificationService.success('Login successful!');
-          this.router.navigate(['/dashboardcount']);
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboardcount';
+          this.router.navigateByUrl(returnUrl);
         }
       },
       error: (err: any) => {

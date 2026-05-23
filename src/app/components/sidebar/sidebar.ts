@@ -24,32 +24,32 @@ export class Sidebar implements OnInit {
   ) { }
 
   menu = [
-    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/dashboardcount' },
-    { name: 'Admins', icon: 'bi bi-person-gear', path: '/admins' },
-    { name: 'Users', icon: 'bi bi-people', path: '/users' },
-    { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/top-users-notes' },
-    { name: 'Merchants', icon: 'bi bi-shop', path: '/merchants' },
-    { name: 'Governments', icon: 'bi bi-bank', path: '/governments' },
+    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/admin/dashboardcount' },
+    { name: 'Admins', icon: 'bi bi-person-gear', path: '/admin/admins' },
+    { name: 'Users', icon: 'bi bi-people', path: '/admin/users' },
+    { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes' },
+    { name: 'Merchants', icon: 'bi bi-shop', path: '/admin/merchants' },
+    { name: 'Governments', icon: 'bi bi-bank', path: '/admin/governments' },
     {
       name: 'Verifycation',
       icon: 'bi bi-bag-check',
-      path: '/verifycation',
+      path: '/admin/verifycation',
       expanded: true,
       children: [
-        { name: 'Verify Account', path: '/verify_account', icon: 'bi bi-hourglass-split' },
-        { name: 'Verify Creator', path: '/verify_creator', icon: 'bi bi-hourglass-split' },
-        { name: 'طلبات التوثيق المدفوعة', path: '/verification-orders', icon: 'bi bi-credit-card-2-front' },
+        { name: 'Verify Account', path: '/admin/verify_account', icon: 'bi bi-hourglass-split' },
+        { name: 'Verify Creator', path: '/admin/verify_creator', icon: 'bi bi-hourglass-split' },
+        { name: 'طلبات التوثيق المدفوعة', path: '/admin/verification-orders', icon: 'bi bi-credit-card-2-front' },
       ],
     },
 
-    { name: 'Interests', icon: 'bi bi-star', path: '/interests' },
-    { name: 'Cities', icon: 'bi bi-geo-alt', path: '/cities' },
-    { name: 'Countries', icon: 'bi bi-globe', path: '/countries' },
-    { name: 'Deals', icon: 'bi bi-bag-check', path: '/deals' },
-    { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/bannedwords' },
-    { name: 'Wallet', icon: 'bi bi-wallet2', path: '/wallet' },
-    { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/calendar' },
-    { name: 'SETTINGS', icon: 'bi bi-gear', path: '/policy-settings' },
+    { name: 'Interests', icon: 'bi bi-star', path: '/admin/interests' },
+    { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities' },
+    { name: 'Countries', icon: 'bi bi-globe', path: '/admin/countries' },
+    { name: 'Deals', icon: 'bi bi-bag-check', path: '/admin/deals' },
+    { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/admin/bannedwords' },
+    { name: 'Wallet', icon: 'bi bi-wallet2', path: '/admin/wallet' },
+    { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar' },
+    { name: 'SETTINGS', icon: 'bi bi-gear', path: '/admin/policy-settings' },
   ];
 
   ngOnInit(): void {
@@ -82,19 +82,19 @@ export class Sidebar implements OnInit {
   logout() {
     const token = localStorage.getItem('admin_token');
     if (!token) {
-      this.router.navigate(['/admin/login']);
+      this.router.navigate(['/login']);
       return;
     }
     this.authService.logout(token).subscribe({
       next: () => {
         localStorage.removeItem('admin_token');
-        this.router.navigateByUrl('/admin/login').then(() => {
+        this.router.navigateByUrl('/login').then(() => {
           window.location.reload();
         });
       },
       error: () => {
         localStorage.removeItem('admin_token');
-        this.router.navigateByUrl('/admin/login').then(() => {
+        this.router.navigateByUrl('/login').then(() => {
           window.location.reload();
         });
       },
