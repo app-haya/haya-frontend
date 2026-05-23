@@ -205,6 +205,69 @@
   color: #fff;
 }
 
+.lp-nav__toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+  align-items: center;
+  justify-content: center;
+}
+.lp-nav__toggle:hover {
+  color: #7a3ca0;
+}
+
+.lp-nav__mobile-menu {
+  display: none;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 999;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  padding: 0 1.5rem;
+}
+.lp-nav__mobile-menu--open {
+  max-height: 350px;
+  padding: 1rem 1.5rem;
+}
+.lp-nav__mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+}
+.lp-nav__mobile-link {
+  display: block;
+  color: #4a4a5e;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f8f9fa;
+  text-align: right;
+}
+.lp-nav__mobile-link:hover {
+  color: #7a3ca0;
+}
+.lp-nav__mobile-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
 /* ============================================================
    HERO (Banner Image)
    ============================================================ */
@@ -218,6 +281,10 @@
   height: auto;
   display: block;
   object-fit: cover;
+}
+
+.lp-hero__img--mobile {
+  display: none;
 }
 
 /* ============================================================
@@ -971,7 +1038,7 @@
   justify-content: center;
   background: #7a3ca0;
   padding: 1rem 2rem;
-  border-radius: 50px;
+  border-radius: 10px; /* Reduced from 50px */
   width: fit-content;
   margin: 0 auto;
 }
@@ -1204,30 +1271,38 @@
   border: none;
   border-radius: 0;
   padding: 0;
-  text-align: right;
   transition: all 0.3s ease;
   position: relative;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center; /* Centers description and header block inside card */
   gap: 0.75rem;
+  width: 100%;
+  max-width: 320px; /* Centered card container width */
+  margin: 0 auto;
 }
 
 .lp-merchant-benefits__card:hover {
   transform: translateY(-8px);
 }
 
+.lp-merchant-benefits__header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the title + icon block on the page */
+  gap: 0.75rem;
+  width: 100%;
+}
+
 .lp-merchant-benefits__icon {
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
-  margin-top: -0.5rem;
   flex-shrink: 0;
   transition: all 0.3s ease;
 }
@@ -1238,7 +1313,7 @@
 }
 
 .lp-merchant-benefits__icon i {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: #fff;
   transition: all 0.3s ease;
 }
@@ -1254,16 +1329,14 @@
   transform: scale(1.1);
 }
 
-.lp-merchant-benefits__content {
-  flex: 1;
-  text-align: right;
-}
-
 .lp-merchant-benefits__title {
   font-size: 1.25rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 0.75rem;
+  margin: 0;
+  text-align: right; /* Right aligns title next to the icon */
+  width: 180px; /* Fixed width to align icons vertically while keeping everything centered */
+  flex-shrink: 0;
 }
 
 .lp-merchant-benefits__desc {
@@ -1271,6 +1344,7 @@
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.7;
   margin: 0;
+  text-align: center; /* Centered description */
 }
 
 /* ============================================================
@@ -1800,26 +1874,189 @@
    RESPONSIVE
    ============================================================ */
 @media (max-width: 991.98px) {
-  .lp-nav__links { display: none; }
-  .lp-stats__grid { grid-template-columns: repeat(2, 1fr); }
-  .lp-how__grid { 
-    grid-template-columns: 1fr; 
+  .lp-nav__inner {
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
+  .lp-nav__links { display: none; }
+  .lp-nav__brand { gap: 0.4rem; }
+  .lp-nav__logo { width: 34px; height: 34px; }
+  .lp-nav__name { font-size: 1rem; }
+  .lp-btn--download { display: none; } /* Hide download button in navbar header on mobile */
+  .lp-nav__toggle { display: flex; } /* Show menu icon on mobile */
+  .lp-nav__mobile-menu { display: block; } /* Enable dropdown container on mobile */
+
+  .lp-about__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .lp-stats__grid { grid-template-columns: repeat(2, 1fr); }
+
+  .lp-how__grid { 
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem; /* Spacing between steps to match vertical curved dashed line */
+    position: relative;
+    padding: 3rem 0;
+  }
+  .lp-how__grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 540' preserveAspectRatio='none'%3E%3Cpath d='M 75,30 C 75,90 25,90 25,150 C 25,210 75,210 75,270 C 75,330 25,330 25,390 C 25,450 75,450 75,510' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-dasharray='6,4' stroke-linecap='round' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: block; /* Show the vertical dashed curve line on mobile */
+  }
+  .lp-how__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    z-index: 1;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+  }
+  .lp-how__card:nth-child(odd) {
+    width: 75%;
+    margin-left: 0;
+    margin-right: auto;
+    text-align: right;
+    align-self: flex-start;
+    margin-top: 0;
+  }
+  .lp-how__card:nth-child(even) {
+    width: 75%;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: left;
+    flex-direction: row-reverse; /* Puts circle number on the left */
+    align-self: flex-end;
+    margin-bottom: 0;
+  }
+  .lp-how__card:nth-child(3) {
+    transform: translateY(-10px); /* Moved up from 5px */
+    margin-top: 0;
+  }
+  .lp-how__card:nth-child(1) {
+    margin-top: 0;
+    transform: translateY(-28px);
+  }
+  .lp-how__card:nth-child(2) {
+    transform: translateY(-55px); /* Moved up from -30px */
+  }
+  .lp-how__card:nth-child(4) {
+    margin-top: 0;
+    transform: translateY(-20px); /* Moved up from 5px */
+  }
+  .lp-how__card:nth-child(5) {
+    margin-top: 0;
+    transform: translateY(42px); /* Adjusted flow from 52px */
+  }
+  .lp-how__step {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    z-index: 2;
+  }
+  .lp-how__card-content {
+    flex: 1;
+  }
+
+  .lp-how__cta {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+  .lp-how__cta-content {
+    margin-right: 0;
+    padding-right: 1.5rem;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  .lp-how__cta-btn {
+    margin-left: 0;
+  }
+
   .lp-how__top-users {
     grid-template-columns: 1fr;
+    margin: 2rem 0;
   }
-  .lp-why__grid { grid-template-columns: 1fr; }
+
+  .lp-how__competition {
+    margin-top: 3rem;
+    padding: 2rem 1.5rem;
+  }
+  .lp-how__competition-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .lp-how__competition-left {
+    margin-top: 0;
+  }
+  .lp-how__bottom-profile {
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .lp-why__grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .lp-why__shape { display: none; }
+
   .lp-merchant-benefits__grid { 
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: 1fr; 
+    gap: 2rem;
+  }
+  .lp-merchant-benefits__shape,
+  .lp-merchant-benefits__pattern {
+    display: none;
+  }
+
+  .lp-download__phone-section {
+    display: none; /* Hide phone mockup with complex absolute positioning on tablet/mobile */
   }
   .lp-download__inner { grid-template-columns: 1fr; text-align: center; }
   .lp-download__btns { justify-content: center; }
-  .lp-footer__top { grid-template-columns: 1fr 1fr; }
+
+  .lp-download__contact-box {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .lp-footer__top { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+  .lp-footer__brand,
+  .lp-footer__links,
+  .lp-footer__contact {
+    align-items: center;
+    text-align: center;
+  }
+  .lp-footer__links ul {
+    align-items: center;
+  }
+  .lp-footer__store-btns {
+    justify-content: center;
+  }
+  .lp-footer__shape { display: none; }
 
   /* Services Mobile Override */
   .lp-services__grid {
     grid-template-columns: 1fr;
     row-gap: 2.5rem;
+    padding-top: 1rem;
     padding-bottom: 0;
   }
   .lp-services__header {
@@ -1827,7 +2064,7 @@
     align-items: center;
     text-align: center;
     gap: 1.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
   }
   .lp-services__title-wrap {
     align-items: center;
@@ -1839,31 +2076,61 @@
   .lp-services__stats {
     padding: 0.6rem 1.5rem;
     gap: 1.25rem;
+    width: 100%;
     max-width: 100%;
+    margin: 0 auto;
     justify-content: center;
   }
   .lp-services__stat:not(:last-child)::after {
     left: -0.65rem;
   }
+  .lp-services__card:nth-child(odd) {
+    transform: translateX(18px);
+  }
+  .lp-services__card:nth-child(even) {
+    transform: translateX(-18px);
+  }
+  .lp-services__top30 {
+    max-width: 100%;
+  }
+  .lp-hero__img--desktop {
+    display: none;
+  }
+  .lp-hero__img--mobile {
+    display: block;
+  }
 }
 
 @media (max-width: 575.98px) {
-  .lp-hero { padding: 3.5rem 0 3rem; }
-  .lp-hero__logo { width: 80px; height: 80px; }
-  .lp-hero__icon-item { width: 50px; height: 50px; font-size: 1.2rem; }
-  .lp-stats__grid { grid-template-columns: repeat(2, 1fr); }
-  .lp-features__grid { grid-template-columns: 1fr; }
-  .lp-merchant-benefits__grid { 
-    grid-template-columns: 1fr; 
+  .lp-container {
+    padding: 0 1rem;
   }
-  .lp-footer__top { grid-template-columns: 1fr; }
-  .lp-download__mockup { display: none; }
-  .lp-download__floating-icon {
-    width: 50px;
-    height: 50px;
+  .lp-btn {
+    padding: 0.55rem 1.2rem;
+    font-size: 0.85rem;
+  }
+  .lp-section-title {
+    font-size: 1.5rem;
+  }
+  .lp-section-header {
+    margin-bottom: 2rem;
+  }
+
+  .lp-about {
+    padding: 3rem 0;
+  }
+  .lp-about__card {
+    padding: 1.5rem 1rem;
+  }
+
+  .lp-hero {
+    padding: 0;
   }
 
   /* Services Small Mobile Override */
+  .lp-services {
+    padding: 4rem 0;
+  }
   .lp-services__stats {
     padding: 0.5rem 1rem;
     gap: 0.8rem;
@@ -1887,8 +2154,76 @@
   .lp-services__top30 {
     padding: 3rem 1.5rem 2rem 1.5rem;
     min-height: 160px;
+    margin-top: 2rem;
   }
   .lp-services__top30 .lp-services__icon {
     right: -0.5rem;
+  }
+
+  .lp-how {
+    padding: 3rem 0;
+  }
+  .lp-how__card {
+    padding: 1.5rem 1rem;
+  }
+  .lp-how__competition {
+    padding: 1.5rem 1rem;
+  }
+  .lp-how__competition-title {
+    font-size: 1.4rem;
+  }
+
+  .lp-why {
+    padding: 3rem 0;
+  }
+  .lp-why__card {
+    padding: 1.5rem 1rem;
+    min-height: auto;
+  }
+
+  .lp-merchant-benefits {
+    padding: 3rem 0;
+  }
+
+  .lp-download {
+    padding: 3rem 0;
+  }
+  .lp-download__content {
+    margin-bottom: 2rem;
+  }
+  .lp-download__btns {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .lp-download__store-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    gap: 0.4rem;
+    border-radius: 8px;
+    justify-content: center;
+  }
+  .lp-download__store-btn i {
+    font-size: 1.3rem;
+  }
+  .lp-download__store-btn img {
+    width: 18px;
+    height: 18px;
+  }
+  .lp-download__store-btn small {
+    font-size: 0.55rem;
+  }
+  .lp-download__store-btn strong {
+    font-size: 0.75rem;
+  }
+  .lp-download__contact-btn {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
   }
 }

@@ -11,6 +11,15 @@ import { CommonModule } from '@angular/common';
 })
 export class LandingPage {
   currentYear = new Date().getFullYear();
+  isMobileMenuOpen = false;
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
 
   stats = [
     { value: '2M+', label: 'مستخدم نشط' },
@@ -40,7 +49,7 @@ export class LandingPage {
       step: '2', 
       icon: 'bi-chat-dots', 
       title: 'تفاعل وانشر', 
-      desc: 'كل نشاطك جديد أو شراء يمنحك نقاطاً تجريبية' 
+      desc: 'كل نشاطك جديد أو شراء<br>يمنحك نقاطاً تجريبية' 
     },
     { 
       step: '3', 
@@ -52,7 +61,7 @@ export class LandingPage {
       step: '4', 
       icon: 'bi-box-arrow-in-right', 
       title: 'أدخل التحدي', 
-      desc: 'تأهّل للتحويل إلى أفضل 30 مستخدماً في منصتنا' 
+      desc: 'تأهّل للتحويل إلى<br>أفضل 30 مستخدماً في منصتنا' 
     },
     { 
       step: '5', 

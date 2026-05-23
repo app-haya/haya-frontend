@@ -14,12 +14,27 @@
         <li><a routerLink="/" fragment="terms" class="lp-nav__link">الشروط والأحكام</a></li>
       </ul>
       <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">حمل التطبيق</a>
+      <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div class="lp-nav__mobile-menu" [class.lp-nav__mobile-menu--open]="isMobileMenuOpen">
+      <ul>
+        <li><a routerLink="/" fragment="hero" (click)="closeMobileMenu()" class="lp-nav__mobile-link">الرئيسية</a></li>
+        <li><a routerLink="/" fragment="about" (click)="closeMobileMenu()" class="lp-nav__mobile-link">من نحن</a></li>
+        <li><a routerLink="/" fragment="privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link">سياسة الخصوصية</a></li>
+        <li><a routerLink="/" fragment="terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link">الشروط والأحكام</a></li>
+        <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">حمل التطبيق</a></li>
+      </ul>
     </div>
   </nav>
 
   <!-- ===== HERO (Banner Image) ===== -->
   <section class="lp-hero" id="hero">
-    <img src="/images/معتمد_ 1.png" alt="هيّا - من السعودية للعالمية بهوية نجدية" class="lp-hero__img" />
+    <img src="/images/معتمد_ 1.png" alt="هيّا - من السعودية للعالمية بهوية نجدية" class="lp-hero__img lp-hero__img--desktop" />
+    <img src="/images/بنر طولي 1.svg" alt="هيّا - من السعودية للعالمية بهوية نجدية" class="lp-hero__img lp-hero__img--mobile" />
   </section>
 
   <!-- ===== WHO WE ARE ===== -->
@@ -187,8 +202,10 @@
         @for (h of howItWorks; track h.step) {
           <div class="lp-how__card">
             <div class="lp-how__step">{{ h.step }}</div>
-            <h3 class="lp-how__title">{{ h.title }}</h3>
-            <p class="lp-how__desc" [innerHTML]="h.desc"></p>
+            <div class="lp-how__card-content">
+              <h3 class="lp-how__title">{{ h.title }}</h3>
+              <p class="lp-how__desc" [innerHTML]="h.desc"></p>
+            </div>
           </div>
         }
       </div>
@@ -272,17 +289,17 @@
       <div class="lp-merchant-benefits__grid">
         @for (benefit of merchantBenefits; track benefit.title) {
           <div class="lp-merchant-benefits__card">
-            <div class="lp-merchant-benefits__icon">
-              @if (benefit.isImage) {
-                <img [src]="benefit.icon" [alt]="benefit.title" />
-              } @else {
-                <i [class]="'bi ' + benefit.icon" aria-hidden="true"></i>
-              }
-            </div>
-            <div class="lp-merchant-benefits__content">
+            <div class="lp-merchant-benefits__header">
+              <div class="lp-merchant-benefits__icon">
+                @if (benefit.isImage) {
+                  <img [src]="benefit.icon" [alt]="benefit.title" />
+                } @else {
+                  <i [class]="'bi ' + benefit.icon" aria-hidden="true"></i>
+                }
+              </div>
               <h3 class="lp-merchant-benefits__title">{{ benefit.title }}</h3>
-              <p class="lp-merchant-benefits__desc">{{ benefit.desc }}</p>
             </div>
+            <p class="lp-merchant-benefits__desc">{{ benefit.desc }}</p>
           </div>
         }
       </div>
