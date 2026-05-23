@@ -935,7 +935,7 @@
 .lp-how__competition-left {
   flex: 1;
   text-align: right;
-  margin-top: 3rem;
+  padding-top: 2rem;
 }
 
 .lp-how__competition-desc {
