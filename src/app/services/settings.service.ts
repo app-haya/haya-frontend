@@ -31,6 +31,18 @@ export class SettingsService {
     return this.http.get(`${this.baseUrl}/about-us`, { headers: this.getHeaders() });
   }
 
+  getPublicTerms(lang: string = 'ar'): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/terms?lang=${lang}`);
+  }
+
+  getPublicPrivacy(lang: string = 'ar'): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/privacy?lang=${lang}`);
+  }
+
+  getPublicAboutUs(lang: string = 'ar'): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/About-us?lang=${lang}`);
+  }
+
   // Common endpoint mentioned by user: GET /api/admin/settings/
   getAllSettings(): Observable<any> {
     return this.http.get(`${this.baseUrl}/`, { headers: this.getHeaders() });

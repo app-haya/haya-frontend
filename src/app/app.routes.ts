@@ -37,6 +37,10 @@ import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
   { path: 'login', component: Login },
+  { path: 'terms', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'terms' } },
+  { path: 'privacy', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'privacy' } },
+  { path: 'about-us', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'about' } },
+  { path: 'About-us', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'about' } },
   {
     path: 'admin',
     component: Dashboard,

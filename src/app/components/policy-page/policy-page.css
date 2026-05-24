@@ -1,0 +1,177 @@
+@import "../landing-page/landing-page.css";
+
+/* ===== POLICY HERO BANNER ===== */
+.lp-policy-hero {
+  background-color: #9259A6;
+  color: #fff;
+  padding: 6rem 0 5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.lp-policy-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/%D8%B4%D9%83%D9%84%20%D9%85%D8%B8%D8%BA%D8%B1%D9%81.svg');
+  background-repeat: repeat;
+  background-size: auto 100%;
+  background-position: center top;
+  opacity: 0.15; /* Haya's design system standard opacity for this shape */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lp-policy-hero .lp-container {
+  position: relative;
+  z-index: 2;
+}
+
+.lp-policy-hero__title {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 1.25rem;
+  letter-spacing: -0.5px;
+}
+
+.lp-policy-hero__subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 750px;
+  margin: 0 auto 2rem;
+  line-height: 1.8;
+  font-weight: 500;
+}
+
+.lp-policy-hero__meta {
+  display: inline-block;
+}
+
+.lp-policy-hero__date {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* ===== POLICY CONTENT SECTION ===== */
+.lp-policy-content {
+  background: #fff;
+  padding: 4rem 0 5rem;
+}
+
+.lp-policy-text {
+  font-size: 1.1rem;
+  line-height: 2.2;
+  color: #1a1a2e;
+  text-align: right;
+  padding: 1rem 0;
+  white-space: pre-line;
+}
+
+/* Typography styles for raw HTML content inside the policy card */
+.lp-policy-text h1, 
+.lp-policy-text h2, 
+.lp-policy-text h3 {
+  color: #1a1a2e;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.lp-policy-text h1 { font-size: 1.8rem; }
+.lp-policy-text h2 { 
+  font-size: 1.4rem; 
+  color: #7a3ca0;
+  border-bottom: 2px dashed #f0f0f8;
+  padding-bottom: 0.5rem;
+}
+.lp-policy-text h3 { font-size: 1.2rem; }
+
+.lp-policy-text p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.lp-policy-text ul, 
+.lp-policy-text ol {
+  padding-right: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1.75rem;
+}
+
+.lp-policy-text li {
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.lp-policy-text strong {
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
+/* ===== POLICY FOOTER SUGGESTION LINK ===== */
+.lp-policy-footer-link {
+  text-align: center;
+  margin-top: 3.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.lp-policy-footer-link a {
+  color: #7a3ca0;
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  padding-bottom: 2px;
+}
+
+.lp-policy-footer-link a:hover {
+  color: #5b2d7a;
+  border-color: #5b2d7a;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991.98px) {
+  .lp-policy-hero {
+    padding: 5rem 0 4rem;
+  }
+  .lp-policy-content {
+    padding: 3rem 0 4rem;
+  }
+  .lp-policy-text {
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .lp-policy-hero__title {
+    font-size: 1.8rem;
+  }
+  .lp-policy-hero__subtitle {
+    font-size: 0.95rem;
+  }
+  .lp-policy-text {
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+  .lp-policy-text h2 {
+    font-size: 1.2rem;
+  }
+  .lp-policy-footer-link {
+    font-size: 0.95rem;
+    margin-top: 2.5rem;
+  }
+}

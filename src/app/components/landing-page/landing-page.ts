@@ -67,7 +67,7 @@ export class LandingPage {
       step: '5', 
       icon: 'bi-trophy', 
       title: 'إربح الجوائز', 
-      desc: 'جوائز شهرية ومكانة خاصة وفرص استثنائية' 
+      desc: 'جوائز شهرية ومكانة خاصة<br>وفرص استثنائية' 
     }
   ];
 
