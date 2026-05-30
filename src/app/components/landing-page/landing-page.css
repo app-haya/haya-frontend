@@ -1971,7 +1971,7 @@
     margin-left: 0;
     margin-right: auto;
     text-align: right;
-    align-self: flex-start;
+    align-self: flex-end; /* Align to left so right edge is at 75% */
     margin-top: 0;
   }
   .lp-how__card:nth-child(even) {
@@ -1980,27 +1980,27 @@
     margin-right: 0;
     text-align: left;
     flex-direction: row-reverse; /* Puts circle number on the left */
-    align-self: flex-end;
+    align-self: flex-start; /* Align to right so left edge is at 25% */
     margin-bottom: 0;
   }
   .lp-how__card:nth-child(3) {
-    transform: translateY(-10px); /* Moved up from 5px */
+    transform: translate(16px, -10px);
     margin-top: 0;
   }
   .lp-how__card:nth-child(1) {
     margin-top: 0;
-    transform: translate(25px, -28px);
+    transform: translate(16px, -28px);
   }
   .lp-how__card:nth-child(2) {
-    transform: translate(12px, -35px);
+    transform: translate(-16px, -35px);
   }
   .lp-how__card:nth-child(4) {
     margin-top: 0;
-    transform: translate(12px, 15px);
+    transform: translate(-16px, 15px);
   }
   .lp-how__card:nth-child(5) {
     margin-top: 0;
-    transform: translate(30px, 75px);
+    transform: translate(16px, 75px);
   }
   .lp-how__step {
     flex-shrink: 0;
