@@ -730,6 +730,11 @@
   transform: translateX(2rem);
 }
 
+/* Adjust card 4 down on desktop to align its step circle on the dashed curve */
+.lp-how__card:nth-child(4) {
+  transform: translateY(18px);
+}
+
 .lp-how__step {
   position: relative;
   background: #f0f0f0;
@@ -1362,6 +1367,19 @@
   text-align: center; /* Centered description */
 }
 
+@media (min-width: 992px) {
+  .lp-merchant-benefits__card {
+    align-items: flex-start;
+  }
+  .lp-merchant-benefits__header {
+    justify-content: flex-start;
+  }
+  .lp-merchant-benefits__desc {
+    text-align: right;
+    padding-right: 56px; /* Aligns with start of title text (44px icon + 12px gap) */
+  }
+}
+
 /* ============================================================
    DOWNLOAD
    ============================================================ */
@@ -1974,11 +1992,11 @@
     transform: translate(25px, -28px);
   }
   .lp-how__card:nth-child(2) {
-    transform: translateY(-55px); /* Moved up from -30px */
+    transform: translate(12px, -35px);
   }
   .lp-how__card:nth-child(4) {
     margin-top: 0;
-    transform: translateY(-20px); /* Moved up from 5px */
+    transform: translate(12px, 15px);
   }
   .lp-how__card:nth-child(5) {
     margin-top: 0;
