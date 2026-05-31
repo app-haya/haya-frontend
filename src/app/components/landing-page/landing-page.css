@@ -1495,7 +1495,7 @@
   position: absolute;
   top: 55%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   z-index: 5;
 }
 
@@ -1504,6 +1504,8 @@
   width: max-content;
   white-space: nowrap;
   animation: marquee 20s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .lp-download__banner-text {
@@ -1514,14 +1516,16 @@
   display: inline-block;
   flex-shrink: 0;
   padding: 0 2rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @keyframes marquee {
   from {
-    transform: translateX(0);
+    transform: translate3d(50%, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -1694,8 +1698,7 @@
 .lp-download__contact-logo {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .lp-download__contact-btn i {
