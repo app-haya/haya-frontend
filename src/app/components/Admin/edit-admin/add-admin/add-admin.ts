@@ -99,7 +99,7 @@ export class AddAdmin implements OnInit {
         this.loading = false;
         if (res?.errorcode === '0') {
           this.notificationService.success('Admin added successfully!');
-          this.router.navigate(['/admins']);
+          this.router.navigate(['/admin/admins']);
           this.admin = {
             name: '',
             email: '',

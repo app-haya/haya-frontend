@@ -15,7 +15,7 @@
       <div class="total-badge" *ngIf="!loading">
         <span>{{ total }} صفقة</span>
       </div>
-      <a [routerLink]="['/adddeal']" class="btn-add-deal">
+      <a [routerLink]="['/admin/adddeal']" class="btn-add-deal">
         <i class="bi bi-plus-circle"></i>
         {{ 'Add Deal' | translate }}
       </a>
@@ -204,7 +204,7 @@
                 <!-- View Details -->
                 <a
                   class="btn-action view"
-                  [routerLink]="['/deal-details', deal.id]"
+                  [routerLink]="['/admin/deal-details', deal.id]"
                   [state]="{ deal: deal }"
                   title="تفاصيل الصفقة"
                 >

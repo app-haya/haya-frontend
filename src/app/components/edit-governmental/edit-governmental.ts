@@ -185,7 +185,7 @@ export class EditGovernmental implements OnInit {
         this.loading = false;
         if (res.errorcode === '0') {
           this.notification.success('Governmental updated successfully');
-          this.router.navigate(['/governments']);
+          this.router.navigate(['/admin/governments']);
         } else {
           this.notification.error(res.message || 'Update failed');
         }

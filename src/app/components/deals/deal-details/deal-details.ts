@@ -65,7 +65,7 @@ export class DealDetails implements OnInit {
       next: () => {
         this.notification.success('Deal approved successfully');
         this.deal.status = 'approved';
-        setTimeout(() => this.router.navigate(['/deals']), 1500);
+        setTimeout(() => this.router.navigate(['/admin/deals']), 1500);
       }
     });
   }
@@ -77,7 +77,7 @@ export class DealDetails implements OnInit {
         next: () => {
           this.notification.success('Deal rejected successfully');
           this.deal.status = 'rejected';
-          setTimeout(() => this.router.navigate(['/deals']), 1500);
+          setTimeout(() => this.router.navigate(['/admin/deals']), 1500);
         }
       });
     }

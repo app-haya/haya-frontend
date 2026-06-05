@@ -124,7 +124,7 @@ export class AddUser implements OnInit {
         this.loading = false;
         if (res.errorcode === '0') {
           this.notification.success('User added successfully');
-          this.router.navigate(['/users']);
+          this.router.navigate(['/admin/users']);
           this.userForm.reset();
           this.selectedImage = null;
           this.userImageName = '';

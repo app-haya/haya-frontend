@@ -150,7 +150,7 @@ export class AddMerchant implements OnInit {
         this.loading = false;
         if (res.errorcode === '0') {
           this.notification.success('Merchant added successfully');
-          this.router.navigate(['/merchants']);
+          this.router.navigate(['/admin/merchants']);
           this.merchantForm.reset();
         } else {
           this.notification.error(res.message || 'Failed to add merchant');

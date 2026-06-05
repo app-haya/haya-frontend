@@ -143,7 +143,7 @@ export class EditAdmin implements OnInit {
         this.loading = false;
         if (res?.errorcode === '0') {
           this.notificationService.success('Admin updated successfully!');
-          this.router.navigate(['/admins']);
+          this.router.navigate(['/admin/admins']);
         } else {
           this.notificationService.error(
             res.message || 'Failed to update admin'

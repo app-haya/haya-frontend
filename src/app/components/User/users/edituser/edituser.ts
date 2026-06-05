@@ -185,7 +185,7 @@ export class EditUser implements OnInit {
     this.usersService.updateUser(formData).subscribe({
       next: () => {
         this.notification.success('User updated successfully');
-        this.router.navigate(['/users']);
+        this.router.navigate(['/admin/users']);
       },
       error: (err) => {
         this.notification.error(err.error?.message || 'Failed to update user');

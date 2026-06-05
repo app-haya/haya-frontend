@@ -147,7 +147,7 @@ export class AddGovernmental implements OnInit {
         this.loading = false;
         if (res.errorcode === '0') {
           this.notification.success('Governmental added successfully');
-          this.router.navigate(['/governments']);
+          this.router.navigate(['/admin/governments']);
           this.governmentalForm.reset();
         } else {
           this.notification.error(res.message || 'Failed to add governmental');

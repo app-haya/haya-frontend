@@ -10,7 +10,7 @@
       [(ngModel)]="searchTerm"
       (input)="search()"
     />
-    <a [routerLink]="['/addgovernmental']" class="btn btn-purple mt-2 mt-md-0">
+    <a [routerLink]="['/admin/addgovernmental']" class="btn btn-purple mt-2 mt-md-0">
       <i class="fas fa-plus me-2"></i>{{ 'Add Governmental' | translate }}
     </a>
   </div>
@@ -83,7 +83,7 @@
           <td class="text-center">
             <div class="action-buttons">
               <a
-                [routerLink]="['/editgovernmental', g.id]"
+                [routerLink]="['/admin/editgovernmental', g.id]"
                 class="btn btn-sm btn-outline-purple"
                 title="Edit"
               >
