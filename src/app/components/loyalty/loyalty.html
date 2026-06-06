@@ -110,9 +110,9 @@
               </td>
               <td>{{ m.email }}</td>
               <td>
-                <span class="points-badge" [class.low-balance]="m.points_balance < settingsData.merchant_low_balance_threshold">
+                <span class="points-badge" [class.low-balance]="(m.loyalty_account?.points_balance ?? 0) < settingsData.merchant_low_balance_threshold">
                   <i class="bi bi-coin"></i>
-                  {{ m.points_balance | number }} {{ 'Points' | translate }}
+                  {{ (m.loyalty_account?.points_balance ?? 0) | number }} {{ 'Points' | translate }}
                 </span>
               </td>
               <td class="text-center">
