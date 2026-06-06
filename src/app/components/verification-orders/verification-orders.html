@@ -7,12 +7,12 @@
         <i class="bi bi-shield-check"></i>
       </div>
       <div>
-        <h4 class="page-title">طلبات التوثيق المدفوعة</h4>
-        <p class="page-subtitle">مراجعة وإدارة طلبات التحقق من الهوية</p>
+        <h4 class="page-title">{{ 'Paid Verification Requests' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Review and manage identity verification requests' | translate }}</p>
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ total }} طلب</span>
+      <span>{{ total }} {{ (total === 1 ? 'Request' : 'Requests') | translate }}</span>
     </div>
   </div>
 
@@ -24,7 +24,7 @@
       (click)="switchTab('pending_review')"
     >
       <i class="bi bi-hourglass-split"></i>
-      قيد المراجعة
+      {{ 'Pending Review' | translate }}
     </button>
     <button
       class="tab-btn"
@@ -32,7 +32,7 @@
       (click)="switchTab('approved')"
     >
       <i class="bi bi-check-circle"></i>
-      مقبولة
+      {{ 'Approved' | translate }}
     </button>
     <button
       class="tab-btn"
@@ -40,14 +40,14 @@
       (click)="switchTab('rejected')"
     >
       <i class="bi bi-x-circle"></i>
-      مرفوضة
+      {{ 'Rejected' | translate }}
     </button>
   </div>
 
   <!-- Loading -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner-ring"></div>
-    <p>جاري التحميل...</p>
+    <p>{{ 'Loading...' | translate }}</p>
   </div>
 
   <!-- Table -->
@@ -56,15 +56,15 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>المستخدم</th>
-            <th>الاتصال</th>
-            <th>الخطة</th>
-            <th>المبلغ</th>
-            <th>رقم العملية</th>
-            <th>تاريخ الطلب</th>
-            <th>الحالة</th>
-            <th *ngIf="activeTab === 'pending_review'" class="text-center">الإجراءات</th>
-            <th *ngIf="activeTab !== 'pending_review'" class="text-center">التفاصيل</th>
+            <th>{{ 'User' | translate }}</th>
+            <th>{{ 'Contact' | translate }}</th>
+            <th>{{ 'Plan' | translate }}</th>
+            <th>{{ 'Amount' | translate }}</th>
+            <th>{{ 'Transaction ID' | translate }}</th>
+            <th>{{ 'Request Date' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th *ngIf="activeTab === 'pending_review'" class="text-center">{{ 'Actions' | translate }}</th>
+            <th *ngIf="activeTab !== 'pending_review'" class="text-center">{{ 'Details' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -102,7 +102,7 @@
 
             <!-- Plan -->
             <td>
-              <span class="plan-badge">{{ getPlanLabel(order.plan) }}</span>
+              <span class="plan-badge">{{ getPlanLabel(order.plan) | translate }}</span>
             </td>
 
             <!-- Amount -->
@@ -127,7 +127,7 @@
             <!-- Status -->
             <td>
               <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-                {{ getStatusLabel(order.status) }}
+                {{ getStatusLabel(order.status) | translate }}
               </span>
             </td>
 
@@ -138,18 +138,18 @@
                   class="action-btn approve-btn"
                   (click)="approve(order.id)"
                   [disabled]="approvingId === order.id"
-                  title="قبول الطلب"
+                  [title]="'Approve Request' | translate"
                 >
-                  <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> قبول</span>
+                  <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> {{ 'Approve' | translate }}</span>
                   <span *ngIf="approvingId === order.id" class="btn-spinner"></span>
                 </button>
                 <button
                   class="action-btn reject-btn"
                   (click)="openRejectModal(order.id)"
                   [disabled]="approvingId === order.id"
-                  title="رفض الطلب"
+                  [title]="'Reject Request' | translate"
                 >
-                  <i class="bi bi-x-lg"></i> رفض
+                  <i class="bi bi-x-lg"></i> {{ 'Reject' | translate }}
                 </button>
               </div>
             </td>
@@ -157,7 +157,7 @@
             <!-- Details (Approved/Rejected) -->
             <td *ngIf="activeTab !== 'pending_review'" class="text-center">
               <button class="detail-btn" (click)="openDetail(order)">
-                <i class="bi bi-eye"></i> عرض
+                <i class="bi bi-eye"></i> {{ 'View' | translate }}
               </button>
             </td>
 
@@ -168,7 +168,7 @@
             <td colspan="8" class="empty-state">
               <div class="empty-content">
                 <i class="bi bi-inbox"></i>
-                <p>لا توجد طلبات</p>
+                <p>{{ 'No orders found' | translate }}</p>
               </div>
             </td>
           </tr>
@@ -201,7 +201,7 @@
     <div class="modal-head">
       <div class="modal-title-wrap">
         <i class="bi bi-x-circle-fill text-danger"></i>
-        <h5>رفض الطلب</h5>
+        <h5>{{ 'Reject Request' | translate }}</h5>
       </div>
       <button class="modal-close" (click)="closeRejectModal()">
         <i class="bi bi-x-lg"></i>
@@ -209,17 +209,17 @@
     </div>
     <div class="modal-body-custom">
       <div class="form-group">
-        <label class="form-lbl">سبب الرفض <span class="optional">(اختياري)</span></label>
+        <label class="form-lbl">{{ 'Rejection Reason' | translate }} <span class="optional">({{ 'Optional' | translate }})</span></label>
         <textarea
           class="form-textarea"
           rows="4"
           [(ngModel)]="rejectReason"
-          placeholder="اكتب سبب الرفض هنا..."
+          [placeholder]="'Write the rejection reason here...' | translate"
         ></textarea>
       </div>
 
       <div class="form-group">
-        <label class="form-lbl">مرفق <span class="optional">(اختياري - PDF أو صورة بحد أقصى 5MB)</span></label>
+        <label class="form-lbl">{{ 'Attachment' | translate }} <span class="optional">({{ 'Optional - PDF or image max 5MB' | translate }})</span></label>
 
         <div *ngIf="!rejectAttachmentName" class="file-drop-zone" (click)="fileInput.click()">
           <input
@@ -230,7 +230,7 @@
             style="display:none"
           />
           <i class="bi bi-cloud-upload"></i>
-          <span>اضغط لرفع ملف</span>
+          <span>{{ 'Click to upload a file' | translate }}</span>
         </div>
 
         <div *ngIf="rejectAttachmentName" class="file-preview">
@@ -241,13 +241,13 @@
           </button>
         </div>
 
-        <p *ngIf="attachmentError" class="file-error">{{ attachmentError }}</p>
+        <p *ngIf="attachmentError" class="file-error">{{ attachmentError | translate }}</p>
       </div>
     </div>
     <div class="modal-footer-custom">
-      <button class="btn-cancel" (click)="closeRejectModal()">إلغاء</button>
+      <button class="btn-cancel" (click)="closeRejectModal()">{{ 'Cancel' | translate }}</button>
       <button class="btn-reject-confirm" (click)="submitReject()" [disabled]="rejectLoading || !!attachmentError">
-        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> تأكيد الرفض</span>
+        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> {{ 'Confirm Rejection' | translate }}</span>
         <span *ngIf="rejectLoading" class="btn-spinner"></span>
       </button>
     </div>
@@ -263,7 +263,7 @@
           class="bi"
           [ngClass]="selectedOrder.status === 'approved' ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'"
         ></i>
-        <h5>تفاصيل الطلب #{{ selectedOrder.id }}</h5>
+        <h5>{{ 'Order Details' | translate }} #{{ selectedOrder.id }}</h5>
       </div>
       <button class="modal-close" (click)="closeDetail()">
         <i class="bi bi-x-lg"></i>
@@ -274,18 +274,18 @@
 
       <!-- User Info -->
       <div class="detail-section">
-        <h6 class="section-title">معلومات المستخدم</h6>
+        <h6 class="section-title">{{ 'User Information' | translate }}</h6>
         <div class="detail-grid">
           <div class="detail-row">
-            <span class="detail-lbl">الاسم</span>
+            <span class="detail-lbl">{{ 'Name' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.user?.name || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">الإيميل</span>
+            <span class="detail-lbl">{{ 'Email' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.user?.email || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">الهاتف</span>
+            <span class="detail-lbl">{{ 'Phone' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.user?.phone || '—' }}</span>
           </div>
         </div>
@@ -293,24 +293,24 @@
 
       <!-- Order Info -->
       <div class="detail-section">
-        <h6 class="section-title">معلومات الطلب</h6>
+        <h6 class="section-title">{{ 'Order Information' | translate }}</h6>
         <div class="detail-grid">
           <div class="detail-row">
-            <span class="detail-lbl">الخطة</span>
-            <span class="detail-val">{{ getPlanLabel(selectedOrder.plan) }}</span>
+            <span class="detail-lbl">{{ 'Plan' | translate }}</span>
+            <span class="detail-val">{{ getPlanLabel(selectedOrder.plan) | translate }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">المبلغ المدفوع</span>
+            <span class="detail-lbl">{{ 'Amount Paid' | translate }}</span>
             <span class="detail-val">
               {{ selectedOrder.amount_paid }} {{ selectedOrder.edfapay_payment?.currency || 'SAR' }}
             </span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">رقم العملية</span>
+            <span class="detail-lbl">{{ 'Transaction ID' | translate }}</span>
             <span class="detail-val tx-mono">{{ selectedOrder.transaction_id || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">تاريخ الطلب</span>
+            <span class="detail-lbl">{{ 'Request Date' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
@@ -318,18 +318,18 @@
 
       <!-- Approved Details -->
       <div class="detail-section" *ngIf="selectedOrder.status === 'approved'">
-        <h6 class="section-title success-title"><i class="bi bi-check-circle-fill"></i> بيانات القبول</h6>
+        <h6 class="section-title success-title"><i class="bi bi-check-circle-fill"></i> {{ 'Approval Details' | translate }}</h6>
         <div class="detail-grid">
           <div class="detail-row">
-            <span class="detail-lbl">ينتهي في</span>
+            <span class="detail-lbl">{{ 'Expires At' | translate }}</span>
             <span class="detail-val highlight-success">{{ selectedOrder.expires_at | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">راجعه</span>
+            <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.reviewed_by || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">تاريخ المراجعة</span>
+            <span class="detail-lbl">{{ 'Review Date' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
@@ -337,24 +337,24 @@
 
       <!-- Rejected Details -->
       <div class="detail-section" *ngIf="selectedOrder.status === 'rejected'">
-        <h6 class="section-title danger-title"><i class="bi bi-x-circle-fill"></i> بيانات الرفض</h6>
+        <h6 class="section-title danger-title"><i class="bi bi-x-circle-fill"></i> {{ 'Rejection Details' | translate }}</h6>
         <div class="detail-grid">
           <div class="detail-row" *ngIf="selectedOrder.rejection_reason">
-            <span class="detail-lbl">سبب الرفض</span>
+            <span class="detail-lbl">{{ 'Rejection Reason' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.rejection_reason }}</span>
           </div>
           <div class="detail-row" *ngIf="selectedOrder.admin_attachment_url">
-            <span class="detail-lbl">المرفق</span>
+            <span class="detail-lbl">{{ 'Attachment' | translate }}</span>
             <a [href]="selectedOrder.admin_attachment_url" target="_blank" class="attachment-link">
-              <i class="bi bi-paperclip"></i> عرض المرفق
+              <i class="bi bi-paperclip"></i> {{ 'View Attachment' | translate }}
             </a>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">راجعه</span>
+            <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.reviewed_by || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-lbl">تاريخ المراجعة</span>
+            <span class="detail-lbl">{{ 'Review Date' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
@@ -362,7 +362,7 @@
 
     </div>
     <div class="modal-footer-custom">
-      <button class="btn-cancel" (click)="closeDetail()">إغلاق</button>
+      <button class="btn-cancel" (click)="closeDetail()">{{ 'Close' | translate }}</button>
     </div>
   </div>
 </div>

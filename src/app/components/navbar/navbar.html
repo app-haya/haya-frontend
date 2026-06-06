@@ -18,9 +18,19 @@
         <button class="icon-action" (click)="toggleDropdown()" title="Language">
           <i class="bi bi-globe"></i>
         </button>
-        <ul *ngIf="showLangDropdown" class="dropdown-menu show" style="position:absolute; right:0; top: 120%; z-index: 1000;">
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="changeLang('en')">{{ 'ENGLISH' | translate }}</a></li>
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="changeLang('ar')">{{ 'عربي' | translate }}</a></li>
+        <ul *ngIf="showLangDropdown" class="dropdown-menu show" style="position:absolute; right:0; top: 120%; z-index: 1000; min-width: auto !important; width: max-content;">
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" style="cursor: pointer" (click)="changeLang('en')">
+              <img src="https://flagcdn.com/w40/us.png" alt="US Flag" style="width: 25px; height: auto; border-radius: 2px; border: 1px solid rgba(0, 0, 0, 0.12); box-shadow: 0 1px 2px rgba(0,0,0,0.08);">
+              <span>{{ 'ENGLISH' | translate }}</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" style="cursor: pointer" (click)="changeLang('ar')">
+              <img src="https://flagcdn.com/w40/sa.png" alt="Saudi Flag" style="width: 25px; height: auto; border-radius: 2px; border: 1px solid rgba(0, 0, 0, 0.12); box-shadow: 0 1px 2px rgba(0,0,0,0.08);">
+              <span>{{ 'عربي' | translate }}</span>
+            </a>
+          </li>
         </ul>
       </div>
 

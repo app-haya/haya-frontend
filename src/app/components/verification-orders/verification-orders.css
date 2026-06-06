@@ -4,7 +4,6 @@
 .page-wrapper {
   padding: 24px;
   min-height: 100vh;
-  direction: rtl;
 }
 
 /* =========================================================
@@ -144,7 +143,7 @@
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: right;
+  text-align: start;
   font-size: 0.875rem;
 }
 
@@ -153,7 +152,7 @@
 }
 
 .data-table th {
-  padding: 14px 18px;
+  padding: 14px 10px;
   font-weight: 600;
   color: #7a3ca0;
   font-size: 0.82rem;
@@ -173,7 +172,7 @@
 }
 
 .data-table td {
-  padding: 13px 18px;
+  padding: 13px 10px;
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -358,7 +357,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 16px;
+  padding: 7px 12px;
   border: none;
   border-radius: 8px;
   font-size: 0.82rem;
@@ -400,7 +399,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 16px;
+  padding: 7px 12px;
   border: 1.5px solid #7a3ca0;
   border-radius: 8px;
   background: transparent;
@@ -512,7 +511,6 @@
   width: 100%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
   animation: slideUp 0.25s ease;
-  direction: rtl;
   overflow: hidden;
 }
 

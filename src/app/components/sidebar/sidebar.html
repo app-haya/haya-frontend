@@ -28,6 +28,7 @@
            class="nav-link text-white d-flex align-items-center py-2">
           <i [class]="item.icon" class="me-2"></i>
           <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>
+          <span *ngIf="!isCollapsed && item.badgeCount" class="badge bg-success rounded-pill ms-auto">{{ item.badgeCount }}</span>
         </a>
       </div>
       <div *ngIf="item.children" class="nav-item dropdown">
@@ -46,7 +47,8 @@
             <a [routerLink]="child.path" routerLinkActive="active" 
                class="nav-link text-white py-1 d-flex align-items-center child-link">
               <i [class]="child.icon" class="me-2"></i>
-              {{ child.name | translate }}
+              <span>{{ child.name | translate }}</span>
+              <span *ngIf="child.badgeCount" class="badge bg-success rounded-pill ms-auto">{{ child.badgeCount }}</span>
             </a>
           </li>
         </ul>

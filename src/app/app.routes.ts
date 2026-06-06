@@ -33,6 +33,7 @@ import { DealDetails } from './components/deals/deal-details/deal-details';
 import { WalletTransactions } from './components/wallet-transactions/wallet-transactions';
 import { Settings } from './components/settings/settings';
 import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
+import { Loyalty } from './components/loyalty/loyalty';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
@@ -113,6 +114,7 @@ export const routes: Routes = [
       { path: 'wallet', component: WalletTransactions, data: { role: 'Wallet' } },
       { path: 'policy-settings', component: Settings },
       { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'Users' } },
+      { path: 'loyalty', component: Loyalty, data: { role: 'Merchants' } },
     ],
   },
   { path: '**', redirectTo: '' },

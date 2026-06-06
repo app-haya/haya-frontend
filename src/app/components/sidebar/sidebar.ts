@@ -3,6 +3,7 @@ import { CommonModule, NgFor, NgIf, NgClass } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -20,15 +21,17 @@ export class Sidebar implements OnInit {
   constructor(
     public translate: TranslateService,
     private authService: AuthService,
+    private dashboardService: DashboardService,
     private router: Router
   ) { }
 
-  menu = [
+  menu: any[] = [
     { name: 'Dashboard', icon: 'bi bi-house-door', path: '/admin/dashboardcount' },
     { name: 'Admins', icon: 'bi bi-person-gear', path: '/admin/admins' },
     { name: 'Users', icon: 'bi bi-people', path: '/admin/users' },
     { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes' },
     { name: 'Merchants', icon: 'bi bi-shop', path: '/admin/merchants' },
+    { name: 'Loyalty Management', icon: 'bi bi-award', path: '/admin/loyalty' },
     { name: 'Governments', icon: 'bi bi-bank', path: '/admin/governments' },
     {
       name: 'Verifycation',
@@ -36,9 +39,8 @@ export class Sidebar implements OnInit {
       path: '/admin/verifycation',
       expanded: true,
       children: [
-        { name: 'Verify Account', path: '/admin/verify_account', icon: 'bi bi-hourglass-split' },
         { name: 'Verify Creator', path: '/admin/verify_creator', icon: 'bi bi-hourglass-split' },
-        { name: 'طلبات التوثيق المدفوعة', path: '/admin/verification-orders', icon: 'bi bi-credit-card-2-front' },
+        { name: 'Paid Verification Requests', path: '/admin/verification-orders', icon: 'bi bi-credit-card-2-front' },
       ],
     },
 
@@ -62,6 +64,35 @@ export class Sidebar implements OnInit {
       error: (err) => {
         console.error('Error fetching profile:', err);
       },
+    });
+
+    this.dashboardService.getAll().subscribe({
+      next: (res) => {
+        if (res && res.errorcode === '0' && res.data) {
+          this.updateBadges(res.data);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching dashboard counts for sidebar:', err);
+      }
+    });
+  }
+
+  updateBadges(data: any): void {
+    this.menu.forEach((item) => {
+      if (item.name === 'Deals') {
+        item.badgeCount = data.pending_deals;
+      }
+      if (item.children) {
+        item.children.forEach((child: any) => {
+          if (child.name === 'Verify Creator') {
+            child.badgeCount = data.pending_creators;
+          }
+          if (child.name === 'Paid Verification Requests') {
+            child.badgeCount = data.pending_verification_requests;
+          }
+        });
+      }
     });
   }
 

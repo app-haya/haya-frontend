@@ -1,10 +1,13 @@
 /* =========================================================
    PAGE WRAPPER
    ========================================================= */
+/*.page-wrapper {
+  padding: 16px 20px;
+  min-height: 100vh;
+}*/
 .page-wrapper {
   padding: 16px 20px;
   min-height: 100vh;
-  direction: rtl;
 }
 
 /* =========================================================
@@ -144,7 +147,8 @@
 
 .search-icon {
   position: absolute;
-  right: 14px;
+  left: 14px;
+  right: auto;
   top: 50%;
   transform: translateY(-50%);
   color: #9ca3af;
@@ -153,7 +157,7 @@
 
 .search-input {
   width: 100%;
-  padding: 9px 38px 9px 14px !important;
+  padding: 9px 14px 9px 38px !important;
   border-radius: 12px;
   border: 1.5px solid #e5e7eb;
   font-size: 0.88rem;
@@ -165,6 +169,15 @@
   border-color: #7a3ca0;
   outline: none;
   box-shadow: 0 0 0 3px rgba(122, 60, 160, 0.1);
+}
+
+[dir="rtl"] .search-icon {
+  right: 14px;
+  left: auto;
+}
+
+[dir="rtl"] .search-input {
+  padding: 9px 38px 9px 14px !important;
 }
 
 /* =========================================================
@@ -210,7 +223,7 @@
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: right;
+  text-align: start;
   font-size: 0.8rem;
 }
 
@@ -536,7 +549,6 @@
   width: 100%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
   animation: slideUp 0.25s ease;
-  direction: rtl;
   overflow: hidden;
 }
 
@@ -1036,4 +1048,8 @@
 
 :host-context(body.dark-mode) .text-purple {
   color: #00cfd5 !important;
+}
+
+:host-context(body[dir="ltr"]) .page-btn i {
+  transform: rotate(180deg);
 }

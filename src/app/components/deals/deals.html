@@ -8,12 +8,12 @@
       </div>
       <div>
         <h4 class="page-title">{{ 'Deals' | translate }}</h4>
-        <p class="page-subtitle">مراجعة وإدارة جميع الصفقات</p>
+        <p class="page-subtitle">{{ 'Review and manage all deals' | translate }}</p>
       </div>
     </div>
     <div class="header-actions">
       <div class="total-badge" *ngIf="!loading">
-        <span>{{ total }} صفقة</span>
+        <span>{{ total }} {{ (total === 1 ? 'deal_singular' : 'deal_plural') | translate }}</span>
       </div>
       <a [routerLink]="['/admin/adddeal']" class="btn-add-deal">
         <i class="bi bi-plus-circle"></i>
@@ -32,7 +32,7 @@
         (click)="switchTab('pending')"
       >
         <i class="bi bi-hourglass-split"></i>
-        قيد المراجعة
+        {{ 'Pending Review' | translate }}
       </button>
       <button
         class="tab-btn"
@@ -40,7 +40,7 @@
         (click)="switchTab('approved')"
       >
         <i class="bi bi-check-circle"></i>
-        مقبولة
+        {{ 'Approved' | translate }}
       </button>
       <button
         class="tab-btn"
@@ -48,7 +48,7 @@
         (click)="switchTab('rejected')"
       >
         <i class="bi bi-x-circle"></i>
-        مرفوضة
+        {{ 'Rejected' | translate }}
       </button>
     </div>
 
@@ -68,7 +68,7 @@
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner-ring"></div>
-    <p>جاري تحميل الصفقات...</p>
+    <p>{{ 'Loading deals...' | translate }}</p>
   </div>
 
   <!-- Table Card -->
@@ -77,20 +77,20 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>الصفقة</th>
-            <th>رقم الحساب</th>
-            <th>نوع البائع</th>
-            <th>السعر الأصلي (ر.س)</th>
-            <th>السعر الإجمالي (ر.س)</th>
-            <th>الفاتورة</th>
-            <th>الضريبة</th>
-            <th>الدولة</th>
-            <th>المدينة</th>
-            <th>النشاط</th>
-            <th>جديد</th>
-            <th>الكمية</th>
-            <th>الحالة</th>
-            <th class="text-center">الإجراءات</th>
+            <th>{{ 'Deal' | translate }}</th>
+            <th>{{ 'Account Number' | translate }}</th>
+            <th>{{ 'Seller Type' | translate }}</th>
+            <th>{{ 'Original Price' | translate }} ({{ 'SAR' | translate }})</th>
+            <th>{{ 'Total Price' | translate }} ({{ 'SAR' | translate }})</th>
+            <th>{{ 'Invoice' | translate }}</th>
+            <th>{{ 'Tax Value' | translate }}</th>
+            <th>{{ 'Country' | translate }}</th>
+            <th>{{ 'City' | translate }}</th>
+            <th>{{ 'Activity' | translate }}</th>
+            <th>{{ 'Is New' | translate }}</th>
+            <th>{{ 'Quantity' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -106,8 +106,8 @@
 
             <!-- Account Number -->
             <td>
-              <a *ngIf="deal.account_number" [href]="formatImageUrl(deal.account_number)" target="_blank" class="view-link-btn" (click)="openImageModal(deal.account_number, 'إثبات الحساب', $event)">
-                <i class="bi bi-link-45deg"></i> عرض
+              <a *ngIf="deal.account_number" [href]="formatImageUrl(deal.account_number)" target="_blank" class="view-link-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event)">
+                <i class="bi bi-link-45deg"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.account_number" class="text-muted">—</span>
             </td>
@@ -133,8 +133,8 @@
 
             <!-- Invoice -->
             <td>
-              <a *ngIf="deal.invoice" [href]="formatImageUrl(deal.invoice)" target="_blank" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'مستند الفاتورة', $event)">
-                <i class="bi bi-file-earmark-pdf"></i> عرض
+              <a *ngIf="deal.invoice" [href]="formatImageUrl(deal.invoice)" target="_blank" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'Invoice Document', $event)">
+                <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.invoice" class="text-muted">—</span>
             </td>
@@ -157,14 +157,13 @@
             <!-- Activity -->
             <td>
               <span class="status-badge" [ngClass]="deal.is_active ? 'badge-approved' : 'badge-rejected'">
-                {{ getActivityLabel(deal.is_active) }}
+                {{ getActivityLabel(deal.is_active) | translate }}
               </span>
             </td>
 
-            <!-- Is New -->
             <td>
               <span class="new-badge" [ngClass]="deal.is_new === 1 ? 'yes' : 'no'">
-                {{ deal.is_new === 1 ? 'نعم' : 'لا' }}
+                {{ (deal.is_new === 1 ? 'Yes' : 'No') | translate }}
               </span>
             </td>
 
@@ -182,7 +181,7 @@
                   ? 'badge-approved'
                   : 'badge-rejected'
               ">
-                {{ deal.status === 'pending' ? 'قيد الانتظار' : deal.status === 'approved' ? 'مقبول' : 'مرفوض' }}
+                {{ (deal.status === 'pending' ? 'Pending' : deal.status === 'approved' ? 'Approved' : 'Rejected') | translate }}
               </span>
             </td>
 
@@ -195,7 +194,7 @@
                   class="btn-action approve"
                   (click)="approve(deal.id)"
                   [disabled]="approvingId === deal.id"
-                  title="قبول الصفقة"
+                  [title]="'Approve Deal' | translate"
                 >
                   <span *ngIf="approvingId !== deal.id"><i class="bi bi-check-lg"></i></span>
                   <span *ngIf="approvingId === deal.id" class="btn-spinner"></span>
@@ -206,7 +205,7 @@
                   class="btn-action view"
                   [routerLink]="['/admin/deal-details', deal.id]"
                   [state]="{ deal: deal }"
-                  title="تفاصيل الصفقة"
+                  [title]="'Deal Details' | translate"
                 >
                   <i class="bi bi-eye"></i>
                 </a>
@@ -216,7 +215,7 @@
                   *ngIf="deal.status === 'pending' || deal.status === 'approved'"
                   class="btn-action reject"
                   (click)="openRejectModal(deal.id)"
-                  title="رفض الصفقة"
+                  [title]="'Reject Deal' | translate"
                 >
                   <i class="bi bi-x-lg"></i>
                 </button>
@@ -230,7 +229,7 @@
             <td colspan="14" class="empty-state">
               <div class="empty-content">
                 <i class="bi bi-inbox"></i>
-                <p>لا توجد صفقات مطابقة</p>
+                <p>{{ 'No matching deals found' | translate }}</p>
               </div>
             </td>
           </tr>
@@ -263,7 +262,7 @@
     <div class="modal-head">
       <div class="modal-title-wrap">
         <i class="bi bi-x-circle-fill text-danger"></i>
-        <h5>رفض الصفقة</h5>
+        <h5>{{ 'Reject Deal' | translate }}</h5>
       </div>
       <button class="modal-close" (click)="closeRejectModal()">
         <i class="bi bi-x-lg"></i>
@@ -271,19 +270,19 @@
     </div>
     <div class="modal-body-custom">
       <div class="form-group">
-        <label class="form-lbl">سبب الرفض <span class="required">*</span></label>
+        <label class="form-lbl">{{ 'Rejection Reason' | translate }} <span class="required">*</span></label>
         <textarea
           class="form-textarea"
           rows="4"
           [(ngModel)]="rejectReason"
-          placeholder="اكتب سبب الرفض هنا..."
+          [placeholder]="'Write the rejection reason here...' | translate"
         ></textarea>
       </div>
     </div>
     <div class="modal-footer-custom">
-      <button class="btn-cancel" (click)="closeRejectModal()">إلغاء</button>
+      <button class="btn-cancel" (click)="closeRejectModal()">{{ 'Cancel' | translate }}</button>
       <button class="btn-reject-confirm" (click)="confirmReject()" [disabled]="rejectLoading || !rejectReason.trim()">
-        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> تأكيد الرفض</span>
+        <span *ngIf="!rejectLoading"><i class="bi bi-x-circle"></i> {{ 'Confirm Rejection' | translate }}</span>
         <span *ngIf="rejectLoading" class="btn-spinner"></span>
       </button>
     </div>
@@ -296,7 +295,7 @@
     <div class="modal-head">
       <div class="modal-title-wrap">
         <i class="bi bi-image text-purple"></i>
-        <h5>{{ previewModalTitle }}</h5>
+        <h5>{{ previewModalTitle | translate }}</h5>
       </div>
       <button class="modal-close" (click)="closeImageModal()">
         <i class="bi bi-x-lg"></i>
@@ -310,9 +309,9 @@
     </div>
     <div class="modal-footer-custom">
       <a [href]="previewImageUrl" target="_blank" class="btn-open-full">
-        <i class="bi bi-box-arrow-up-right"></i> فتح في علامة تبويب جديدة
+        <i class="bi bi-box-arrow-up-right"></i> {{ 'Open in new tab' | translate }}
       </a>
-      <button class="btn-cancel" (click)="closeImageModal()">إغلاق</button>
+      <button class="btn-cancel" (click)="closeImageModal()">{{ 'Close' | translate }}</button>
     </div>
   </div>
 </div>

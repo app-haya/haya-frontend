@@ -178,9 +178,9 @@ export class VerificationOrders implements OnInit {
 
   getPlanLabel(plan: string): string {
     const labels: Record<string, string> = {
-      '1year': 'سنة واحدة',
-      '2years': 'سنتان',
-      '3years': '3 سنوات'
+      '1year': '1 Year',
+      '2years': '2 Years',
+      '3years': '3 Years'
     };
     return labels[plan] || plan;
   }
@@ -196,9 +196,9 @@ export class VerificationOrders implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      pending_review: 'قيد المراجعة',
-      approved: 'مقبول',
-      rejected: 'مرفوض'
+      pending_review: 'Pending Review',
+      approved: 'Approved',
+      rejected: 'Rejected'
     };
     return map[status] || status;
   }

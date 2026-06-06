@@ -1,0 +1,553 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-award"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Loyalty Management' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Manage merchant loyalty packages, balances, invoices, and settings' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation Bar -->
+  <div class="controls-row">
+    <div class="tabs-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'packages'" (click)="switchTab('packages')">
+        <i class="bi bi-box-seam"></i>
+        {{ 'Loyalty Packages' | translate }}
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'merchants'" (click)="switchTab('merchants')">
+        <i class="bi bi-shop"></i>
+        {{ 'Merchants & Credit' | translate }}
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
+        <i class="bi bi-bar-chart-line"></i>
+        {{ 'Loyalty Reports' | translate }}
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="switchTab('settings')">
+        <i class="bi bi-sliders"></i>
+        {{ 'Loyalty Settings' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
+  </div>
+
+  <!-- ===================== PACKAGES TAB ===================== -->
+  <div *ngIf="!loading && activeTab === 'packages'" class="tab-content-container animate-fade">
+    <div class="section-actions-row mb-4">
+      <button class="btn-primary-action" (click)="openAddPackage()">
+        <i class="bi bi-plus-circle"></i>
+        {{ 'Add Package' | translate }}
+      </button>
+    </div>
+
+    <!-- Package Grid -->
+    <div class="packages-grid" *ngIf="packages.length > 0">
+      <div class="package-card" *ngFor="let pkg of packages" [class.inactive]="!pkg.is_active">
+        <div class="package-card-header">
+          <h5 class="pkg-title">{{ pkg.name }}</h5>
+          <span class="pkg-badge">{{ pkg.points | number }} {{ 'Points' | translate }}</span>
+        </div>
+        <div class="package-card-body">
+          <div class="pkg-price-row">
+            <span class="price-val">{{ pkg.price | number:'1.0-2' }}</span>
+            <span class="currency-label">{{ pkg.currency | translate }}</span>
+          </div>
+          <div class="pkg-status-row">
+            <span class="status-indicator" [class.active]="pkg.is_active">
+              {{ (pkg.is_active ? 'Active' : 'Inactive') | translate }}
+            </span>
+            <span class="sort-tag">{{ 'Order' | translate }}: {{ pkg.sort_order }}</span>
+          </div>
+        </div>
+        <div class="package-card-footer">
+          <button class="btn-card-action edit" (click)="openEditPackage(pkg)" [title]="'Edit Package' | translate">
+            <i class="bi bi-pencil-square"></i> {{ 'Edit' | translate }}
+          </button>
+          <button class="btn-card-action disable" *ngIf="pkg.is_active" (click)="disablePackage(pkg)" [title]="'Disable Package' | translate">
+            <i class="bi bi-slash-circle"></i> {{ 'Disable' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state-card" *ngIf="packages.length === 0">
+      <i class="bi bi-inbox"></i>
+      <p>{{ 'No packages found.' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- ===================== MERCHANTS TAB ===================== -->
+  <div *ngIf="!loading && activeTab === 'merchants'" class="tab-content-container animate-fade">
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'Merchant' | translate }}</th>
+              <th>{{ 'Email' | translate }}</th>
+              <th>{{ 'Points Balance' | translate }}</th>
+              <th class="text-center">{{ 'Actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of merchants" class="table-row">
+              <td>
+                <div class="merchant-name-cell">
+                  <span class="name-text">{{ m.name || '—' }}</span>
+                  <span class="id-tag">#{{ m.id }}</span>
+                </div>
+              </td>
+              <td>{{ m.email }}</td>
+              <td>
+                <span class="points-badge" [class.low-balance]="m.points_balance < settingsData.merchant_low_balance_threshold">
+                  <i class="bi bi-coin"></i>
+                  {{ m.points_balance | number }} {{ 'Points' | translate }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button class="btn-action view" (click)="viewMerchantDetails(m)" [title]="'View Details' | translate">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn-action approve" (click)="openAddCredit(m)" [title]="'Add Credit' | translate">
+                    <i class="bi bi-plus-circle-dotted"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="merchants.length === 0">
+              <td colspan="4" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-inbox"></i>
+                  <p>{{ 'No merchants found.' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar" *ngIf="merchantsLastPage > 1">
+        <button class="page-btn" (click)="loadMerchants(merchantsPage - 1)" [disabled]="merchantsPage === 1">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          *ngFor="let p of getPageNumbers(merchantsPage, merchantsLastPage)"
+          [class.active]="p === merchantsPage"
+          (click)="loadMerchants(p)"
+        >{{ p }}</button>
+        <button class="page-btn" (click)="loadMerchants(merchantsPage + 1)" [disabled]="merchantsPage === merchantsLastPage">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== REPORTS TAB ===================== -->
+  <div *ngIf="!loading && activeTab === 'reports'" class="tab-content-container animate-fade">
+    <div class="sub-tabs mb-4">
+      <button class="sub-tab-btn" [class.active]="activeReportTab === 'purchases'" (click)="switchReportTab('purchases')">
+        {{ 'Purchases Report' | translate }}
+      </button>
+      <button class="sub-tab-btn" [class.active]="activeReportTab === 'invoices'" (click)="switchReportTab('invoices')">
+        {{ 'Invoices Report' | translate }}
+      </button>
+    </div>
+
+    <!-- Purchases Report Table -->
+    <div class="table-card" *ngIf="activeReportTab === 'purchases'">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'ID' | translate }}</th>
+              <th>{{ 'Merchant' | translate }}</th>
+              <th>{{ 'Package Name' | translate }}</th>
+              <th>{{ 'Points' | translate }}</th>
+              <th>{{ 'Price' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Date' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of purchases" class="table-row">
+              <td>#{{ p.id }}</td>
+              <td>{{ p.merchant?.name || p.merchant?.email || '—' }}</td>
+              <td>{{ p.package_name || '—' }}</td>
+              <td>{{ p.points | number }}</td>
+              <td>{{ p.price | number:'1.0-2' }} {{ p.currency | translate }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="p.payment_status === 'paid' ? 'badge-approved' : 'badge-pending'">
+                  {{ (p.payment_status || 'Pending') | translate }}
+                </span>
+              </td>
+              <td>{{ p.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+            <tr *ngIf="purchases.length === 0">
+              <td colspan="7" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-inbox"></i>
+                  <p>{{ 'No purchase records found.' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar" *ngIf="purchasesLastPage > 1">
+        <button class="page-btn" (click)="purchasesPage = purchasesPage - 1; loadReports()" [disabled]="purchasesPage === 1">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          *ngFor="let p of getPageNumbers(purchasesPage, purchasesLastPage)"
+          [class.active]="p === purchasesPage"
+          (click)="purchasesPage = p; loadReports()"
+        >{{ p }}</button>
+        <button class="page-btn" (click)="purchasesPage = purchasesPage + 1; loadReports()" [disabled]="purchasesPage === purchasesLastPage">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Invoices Report Table -->
+    <div class="table-card" *ngIf="activeReportTab === 'invoices'">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'Invoice Number' | translate }}</th>
+              <th>{{ 'Merchant' | translate }}</th>
+              <th>{{ 'Subtotal' | translate }}</th>
+              <th>{{ 'Tax' | translate }}</th>
+              <th>{{ 'Total Price' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th>{{ 'Date' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inv of invoices" class="table-row">
+              <td>{{ inv.invoice_number }}</td>
+              <td>{{ inv.merchant_loyalty_account?.merchant?.name || '—' }}</td>
+              <td>{{ inv.subtotal | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+              <td>{{ inv.tax | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+              <td>{{ inv.total | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="inv.status === 'paid' ? 'badge-approved' : 'badge-pending'">
+                  {{ (inv.status || 'Pending') | translate }}
+                </span>
+              </td>
+              <td>{{ inv.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+            <tr *ngIf="invoices.length === 0">
+              <td colspan="7" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-inbox"></i>
+                  <p>{{ 'No invoice records found.' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar" *ngIf="invoicesLastPage > 1">
+        <button class="page-btn" (click)="invoicesPage = invoicesPage - 1; loadReports()" [disabled]="invoicesPage === 1">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          *ngFor="let p of getPageNumbers(invoicesPage, invoicesLastPage)"
+          [class.active]="p === invoicesPage"
+          (click)="invoicesPage = p; loadReports()"
+        >{{ p }}</button>
+        <button class="page-btn" (click)="invoicesPage = invoicesPage + 1; loadReports()" [disabled]="invoicesPage === invoicesLastPage">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SETTINGS TAB ===================== -->
+  <div *ngIf="!loading && activeTab === 'settings'" class="tab-content-container animate-fade">
+    <div class="settings-card">
+      <h5 class="settings-card-title"><i class="bi bi-gear-fill text-purple me-2"></i> {{ 'Loyalty Rules Configuration' | translate }}</h5>
+      <hr>
+      <div class="settings-form mt-4">
+        <div class="form-group mb-4">
+          <label class="form-lbl">{{ 'Points per Riyal' | translate }} <span class="required">*</span></label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="settingsData.points_per_riyal"
+            min="1"
+          />
+          <small class="form-text text-muted">{{ 'Defines how many loyalty points are credited per 1 SAR spent.' | translate }}</small>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-lbl">{{ 'Low Balance Notification Threshold' | translate }} <span class="required">*</span></label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="settingsData.merchant_low_balance_threshold"
+            min="0"
+          />
+          <small class="form-text text-muted">{{ 'The balance limit below which the merchant gets low points warning notifications.' | translate }}</small>
+        </div>
+
+        <div class="settings-footer">
+          <button class="btn-primary-action px-4" (click)="saveSettings()">
+            <i class="bi bi-check-circle"></i>
+            {{ 'Save Changes' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== ADD/EDIT PACKAGE MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showPackageModal" (click)="closePackageModal()">
+  <div class="modal-box reject-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-box-seam text-purple"></i>
+        <h5>{{ (isEditPackage ? 'Edit Package' : 'Add Package') | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closePackageModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Package Name' | translate }} <span class="required">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="packageForm.name" [placeholder]="'Package Name' | translate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Points Value' | translate }} <span class="required">*</span></label>
+        <input type="number" class="form-control" [(ngModel)]="packageForm.points" min="1">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Price' | translate }} <span class="required">*</span></label>
+        <input type="number" class="form-control" [(ngModel)]="packageForm.price" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Currency' | translate }} <span class="required">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="packageForm.currency" disabled>
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Sort Order' | translate }}</label>
+        <input type="number" class="form-control" [(ngModel)]="packageForm.sort_order">
+      </div>
+
+      <div class="form-group flex-row align-items-center gap-2 mt-2">
+        <input type="checkbox" id="pkg_active" [(ngModel)]="packageForm.is_active">
+        <label for="pkg_active" class="form-lbl m-0">{{ 'Is Active' | translate }}</label>
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closePackageModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-primary-action" (click)="savePackage()" [disabled]="packageSubmitting">
+        <span *ngIf="!packageSubmitting"><i class="bi bi-check-circle"></i> {{ 'Save' | translate }}</span>
+        <span *ngIf="packageSubmitting" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADD CREDIT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showCreditModal" (click)="closeCreditModal()">
+  <div class="modal-box reject-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-plus-circle-dotted text-success"></i>
+        <h5>{{ 'Add Merchant Credit' | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeCreditModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+      <p class="mb-2"><strong>{{ 'Merchant' | translate }}:</strong> {{ creditForm.merchantName }}</p>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Custom Points' | translate }} <span class="required">*</span></label>
+        <input type="number" class="form-control" [(ngModel)]="creditForm.custom_points" min="1">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Price Charged' | translate }}</label>
+        <input type="number" class="form-control" [(ngModel)]="creditForm.price" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Note' | translate }}</label>
+        <textarea class="form-textarea" rows="3" [(ngModel)]="creditForm.note" [placeholder]="'Write transaction reason/note here...' | translate"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeCreditModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-primary-action" (click)="submitCredit()" [disabled]="creditSubmitting">
+        <span *ngIf="!creditSubmitting"><i class="bi bi-check-circle"></i> {{ 'Confirm' | translate }}</span>
+        <span *ngIf="creditSubmitting" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MERCHANT DETAILS MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+  <div class="modal-box merchant-details-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-shop text-purple"></i>
+        <h5>{{ 'Merchant Loyalty Details' | translate }} - {{ selectedMerchant?.name }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeDetailsModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom scrollable-body">
+      
+      <!-- Sub-tabs within Modal -->
+      <div class="sub-tabs mb-3">
+        <button class="sub-tab-btn" [class.active]="detailsTab === 'invoices'" (click)="detailsTab = 'invoices'">
+          <i class="bi bi-file-earmark-text me-1"></i> {{ 'Invoices' | translate }}
+        </button>
+        <button class="sub-tab-btn" [class.active]="detailsTab === 'logs'" (click)="detailsTab = 'logs'">
+          <i class="bi bi-clock-history me-1"></i> {{ 'Balance Logs' | translate }}
+        </button>
+      </div>
+
+      <!-- Invoices Section -->
+      <div *ngIf="detailsTab === 'invoices'">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'Invoice Number' | translate }}</th>
+                <th>{{ 'Subtotal' | translate }}</th>
+                <th>{{ 'Tax' | translate }}</th>
+                <th>{{ 'Total' | translate }}</th>
+                <th>{{ 'Status' | translate }}</th>
+                <th>{{ 'Date' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inv of merchantInvoicesList" class="table-row">
+                <td>{{ inv.invoice_number }}</td>
+                <td>{{ inv.subtotal | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+                <td>{{ inv.tax | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+                <td>{{ inv.total | number:'1.0-2' }} {{ inv.currency | translate }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="inv.status === 'paid' ? 'badge-approved' : 'badge-pending'">
+                    {{ (inv.status || 'Pending') | translate }}
+                  </span>
+                </td>
+                <td>{{ inv.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+              </tr>
+              <tr *ngIf="merchantInvoicesList.length === 0">
+                <td colspan="6" class="empty-state text-center">
+                  <p class="m-0 text-muted">{{ 'No invoice records found.' | translate }}</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination for Invoices -->
+        <div class="pagination-bar mt-2" *ngIf="merchantInvoicesLastPage > 1">
+          <button class="page-btn" (click)="loadMerchantInvoices(merchantInvoicesPage - 1)" [disabled]="merchantInvoicesPage === 1">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <button
+            class="page-btn"
+            *ngFor="let p of getPageNumbers(merchantInvoicesPage, merchantInvoicesLastPage)"
+            [class.active]="p === merchantInvoicesPage"
+            (click)="loadMerchantInvoices(p)"
+          >{{ p }}</button>
+          <button class="page-btn" (click)="loadMerchantInvoices(merchantInvoicesPage + 1)" [disabled]="merchantInvoicesPage === merchantInvoicesLastPage">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Balance Logs Section -->
+      <div *ngIf="detailsTab === 'logs'">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'Type' | translate }}</th>
+                <th>{{ 'Points' | translate }}</th>
+                <th>{{ 'Action' | translate }}</th>
+                <th>{{ 'Note' | translate }}</th>
+                <th>{{ 'Date' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of merchantLogs" class="table-row">
+                <td>
+                  <span class="badge" [ngClass]="log.type === 'addition' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    {{ (log.type === 'addition' ? 'Credit Added' : 'Deduction') | translate }}
+                  </span>
+                </td>
+                <td><strong>{{ log.type === 'addition' ? '+' : '-' }}{{ log.points | number }}</strong></td>
+                <td>{{ log.action_type | translate }}</td>
+                <td><span class="note-text-el" [title]="log.note || ''">{{ log.note || '—' }}</span></td>
+                <td>{{ log.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+              </tr>
+              <tr *ngIf="merchantLogs.length === 0">
+                <td colspan="5" class="empty-state text-center">
+                  <p class="m-0 text-muted">{{ 'No balance log records found.' | translate }}</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination for Balance Logs -->
+        <div class="pagination-bar mt-2" *ngIf="logsLastPage > 1">
+          <button class="page-btn" (click)="loadMerchantLogs(logsPage - 1)" [disabled]="logsPage === 1">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <button
+            class="page-btn"
+            *ngFor="let p of getPageNumbers(logsPage, logsLastPage)"
+            [class.active]="p === logsPage"
+            (click)="loadMerchantLogs(p)"
+          >{{ p }}</button>
+          <button class="page-btn" (click)="loadMerchantLogs(logsPage + 1)" [disabled]="logsPage === logsLastPage">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeDetailsModal()">{{ 'Close' | translate }}</button>
+    </div>
+  </div>
+</div>

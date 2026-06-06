@@ -29,6 +29,7 @@
   transition: all 0.25s ease;
   border-left: 4px solid transparent;
   margin: 2px 0;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -132,4 +133,23 @@
 
 :host-context(body.dark-mode) .sidebar::-webkit-scrollbar-thumb {
   background-color: #30363d;
+}
+
+/* Premium Sidebar Badge */
+.sidebar .badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  line-height: 1;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-inline-start: 12px;
+}
+
+:host-context(body.dark-mode) .sidebar .badge {
+  background-color: #00cfd5 !important;
+  color: #11161d !important;
+  box-shadow: 0 2px 5px rgba(0, 207, 213, 0.2);
 }

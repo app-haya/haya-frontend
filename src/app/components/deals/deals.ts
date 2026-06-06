@@ -116,12 +116,12 @@ export class Deals implements OnInit {
     this.dealService.approveDeal(id).subscribe({
       next: () => {
         this.approvingId = null;
-        this.notification.success('تم قبول الصفقة بنجاح');
+        this.notification.success('Deal approved successfully');
         this.loadDeals(this.currentPage);
       },
       error: (err: any) => {
         this.approvingId = null;
-        const msg = err?.error?.message || 'حدث خطأ أثناء القبول';
+        const msg = err?.error?.message || 'An error occurred during approval';
         this.notification.error(msg);
       }
     });
@@ -142,7 +142,7 @@ export class Deals implements OnInit {
   confirmReject(): void {
     if (this.selectedDealId === null) return;
     if (!this.rejectReason.trim()) {
-      this.notification.error('برجاء كتابة سبب الرفض');
+      this.notification.error('Please write the rejection reason');
       return;
     }
 
@@ -150,13 +150,13 @@ export class Deals implements OnInit {
     this.dealService.rejectDeal(this.selectedDealId, this.rejectReason).subscribe({
       next: () => {
         this.rejectLoading = false;
-        this.notification.success('تم رفض الصفقة بنجاح');
+        this.notification.success('Deal rejected successfully');
         this.closeRejectModal();
         this.loadDeals(this.currentPage);
       },
       error: (err: any) => {
         this.rejectLoading = false;
-        const msg = err?.error?.message || 'حدث خطأ أثناء الرفض';
+        const msg = err?.error?.message || 'An error occurred during rejection';
         this.notification.error(msg);
       }
     });
@@ -242,6 +242,6 @@ export class Deals implements OnInit {
   }
 
   getActivityLabel(isActive: any): string {
-    return isActive ? 'نشط' : 'غير نشط';
+    return isActive ? 'Active' : 'Inactive';
   }
 }
