@@ -1,101 +1,6 @@
-.container-fluid {
-  min-height: 100vh;
-  padding: 25px;
-}
-
-h4.fw-bold {
-  color: #1f6eb4;
-  font-weight: 700;
-}
-
-.text-muted {
-  color: #6c757d !important;
-}
-
-.search-input {
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  transition: 0.3s;
-}
-
-.search-input:focus {
-  border-color: #7a3ca0;
-  box-shadow: 0 0 0 0.15rem rgba(122, 60, 160, 0.25);
-}
-
-.btn-purple {
-  background-color: #7a3ca0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.btn-purple:hover {
-  background-color: #5b2e7a;
-  color: #fff;
-}
-
-.btn-outline-purple {
-  border: 1px solid #7a3ca0;
-  color: #7a3ca0;
-  border-radius: 6px;
-  padding: 5px 10px;
-}
-
-.btn-outline-purple:hover {
-  background-color: #7a3ca0;
-  color: #fff;
-}
-
-.btn-outline-danger {
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  border-radius: 6px;
-  padding: 5px 10px;
-}
-
-.btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: white;
-}
-
-.table-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 25px;
-  margin-top: 20px;
-}
-
-.table th {
-  background-color: #f8f9fa;
-  color: #1f6eb4;
-  font-weight: 600;
-  border: none;
-}
-
-.table td {
-  vertical-align: middle;
-  border-top: 1px solid #e9ecef;
-}
-
-.custom-switch {
-  width: 2.2em;
-  height: 1.1em;
-}
-
-.bg-success-subtle {
-  background-color: #d1e7dd;
-}
-
-.bg-danger-subtle {
-  background-color: #f8d7da;
-}
-
-/* Modal Styling */
+/* ========================================================= */
+/* MODAL STYLING (Light Mode) */
+/* ========================================================= */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -116,8 +21,9 @@ h4.fw-bold {
 .modal-content {
   background: #ffffff;
   border-radius: 20px;
+  padding: 0;
   width: 95%;
-  max-width: 450px;
+  max-width: 480px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
   overflow: hidden;
@@ -125,7 +31,7 @@ h4.fw-bold {
 }
 
 .modal-header {
-  padding: 15px 25px;
+  padding: 20px 25px;
   background: #7a3ca0;
   color: white;
   display: flex;
@@ -133,23 +39,55 @@ h4.fw-bold {
   justify-content: space-between;
 }
 
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
 .close-btn {
   background: rgba(255, 255, 255, 0.15);
   border: none;
   color: white;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-.image-upload-box {
-  border: 1px dashed #ced4da !important;
-  transition: 0.3s;
+.gift-modal-form {
+  padding: 24px;
 }
 
-.image-upload-box:hover {
-  border-color: #7a3ca0 !important;
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  color: #333;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
 }
 
 .btn-outline {
@@ -158,12 +96,29 @@ h4.fw-bold {
   color: #666;
 }
 
-/* Dark Mode Overrides */
-:host-context(body.dark-mode) .table-container,
+/* Image Upload Box */
+.image-upload-box {
+  background-color: #fafafa;
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.image-upload-box:hover {
+  border-color: #7a3ca0;
+  background-color: #faf7ff;
+}
+
+.text-purple {
+  color: #7a3ca0 !important;
+}
+
+/* 🌙 PREMIUM DARK MODE 🌙 */
 :host-context(body.dark-mode) .modal-content {
-  background: #161b22 !important;
-  color: #c9d1d9 !important;
+  background-color: #161b22 !important;
+  color: #ffffff !important;
   border: 1px solid #30363d !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
 }
 
 :host-context(body.dark-mode) .modal-header {
@@ -171,34 +126,16 @@ h4.fw-bold {
   border-bottom: 1px solid #30363d !important;
 }
 
-:host-context(body.dark-mode) .image-upload-box {
-  background-color: #0d1117 !important;
-  border-color: #30363d !important;
-  color: #8b949e !important;
-}
-
-:host-context(body.dark-mode) .image-upload-box p,
-:host-context(body.dark-mode) .image-upload-box i {
-  color: #00cfd5 !important;
-}
-
-:host-context(body.dark-mode) .form-label,
-:host-context(body.dark-mode) label {
+:host-context(body.dark-mode) .form-group label {
   color: #ffffff !important;
 }
 
-:host-context(body.dark-mode) .form-control,
-:host-context(body.dark-mode) .form-select,
-:host-context(body.dark-mode) select,
-:host-context(body.dark-mode) input {
+:host-context(body.dark-mode) .form-group input,
+:host-context(body.dark-mode) .form-group select,
+:host-context(body.dark-mode) .form-group textarea {
   background-color: #0d1117 !important;
   border: 1px solid #30363d !important;
   color: #ffffff !important;
-}
-
-:host-context(body.dark-mode) .btn-purple {
-  background-color: #00cfd5 !important;
-  color: #0b0e14 !important;
 }
 
 :host-context(body.dark-mode) .btn-outline {
@@ -207,21 +144,23 @@ h4.fw-bold {
   border: 1px solid #30363d !important;
 }
 
-:host-context(body.dark-mode) .bg-success-subtle {
-  background-color: rgba(35, 134, 54, 0.15) !important;
-  color: #3fb950 !important;
+:host-context(body.dark-mode) .btn-outline:hover {
+  background-color: #30363d !important;
+  color: #ffffff !important;
 }
 
-:host-context(body.dark-mode) .bg-danger-subtle {
-  background-color: rgba(248, 81, 73, 0.15) !important;
-  color: #f85149 !important;
-}
-
-:host-context(body.dark-mode) .text-purple {
-  color: #00cfd5 !important;
+:host-context(body.dark-mode) .image-upload-box {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
 }
 
 @keyframes modalIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }

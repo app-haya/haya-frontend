@@ -1,49 +1,96 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">{{ 'Banned Words' | translate }}</h4>
-  <p class="text-muted mb-4">{{ 'Manage all blocked words' | translate }}</p>
+<div class="page-wrapper">
 
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <div class="search-container">
-      <input type="text" class="form-control search-input" [placeholder]="'Search words...' | translate"
-        [(ngModel)]="searchTerm" (input)="applyFilter()" />
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-slash-circle"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Banned Words' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Manage all blocked words' | translate }}</p>
+      </div>
     </div>
-    <button class="btn btn-purple mt-2 mt-md-0" (click)="openAddModal()">
-      <i class="fas fa-plus me-2"></i>{{ 'Add Word' | translate }}
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ filteredWords.length }} {{ (filteredWords.length === 1 ? 'Word' : 'Words') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search & Add) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search words...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilter()"
+      />
+    </div>
+    <button class="btn-add" (click)="openAddModal()">
+      <i class="bi bi-plus-lg"></i>
+      {{ 'Add Word' | translate }}
     </button>
   </div>
 
-  <div class="table-container table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>{{ 'ID' | translate }}</th>
-          <th>{{ 'Word' | translate }}</th>
-          <th>{{ 'Created At' | translate }}</th>
-          <th>{{ 'Updated At' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let word of filteredWords">
-          <td>{{ word.id }}</td>
-          <td>{{ word.word }}</td>
-          <td>{{ word.created_at | date : 'short' }}</td>
-          <td>{{ word.updated_at | date : 'short' }}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-outline-purple me-2" (click)="startEdit(word)">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteWord(word.id)">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="filteredWords.length === 0">
-          <td colspan="5" class="text-center text-muted">{{ 'No banned words found.' | translate }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Loading State (Banned words doesn't have loading indicator but let's add it for consistency) -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading banned words...' | translate }}</p>
   </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'ID' | translate }}</th>
+            <th>{{ 'Word' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+            <th>{{ 'Updated At' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let word of filteredWords" class="table-row">
+            <td>{{ word.id }}</td>
+            <td>{{ word.word }}</td>
+            <td>{{ word.created_at | date : 'dd/MM/yyyy' }}</td>
+            <td>{{ word.updated_at | date : 'dd/MM/yyyy' }}</td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  class="edit-btn"
+                  (click)="startEdit(word)"
+                  [title]="'Edit' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                  class="delete-btn"
+                  (click)="deleteWord(word.id)"
+                  [title]="'Delete' | translate"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredWords.length === 0">
+            <td colspan="5" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No banned words found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- Add Modal -->
@@ -58,8 +105,14 @@
     <form (ngSubmit)="addWord()" class="city-form">
       <div class="form-group">
         <label>{{ 'Word' | translate }}</label>
-        <input type="text" [(ngModel)]="newWord" name="newWord" required
-          [placeholder]="'e.g. offensive word' | translate" #addInput />
+        <input
+          type="text"
+          [(ngModel)]="newWord"
+          name="newWord"
+          required
+          [placeholder]="'e.g. offensive word' | translate"
+          #addInput
+        />
       </div>
 
       <div class="form-actions">
@@ -82,8 +135,13 @@
     <form (ngSubmit)="updateWord()" class="city-form">
       <div class="form-group">
         <label>{{ 'Banned Word' | translate }}</label>
-        <input type="text" [(ngModel)]="editWord" name="editWord" required
-          [placeholder]="'e.g. offensive word' | translate" />
+        <input
+          type="text"
+          [(ngModel)]="editWord"
+          name="editWord"
+          required
+          [placeholder]="'e.g. offensive word' | translate"
+        />
       </div>
 
       <div class="form-actions">

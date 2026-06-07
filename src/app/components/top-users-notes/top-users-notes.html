@@ -1,128 +1,153 @@
-<div class="container-fluid p-3">
-  <div class="d-flex justify-content-between align-items-end mb-4">
-    <div>
-      <h4 class="fw-bold mb-2">{{ 'Top Users Notes' | translate }}</h4>
-      <p class="subtitle-text mb-0">{{ 'Manage top 30 users and their notes' | translate }}</p>
-    </div>
-    <div class="d-flex gap-3">
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-trophy"></i>
+      </div>
       <div>
-        <label class="form-label small text-muted mb-1">{{ 'Year' | translate }}</label>
-        <select class="form-select form-select-sm" [(ngModel)]="selectedYear" (change)="onDateChange()">
+        <h4 class="page-title">{{ 'Top Users Notes' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Manage top 30 users and their notes' | translate }}</p>
+      </div>
+    </div>
+    
+    <!-- Year & Month Selects -->
+    <div class="d-flex gap-2 align-items-center">
+      <div>
+        <select class="header-select" [(ngModel)]="selectedYear" (change)="onDateChange()">
           <option *ngFor="let year of years" [value]="year">{{ year }}</option>
         </select>
       </div>
       <div>
-        <label class="form-label small text-muted mb-1">{{ 'Month' | translate }}</label>
-        <select class="form-select form-select-sm" [(ngModel)]="selectedMonth" (change)="onDateChange()">
+        <select class="header-select" [(ngModel)]="selectedMonth" (change)="onDateChange()">
           <option *ngFor="let month of months" [value]="month">{{ month }}</option>
         </select>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>{{ 'Rank' | translate }}</th>
-          <th>{{ 'Image' | translate }}</th>
-          <th>{{ 'Name' | translate }}</th>
-          <th>{{ 'Phone' | translate }}</th>
-          <th>{{ 'Points' | translate }}</th>
-          <th>{{ 'Last Updated' | translate }}</th>
-          <th>{{ 'Status' | translate }}</th>
-          <th>{{ 'Gift Type' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of users">
-          <td>{{ item.rank }}</td>
-          <td>
-            <img *ngIf="item.user?.image" [src]="item.user.image" alt="Profile Image" class="img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
-          </td>
-          <td>{{ item.user?.name }}</td>
-          <td>{{ item.user?.phone || '-' }}</td>
-          <td>
-            <span class="points-value">{{ item.total_points }}</span>
-          </td>
-          <td>{{ item.note_updated_at ? (item.note_updated_at | date: 'short') : '-' }}</td>
-          <td>
-            <div class="d-flex align-items-center gap-2">
-              <span class="badge" [ngClass]="{'bg-warning': item.status === 'waiting' || !item.status, 'bg-success': item.status === 'completed'}">
-                {{ item.status === 'completed' ? ('تم الاستلام' | translate) : ('انتظار' | translate) }}
-              </span>
-              <div class="form-check form-switch m-0 p-0 ms-2 d-flex align-items-center">
-                <input class="form-check-input custom-status-switch m-0" type="checkbox" role="switch" style="cursor: pointer; width: 2.5em; height: 1.25em;"
-                       [checked]="item.status === 'completed'"
-                       (change)="toggleStatus(item, $event)">
-              </div>
-            </div>
-          </td>
-          <td>{{ item.note || '-' }}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-outline-purple" (click)="openModal(item)">
-              <i class="fas fa-edit me-1"></i> {{ 'Gift Type' | translate }}
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="users.length === 0">
-          <td colspan="9" class="text-center text-muted">{{ 'No users found.' | translate }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <nav aria-label="Page navigation" *ngIf="lastPage > 1" class="mt-4">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" href="javascript:void(0)" (click)="prevPage()" aria-label="Previous">
-            <span aria-hidden="true">{{ '&laquo;' | translate }}</span>
-          </a>
-        </li>
-        <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="currentPage === page">
-          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === lastPage">
-          <a class="page-link" href="javascript:void(0)" (click)="nextPage()" aria-label="Next">
-            <span aria-hidden="true">{{ '&raquo;' | translate }}</span>
-          </a>
-        </li>
-      </ul>
-      <div class="d-flex justify-content-between align-items-center mt-2">
-        <div class="text-muted small">
-          {{ 'Showing' | translate }} {{ (currentPage - 1) * perPage + 1 }} {{ 'to' | translate }} 
-          {{ Math.min(currentPage * perPage, total) }} {{ 'of' | translate }} {{ total }} {{ 'entries' | translate }}
-        </div>
-      </div>
-    </nav>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
   </div>
 
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">{{ 'Loading...' | translate }}</p>
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Rank' | translate }}</th>
+            <th>{{ 'Image' | translate }}</th>
+            <th>{{ 'Name' | translate }}</th>
+            <th>{{ 'Phone' | translate }}</th>
+            <th>{{ 'Points' | translate }}</th>
+            <th>{{ 'Last Updated' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th>{{ 'Gift Type' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of users" class="table-row">
+            <td>{{ item.rank }}</td>
+            <td>
+              <img
+                *ngIf="item.user?.image"
+                [src]="item.user.image"
+                alt="Profile Image"
+                class="profile-img"
+              />
+              <span *ngIf="!item.user?.image">—</span>
+            </td>
+            <td>{{ item.user?.name || '-' }}</td>
+            <td>{{ item.user?.phone || '-' }}</td>
+            <td>
+              <span class="points-value">{{ item.total_points }}</span>
+            </td>
+            <td>{{ item.note_updated_at ? (item.note_updated_at | date: 'dd/MM/yyyy') : '-' }}</td>
+            <td>
+              <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="status-badge" [ngClass]="item.status === 'completed' ? 'badge-approved' : 'badge-pending'">
+                  {{ (item.status === 'completed' ? 'Received' : 'Waiting') | translate }}
+                </span>
+                <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
+                  <input
+                    class="form-check-input custom-status-switch m-0"
+                    type="checkbox"
+                    role="switch"
+                    style="cursor: pointer;"
+                    [checked]="item.status === 'completed'"
+                    (change)="toggleStatus(item, $event)"
+                  />
+                </div>
+              </div>
+            </td>
+            <td class="truncate-text" [title]="item.note || ''">{{ item.note || '-' }}</td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  class="edit-btn"
+                  style="width: auto; padding: 4px 10px; font-size: 0.75rem; gap: 4px;"
+                  (click)="openModal(item)"
+                  [title]="'Gift Type' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                  {{ 'Gift Type' | translate }}
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="9" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No users found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let page of getPageNumbers()"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >{{ page }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
 
   <!-- Modal -->
-  <div class="modal fade show" tabindex="-1" *ngIf="isModalOpen" style="display: block; background: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{ 'Update Gift Type' | translate }}</h5>
-          <button type="button" class="btn-close" (click)="closeModal()"></button>
+  <div class="custom-modal" *ngIf="isModalOpen">
+    <div class="custom-modal-backdrop" (click)="closeModal()"></div>
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="m-0">{{ 'Update Gift Type' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="mb-3">
+          <label class="form-label mb-2">{{ 'Gift Type' | translate }}</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="noteText" placeholder="{{ 'Enter gift type here...' | translate }}"></textarea>
         </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">{{ 'Gift Type' | translate }}</label>
-            <textarea class="form-control" rows="4" [(ngModel)]="noteText" placeholder="{{ 'Enter gift type here...' | translate }}"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeModal()">{{ 'Cancel' | translate }}</button>
-          <button type="button" class="btn btn-purple" (click)="saveNote()">{{ 'Save' | translate }}</button>
-        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeModal()">{{ 'Cancel' | translate }}</button>
+        <button type="button" class="btn-add" (click)="saveNote()">{{ 'Save' | translate }}</button>
       </div>
     </div>
   </div>
+
 </div>

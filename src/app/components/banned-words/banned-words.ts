@@ -18,6 +18,7 @@ export class BannedWords implements OnInit {
   filteredWords: any[] = [];
   newWord: string = '';
   searchTerm: string = '';
+  loading: boolean = false;
 
   showAddModal: boolean = false;
   editMode: boolean = false;
@@ -37,6 +38,7 @@ export class BannedWords implements OnInit {
   }
 
   loadWords(): void {
+    this.loading = true;
     this.bannedWordsService.getAll().subscribe({
       next: (res) => {
         if (res && res.errorcode === '0' && Array.isArray(res.data)) {
@@ -48,10 +50,12 @@ export class BannedWords implements OnInit {
           this.filteredWords = [];
           this.message = res.message || 'No data found';
         }
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error:', err);
         this.notification.error('Failed to load banned words');
+        this.loading = false;
       },
     });
   }

@@ -1,1 +1,109 @@
-<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Roles' | translate }}</h4>  <p class="text-muted mb-4">{{ 'List of All Roles' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 gap-2">    <input      type="text"      class="form-control search-input"      [placeholder]="'Search by name...' | translate"      [(ngModel)]="searchTerm"      (input)="filterRoles()"    />    <button class="btn btn-purple" (click)="openAddModal()">      <i class="fas fa-plus me-2"></i>{{ 'Add Role' | translate }}    </button>  </div>  <div *ngIf="loading" class="text-center my-4">    <div class="spinner-border text-primary"></div>  </div>  <div class="table-container table-responsive" *ngIf="!loading">    <table class="table table-hover align-middle">      <thead>        <tr>          <th>{{ 'Role Name' | translate }}</th>          <th class="text-center">{{ 'Actions' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let role of filteredRoles">          <td>{{ role.name }}</td>          <td class="text-center">            <button class="btn btn-sm btn-outline-purple me-2" (click)="openEditModal(role)">              <i class="fas fa-edit"></i>            </button>            <button class="btn btn-sm btn-outline-danger" (click)="deleteRole(role.id)">              <i class="fas fa-trash-alt"></i>            </button>          </td>        </tr>        <tr *ngIf="filteredRoles.length === 0">          <td colspan="2" class="text-center text-muted">{{ 'No roles found.' | translate }}</td>        </tr>      </tbody>    </table>  </div></div><div class="modal-overlay" *ngIf="showModal" (click)="showModal = false"></div><div class="modal" *ngIf="showModal">  <div class="modal-content" (click)="$event.stopPropagation()">    <div class="modal-header">      <h3>{{ modalTitle }}</h3>      <button class="close-btn" (click)="showModal = false">✕</button>    </div>    <form (ngSubmit)="saveRole()" class="city-form">      <div class="form-group">        <label>{{ 'Role Name' | translate }}</label>        <input type="text" [(ngModel)]="formData.name" name="name" required />      </div>      <div class="form-actions">        <button class="btn btn-purple" type="submit">{{ 'Save' | translate }}</button>        <button class="btn btn-outline" type="button" (click)="showModal = false">{{ 'Cancel' | translate }}</button>      </div>    </form>  </div></div>
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-shield-lock"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Roles' | translate }}</h4>
+        <p class="page-subtitle">{{ 'List of All Roles' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ filteredRoles.length }} {{ (filteredRoles.length === 1 ? 'Role' : 'Roles') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search & Add) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by name...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="filterRoles()"
+      />
+    </div>
+    <button class="btn-add" (click)="openAddModal()">
+      <i class="bi bi-plus-lg"></i>
+      {{ 'Add Role' | translate }}
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading roles...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Role Name' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of filteredRoles" class="table-row">
+            <td>{{ role.name }}</td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  class="edit-btn"
+                  (click)="openEditModal(role)"
+                  [title]="'Edit' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                  class="delete-btn"
+                  (click)="deleteRole(role.id)"
+                  [title]="'Delete' | translate"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredRoles.length === 0">
+            <td colspan="2" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No roles found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="showModal = false"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="close-btn" (click)="showModal = false">✕</button>
+    </div>
+    <form (ngSubmit)="saveRole()" class="city-form">
+      <div class="form-group">
+        <label>{{ 'Role Name' | translate }}</label>
+        <input type="text" [(ngModel)]="formData.name" name="name" required />
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-purple" type="submit">{{ 'Save' | translate }}</button>
+        <button class="btn btn-outline" type="button" (click)="showModal = false">{{ 'Cancel' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</div>

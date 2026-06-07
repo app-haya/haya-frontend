@@ -1,1 +1,91 @@
-<div class="container-fluid p-3">  <h4 class="fw-bold mb-3">{{ 'Messages' | translate }}</h4>  <p class="text-muted mb-4">{{ 'List of All Messages' | translate }}</p>  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">    <input      type="text"      class="form-control search-input"      [placeholder]="'Search by message or sender...' | translate"      [(ngModel)]="searchTerm"      (input)="filterMessages()"    />  </div>  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">    <table class="table table-hover align-middle">      <thead>        <tr>          <th>{{ 'Message' | translate }}</th>          <th>{{ 'Sender' | translate }}</th>          <th>{{ 'Receiver' | translate }}</th>          <th>{{ 'Created At' | translate }}</th>          <th>{{ 'Updated At' | translate }}</th>        </tr>      </thead>      <tbody>        <tr *ngFor="let msg of messages">          <td>{{ msg.message }}</td>          <td>{{ msg.sender?.name || "N/A" }}</td>          <td>{{ msg.receiver?.name || "N/A" }}</td>          <td>{{ msg.created_at | date:'short' }}</td>          <td>{{ msg.updated_at | date:'short' }}</td>        </tr>        <tr *ngIf="messages.length === 0">          <td colspan="5" class="text-center text-muted">{{ 'No messages found.' | translate }}</td>        </tr>      </tbody>    </table>    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">      <nav>        <ul class="pagination mb-0">          <li class="page-item" [class.disabled]="currentPage === 1">            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>          </li>          <li            class="page-item"            *ngFor="let page of getPageNumbers()"            [class.active]="page === currentPage"          >            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>          </li>          <li class="page-item" [class.disabled]="currentPage === lastPage">            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>          </li>        </ul>      </nav>    </div>  </div>  <ng-template #loadingSpinner>    <div class="text-center my-5">      <div class="spinner-border text-primary"></div>      <p class="mt-2">{{ 'Loading messages...' | translate }}</p>    </div>  </ng-template></div>
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-chat-left-text"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Messages' | translate }}</h4>
+        <p class="page-subtitle">{{ 'List of All Messages' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ messages.length }} {{ (messages.length === 1 ? 'Message' : 'Messages') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search Only) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by message or sender...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="filterMessages()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading messages...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Message' | translate }}</th>
+            <th>{{ 'Sender' | translate }}</th>
+            <th>{{ 'Receiver' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+            <th>{{ 'Updated At' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let msg of messages" class="table-row">
+            <td class="truncate-text" [title]="msg.message" style="max-width: 200px;">
+              {{ msg.message }}
+            </td>
+            <td>{{ msg.sender?.name || "N/A" }}</td>
+            <td>{{ msg.receiver?.name || "N/A" }}</td>
+            <td>{{ msg.created_at | date:'dd/MM/yyyy' }}</td>
+            <td>{{ msg.updated_at | date:'dd/MM/yyyy' }}</td>
+          </tr>
+          <tr *ngIf="messages.length === 0">
+            <td colspan="5" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No messages found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let page of getPageNumbers()"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >{{ page }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

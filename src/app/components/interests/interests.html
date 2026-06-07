@@ -1,67 +1,115 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">{{ 'Interests' | translate }}</h4>
-  <p class="text-muted mb-4">{{ 'List of All Interests' | translate }}</p>
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input type="text" class="form-control search-input" [placeholder]="'Search by name...' | translate"
-      [(ngModel)]="searchTerm" (input)="filterInterests()" />
-    <button class="btn btn-purple mt-2 mt-md-0" (click)="openAddModal()">
-      <i class="fas fa-plus me-2"></i>{{ 'Add Interest' | translate }}
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-heart"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Interests' | translate }}</h4>
+        <p class="page-subtitle">{{ 'List of All Interests' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ filteredInterests.length }} {{ (filteredInterests.length === 1 ? 'Interest' : 'Interests') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search & Add) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by name...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="filterInterests()"
+      />
+    </div>
+    <button class="btn-add" (click)="openAddModal()">
+      <i class="bi bi-plus-lg"></i>
+      {{ 'Add Interest' | translate }}
     </button>
   </div>
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>{{ 'Name (EN)' | translate }}</th>
-          <th>{{ 'Name (AR)' | translate }}</th>
-          <th>{{ 'Created At' | translate }}</th>
-          <th>{{ 'Updated At' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let interest of filteredInterests">
-          <td>{{ interest.name_en }}</td>
-          <td>{{ interest.name_ar }}</td>
-          <td>{{ interest.created_at | date: 'short' }}</td>
-          <td>{{ interest.updated_at | date: 'short' }}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-outline-purple me-2" (click)="openEditModal(interest)">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteInterest(interest.id)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="filteredInterests.length === 0">
-          <td colspan="5" class="text-center text-muted">{{ 'No interests found.' | translate }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="total > 0">
-      <nav>
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>
-          </li>
-          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
-            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === lastPage">
-            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>
-          </li>
-        </ul>
-      </nav>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading interests...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Name (EN)' | translate }}</th>
+            <th>{{ 'Name (AR)' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+            <th>{{ 'Updated At' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let interest of filteredInterests" class="table-row">
+            <td>{{ interest.name_en }}</td>
+            <td>{{ interest.name_ar }}</td>
+            <td>{{ interest.created_at | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ interest.updated_at | date: 'dd/MM/yyyy' }}</td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  class="edit-btn"
+                  (click)="openEditModal(interest)"
+                  [title]="'Edit' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                  class="delete-btn"
+                  (click)="deleteInterest(interest.id)"
+                  [title]="'Delete' | translate"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredInterests.length === 0">
+            <td colspan="5" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No interests found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="total > 0 && lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let page of getPageNumbers()"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >{{ page }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
     </div>
   </div>
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">{{ 'Loading interests...' | translate }}</p>
-    </div>
-  </ng-template>
+
 </div>
+
+<!-- Modal -->
 <div class="modal-overlay" *ngIf="showModal" (click)="showModal = false"></div>
 <div class="modal" *ngIf="showModal">
   <div class="modal-content" (click)="$event.stopPropagation()">
@@ -72,13 +120,24 @@
     <form (ngSubmit)="saveInterest()" class="city-form">
       <div class="form-group">
         <label>{{ 'Name (English)' | translate }}</label>
-        <input type="text" [(ngModel)]="formData.name_en" name="name_en" required
-          [placeholder]="'e.g. Sports' | translate" />
+        <input
+          type="text"
+          [(ngModel)]="formData.name_en"
+          name="name_en"
+          required
+          [placeholder]="'e.g. Sports' | translate"
+        />
       </div>
       <div class="form-group">
         <label>{{ 'Name (Arabic)' | translate }}</label>
-        <input type="text" [(ngModel)]="formData.name_ar" name="name_ar" required dir="rtl"
-          [placeholder]="'مثلاً: رياضة' | translate" />
+        <input
+          type="text"
+          [(ngModel)]="formData.name_ar"
+          name="name_ar"
+          required
+          dir="rtl"
+          [placeholder]="'مثلاً: رياضة' | translate"
+        />
       </div>
       <div class="form-actions">
         <button type="submit" class="btn btn-purple">{{ 'Save' | translate }}</button>

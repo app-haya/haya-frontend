@@ -34,7 +34,7 @@ export class Merchants implements OnInit {
 
   loadMerchants(page: number = 1) {
     this.loading = true;
-    this.merchantService.getAll().subscribe({
+    this.merchantService.getAll(page).subscribe({
       next: (res) => {
         if (res && res.data) {
           this.merchants = res.data.data || [];

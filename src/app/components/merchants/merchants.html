@@ -1,139 +1,189 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">{{ 'Merchants' | translate }}</h4>
-  <p class="text-muted mb-4">{{ 'List of All Merchants' | translate }}</p>
+<div class="page-wrapper">
 
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input
-      type="text"
-      class="form-control search-input"
-      [placeholder]="'Search by name, email, or phone...' | translate"
-      [(ngModel)]="searchTerm"
-      (input)="search()"
-    />
-    <a [routerLink]="['/admin/addmerchant']" class="btn btn-purple mt-2 mt-md-0">
-      <i class="fas fa-user-plus me-2"></i>{{ 'Add Merchant' | translate }}
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-shop"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Merchants' | translate }}</h4>
+        <p class="page-subtitle">{{ 'List of All Merchants' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ filteredMerchants.length }} {{ (filteredMerchants.length === 1 ? 'Merchant' : 'Merchants') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search & Add) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by name, email, or phone...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="search()"
+      />
+    </div>
+    <a [routerLink]="['/admin/addmerchant']" class="btn-add">
+      <i class="bi bi-person-plus-fill"></i>
+      {{ 'Add Merchant' | translate }}
     </a>
   </div>
 
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle text-center">
-      <thead>
-        <tr>
-          <th>{{ 'Profile Image' | translate }}</th>
-          <th>{{ 'Name' | translate }}</th>
-          <th>{{ 'Owner Name' | translate }}</th>
-          <th>{{ 'Email' | translate }}</th>
-          <th>{{ 'Phone' | translate }}</th>
-          <th>{{ 'Sign In Type' | translate }}</th>
-          <th>{{ 'Commercial Register' | translate }}</th>
-          <th>{{ 'Activity' | translate }}</th>
-          <th>{{ 'Privacy' | translate }}</th>
-          <th>{{ 'Created At' | translate }}</th>
-          <th>{{ 'Updated At' | translate }}</th>
-          <th>{{ 'Verification' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let merchant of filteredMerchants">
-          <td>
-            <img
-              [src]="merchant.Store_logo || merchant.image || 'assets/images/user.jpg'"
-              alt="Merchant"
-              class="profile-img"
-            />
-          </td>
-          <td class="truncate-text" [title]="merchant.name || ''">{{ merchant.name || '-' }}</td>
-          <td class="truncate-text" [title]="merchant.owner_name || ''">{{ merchant.owner_name || '-' }}</td>
-          <td class="truncate-text" [title]="merchant.email || ''">{{ merchant.email || '-' }}</td>
-          <td>{{ merchant.phone || '-' }}</td>
-          <td>
-            <span class="badge bg-info text-dark">
-              {{ merchant.sign_in_type || 'normal' }}
-            </span>
-          </td>
-          <td>
-            <img
-              *ngIf="merchant.commercial_register"
-              [src]="merchant.commercial_register"
-              alt="register"
-              class="register-img"
-            />
-            <span *ngIf="!merchant.commercial_register">-</span>
-          </td>
-          <td class="truncate-text" [title]="merchant.activity || ''">
-            {{ merchant.activity || '-' }}
-          </td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="merchant.is_private == '1' ? 'bg-secondary' : 'bg-light text-dark'"
-            >
-              {{ merchant.is_private == '1' ? ('Private' | translate) : ('Public' | translate) }}
-            </span>
-          </td>
-          <td>{{ merchant.created_at | date : 'short' }}</td>
-          <td>{{ merchant.updated_at | date : 'short' }}</td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="merchant.is_verified == 1 ? 'bg-success' : 'bg-warning text-dark'"
-            >
-              {{ merchant.is_verified == 1 ? ('Verified' | translate) : ('Pending' | translate) }}
-            </span>
-          </td>
-          <td class="text-center">
-            <div class="action-buttons">
-              <a
-                [routerLink]="['/admin/editmerchant', merchant.id]"
-                class="btn btn-sm btn-outline-purple"
-                title="Edit"
-              >
-                <i class="fas fa-edit"></i>
-              </a>
-              <button
-                class="btn btn-sm btn-outline-danger"
-                (click)="deleteMerchant(merchant.id)"
-                title="Delete"
-              >
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="filteredMerchants.length === 0">
-          <td colspan="13" class="text-center text-muted">
-            {{ 'No merchants found.' | translate }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading merchants...' | translate }}</p>
+  </div>
 
-    <div class="d-flex justify-content-center align-items-center mt-4" *ngIf="lastPage > 0">
-      <nav>
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="prevPage()">{{ '&laquo; Prev' | translate }}</a>
-          </li>
-          <li
-            class="page-item"
-            *ngFor="let page of getPageNumbers()"
-            [class.active]="page === currentPage"
-          >
-            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === lastPage">
-            <a class="page-link" (click)="nextPage()">{{ 'Next &raquo;' | translate }}</a>
-          </li>
-        </ul>
-      </nav>
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Profile Image' | translate }}</th>
+            <th>{{ 'Name' | translate }}</th>
+            <th>{{ 'Owner Name' | translate }}</th>
+            <th>{{ 'Email' | translate }}</th>
+            <th>{{ 'Phone' | translate }}</th>
+            <th>{{ 'Sign In Type' | translate }}</th>
+            <th>{{ 'Commercial Register' | translate }}</th>
+            <th>{{ 'Activity' | translate }}</th>
+            <th>{{ 'Privacy' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+            <th>{{ 'Updated At' | translate }}</th>
+            <th>{{ 'Verification' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let merchant of filteredMerchants" class="table-row">
+            
+            <!-- Profile Image -->
+            <td>
+              <img
+                [src]="merchant.Store_logo || merchant.image || 'assets/images/user.jpg'"
+                alt="Merchant"
+                class="profile-img"
+              />
+            </td>
+            
+            <!-- Name -->
+            <td class="truncate-text" [title]="merchant.name || ''">
+              {{ merchant.name || '-' }}
+            </td>
+            
+            <!-- Owner Name -->
+            <td class="truncate-text" [title]="merchant.owner_name || ''">
+              {{ merchant.owner_name || '-' }}
+            </td>
+            
+            <!-- Email -->
+            <td class="truncate-text" [title]="merchant.email || ''">
+              {{ merchant.email || '-' }}
+            </td>
+            
+            <!-- Phone -->
+            <td>{{ merchant.phone || '-' }}</td>
+            
+            <!-- Sign In Type -->
+            <td>
+              <span class="status-badge badge-info-type">
+                {{ merchant.sign_in_type || 'normal' }}
+              </span>
+            </td>
+            
+            <!-- Commercial Register -->
+            <td>
+              <img
+                *ngIf="merchant.commercial_register"
+                [src]="merchant.commercial_register"
+                alt="register"
+                class="register-img"
+              />
+              <span *ngIf="!merchant.commercial_register">-</span>
+            </td>
+            
+            <!-- Activity -->
+            <td class="truncate-text" [title]="merchant.activity || ''">
+              {{ merchant.activity || '-' }}
+            </td>
+            
+            <!-- Privacy -->
+            <td>
+              <span class="status-badge" [ngClass]="merchant.is_private == '1' ? 'badge-private-type' : 'badge-approved'">
+                {{ merchant.is_private == '1' ? ('Private' | translate) : ('Public' | translate) }}
+              </span>
+            </td>
+            
+            <!-- Created At -->
+            <td>{{ merchant.created_at | date : 'dd/MM/yyyy' }}</td>
+            
+            <!-- Updated At -->
+            <td>{{ merchant.updated_at | date : 'dd/MM/yyyy' }}</td>
+            
+            <!-- Verification -->
+            <td>
+              <span class="status-badge" [ngClass]="merchant.is_verified == 1 ? 'badge-approved' : 'badge-pending'">
+                <i class="bi" [ngClass]="merchant.is_verified == 1 ? 'bi-check-circle-fill' : 'bi-hourglass-split'"></i>
+                {{ merchant.is_verified == 1 ? ('Verified' | translate) : ('Pending' | translate) }}
+              </span>
+            </td>
+            
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="action-buttons">
+                <a
+                  [routerLink]="['/admin/editmerchant', merchant.id]"
+                  class="edit-btn"
+                  [title]="'Edit' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <button
+                  class="delete-btn"
+                  (click)="deleteMerchant(merchant.id)"
+                  [title]="'Delete' | translate"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Empty State -->
+          <tr *ngIf="filteredMerchants.length === 0">
+            <td colspan="13" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No merchants found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let page of getPageNumbers()"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >{{ page }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
     </div>
   </div>
 
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">{{ 'Loading merchants...' | translate }}</p>
-    </div>
-  </ng-template>
 </div>

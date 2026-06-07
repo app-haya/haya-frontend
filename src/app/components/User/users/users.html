@@ -1,128 +1,173 @@
-<div class="container-fluid p-3">
-  <h4 class="fw-bold mb-3">{{ 'Users' | translate }}</h4>
-  <p class="text-muted mb-4">{{ 'List of All Users' | translate }}</p>
+<div class="page-wrapper">
 
-  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-    <input
-      type="text"
-      class="form-control search-input"
-      [placeholder]="'Search...' | translate"
-      [(ngModel)]="searchTerm"
-      (input)="search()"
-    />
-    <a [routerLink]="['/admin/adduser']" class="btn btn-purple mt-2 mt-md-0">
-      <i class="fas fa-user-plus me-2"></i>{{ 'Add User' | translate }}
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-people"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Users' | translate }}</h4>
+        <p class="page-subtitle">{{ 'List of All Users' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ filteredUsers.length }} {{ (filteredUsers.length === 1 ? 'User' : 'Users') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Action Bar (Search & Add) -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="search()"
+      />
+    </div>
+    <a [routerLink]="['/admin/adduser']" class="btn-add">
+      <i class="bi bi-person-plus-fill"></i>
+      {{ 'Add User' | translate }}
     </a>
   </div>
 
-  <div *ngIf="!loading; else loadingSpinner" class="table-container table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>{{ 'Image' | translate }}</th>
-          <th>{{ 'Name' | translate }}</th>
-          <th>{{ 'Email' | translate }}</th>
-          <th>{{ 'Phone' | translate }}</th>
-          <th>{{ 'Sign_In' | translate }}</th>
-          <th>{{ 'Gender' | translate }}</th>
-          <th>{{ 'Activity' | translate }}</th>
-          <th>{{ 'Privacy' | translate }}</th>
-          <th>{{ 'Created At' | translate }}</th>
-          <th>{{ 'Updated At' | translate }}</th>
-          <th>{{ 'Verification' | translate }}</th>
-          <th class="text-center">{{ 'Actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of filteredUsers">
-          <td>
-            <img
-              *ngIf="user.image"
-              [src]="user.image"
-              alt="Profile Image"
-              class="img-thumbnail"
-              style="max-width: 50px"
-            />
-            <img
-              *ngIf="!user.image"
-              src="assets/images/user.jpg"
-              alt="Default Image"
-              class="img-thumbnail"
-              style="max-width: 50px"
-            />
-          </td>
-          <td class="truncate-text" [title]="user.name || ''">{{ user.name || '-' }}</td>
-          <td class="truncate-text" [title]="user.email || ''">{{ user.email || '-' }}</td>
-          <td>{{ user.phone || '-' }}</td>
-          <td>{{ user.sign_in_type || 'normal' }}</td>
-          <td>{{ user.gender === 1 ? ('Male' | translate) : ('Female' | translate) }}</td>
-          <td class="truncate-text" [title]="user.activity || ''">
-            {{ user.status !== "1" ? "Inactive" : user.activity || "-" }}
-          </td>
-          <td>{{ user.is_private === "1" ? ('Private' | translate) : ('Public' | translate) }}</td>
-          <td>{{ user.created_at | date : "short" }}</td>
-          <td>{{ user.updated_at | date : "short" }}</td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="{
-                'bg-success': user.is_verified,
-                'bg-secondary': !user.is_verified
-              }"
-            >
-              {{ user.is_verified ? ('Verified' | translate) : ('Not Verified' | translate) }}
-            </span>
-          </td>
-          <td class="text-center">
-            <div class="action-buttons">
-              <a
-                [routerLink]="['/admin/edituser', user.id]"
-                class="btn btn-sm btn-outline-purple"
-                title="Edit"
-              >
-                <i class="fas fa-edit"></i>
-              </a>
-              <button
-                class="btn btn-sm btn-outline-danger"
-                (click)="deleteUser(user.id)"
-                title="Delete"
-              >
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="filteredUsers.length === 0">
-          <td colspan="12" class="text-center text-muted">
-            {{ 'No users found.' | translate }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <nav aria-label="Page navigation" *ngIf="lastPage > 1" class="mt-4">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" href="javascript:void(0)" (click)="prevPage()" aria-label="Previous">
-            <span aria-hidden="true">{{ '&laquo;' | translate }}</span>
-          </a>
-        </li>
-        <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="currentPage === page">
-          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === lastPage">
-          <a class="page-link" href="javascript:void(0)" (click)="nextPage()" aria-label="Next">
-            <span aria-hidden="true">{{ '&raquo;' | translate }}</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading users...' | translate }}</p>
   </div>
 
-  <ng-template #loadingSpinner>
-    <div class="text-center my-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">{{ 'Loading users...' | translate }}</p>
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Image' | translate }}</th>
+            <th>{{ 'Name' | translate }}</th>
+            <th>{{ 'Email' | translate }}</th>
+            <th>{{ 'Phone' | translate }}</th>
+            <th>{{ 'Sign_In' | translate }}</th>
+            <th>{{ 'Gender' | translate }}</th>
+            <th>{{ 'Activity' | translate }}</th>
+            <th>{{ 'Privacy' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+            <th>{{ 'Updated At' | translate }}</th>
+            <th>{{ 'Verification' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" class="table-row">
+            
+            <!-- Image -->
+            <td>
+              <img
+                [src]="user.image || 'assets/images/user.jpg'"
+                alt="Profile Image"
+                class="profile-img"
+              />
+            </td>
+            
+            <!-- Name -->
+            <td class="truncate-text" [title]="user.name || ''">
+              {{ user.name || '-' }}
+            </td>
+            
+            <!-- Email -->
+            <td class="truncate-text" [title]="user.email || ''">
+              {{ user.email || '-' }}
+            </td>
+            
+            <!-- Phone -->
+            <td>{{ user.phone || '-' }}</td>
+            
+            <!-- Sign In Type -->
+            <td>
+              <span class="status-badge badge-info-type">
+                {{ user.sign_in_type || 'normal' }}
+              </span>
+            </td>
+            
+            <!-- Gender -->
+            <td>{{ user.gender === 1 ? ('Male' | translate) : ('Female' | translate) }}</td>
+            
+            <!-- Activity -->
+            <td class="truncate-text" [title]="user.activity || ''">
+              {{ user.status !== "1" ? ("Inactive" | translate) : (user.activity || "-") }}
+            </td>
+            
+            <!-- Privacy -->
+            <td>
+              <span class="status-badge" [ngClass]="user.is_private === '1' ? 'badge-private-type' : 'badge-approved'">
+                {{ user.is_private === "1" ? ('Private' | translate) : ('Public' | translate) }}
+              </span>
+            </td>
+            
+            <!-- Created At -->
+            <td>{{ user.created_at | date : "dd/MM/yyyy" }}</td>
+            
+            <!-- Updated At -->
+            <td>{{ user.updated_at | date : "dd/MM/yyyy" }}</td>
+            
+            <!-- Verification -->
+            <td>
+              <span class="status-badge" [ngClass]="user.is_verified ? 'badge-approved' : 'badge-pending'">
+                <i class="bi" [ngClass]="user.is_verified ? 'bi-check-circle-fill' : 'bi-hourglass-split'"></i>
+                {{ user.is_verified ? ('Verified' | translate) : ('Not Verified' | translate) }}
+              </span>
+            </td>
+            
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="action-buttons">
+                <a
+                  [routerLink]="['/admin/edituser', user.id]"
+                  class="edit-btn"
+                  [title]="'Edit' | translate"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <button
+                  class="delete-btn"
+                  (click)="deleteUser(user.id)"
+                  [title]="'Delete' | translate"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="12" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No users found.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let page of getPageNumbers()"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >{{ page }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
 </div>

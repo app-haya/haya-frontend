@@ -1,45 +1,3 @@
-.table-container {
-  background-color: var(--card-bg, #fff);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  padding: 1rem;
-}
-
-.table th, .table td {
-  vertical-align: middle;
-}
-
-.subtitle-text {
-  color: inherit;
-  opacity: 0.7;
-}
-
-.btn-purple {
-  background-color: #6f42c1;
-  color: #fff;
-  border: none;
-}
-
-.btn-purple:hover {
-  background-color: #5936a2;
-  color: #fff;
-}
-
-.btn-outline-purple {
-  color: #6f42c1;
-  border-color: #6f42c1;
-}
-
-.btn-outline-purple:hover {
-  color: #fff;
-  background-color: #6f42c1;
-}
-
-/* Modal specific fixes if needed */
-.modal {
-  z-index: 1050;
-}
-
 /* Custom Toggle Switch */
 .form-switch .form-check-input.custom-status-switch {
   background-color: #1a1a1a !important;
@@ -57,11 +15,10 @@
   font-weight: 700;
   color: #6f42c1;
   background-color: rgba(111, 66, 193, 0.12);
-  padding: 0.35rem 0.85rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 50px;
   display: inline-block;
-  font-size: 0.9rem;
-  min-width: 65px;
+  font-size: 0.8rem;
+  min-width: 55px;
   text-align: center;
 }
-
