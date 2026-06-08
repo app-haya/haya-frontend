@@ -66,6 +66,12 @@ export class Sidebar implements OnInit {
       },
     });
 
+    this.dashboardService.getRefreshObservable().subscribe(() => {
+      this.loadCounts();
+    });
+  }
+
+  loadCounts(): void {
     this.dashboardService.getAll().subscribe({
       next: (res) => {
         if (res && res.errorcode === '0' && res.data) {

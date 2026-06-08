@@ -130,7 +130,7 @@
                 <span class="info-item-icon"><i class="bi bi-globe2"></i></span>
                 <div>
                   <span class="info-item-label">{{ 'Location' | translate }}</span>
-                  <span class="info-item-val">{{ deal.country_id }} / {{ deal.city_id || '—' }}</span>
+                  <span class="info-item-val">{{ getLocalizedName(deal.country) }} / {{ getLocalizedName(deal.city) }}</span>
                 </div>
               </div>
               <div class="info-item">
@@ -367,12 +367,12 @@
               <div class="meta-item" *ngIf="deal.country_id">
                 <span class="meta-icon"><i class="bi bi-geo-alt-fill"></i></span>
                 <span class="meta-key">{{ 'Country' | translate }}</span>
-                <span class="meta-val">{{ deal.country_id }}</span>
+                <span class="meta-val">{{ getLocalizedName(deal.country) }}</span>
               </div>
               <div class="meta-item" *ngIf="deal.city_id">
                 <span class="meta-icon"><i class="bi bi-building"></i></span>
                 <span class="meta-key">{{ 'City' | translate }}</span>
-                <span class="meta-val">{{ deal.city_id }}</span>
+                <span class="meta-val">{{ getLocalizedName(deal.city) }}</span>
               </div>
               <div class="meta-item">
                 <span class="meta-icon"><i class="bi bi-person-circle"></i></span>

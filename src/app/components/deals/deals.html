@@ -144,14 +144,14 @@
               <span class="tax-value">{{ deal.tax_value !== null ? deal.tax_value + '%' : '—' }}</span>
             </td>
 
-            <!-- Country ID -->
+            <!-- Country Name -->
             <td>
-              <span class="geo-id">{{ deal.country_id || '—' }}</span>
+              <span class="geo-id">{{ getLocalizedName(deal.country) }}</span>
             </td>
 
-            <!-- City ID -->
+            <!-- City Name -->
             <td>
-              <span class="geo-id">{{ deal.city_id || '—' }}</span>
+              <span class="geo-id">{{ getLocalizedName(deal.city) }}</span>
             </td>
 
             <!-- Activity -->

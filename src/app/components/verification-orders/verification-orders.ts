@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VerificationOrdersService } from '../../services/verification-orders.service';
 import { NotificationService } from '../../services/notification.service';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-verification-orders',
@@ -40,7 +41,8 @@ export class VerificationOrders implements OnInit {
 
   constructor(
     private svc: VerificationOrdersService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +98,7 @@ export class VerificationOrders implements OnInit {
         this.approvingId = null;
         this.notification.success('Order approved successfully!');
         this.loadOrders(this.currentPage);
+        this.dashboardService.triggerRefresh();
       },
       error: (err: any) => {
         this.approvingId = null;
@@ -157,6 +160,7 @@ export class VerificationOrders implements OnInit {
         this.notification.success('Order rejected successfully!');
         this.closeRejectModal();
         this.loadOrders(this.currentPage);
+        this.dashboardService.triggerRefresh();
       },
       error: (err: any) => {
         this.rejectLoading = false;

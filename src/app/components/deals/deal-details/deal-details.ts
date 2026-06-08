@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DealService } from '../../../services/deal.service';
 import { NotificationService } from '../../../services/notification.service';
+import { DashboardService } from '../../../services/dashboard.service';
 
 @Component({
   selector: 'app-deal-details',
@@ -24,7 +25,9 @@ export class DealDetails implements OnInit {
     private router: Router,
     private dealService: DealService,
     private notification: NotificationService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public translate: TranslateService,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +68,7 @@ export class DealDetails implements OnInit {
       next: () => {
         this.notification.success('Deal approved successfully');
         this.deal.status = 'approved';
+        this.dashboardService.triggerRefresh();
         setTimeout(() => this.router.navigate(['/admin/deals']), 1500);
       }
     });
@@ -77,6 +81,7 @@ export class DealDetails implements OnInit {
         next: () => {
           this.notification.success('Deal rejected successfully');
           this.deal.status = 'rejected';
+          this.dashboardService.triggerRefresh();
           setTimeout(() => this.router.navigate(['/admin/deals']), 1500);
         }
       });
@@ -122,5 +127,11 @@ export class DealDetails implements OnInit {
 
   getSafeUrl(url: string): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.formatImageUrl(url));
+  }
+
+  getLocalizedName(obj: any): string {
+    if (!obj) return '—';
+    const currentLang = this.translate.currentLang || 'ar';
+    return currentLang === 'ar' ? (obj.name_ar || obj.name_en || '—') : (obj.name_en || obj.name_ar || '—');
   }
 }

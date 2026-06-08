@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DealService } from '../../services/deal.service';
 import { NotificationService } from '../../services/notification.service';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-deals',
@@ -46,7 +47,9 @@ export class Deals implements OnInit {
   constructor(
     private dealService: DealService,
     private notification: NotificationService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public translate: TranslateService,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -118,6 +121,7 @@ export class Deals implements OnInit {
         this.approvingId = null;
         this.notification.success('Deal approved successfully');
         this.loadDeals(this.currentPage);
+        this.dashboardService.triggerRefresh();
       },
       error: (err: any) => {
         this.approvingId = null;
@@ -153,6 +157,7 @@ export class Deals implements OnInit {
         this.notification.success('Deal rejected successfully');
         this.closeRejectModal();
         this.loadDeals(this.currentPage);
+        this.dashboardService.triggerRefresh();
       },
       error: (err: any) => {
         this.rejectLoading = false;
@@ -243,5 +248,11 @@ export class Deals implements OnInit {
 
   getActivityLabel(isActive: any): string {
     return isActive ? 'Active' : 'Inactive';
+  }
+
+  getLocalizedName(obj: any): string {
+    if (!obj) return '—';
+    const currentLang = this.translate.currentLang || 'ar';
+    return currentLang === 'ar' ? (obj.name_ar || obj.name_en || '—') : (obj.name_en || obj.name_ar || '—');
   }
 }
