@@ -119,15 +119,17 @@ export class Settings implements OnInit {
       formData.append('id', this.settingsId.toString());
     }
 
-    this.settingsService.saveSettings(formData).subscribe({
+    this.settingsService.saveSettings(formData).pipe(
+      catchError((err) => of({ errorcode: '1', message: err.error?.message || 'Failed to save settings' }))
+    ).subscribe({
       next: (res: any) => {
-        if (res.errorcode === '0') {
-          this.notification.success('Settings saved successfully');
+        if (res && res.errorcode === '0') {
           if (res.data && res.data.id) {
             this.settingsId = res.data.id;
           }
+          this.notification.success('Settings saved successfully');
         } else {
-          this.notification.error(res.message || 'Failed to save settings');
+          this.notification.error(res?.message || 'Failed to save settings');
         }
         this.submitting = false;
       },

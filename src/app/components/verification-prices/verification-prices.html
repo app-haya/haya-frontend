@@ -1,0 +1,93 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-tags"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'VERIFICATION_PRICES' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Manage and configure verification subscription plan prices' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
+  </div>
+
+  <!-- Price Config Card -->
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4" 
+       *ngIf="!loading"
+       [style.background-color]="isDarkMode ? '#161b22' : '#fff'" 
+       [style.color]="isDarkMode ? '#c9d1d9' : '#1a1a2e'">
+    <div class="card-header py-3 bg-transparent border-0 d-flex justify-content-between align-items-center">
+      <h6 class="mb-0 fw-bold" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'">
+        <i class="bi bi-coin me-2"></i>{{ 'Pricing Configuration' | translate }}
+      </h6>
+      <button class="btn btn-sm px-4 py-2 rounded-pill d-flex align-items-center save-btn"
+              (click)="savePrices()"
+              [style.background-color]="isDarkMode ? '#00cfd5' : '#7a3ca0'"
+              [style.color]="isDarkMode ? '#000' : '#fff'"
+              [style.border]="'none'"
+              [disabled]="savingPrices">
+        <span *ngIf="savingPrices" class="spinner-border spinner-border-sm me-2"></span>
+        <i *ngIf="!savingPrices" class="bi bi-save me-2"></i>
+        {{ 'SAVE_CHANGES' | translate }}
+      </button>
+    </div>
+    
+    <div class="card-body px-4 pb-4 pt-1">
+      <div class="row g-4 mt-1">
+        <!-- Plan 1 Year -->
+        <div class="col-md-4">
+          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
+              <i class="bi bi-calendar-event me-2"></i>{{ 'PRICE_1YEAR' | translate }}
+            </label>
+            <div class="input-group mt-2">
+              <input type="number" class="form-control form-control-lg" [(ngModel)]="price1Year"
+                placeholder="{{ 'ENTER_PRICE_1YEAR' | translate }}" min="0" />
+              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
+            </div>
+            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 1 year' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Plan 2 Years -->
+        <div class="col-md-4">
+          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
+              <i class="bi bi-calendar2-range me-2"></i>{{ 'PRICE_2YEARS' | translate }}
+            </label>
+            <div class="input-group mt-2">
+              <input type="number" class="form-control form-control-lg" [(ngModel)]="price2Years"
+                placeholder="{{ 'ENTER_PRICE_2YEARS' | translate }}" min="0" />
+              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
+            </div>
+            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 2 years' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Plan 3 Years -->
+        <div class="col-md-4">
+          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
+              <i class="bi bi-calendar3 me-2"></i>{{ 'PRICE_3YEARS' | translate }}
+            </label>
+            <div class="input-group mt-2">
+              <input type="number" class="form-control form-control-lg" [(ngModel)]="price3Year"
+                placeholder="{{ 'ENTER_PRICE_3YEARS' | translate }}" min="0" />
+              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
+            </div>
+            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 3 years' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

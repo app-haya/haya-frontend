@@ -16,6 +16,34 @@
     </div>
   </div>
 
+  <!-- Tabs -->
+  <div class="tabs-bar" *ngIf="!loading">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'pending'"
+      (click)="switchTab('pending')"
+    >
+      <i class="bi bi-hourglass-split"></i>
+      {{ 'Pending Review' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'approved'"
+      (click)="switchTab('approved')"
+    >
+      <i class="bi bi-check-circle"></i>
+      {{ 'Approved' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'rejected'"
+      (click)="switchTab('rejected')"
+    >
+      <i class="bi bi-x-circle"></i>
+      {{ 'Rejected' | translate }}
+    </button>
+  </div>
+
   <!-- Action Bar (Search Only) -->
   <div class="action-bar" *ngIf="!loading">
     <div class="search-box">
@@ -42,12 +70,12 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>{{ 'Profile' | translate }}</th>
-            <th>{{ 'Name' | translate }}</th>
-            <th>{{ 'Email' | translate }}</th>
-            <th>{{ 'Verified Link' | translate }}</th>
-            <th>{{ 'Document' | translate }}</th>
-            <th>{{ 'Subscription' | translate }}</th>
+            <th>{{ 'User' | translate }}</th>
+            <th>{{ 'Type' | translate }}</th>
+            <th>{{ 'Verification Documents' | translate }}</th>
+            <th>{{ 'Plan' | translate }}</th>
+            <th>{{ 'Price' | translate }}</th>
+            <th>{{ 'Request Date' | translate }}</th>
             <th>{{ 'Status' | translate }}</th>
             <th class="text-center">{{ 'Actions' | translate }}</th>
           </tr>
@@ -55,67 +83,136 @@
         <tbody>
           <tr *ngFor="let creator of filteredCreators" class="table-row">
             
-            <!-- Profile -->
+            <!-- User -->
             <td>
-              <img
-                *ngIf="creator.creator_profile_image"
-                [src]="creator.creator_profile_image"
-                alt="profile"
-                class="profile-img"
-              />
-              <span *ngIf="!creator.creator_profile_image">—</span>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <img
+                    *ngIf="creator.image"
+                    [src]="creator.image"
+                    [alt]="creator.name"
+                    class="avatar-img"
+                  />
+                  <div *ngIf="!creator.image" class="avatar-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ creator.name || '—' }}</span>
+                  <span class="d-block small text-muted" style="font-size: 0.72rem;" *ngIf="creator.email">
+                    {{ creator.email }}
+                  </span>
+                </div>
+              </div>
             </td>
             
-            <!-- Name -->
-            <td>{{ creator.name || '-' }}</td>
-            
-            <!-- Email -->
-            <td class="truncate-text" [title]="creator.email || ''">{{ creator.email || '-' }}</td>
-            
-            <!-- Verified Link -->
+            <!-- Type -->
             <td>
-              <a *ngIf="creator.creator_verified_link" [href]="creator.creator_verified_link" target="_blank" class="status-badge badge-info-type text-decoration-none">
-                <i class="bi bi-link-45deg"></i> {{ 'Open' | translate }}
-              </a>
-              <span *ngIf="!creator.creator_verified_link">—</span>
+              <span class="status-badge badge-info-type">
+                {{ (creator.verified_method || 'creator') | translate }}
+              </span>
             </td>
             
-            <!-- Document -->
+            <!-- Verification Documents -->
             <td>
-              <a *ngIf="creator.creator_document" [href]="creator.creator_document" target="_blank" class="status-badge badge-info-type text-decoration-none">
-                <i class="bi bi-eye"></i> {{ 'View' | translate }}
-              </a>
-              <span *ngIf="!creator.creator_document">—</span>
+              <div class="d-flex flex-wrap gap-1">
+                <a *ngIf="creator.creator_profile_image" [href]="creator.creator_profile_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <i class="bi bi-person"></i> {{ 'Profile' | translate }}
+                </a>
+                <a *ngIf="creator.creator_document" [href]="creator.creator_document" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <i class="bi bi-file-earmark"></i> {{ 'Document' | translate }}
+                </a>
+                <a *ngIf="creator.creator_verified_link" [href]="creator.creator_verified_link" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <i class="bi bi-link-45deg"></i> {{ 'Link 1' | translate }}
+                </a>
+                <a *ngIf="creator.creator_verified_link_2" [href]="creator.creator_verified_link_2" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <i class="bi bi-link-45deg"></i> {{ 'Link 2' | translate }}
+                </a>
+                <span *ngIf="!creator.creator_profile_image && !creator.creator_document && !creator.creator_verified_link && !creator.creator_verified_link_2">—</span>
+              </div>
             </td>
             
-            <!-- Subscription -->
-            <td>{{ creator.subscription_type || '-' }}</td>
+            <!-- Plan -->
+            <td>
+              <span class="plan-badge" *ngIf="creator.verification_order?.plan">
+                {{ getPlanLabel(creator.verification_order.plan) | translate }}
+              </span>
+              <span class="plan-badge" *ngIf="!creator.verification_order?.plan && creator.subscription_type">
+                {{ getPlanLabel(creator.subscription_type) | translate }}
+              </span>
+              <span *ngIf="!creator.verification_order?.plan && !creator.subscription_type">—</span>
+            </td>
+            
+            <!-- Price -->
+            <td>
+              <div class="amount-cell" *ngIf="creator.verification_order?.amount_paid">
+                <span class="amount-value" style="font-size: 0.85rem; font-weight: 700;">{{ creator.verification_order.amount_paid }}</span>
+                <span class="amount-currency" style="font-size: 0.72rem; color: #9ca3af;">{{ creator.verification_order.currency || 'SAR' }}</span>
+              </div>
+              <span *ngIf="!creator.verification_order?.amount_paid">—</span>
+            </td>
+            
+            <!-- Request Date -->
+            <td>
+              <div *ngIf="creator.verification_order?.created_at">
+                <span class="date-cell">{{ creator.verification_order.created_at | date:'dd/MM/yyyy' }}</span>
+                <span class="time-cell">{{ creator.verification_order.created_at | date:'HH:mm' }}</span>
+              </div>
+              <span *ngIf="!creator.verification_order?.created_at">—</span>
+            </td>
             
             <!-- Status -->
             <td>
-              <span class="status-badge badge-pending">
-                {{ 'Pending' | translate }}
+              <span class="status-badge" [ngClass]="getStatusClass(creator.creator_status)">
+                {{ getStatusLabel(creator.creator_status) | translate }}
               </span>
             </td>
             
             <!-- Actions -->
             <td class="text-center">
               <div class="action-buttons">
-                <button
-                  class="edit-btn"
-                  style="background: #f0fdf4; color: #15803d;"
-                  (click)="approve(creator.id)"
-                  [title]="'Approve' | translate"
-                >
-                  <i class="bi bi-check-lg"></i>
-                </button>
-                <button
-                  class="delete-btn"
-                  (click)="reject(creator.id)"
-                  [title]="'Reject' | translate"
-                >
-                  <i class="bi bi-x-lg"></i>
-                </button>
+                <!-- If Pending: show both Approve and Reject -->
+                <ng-container *ngIf="activeTab === 'pending'">
+                  <button
+                    class="edit-btn"
+                    style="background: #f0fdf4; color: #15803d;"
+                    (click)="approve(creator.id)"
+                    [title]="'Approve' | translate"
+                  >
+                    <i class="bi bi-check-lg"></i>
+                  </button>
+                  <button
+                    class="delete-btn"
+                    (click)="reject(creator.id)"
+                    [title]="'Reject' | translate"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </ng-container>
+
+                <!-- If Approved: show only Reject -->
+                <ng-container *ngIf="activeTab === 'approved'">
+                  <button
+                    class="delete-btn px-3 py-1"
+                    style="width: auto; height: auto; min-width: 75px; font-size: 0.8rem;"
+                    (click)="reject(creator.id)"
+                    [title]="'Reject' | translate"
+                  >
+                    <i class="bi bi-x-lg me-1"></i> {{ 'Reject' | translate }}
+                  </button>
+                </ng-container>
+
+                <!-- If Rejected: show only Approve -->
+                <ng-container *ngIf="activeTab === 'rejected'">
+                  <button
+                    class="edit-btn px-3 py-1"
+                    style="background: #f0fdf4; color: #15803d; width: auto; height: auto; min-width: 75px; font-size: 0.8rem;"
+                    (click)="approve(creator.id)"
+                    [title]="'Approve' | translate"
+                  >
+                    <i class="bi bi-check-lg me-1"></i> {{ 'Approve' | translate }}
+                  </button>
+                </ng-container>
               </div>
             </td>
           </tr>

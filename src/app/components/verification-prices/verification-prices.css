@@ -1,0 +1,115 @@
+/* =========================================================
+   PAGE WRAPPER & HEADER
+   ========================================================= */
+.page-wrapper {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 14px rgba(122, 60, 160, 0.35);
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin: 2px 0 0 0;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  color: #7a3ca0;
+  gap: 14px;
+}
+
+.spinner-ring {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(122, 60, 160, 0.15);
+  border-top-color: #7a3ca0;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   PRICE INPUT CARD
+   ========================================================= */
+.price-input-card {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.price-input-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  border-color: #7a3ca0 !important;
+}
+
+.save-btn {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-group-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* RTL Adjustments for language transitions if needed */
+[dir="rtl"] .header-icon {
+  margin-left: 0;
+  margin-right: 0;
+}

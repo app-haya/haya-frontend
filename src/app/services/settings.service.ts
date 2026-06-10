@@ -56,6 +56,14 @@ export class SettingsService {
     return this.http.post(`${this.baseUrl}/update`, data, { headers: this.getHeaders() });
   }
 
+  getVerificationPrices(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/verification-prices`, { headers: this.getHeaders() });
+  }
+
+  updateVerificationPrices(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/verification-prices/update`, data, { headers: this.getHeaders() });
+  }
+
   deleteSettings(id: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/delete`, { id }, { headers: this.getHeaders() });
   }

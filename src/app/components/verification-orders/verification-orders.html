@@ -16,6 +16,7 @@
     </div>
   </div>
 
+
   <!-- Tabs -->
   <div class="tabs-bar">
     <button
@@ -57,14 +58,13 @@
         <thead>
           <tr>
             <th>{{ 'User' | translate }}</th>
-            <th>{{ 'Contact' | translate }}</th>
+            <th>{{ 'Type' | translate }}</th>
+            <th>{{ 'Verification Documents' | translate }}</th>
             <th>{{ 'Plan' | translate }}</th>
-            <th>{{ 'Amount' | translate }}</th>
-            <th>{{ 'Transaction ID' | translate }}</th>
+            <th>{{ 'Price' | translate }}</th>
             <th>{{ 'Request Date' | translate }}</th>
             <th>{{ 'Status' | translate }}</th>
-            <th *ngIf="activeTab === 'pending_review'" class="text-center">{{ 'Actions' | translate }}</th>
-            <th *ngIf="activeTab !== 'pending_review'" class="text-center">{{ 'Details' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -87,17 +87,62 @@
                 </div>
                 <div class="user-info">
                   <span class="user-name">{{ order.user?.name || '—' }}</span>
-                  <span class="user-id">#{{ order.user?.id }}</span>
+                  <span class="d-block small text-muted" style="font-size: 0.75rem;" *ngIf="order.user?.phone">
+                    {{ order.user?.phone }}
+                  </span>
+                  <span class="d-block small text-muted" style="font-size: 0.72rem;" *ngIf="order.user?.email">
+                    {{ order.user?.email }}
+                  </span>
                 </div>
               </div>
             </td>
 
-            <!-- Contact -->
+            <!-- Type -->
             <td>
-              <div class="contact-cell">
-                <span class="contact-email">{{ order.user?.email || '—' }}</span>
-                <span class="contact-phone">{{ order.user?.phone || '—' }}</span>
+              <span class="status-badge badge-info-type" *ngIf="order.user?.verified_method">
+                {{ order.user.verified_method | translate }}
+              </span>
+              <span *ngIf="!order.user?.verified_method">—</span>
+            </td>
+
+            <!-- Verification Info -->
+            <td>
+              <div class="d-flex flex-column gap-1" *ngIf="order.user">
+                <!-- Personal / Business -->
+                <div *ngIf="order.user.verified_method !== 'creator'">
+                  <span class="d-block small text-muted" *ngIf="order.user.number_verify">
+                    {{ 'Number Verify' | translate }}: {{ order.user.number_verify }}
+                  </span>
+                  <span class="d-block small text-muted" *ngIf="order.user.commercial_register">
+                    {{ 'Commercial Register' | translate }}: {{ order.user.commercial_register }}
+                  </span>
+                  <div class="d-flex gap-1 mt-1">
+                    <a *ngIf="order.user.verify_image" [href]="order.user.verify_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                      <i class="bi bi-image"></i> {{ 'View' | translate }}
+                    </a>
+                    <a *ngIf="order.user.commercial_register_url" [href]="order.user.commercial_register_url" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                      <i class="bi bi-file-earmark-pdf"></i> {{ 'CR' | translate }}
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Creator -->
+                <div *ngIf="order.user.verified_method === 'creator'" class="d-flex flex-wrap gap-1">
+                  <a *ngIf="order.user.creator_profile_image" [href]="order.user.creator_profile_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                    <i class="bi bi-person"></i> {{ 'Profile' | translate }}
+                  </a>
+                  <a *ngIf="order.user.creator_document" [href]="order.user.creator_document" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                    <i class="bi bi-file-earmark"></i> {{ 'Doc' | translate }}
+                  </a>
+                  <a *ngIf="order.user.creator_verified_link" [href]="order.user.creator_verified_link" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                    <i class="bi bi-link-45deg"></i> L1
+                  </a>
+                  <a *ngIf="order.user.creator_verified_link_2" [href]="order.user.creator_verified_link_2" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                    <i class="bi bi-link-45deg"></i> L2
+                  </a>
+                </div>
               </div>
+              <span *ngIf="!order.user">—</span>
             </td>
 
             <!-- Plan -->
@@ -105,17 +150,12 @@
               <span class="plan-badge">{{ getPlanLabel(order.plan) | translate }}</span>
             </td>
 
-            <!-- Amount -->
+            <!-- Price -->
             <td>
               <div class="amount-cell">
-                <span class="amount-value">{{ order.amount_paid }}</span>
-                <span class="amount-currency">{{ order.edfapay_payment?.currency || 'SAR' }}</span>
+                <span class="amount-value" style="font-size: 0.85rem; font-weight: 700;">{{ order.amount_paid }}</span>
+                <span class="amount-currency" style="font-size: 0.72rem; color: #9ca3af;">{{ order.edfapay_payment?.currency || 'SAR' }}</span>
               </div>
-            </td>
-
-            <!-- Transaction ID -->
-            <td>
-              <span class="tx-id">{{ order.transaction_id || '—' }}</span>
             </td>
 
             <!-- Date -->
@@ -131,39 +171,67 @@
               </span>
             </td>
 
-            <!-- Actions (Pending) -->
-            <td *ngIf="activeTab === 'pending_review'" class="text-center">
+            <!-- Actions -->
+            <td class="text-center">
               <div class="action-group">
+                <!-- View Details always shown -->
                 <button
-                  class="action-btn approve-btn"
-                  (click)="approve(order.id)"
-                  [disabled]="approvingId === order.id"
-                  [title]="'Approve Request' | translate"
+                  class="detail-btn me-2"
+                  (click)="openDetail(order)"
+                  [title]="'View Details' | translate"
                 >
-                  <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> {{ 'Approve' | translate }}</span>
-                  <span *ngIf="approvingId === order.id" class="btn-spinner"></span>
+                  <i class="bi bi-eye"></i> {{ 'View' | translate }}
                 </button>
-                <button
-                  class="action-btn reject-btn"
-                  (click)="openRejectModal(order.id)"
-                  [disabled]="approvingId === order.id"
-                  [title]="'Reject Request' | translate"
-                >
-                  <i class="bi bi-x-lg"></i> {{ 'Reject' | translate }}
-                </button>
+
+                <!-- If Pending Review: show both Approve and Reject -->
+                <ng-container *ngIf="activeTab === 'pending_review'">
+                  <button
+                    class="action-btn approve-btn me-1"
+                    (click)="approve(order.id)"
+                    [disabled]="approvingId === order.id"
+                    [title]="'Approve Request' | translate"
+                  >
+                    <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> {{ 'Approve' | translate }}</span>
+                    <span *ngIf="approvingId === order.id" class="btn-spinner"></span>
+                  </button>
+                  <button
+                    class="action-btn reject-btn"
+                    (click)="openRejectModal(order.id)"
+                    [disabled]="approvingId === order.id"
+                    [title]="'Reject Request' | translate"
+                  >
+                    <i class="bi bi-x-lg"></i> {{ 'Reject' | translate }}
+                  </button>
+                </ng-container>
+
+                <!-- If Approved: show only Reject -->
+                <ng-container *ngIf="activeTab === 'approved'">
+                  <button
+                    class="action-btn reject-btn"
+                    (click)="openRejectModal(order.id)"
+                    [disabled]="approvingId === order.id"
+                    [title]="'Reject Request' | translate"
+                  >
+                    <i class="bi bi-x-lg"></i> {{ 'Reject' | translate }}
+                  </button>
+                </ng-container>
+
+                <!-- If Rejected: show only Approve -->
+                <ng-container *ngIf="activeTab === 'rejected'">
+                  <button
+                    class="action-btn approve-btn"
+                    (click)="approve(order.id)"
+                    [disabled]="approvingId === order.id"
+                    [title]="'Approve Request' | translate"
+                  >
+                    <span *ngIf="approvingId !== order.id"><i class="bi bi-check-lg"></i> {{ 'Approve' | translate }}</span>
+                    <span *ngIf="approvingId === order.id" class="btn-spinner"></span>
+                  </button>
+                </ng-container>
               </div>
             </td>
-
-            <!-- Details (Approved/Rejected) -->
-            <td *ngIf="activeTab !== 'pending_review'" class="text-center">
-              <button class="detail-btn" (click)="openDetail(order)">
-                <i class="bi bi-eye"></i> {{ 'View' | translate }}
-              </button>
-            </td>
-
           </tr>
 
-          <!-- Empty State -->
           <tr *ngIf="orders.length === 0">
             <td colspan="8" class="empty-state">
               <div class="empty-content">
@@ -287,6 +355,64 @@
           <div class="detail-row">
             <span class="detail-lbl">{{ 'Phone' | translate }}</span>
             <span class="detail-val">{{ selectedOrder.user?.phone || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Details -->
+      <div class="detail-section" *ngIf="selectedOrder.user">
+        <h6 class="section-title"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i> {{ 'Verification Details' | translate }}</h6>
+        <div class="detail-grid">
+          <div class="detail-row" *ngIf="selectedOrder.user.verified_method">
+            <span class="detail-lbl">{{ 'Verified Method' | translate }}</span>
+            <span class="detail-val font-semibold text-primary">{{ selectedOrder.user.verified_method | translate }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="selectedOrder.user.number_verify">
+            <span class="detail-lbl">{{ 'Number Verify' | translate }}</span>
+            <span class="detail-val">{{ selectedOrder.user.number_verify }}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.verify_image">
+            <span class="detail-lbl">{{ 'Verify Image' | translate }}</span>
+            <a [href]="selectedOrder.user.verify_image" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-image me-1"></i> {{ 'View' | translate }}
+            </a>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.commercial_register_url">
+            <span class="detail-lbl">{{ 'Commercial Register' | translate }}</span>
+            <a [href]="selectedOrder.user.commercial_register_url" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-file-earmark-pdf me-1"></i> {{ 'View' | translate }}
+            </a>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.creator_profile_image">
+            <span class="detail-lbl">{{ 'Profile Image' | translate }}</span>
+            <a [href]="selectedOrder.user.creator_profile_image" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-person-bounding-box me-1"></i> {{ 'View' | translate }}
+            </a>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.creator_document">
+            <span class="detail-lbl">{{ 'Document' | translate }}</span>
+            <a [href]="selectedOrder.user.creator_document" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-file-earmark me-1"></i> {{ 'View' | translate }}
+            </a>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.creator_verified_link">
+            <span class="detail-lbl">{{ 'Verified Link' | translate }} 1</span>
+            <a [href]="selectedOrder.user.creator_verified_link" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-link-45deg me-1"></i> {{ 'Open' | translate }}
+            </a>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedOrder.user.creator_verified_link_2">
+            <span class="detail-lbl">{{ 'Verified Link' | translate }} 2</span>
+            <a [href]="selectedOrder.user.creator_verified_link_2" target="_blank" class="attachment-link text-decoration-none">
+              <i class="bi bi-link-45deg me-1"></i> {{ 'Open' | translate }}
+            </a>
           </div>
         </div>
       </div>

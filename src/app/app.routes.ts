@@ -26,6 +26,7 @@ import { BannedWords } from './components/banned-words/banned-words';
 import { PendingUsers } from './components/pending-users/pending-users';
 import { PendingCreators } from './components/pending-creators/pending-creators';
 import { VerificationOrders } from './components/verification-orders/verification-orders';
+import { VerificationPrices } from './components/verification-prices/verification-prices';
 import { Roles } from './components/roles/roles';
 import { Dashcount } from './components/dashcount/dashcount';
 import { DealDetails } from './components/deals/deal-details/deal-details';
@@ -92,6 +93,11 @@ export const routes: Routes = [
       {
         path: 'verification-orders',
         component: VerificationOrders,
+        data: { role: 'verifycation' },
+      },
+      {
+        path: 'verification-prices',
+        component: VerificationPrices,
         data: { role: 'verifycation' },
       },
 

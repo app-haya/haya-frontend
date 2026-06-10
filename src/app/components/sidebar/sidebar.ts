@@ -39,6 +39,7 @@ export class Sidebar implements OnInit {
       children: [
         { name: 'Verify Creator', path: '/admin/verify_creator', icon: 'bi bi-hourglass-split' },
         { name: 'Paid Verification Requests', path: '/admin/verification-orders', icon: 'bi bi-credit-card-2-front' },
+        { name: 'VERIFICATION_PRICES', path: '/admin/verification-prices', icon: 'bi bi-tags' },
       ],
     },
     { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes' },

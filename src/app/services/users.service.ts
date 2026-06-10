@@ -69,9 +69,9 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/${id}/reject`, { reason }, { headers });
   }
 
-  getPendingCreators(page: number = 1): Observable<any> {
+  getPendingCreators(page: number = 1, status: string = 'pending'): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get(`${this.baseUrl}/creator/pending?page=${page}`, { headers });
+    return this.http.get(`${this.baseUrl}/creator/pending?page=${page}&status=${status}`, { headers });
   }
 
   approveCreator(id: number): Observable<any> {

@@ -1,1 +1,128 @@
 /* Premium table styles are inherited from global styles.css */
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ede8ff;
+}
+
+.avatar-placeholder {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ede8ff, #d8ccff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7a3ca0;
+  font-size: 1.1rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* Plan Badge */
+.plan-badge {
+  background: linear-gradient(135deg, #ede8ff, #d8ccff);
+  color: #5b2d80;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Amount styling */
+.amount-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.amount-value {
+  font-weight: 700;
+  color: #1a1a2e;
+  font-size: 0.95rem;
+}
+
+.amount-currency {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Date and Time styling */
+.date-cell {
+  display: block;
+  font-weight: 500;
+  color: #374151;
+}
+
+.time-cell {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+.tabs-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #f3f4f6;
+  padding: 6px;
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 22px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(122, 60, 160, 0.08);
+  color: #7a3ca0;
+}
+
+.tab-btn.active {
+  background: #fff;
+  color: #7a3ca0;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.action-bar {
+  justify-content: flex-end !important;
+}

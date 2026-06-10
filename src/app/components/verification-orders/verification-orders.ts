@@ -6,6 +6,8 @@ import { VerificationOrdersService } from '../../services/verification-orders.se
 import { NotificationService } from '../../services/notification.service';
 import { DashboardService } from '../../services/dashboard.service';
 
+import { ThemeService } from '../../services/theme.service';
+
 @Component({
   selector: 'app-verification-orders',
   templateUrl: './verification-orders.html',
@@ -39,15 +41,24 @@ export class VerificationOrders implements OnInit {
   // Approve loading state per order
   approvingId: number | null = null;
 
+
+
   constructor(
     private svc: VerificationOrdersService,
     private notification: NotificationService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    public themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
     this.loadOrders();
   }
+
+  get isDarkMode(): boolean {
+    return this.themeService.isDark();
+  }
+
+
 
   loadOrders(page: number = 1): void {
     this.loading = true;
