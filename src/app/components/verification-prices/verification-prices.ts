@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { NotificationService } from '../../services/notification.service';
 import { ThemeService } from '../../services/theme.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-verification-prices',
@@ -35,7 +36,8 @@ export class VerificationPrices implements OnInit {
   constructor(
     private settingsService: SettingsService,
     private notification: NotificationService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -94,7 +96,7 @@ export class VerificationPrices implements OnInit {
 
   savePlan(): void {
     if (!this.formPlanKey || !this.formLabelAr || !this.formLabelEn || this.formPrice === null || this.formPrice === undefined) {
-      this.notification.error('Please fill in all required fields');
+      this.notification.error('Please fill all required fields');
       return;
     }
 
@@ -133,24 +135,28 @@ export class VerificationPrices implements OnInit {
   }
 
   deletePlan(id: number): void {
-    if (!confirm('Are you sure you want to delete this plan?')) {
-      return;
-    }
-
-    this.deletingPlanId = id;
-    this.settingsService.deleteVerificationPlan(id).subscribe({
-      next: (res: any) => {
-        this.deletingPlanId = null;
-        if (res && res.errorcode === '0') {
-          this.notification.success('Verification plan deleted successfully!');
-          this.loadPlans();
-        } else {
-          this.notification.error(res.message || 'Failed to delete verification plan');
-        }
-      },
-      error: () => {
-        this.deletingPlanId = null;
-        this.notification.error('Failed to delete verification plan');
+    this.dialogService.confirm({
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete this plan?',
+      confirmText: 'Delete',
+      type: 'danger',
+      onConfirm: () => {
+        this.deletingPlanId = id;
+        this.settingsService.deleteVerificationPlan(id).subscribe({
+          next: (res: any) => {
+            this.deletingPlanId = null;
+            if (res && res.errorcode === '0') {
+              this.notification.success('Verification plan deleted successfully!');
+              this.loadPlans();
+            } else {
+              this.notification.error(res.message || 'Failed to delete verification plan');
+            }
+          },
+          error: () => {
+            this.deletingPlanId = null;
+            this.notification.error('Failed to delete verification plan');
+          }
+        });
       }
     });
   }
