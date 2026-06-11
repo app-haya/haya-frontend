@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="page-header d-flex justify-content-between align-items-center">
     <div class="header-left">
       <div class="header-icon">
         <i class="bi bi-tags"></i>
@@ -11,6 +11,12 @@
         <p class="page-subtitle">{{ 'Manage and configure verification subscription plan prices' | translate }}</p>
       </div>
     </div>
+    <div class="header-right" *ngIf="!loading && !showForm">
+      <button class="btn-add" (click)="openAddForm()">
+        <i class="bi bi-plus-lg"></i>
+        {{ 'ADD_NEW_PLAN' | translate }}
+      </button>
+    </div>
   </div>
 
   <!-- Loading -->
@@ -19,73 +25,202 @@
     <p>{{ 'Loading...' | translate }}</p>
   </div>
 
-  <!-- Price Config Card -->
-  <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4" 
-       *ngIf="!loading"
-       [style.background-color]="isDarkMode ? '#161b22' : '#fff'" 
-       [style.color]="isDarkMode ? '#c9d1d9' : '#1a1a2e'">
-    <div class="card-header py-3 bg-transparent border-0 d-flex justify-content-between align-items-center">
-      <h6 class="mb-0 fw-bold" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'">
-        <i class="bi bi-coin me-2"></i>{{ 'Pricing Configuration' | translate }}
-      </h6>
-      <button class="btn btn-sm px-4 py-2 rounded-pill d-flex align-items-center save-btn"
-              (click)="savePrices()"
-              [style.background-color]="isDarkMode ? '#00cfd5' : '#7a3ca0'"
-              [style.color]="isDarkMode ? '#000' : '#fff'"
-              [style.border]="'none'"
-              [disabled]="savingPrices">
-        <span *ngIf="savingPrices" class="spinner-border spinner-border-sm me-2"></span>
-        <i *ngIf="!savingPrices" class="bi bi-save me-2"></i>
-        {{ 'SAVE_CHANGES' | translate }}
+  <!-- Add/Edit Custom Modal -->
+  <div class="custom-modal" *ngIf="showForm">
+    <div class="custom-modal-backdrop" (click)="closeForm()"></div>
+    <div class="custom-modal-content" style="max-width: 500px;" (click)="$event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="custom-modal-header bg-transparent border-0 border-bottom d-flex justify-content-between align-items-center"
+           [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+        <h5 class="modal-title fw-bold mb-0" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'">
+          <i class="bi" [ngClass]="isEditing ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+          {{ (isEditing ? 'EDIT_VERIFICATION_PLAN' : 'ADD_VERIFICATION_PLAN') | translate }}
+        </h5>
+        <button type="button" class="btn-close" [ngClass]="{'btn-close-white': isDarkMode}" (click)="closeForm()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="custom-modal-body p-4">
+        <div class="row g-3">
+          <!-- Plan Key -->
+          <div class="col-12">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'PLAN_KEY' | translate }} *</label>
+              <input type="text" class="form-control" [(ngModel)]="formPlanKey" 
+                     placeholder="e.g. 1month, 1year, 6months" [disabled]="isEditing" />
+              <span class="text-muted small fs-7 mt-1 d-block">{{ 'Unique ID for the plan (cannot be changed later)' | translate }}</span>
+            </div>
+          </div>
+
+          <!-- Label AR -->
+          <div class="col-6">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'LABEL_ARABIC' | translate }} *</label>
+              <input type="text" class="form-control" [(ngModel)]="formLabelAr" placeholder="مثال: شهر واحد، سنتين" />
+            </div>
+          </div>
+
+          <!-- Label EN -->
+          <div class="col-6">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'LABEL_ENGLISH' | translate }} *</label>
+              <input type="text" class="form-control" [(ngModel)]="formLabelEn" placeholder="e.g. 1 Month, 2 Years" />
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div class="col-12">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'PRICE' | translate }} *</label>
+              <div class="input-group">
+                <input type="number" class="form-control" [(ngModel)]="formPrice" min="0" step="0.01" />
+                <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Duration Value -->
+          <div class="col-6">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'DURATION_VALUE' | translate }} *</label>
+              <input type="number" class="form-control" [(ngModel)]="formDurationValue" min="1" />
+            </div>
+          </div>
+
+          <!-- Duration Unit -->
+          <div class="col-6">
+            <div class="form-group mb-0">
+              <label class="form-label small fw-semibold">{{ 'DURATION_UNIT' | translate }} *</label>
+              <select class="form-select" [(ngModel)]="formDurationUnit">
+                <option value="day">{{ 'DAYS' | translate }}</option>
+                <option value="month">{{ 'MONTHS' | translate }}</option>
+                <option value="year">{{ 'YEARS' | translate }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Active Status -->
+          <div class="col-12 mt-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="planActiveSwitch" [(ngModel)]="formIsActive">
+              <label class="form-check-label small fw-semibold ms-2" for="planActiveSwitch">
+                {{ 'ACTIVATE_PLAN_STATUS' | translate }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="custom-modal-footer bg-transparent border-0 border-top mt-auto"
+           [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+        <button class="btn btn-outline-secondary rounded-pill px-4" (click)="closeForm()">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button class="btn save-plan-btn rounded-pill px-4 text-white" 
+                [style.background-color]="isDarkMode ? '#00cfd5' : '#7a3ca0'"
+                [style.color]="isDarkMode ? '#000' : '#fff'"
+                [style.border]="'none'"
+                (click)="savePlan()"
+                [disabled]="savingPlan">
+          <span *ngIf="savingPlan" class="spinner-border spinner-border-sm me-2"></span>
+          {{ 'SAVE_CHANGES' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Plans List Grid -->
+  <div class="row g-4" *ngIf="!loading && !showForm">
+    <!-- Empty State -->
+    <div class="col-12 text-center py-5" *ngIf="plans.length === 0">
+      <div class="mb-3">
+        <i class="bi bi-tag-fill text-muted" style="font-size: 3rem;"></i>
+      </div>
+      <h5 class="text-muted">{{ 'No verification plans configured yet' | translate }}</h5>
+      <button class="btn btn-outline-primary rounded-pill px-4 mt-3" (click)="openAddForm()">
+        {{ 'ADD_NEW_PLAN' | translate }}
       </button>
     </div>
-    
-    <div class="card-body px-4 pb-4 pt-1">
-      <div class="row g-4 mt-1">
-        <!-- Plan 1 Year -->
-        <div class="col-md-4">
-          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
-            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
-              <i class="bi bi-calendar-event me-2"></i>{{ 'PRICE_1YEAR' | translate }}
-            </label>
-            <div class="input-group mt-2">
-              <input type="number" class="form-control form-control-lg" [(ngModel)]="price1Year"
-                placeholder="{{ 'ENTER_PRICE_1YEAR' | translate }}" min="0" />
-              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
+
+    <!-- Plan Cards -->
+    <div class="col-md-4" *ngFor="let plan of plans">
+      <div class="card h-100 shadow-sm border rounded-4 plan-card overflow-hidden"
+           [style.background-color]="isDarkMode ? '#161b22' : '#fff'" 
+           [style.color]="isDarkMode ? '#c9d1d9' : '#1a1a2e'"
+           [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+        
+        <!-- Card Ribbon/Header -->
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-start"
+             [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+          <div>
+            <h5 class="card-title fw-bold mb-1 d-flex align-items-center">
+              <i class="bi bi-shield-check me-2" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'"></i>
+              {{ plan.label_ar }}
+            </h5>
+            <span class="text-muted small">{{ plan.label_en }}</span>
+          </div>
+          <span class="badge rounded-pill" 
+                [ngClass]="plan.is_active ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+            {{ (plan.is_active ? 'Active' : 'Inactive') | translate }}
+          </span>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4 d-flex flex-column justify-content-between">
+          <div class="plan-details mb-4">
+            <!-- Price -->
+            <div class="mb-3 d-flex align-items-baseline">
+              <span class="h1 fw-bold mb-0 text-gradient" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'">
+                {{ plan.price }}
+              </span>
+              <span class="ms-2 text-muted fw-semibold">{{ 'SAR_SYMBOL' | translate }}</span>
             </div>
-            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 1 year' | translate }}</span>
+
+            <!-- Duration -->
+            <div class="d-flex align-items-center mb-2 small text-muted">
+              <i class="bi bi-clock me-2"></i>
+              <span>
+                {{ 'Duration:' | translate }} <strong>{{ plan.duration_value }} {{ (plan.duration_unit === 'day' ? 'DAYS' : plan.duration_unit === 'month' ? 'MONTHS' : 'YEARS') | translate }}</strong>
+              </span>
+            </div>
+
+            <!-- Plan Key -->
+            <div class="d-flex align-items-center small text-muted">
+              <i class="bi bi-key me-2"></i>
+              <span>
+                {{ 'Key:' | translate }} <code>{{ plan.plan_key }}</code>
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions Footer -->
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto"
+               [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+            <!-- Toggle Switch -->
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" [checked]="plan.is_active"
+                     (change)="togglePlan(plan.id)" [disabled]="togglingPlanId === plan.id">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+              <button class="btn btn-icon btn-outline-secondary btn-sm rounded-circle" 
+                      (click)="openEditForm(plan)" title="{{ 'Edit Plan' | translate }}">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-icon btn-outline-danger btn-sm rounded-circle" 
+                      (click)="deletePlan(plan.id)" [disabled]="deletingPlanId === plan.id"
+                      title="{{ 'Delete Plan' | translate }}">
+                <span *ngIf="deletingPlanId === plan.id" class="spinner-border spinner-border-sm"></span>
+                <i *ngIf="deletingPlanId !== plan.id" class="bi bi-trash"></i>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Plan 2 Years -->
-        <div class="col-md-4">
-          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
-            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
-              <i class="bi bi-calendar2-range me-2"></i>{{ 'PRICE_2YEARS' | translate }}
-            </label>
-            <div class="input-group mt-2">
-              <input type="number" class="form-control form-control-lg" [(ngModel)]="price2Years"
-                placeholder="{{ 'ENTER_PRICE_2YEARS' | translate }}" min="0" />
-              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
-            </div>
-            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 2 years' | translate }}</span>
-          </div>
-        </div>
-
-        <!-- Plan 3 Years -->
-        <div class="col-md-4">
-          <div class="price-input-card p-4 rounded-3 border" [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
-            <label class="form-label small fw-semibold" [style.color]="isDarkMode ? '#8b949e' : '#4b5563'">
-              <i class="bi bi-calendar3 me-2"></i>{{ 'PRICE_3YEARS' | translate }}
-            </label>
-            <div class="input-group mt-2">
-              <input type="number" class="form-control form-control-lg" [(ngModel)]="price3Year"
-                placeholder="{{ 'ENTER_PRICE_3YEARS' | translate }}" min="0" />
-              <span class="input-group-text bg-light border-start-0">{{ 'SAR_SYMBOL' | translate }}</span>
-            </div>
-            <span class="d-block mt-2 text-muted small" style="font-size: 0.78rem;">{{ 'Plan billed every 3 years' | translate }}</span>
-          </div>
-        </div>
       </div>
     </div>
   </div>

@@ -64,6 +64,22 @@ export class SettingsService {
     return this.http.post(`${this.baseUrl}/verification-prices/update`, data, { headers: this.getHeaders() });
   }
 
+  getVerificationPlans(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/verification-plans`, { headers: this.getHeaders() });
+  }
+
+  saveVerificationPlan(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/verification-plans/store`, data, { headers: this.getHeaders() });
+  }
+
+  deleteVerificationPlan(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/verification-plans/delete`, { id }, { headers: this.getHeaders() });
+  }
+
+  toggleVerificationPlan(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/verification-plans/toggle`, { id }, { headers: this.getHeaders() });
+  }
+
   deleteSettings(id: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/delete`, { id }, { headers: this.getHeaders() });
   }

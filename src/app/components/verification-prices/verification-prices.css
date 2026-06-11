@@ -74,38 +74,128 @@
 }
 
 /* =========================================================
-   PRICE INPUT CARD
+   PLAN CARDS & FORMS
    ========================================================= */
-.price-input-card {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: rgba(255, 255, 255, 0.02);
+.plan-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.price-input-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
   border-color: #7a3ca0 !important;
 }
 
-.save-btn {
+.add-plan-btn {
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(122, 60, 160, 0.25);
+  transition: all 0.2s ease;
+}
+
+.add-plan-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(122, 60, 160, 0.35);
+  color: #fff;
+}
+
+.save-plan-btn {
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
-.save-btn:hover:not(:disabled) {
+.save-plan-btn:hover {
   transform: translateY(-1px);
   opacity: 0.95;
 }
 
-.save-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.text-gradient {
+  background: linear-gradient(135deg, #7a3ca0, #00cfd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.input-group-text {
-  font-size: 0.85rem;
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  transform: scale(1.05);
+}
+
+.fs-7 {
+  font-size: 0.75rem;
+}
+
+.plan-form-card {
+  animation: slideDown 0.3s ease-out;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
   font-weight: 600;
   color: #4b5563;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2937;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #7a3ca0;
+  box-shadow: 0 0 0 3px rgba(122, 60, 160, 0.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🌙 PREMIUM DARK MODE 🌙 */
+:host-context(body.dark-mode) .form-group label {
+  color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .form-group input,
+:host-context(body.dark-mode) .form-group select {
+  background-color: #0d1117 !important;
+  border: 1.5px solid #30363d !important;
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .form-group input:focus,
+:host-context(body.dark-mode) .form-group select:focus {
+  border-color: #00cfd5 !important;
+  box-shadow: 0 0 0 3px rgba(0, 207, 213, 0.15) !important;
 }
 
 /* RTL Adjustments for language transitions if needed */
