@@ -150,11 +150,11 @@
       <div class="card h-100 shadow-sm border rounded-4 plan-card overflow-hidden"
            [style.background-color]="isDarkMode ? '#161b22' : '#fff'" 
            [style.color]="isDarkMode ? '#c9d1d9' : '#1a1a2e'"
-           [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+           [style.border-color]="isDarkMode ? 'rgba(0, 207, 213, 0.4)' : '#e5e7eb'">
         
         <!-- Card Ribbon/Header -->
         <div class="p-4 border-bottom d-flex justify-content-between align-items-start"
-             [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+             [style.border-color]="isDarkMode ? 'rgba(0, 207, 213, 0.4)' : '#e5e7eb'">
           <div>
             <h5 class="card-title fw-bold mb-1 d-flex align-items-center">
               <i class="bi bi-shield-check me-2" [style.color]="isDarkMode ? '#00cfd5' : '#7a3ca0'"></i>
@@ -198,7 +198,7 @@
 
           <!-- Actions Footer -->
           <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto"
-               [style.border-color]="isDarkMode ? '#30363d' : '#e5e7eb'">
+               [style.border-color]="isDarkMode ? 'rgba(0, 207, 213, 0.4)' : '#e5e7eb'">
             <!-- Toggle Switch -->
             <div class="form-check form-switch mb-0">
               <input class="form-check-input" type="checkbox" [checked]="plan.is_active"

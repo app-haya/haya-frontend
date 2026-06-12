@@ -126,3 +126,197 @@
 .action-bar {
   justify-content: flex-end !important;
 }
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+.detail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1.5px solid #7a3ca0;
+  border-radius: 8px;
+  background: transparent;
+  color: #7a3ca0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-btn:hover {
+  background: #7a3ca0;
+  color: #fff;
+}
+
+.detail-section {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #f3f4f6;
+  text-align: right; /* RTL support for details section content */
+}
+
+/* Switch text align logic for RTL/LTR support */
+[dir="ltr"] .detail-section {
+  text-align: left;
+}
+
+.section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.detail-lbl {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 110px;
+}
+
+.detail-val {
+  font-size: 0.875rem;
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+.attachment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #7a3ca0;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.attachment-link:hover {
+  text-decoration: underline;
+}
+
+.success-title { color: #15803d; }
+.danger-title { color: #b91c1c; }
+
+.tx-mono {
+  font-family: monospace;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.highlight-success {
+  color: #15803d;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+:host-context(body.dark-mode) .tabs-bar {
+  background: #161b22 !important;
+  border: 1px solid #30363d !important;
+}
+
+:host-context(body.dark-mode) .tab-btn {
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .tab-btn:hover {
+  background: rgba(0, 207, 213, 0.08) !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .tab-btn.active {
+  background: #0d1117 !important;
+  color: #00cfd5 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+:host-context(body.dark-mode) .user-name {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .avatar-img {
+  border-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .avatar-placeholder {
+  background: linear-gradient(135deg, #21262d, #30363d) !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .plan-badge {
+  background: linear-gradient(135deg, rgba(0, 207, 213, 0.15), rgba(0, 143, 148, 0.15)) !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .amount-value {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .amount-currency {
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .date-cell {
+  color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .time-cell {
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .detail-btn {
+  border-color: #00cfd5 !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .detail-btn:hover {
+  background: #00cfd5 !important;
+  color: #0b0e14 !important;
+}
+
+:host-context(body.dark-mode) .detail-section {
+  background: #0d1117 !important;
+  border-color: #21262d !important;
+}
+
+:host-context(body.dark-mode) .detail-lbl {
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .detail-val {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .attachment-link {
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .tx-mono {
+  background: #21262d !important;
+  color: #c9d1d9 !important;
+}

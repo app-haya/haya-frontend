@@ -53,6 +53,10 @@ export class Deals implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const savedTab = sessionStorage.getItem('deals_tab') as 'pending' | 'approved' | 'rejected';
+    if (savedTab) {
+      this.activeTab = savedTab;
+    }
     this.loadDeals();
   }
 
@@ -96,6 +100,7 @@ export class Deals implements OnInit {
   switchTab(tab: 'pending' | 'approved' | 'rejected'): void {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
+    sessionStorage.setItem('deals_tab', tab);
     this.currentPage = 1;
     this.searchTerm = '';
     this.loadDeals(1);

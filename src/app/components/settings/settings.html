@@ -28,10 +28,8 @@
     </div>
   </div>
 
-  <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border" [class.text-light]="isDarkMode" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
   </div>
 
   <form [formGroup]="settingsForm" *ngIf="!loading">

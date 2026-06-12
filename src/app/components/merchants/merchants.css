@@ -139,28 +139,8 @@
 /* =========================================================
    LOADING STATE
    ========================================================= */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 0;
-  color: #7a3ca0;
-  gap: 12px;
-}
 
-.spinner-ring {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(122, 60, 160, 0.15);
-  border-top-color: #7a3ca0;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
 
 /* =========================================================
    TABLE CARD & DATA TABLE

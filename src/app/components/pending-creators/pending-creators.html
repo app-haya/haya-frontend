@@ -73,6 +73,7 @@
             <th>{{ 'User' | translate }}</th>
             <th>{{ 'Type' | translate }}</th>
             <th>{{ 'Verification Documents' | translate }}</th>
+            <th>{{ 'Links' | translate }}</th>
             <th>{{ 'Plan' | translate }}</th>
             <th>{{ 'Price' | translate }}</th>
             <th>{{ 'Request Date' | translate }}</th>
@@ -116,19 +117,26 @@
             <!-- Verification Documents -->
             <td>
               <div class="d-flex flex-wrap gap-1">
-                <a *ngIf="creator.creator_profile_image" [href]="creator.creator_profile_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                <a *ngIf="creator.creator_profile_image" [href]="creator.creator_profile_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                   <i class="bi bi-person"></i> {{ 'Profile' | translate }}
                 </a>
-                <a *ngIf="creator.creator_document" [href]="creator.creator_document" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                <a *ngIf="creator.creator_document" [href]="creator.creator_document" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                   <i class="bi bi-file-earmark"></i> {{ 'Document' | translate }}
                 </a>
-                <a *ngIf="creator.creator_verified_link" [href]="creator.creator_verified_link" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                <span *ngIf="!creator.creator_profile_image && !creator.creator_document">—</span>
+              </div>
+            </td>
+
+            <!-- Links -->
+            <td>
+              <div class="d-flex flex-wrap gap-1">
+                <a *ngIf="creator.creator_verified_link" [href]="creator.creator_verified_link" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                   <i class="bi bi-link-45deg"></i> {{ 'Link 1' | translate }}
                 </a>
-                <a *ngIf="creator.creator_verified_link_2" [href]="creator.creator_verified_link_2" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                <a *ngIf="creator.creator_verified_link_2" [href]="creator.creator_verified_link_2" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                   <i class="bi bi-link-45deg"></i> {{ 'Link 2' | translate }}
                 </a>
-                <span *ngIf="!creator.creator_profile_image && !creator.creator_document && !creator.creator_verified_link && !creator.creator_verified_link_2">—</span>
+                <span *ngIf="!creator.creator_verified_link && !creator.creator_verified_link_2">—</span>
               </div>
             </td>
             
@@ -171,6 +179,14 @@
             <!-- Actions -->
             <td class="text-center">
               <div class="action-buttons">
+                <!-- View Details always shown -->
+                <button
+                  class="detail-btn me-2"
+                  (click)="openDetail(creator)"
+                  [title]="'View Details' | translate"
+                >
+                  <i class="bi bi-eye"></i> {{ 'View' | translate }}
+                </button>
                 <!-- If Pending: show both Approve and Reject -->
                 <ng-container *ngIf="activeTab === 'pending'">
                   <button
@@ -217,7 +233,7 @@
             </td>
           </tr>
           <tr *ngIf="filteredCreators.length === 0">
-            <td colspan="8" class="empty-state">
+            <td colspan="9" class="empty-state">
               <div class="empty-content">
                 <i class="bi bi-inbox"></i>
                 <p>{{ 'No creators found.' | translate }}</p>
@@ -265,6 +281,159 @@
       <div class="custom-modal-footer">
         <button type="button" class="btn btn-light" (click)="closeRejectModal()">{{ 'Cancel' | translate }}</button>
         <button type="button" class="btn btn-danger-muted" (click)="submitReject()">{{ 'Reject' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="custom-modal" *ngIf="showDetailModal">
+    <div class="custom-modal-backdrop" (click)="closeDetail()"></div>
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="m-0 d-flex align-items-center gap-2">
+          <i
+            class="bi"
+            [ngClass]="selectedCreator.creator_status === 'approved' ? 'bi-check-circle-fill text-success' : (selectedCreator.creator_status === 'rejected' ? 'bi-x-circle-fill text-danger' : 'bi-hourglass-split text-warning')"
+          ></i>
+          {{ 'Application Details' | translate }} #{{ selectedCreator.id }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDetail()"></button>
+      </div>
+      <div class="custom-modal-body" style="max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+        <!-- User Info -->
+        <div class="detail-section">
+          <h6 class="section-title">{{ 'User Information' | translate }}</h6>
+          <div class="detail-grid">
+            <div class="detail-row">
+              <span class="detail-lbl">{{ 'Name' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.name || '—' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-lbl">{{ 'Email' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.email || '—' }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.type">
+              <span class="detail-lbl">{{ 'Type' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.type | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Details -->
+        <div class="detail-section">
+          <h6 class="section-title"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i> {{ 'Verification Details' | translate }}</h6>
+          <div class="detail-grid">
+            <div class="detail-row" *ngIf="selectedCreator.verified_method">
+              <span class="detail-lbl">{{ 'Verified Method' | translate }}</span>
+              <span class="detail-val font-semibold text-primary">{{ selectedCreator.verified_method | translate }}</span>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedCreator.creator_profile_image">
+              <span class="detail-lbl">{{ 'Profile Image' | translate }}</span>
+              <a [href]="selectedCreator.creator_profile_image" target="_blank" class="attachment-link text-decoration-none">
+                <i class="bi bi-person-bounding-box me-1"></i> {{ 'View' | translate }}
+              </a>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedCreator.creator_document">
+              <span class="detail-lbl">{{ 'Document' | translate }}</span>
+              <a [href]="selectedCreator.creator_document" target="_blank" class="attachment-link text-decoration-none">
+                <i class="bi bi-file-earmark me-1"></i> {{ 'View' | translate }}
+              </a>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedCreator.creator_verified_link">
+              <span class="detail-lbl">{{ 'Verified Link' | translate }} 1</span>
+              <a [href]="selectedCreator.creator_verified_link" target="_blank" class="attachment-link text-decoration-none">
+                <i class="bi bi-link-45deg me-1"></i> {{ 'Open' | translate }}
+              </a>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedCreator.creator_verified_link_2">
+              <span class="detail-lbl">{{ 'Verified Link' | translate }} 2</span>
+              <a [href]="selectedCreator.creator_verified_link_2" target="_blank" class="attachment-link text-decoration-none">
+                <i class="bi bi-link-45deg me-1"></i> {{ 'Open' | translate }}
+              </a>
+            </div>
+            
+            <div class="detail-row" *ngIf="!selectedCreator.creator_profile_image && !selectedCreator.creator_document && !selectedCreator.creator_verified_link && !selectedCreator.creator_verified_link_2">
+              <span class="detail-lbl">{{ 'Documents' | translate }}</span>
+              <span class="detail-val">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Info -->
+        <div class="detail-section" *ngIf="selectedCreator.verification_order">
+          <h6 class="section-title">{{ 'Order Information' | translate }}</h6>
+          <div class="detail-grid">
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.plan">
+              <span class="detail-lbl">{{ 'Plan' | translate }}</span>
+              <span class="detail-val">{{ getPlanLabel(selectedCreator.verification_order.plan) | translate }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.amount_paid">
+              <span class="detail-lbl">{{ 'Amount Paid' | translate }}</span>
+              <span class="detail-val">
+                {{ selectedCreator.verification_order.amount_paid }} {{ selectedCreator.verification_order.currency || 'SAR' }}
+              </span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.transaction_id">
+              <span class="detail-lbl">{{ 'Transaction ID' | translate }}</span>
+              <span class="detail-val tx-mono">{{ selectedCreator.verification_order.transaction_id }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.created_at">
+              <span class="detail-lbl">{{ 'Request Date' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Approved Details -->
+        <div class="detail-section" *ngIf="selectedCreator.verification_order && selectedCreator.verification_order.status === 'approved'">
+          <h6 class="section-title success-title"><i class="bi bi-check-circle-fill"></i> {{ 'Approval Details' | translate }}</h6>
+          <div class="detail-grid">
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.expires_at">
+              <span class="detail-lbl">{{ 'Expires At' | translate }}</span>
+              <span class="detail-val highlight-success">{{ selectedCreator.verification_order.expires_at | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.reviewed_by">
+              <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.reviewed_by }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.reviewed_at">
+              <span class="detail-lbl">{{ 'Review Date' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rejected Details -->
+        <div class="detail-section" *ngIf="selectedCreator.verification_order && selectedCreator.verification_order.status === 'rejected'">
+          <h6 class="section-title danger-title"><i class="bi bi-x-circle-fill text-danger"></i> {{ 'Rejection Details' | translate }}</h6>
+          <div class="detail-grid">
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.rejection_reason">
+              <span class="detail-lbl">{{ 'Rejection Reason' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.rejection_reason }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.admin_attachment_url">
+              <span class="detail-lbl">{{ 'Attachment' | translate }}</span>
+              <a [href]="selectedCreator.verification_order.admin_attachment_url" target="_blank" class="attachment-link">
+                <i class="bi bi-paperclip"></i> {{ 'View Attachment' | translate }}
+              </a>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.reviewed_by">
+              <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.reviewed_by }}</span>
+            </div>
+            <div class="detail-row" *ngIf="selectedCreator.verification_order.reviewed_at">
+              <span class="detail-lbl">{{ 'Review Date' | translate }}</span>
+              <span class="detail-val">{{ selectedCreator.verification_order.reviewed_at | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeDetail()">{{ 'Close' | translate }}</button>
       </div>
     </div>
   </div>

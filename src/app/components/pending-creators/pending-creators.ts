@@ -10,6 +10,8 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   rejectReason = '';
   currentRejectId: number | null = null;
   activeTab: 'pending' | 'approved' | 'rejected' = 'pending';
+  showDetailModal = false;
+  selectedCreator: any = null;
 
   constructor(
     private userService: UsersService,
@@ -18,6 +20,10 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   ) {}
 
   ngOnInit(): void {
+    const savedTab = sessionStorage.getItem('verify_creator_tab') as 'pending' | 'approved' | 'rejected';
+    if (savedTab) {
+      this.activeTab = savedTab;
+    }
     this.loadPendingCreators();
   }
 
@@ -57,6 +63,7 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
 
   getPlanLabel(plan: string): string {
     const labels: Record<string, string> = {
+      '1month': '1 Month',
       '1year': '1 Year',
       '2years': '2 Years',
       '3years': '3 Years'
@@ -67,6 +74,7 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   switchTab(tab: 'pending' | 'approved' | 'rejected'): void {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
+    sessionStorage.setItem('verify_creator_tab', tab);
     this.currentPage = 1;
     this.loadPendingCreators(1);
   }
@@ -125,5 +133,15 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
       (c.name && c.name.toLowerCase().includes(term)) ||
       (c.email && c.email.toLowerCase().includes(term))
     );
+  }
+
+  openDetail(creator: any): void {
+    this.selectedCreator = creator;
+    this.showDetailModal = true;
+  }
+
+  closeDetail(): void {
+    this.showDetailModal = false;
+    this.selectedCreator = null;
   }
 }

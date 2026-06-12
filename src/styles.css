@@ -254,6 +254,21 @@ body.dark-mode .sidebar .nav-link.active {
   color: #00cfd5 !important;
 }
 
+body.dark-mode .sidebar .child-link {
+  color: #8b949e !important;
+}
+
+body.dark-mode .sidebar .child-link:hover {
+  background-color: rgba(0, 207, 213, 0.03) !important;
+  color: #00cfd5 !important;
+}
+
+body.dark-mode .sidebar .child-link.active {
+  color: #00cfd5 !important;
+  background-color: rgba(0, 207, 213, 0.08) !important;
+}
+
+
 body.dark-mode .table thead th {
   border-top: none !important;
   padding: 15px !important;
@@ -309,6 +324,11 @@ body.dark-mode ::placeholder {
   color: #6e7681 !important;
   opacity: 1 !important;
 }
+
+body.dark-mode .text-muted {
+  color: #8b949e !important;
+}
+
 
 body.dark-mode .btn-close {
   filter: invert(1) grayscale(100%) brightness(200%) !important;
@@ -637,18 +657,65 @@ body.dark-mode .icon-btn.reject:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 0;
+  min-height: 65vh;
   color: #7a3ca0;
-  gap: 12px;
+  gap: 16px;
+  width: 100%;
 }
 
 .spinner-ring {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(122, 60, 160, 0.15);
+  width: 46px;
+  height: 46px;
+  border: 3px solid rgba(122, 60, 160, 0.08);
   border-top-color: #7a3ca0;
+  border-bottom-color: #7a3ca0;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  position: relative;
+  display: inline-block;
+  animation: spin-clockwise 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  box-shadow: 0 0 15px rgba(122, 60, 160, 0.15);
+}
+
+.spinner-ring::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 3px solid rgba(122, 60, 160, 0.03);
+  border-left-color: rgba(122, 60, 160, 0.85);
+  border-right-color: rgba(122, 60, 160, 0.85);
+  border-radius: 50%;
+  animation: spin-counterclockwise 0.8s linear infinite;
+}
+
+/* Dark Mode Spinner */
+body.dark-mode .spinner-ring {
+  border-color: rgba(0, 207, 213, 0.08);
+  border-top-color: #00cfd5;
+  border-bottom-color: #00cfd5;
+  box-shadow: 0 0 15px rgba(0, 207, 213, 0.25);
+}
+
+body.dark-mode .spinner-ring::before {
+  border-color: rgba(0, 207, 213, 0.03);
+  border-left-color: rgba(0, 207, 213, 0.85);
+  border-right-color: rgba(0, 207, 213, 0.85);
+}
+
+body.dark-mode .loading-state {
+  color: #00cfd5;
+}
+
+@keyframes spin-clockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-counterclockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
 }
 
 /* Table Card & Data Table */
@@ -749,6 +816,12 @@ body.dark-mode .icon-btn.reject:hover {
   border: 1px solid #bbf7d0;
 }
 
+.badge-rejected {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
 .badge-info-type {
   background: #e0f2fe;
   color: #0369a1;
@@ -759,6 +832,62 @@ body.dark-mode .icon-btn.reject:hover {
   background: #f3f4f6;
   color: #374151;
   border: 1px solid #e5e7eb;
+}
+
+.badge-purple-type {
+  background: #f3f0ff;
+  color: #7a3ca0;
+  border: 1px solid #e9d5ff;
+}
+
+/* Dark Mode Overrides for Status Badges */
+body.dark-mode .badge-pending {
+  background: rgba(217, 119, 6, 0.15) !important;
+  color: #f59e0b !important;
+  border-color: rgba(217, 119, 6, 0.3) !important;
+}
+
+body.dark-mode .badge-approved {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+body.dark-mode .badge-rejected {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+body.dark-mode .badge-info-type {
+  background: rgba(14, 165, 233, 0.15) !important;
+  color: #0ea5e9 !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+body.dark-mode .badge-private-type {
+  background: rgba(156, 163, 175, 0.15) !important;
+  color: #9ca3af !important;
+  border-color: rgba(156, 163, 175, 0.3) !important;
+}
+
+body.dark-mode .badge-purple-type {
+  background: rgba(122, 60, 160, 0.15) !important;
+  color: #d8b4fe !important;
+  border-color: rgba(122, 60, 160, 0.3) !important;
+}
+
+/* Form Switches (Dark Mode) */
+body.dark-mode .form-switch .form-check-input {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%238b949e'/%3e%3c/svg%3e") !important;
+}
+
+body.dark-mode .form-switch .form-check-input:checked {
+  background-color: #00cfd5 !important;
+  border-color: #00cfd5 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%230b0e14'/%3e%3c/svg%3e") !important;
 }
 
 /* Action Buttons */

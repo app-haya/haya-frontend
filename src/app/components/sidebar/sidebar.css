@@ -107,14 +107,6 @@
   font-weight: 700;
 }
 
-:host-context(body.dark-mode) .child-link {
-  color: #8b949e !important;
-}
-
-:host-context(body.dark-mode) .child-link.active {
-  color: #00cfd5 !important;
-  background-color: rgba(0, 207, 213, 0.08) !important;
-}
 
 /* 📱 Responsive & UI Polish 📱 */
 .sidebar.collapsed .nav-link span,

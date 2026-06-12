@@ -51,6 +51,10 @@ export class VerificationOrders implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const savedTab = sessionStorage.getItem('verify_orders_tab') as 'pending_review' | 'approved' | 'rejected';
+    if (savedTab) {
+      this.activeTab = savedTab;
+    }
     this.loadOrders();
   }
 
@@ -82,6 +86,7 @@ export class VerificationOrders implements OnInit {
   switchTab(tab: 'pending_review' | 'approved' | 'rejected'): void {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
+    sessionStorage.setItem('verify_orders_tab', tab);
     this.currentPage = 1;
     this.loadOrders(1);
   }
@@ -193,6 +198,7 @@ export class VerificationOrders implements OnInit {
 
   getPlanLabel(plan: string): string {
     const labels: Record<string, string> = {
+      '1month': '1 Month',
       '1year': '1 Year',
       '2years': '2 Years',
       '3years': '3 Years'

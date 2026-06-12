@@ -170,19 +170,59 @@
 }
 
 .dd-spinner {
-  width: 48px; height: 48px;
-  border: 4px solid rgba(122,60,160,0.15);
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(122, 60, 160, 0.08);
   border-top-color: #7a3ca0;
+  border-bottom-color: #7a3ca0;
   border-radius: 50%;
-  animation: spin 0.75s linear infinite;
+  position: relative;
+  display: inline-block;
+  animation: spin-clockwise 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  box-shadow: 0 0 15px rgba(122, 60, 160, 0.15);
+}
+
+.dd-spinner::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 3px solid rgba(122, 60, 160, 0.03);
+  border-left-color: rgba(122, 60, 160, 0.85);
+  border-right-color: rgba(122, 60, 160, 0.85);
+  border-radius: 50%;
+  animation: spin-counterclockwise 0.8s linear infinite;
 }
 
 .dd-spinner-sm {
-  width: 28px; height: 28px;
-  border-width: 3px;
+  width: 28px;
+  height: 28px;
+  border-width: 2px;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+.dd-spinner-sm::before {
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-width: 2px;
+}
+
+/* Dark Mode Overrides */
+:host-context(body.dark-mode) .dd-spinner {
+  border-color: rgba(0, 207, 213, 0.08) !important;
+  border-top-color: #00cfd5 !important;
+  border-bottom-color: #00cfd5 !important;
+  box-shadow: 0 0 15px rgba(0, 207, 213, 0.25) !important;
+}
+
+:host-context(body.dark-mode) .dd-spinner::before {
+  border-color: rgba(0, 207, 213, 0.03) !important;
+  border-left-color: rgba(0, 207, 213, 0.85) !important;
+  border-right-color: rgba(0, 207, 213, 0.85) !important;
+}
 
 /* ════════════════════════════════════════
    BODY LAYOUT

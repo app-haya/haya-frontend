@@ -59,6 +59,7 @@
           <tr>
             <th>{{ 'User' | translate }}</th>
             <th>{{ 'Type' | translate }}</th>
+            <th>{{ 'Number Verify' | translate }}</th>
             <th>{{ 'Verification Documents' | translate }}</th>
             <th>{{ 'Plan' | translate }}</th>
             <th>{{ 'Price' | translate }}</th>
@@ -86,11 +87,11 @@
                   <span class="verified-dot" *ngIf="order.user?.is_verified === '1'"></span>
                 </div>
                 <div class="user-info">
-                  <span class="user-name">{{ order.user?.name || '—' }}</span>
+                  <span class="user-name" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block;">{{ order.user?.name || '—' }}</span>
                   <span class="d-block small text-muted" style="font-size: 0.75rem;" *ngIf="order.user?.phone">
                     {{ order.user?.phone }}
                   </span>
-                  <span class="d-block small text-muted" style="font-size: 0.72rem;" *ngIf="order.user?.email">
+                  <span class="d-block small text-muted" style="font-size: 0.72rem; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" *ngIf="order.user?.email" [title]="order.user.email">
                     {{ order.user?.email }}
                   </span>
                 </div>
@@ -105,39 +106,47 @@
               <span *ngIf="!order.user?.verified_method">—</span>
             </td>
 
+            <!-- Verification Number -->
+            <td>
+              <div *ngIf="order.user">
+                <span *ngIf="order.user.verified_method !== 'creator'">
+                  <span *ngIf="order.user.number_verify">
+                    {{ 'No.' | translate }}: {{ order.user.number_verify }}
+                  </span>
+                  <span *ngIf="!order.user.number_verify && order.user.commercial_register">
+                    {{ 'CR' | translate }}: {{ order.user.commercial_register }}
+                  </span>
+                  <span *ngIf="!order.user.number_verify && !order.user.commercial_register">—</span>
+                </span>
+                <span *ngIf="order.user.verified_method === 'creator'">—</span>
+              </div>
+              <span *ngIf="!order.user">—</span>
+            </td>
+
             <!-- Verification Info -->
             <td>
               <div class="d-flex flex-column gap-1" *ngIf="order.user">
                 <!-- Personal / Business -->
                 <div *ngIf="order.user.verified_method !== 'creator'">
-                  <span class="d-block small text-muted" *ngIf="order.user.number_verify">
-                    {{ 'Number Verify' | translate }}: {{ order.user.number_verify }}
-                  </span>
-                  <span class="d-block small text-muted" *ngIf="order.user.commercial_register">
-                    {{ 'Commercial Register' | translate }}: {{ order.user.commercial_register }}
-                  </span>
                   <div class="d-flex gap-1 mt-1">
-                    <a *ngIf="order.user.verify_image" [href]="order.user.verify_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                    <a *ngIf="order.user.verify_image" [href]="order.user.verify_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                       <i class="bi bi-image"></i> {{ 'View' | translate }}
-                    </a>
-                    <a *ngIf="order.user.commercial_register_url" [href]="order.user.commercial_register_url" target="_blank" class="status-badge badge-info-type text-decoration-none">
-                      <i class="bi bi-file-earmark-pdf"></i> {{ 'CR' | translate }}
                     </a>
                   </div>
                 </div>
 
                 <!-- Creator -->
                 <div *ngIf="order.user.verified_method === 'creator'" class="d-flex flex-wrap gap-1">
-                  <a *ngIf="order.user.creator_profile_image" [href]="order.user.creator_profile_image" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <a *ngIf="order.user.creator_profile_image" [href]="order.user.creator_profile_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                     <i class="bi bi-person"></i> {{ 'Profile' | translate }}
                   </a>
-                  <a *ngIf="order.user.creator_document" [href]="order.user.creator_document" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <a *ngIf="order.user.creator_document" [href]="order.user.creator_document" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                     <i class="bi bi-file-earmark"></i> {{ 'Doc' | translate }}
                   </a>
-                  <a *ngIf="order.user.creator_verified_link" [href]="order.user.creator_verified_link" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <a *ngIf="order.user.creator_verified_link" [href]="order.user.creator_verified_link" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                     <i class="bi bi-link-45deg"></i> L1
                   </a>
-                  <a *ngIf="order.user.creator_verified_link_2" [href]="order.user.creator_verified_link_2" target="_blank" class="status-badge badge-info-type text-decoration-none">
+                  <a *ngIf="order.user.creator_verified_link_2" [href]="order.user.creator_verified_link_2" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                     <i class="bi bi-link-45deg"></i> L2
                   </a>
                 </div>
@@ -233,7 +242,7 @@
           </tr>
 
           <tr *ngIf="orders.length === 0">
-            <td colspan="8" class="empty-state">
+            <td colspan="9" class="empty-state">
               <div class="empty-content">
                 <i class="bi bi-inbox"></i>
                 <p>{{ 'No orders found' | translate }}</p>
@@ -380,11 +389,9 @@
             </a>
           </div>
 
-          <div class="detail-row" *ngIf="selectedOrder.user.commercial_register_url">
+          <div class="detail-row" *ngIf="selectedOrder.user.commercial_register">
             <span class="detail-lbl">{{ 'Commercial Register' | translate }}</span>
-            <a [href]="selectedOrder.user.commercial_register_url" target="_blank" class="attachment-link text-decoration-none">
-              <i class="bi bi-file-earmark-pdf me-1"></i> {{ 'View' | translate }}
-            </a>
+            <span class="detail-val">{{ selectedOrder.user.commercial_register }}</span>
           </div>
 
           <div class="detail-row" *ngIf="selectedOrder.user.creator_profile_image">

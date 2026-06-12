@@ -589,5 +589,15 @@
     "Verification plan deleted successfully!": "تم حذف باقة التوثيق بنجاح!",
     "Failed to delete verification plan": "فشل حذف باقة التوثيق",
     "Verification plan status updated successfully!": "تم تحديث حالة باقة التوثيق بنجاح!",
-    "Failed to update plan status": "فشل تحديث حالة الباقة"
+    "Failed to update plan status": "فشل تحديث حالة الباقة",
+    "Links": "الروابط",
+    "1 Month": "شهر واحد",
+    "merchant": "تاجر",
+    "user": "مستخدم",
+    "governmental": "جهة حكومية",
+    "doctor": "طبيب",
+    "patient": "مريض",
+    "admin": "مدير",
+    "CR": "السجل التجاري",
+    "No.": "رقم التوثيق"
 }
