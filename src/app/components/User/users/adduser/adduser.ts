@@ -49,7 +49,7 @@ export class AddUser implements OnInit {
       gender: ['', Validators.required],
       country_id: ['', Validators.required],
       city_id: ['', Validators.required],
-      account_type: ['', Validators.required],
+      type: ['', Validators.required],
       is_active: ['1', Validators.required],
       interests: [[]],
       image: [null],
