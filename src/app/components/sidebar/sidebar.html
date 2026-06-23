@@ -44,7 +44,10 @@
         </a>
         <ul *ngIf="item.expanded && !isCollapsed" class="nav flex-column">
           <li *ngFor="let child of item.children" class="mb-1">
-            <a [routerLink]="child.path" routerLinkActive="active" 
+            <a [routerLink]="child.path"
+               [queryParams]="child.queryParams || null"
+               [routerLinkActiveOptions]="child.routerLinkActiveOptions || { exact: false }"
+               routerLinkActive="active" 
                class="nav-link text-white py-1 d-flex align-items-center child-link">
               <i [class]="child.icon" class="me-2"></i>
               <span>{{ child.name | translate }}</span>

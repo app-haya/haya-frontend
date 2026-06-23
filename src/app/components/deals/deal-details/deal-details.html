@@ -233,19 +233,14 @@
                     <th>{{ 'Price' | translate }}</th>
                     <th>{{ 'Payment Status' | translate }}</th>
                     <th>{{ 'Order Status' | translate }}</th>
+                    <th>{{ 'Invoice' | translate }}</th>
+                    <th>{{ 'Created At' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let order of orders">
                     <td>
                       <div class="p-user">
-                        <div class="p-avatar">
-                          <img *ngIf="order.user.image" [src]="order.user.image" [alt]="order.user.name"
-                            onerror="this.src='assets/images/default-user.png'">
-                          <div *ngIf="!order.user.image" class="p-avatar-letter">
-                            {{ order.user.name?.charAt(0) | uppercase }}
-                          </div>
-                        </div>
                         <div class="p-info">
                           <span class="p-name">{{ order.user.name }}</span>
                           <span class="p-phone">{{ order.user.phone }}</span>
@@ -267,9 +262,23 @@
                     </td>
                     <td>
                       <div class="p-status">
-                        <span class="p-status-dot" [ngClass]="order.status"></span>
-                        <span>{{ (order.status | titlecase) | translate }}</span>
+                        <span class="p-status-dot" [ngClass]="{
+                          'pending': order.status === 'pending',
+                          'in-delivery': order.status === 'in delivery',
+                          'received': order.status === 'received',
+                          'cancelled': order.status === 'cancelled'
+                        }"></span>
+                        <span>{{ (order.status === 'pending' ? 'Pending' : order.status === 'in delivery' ? 'Out for Delivery' : order.status === 'received' ? 'Delivered' : 'Cancelled') | translate }}</span>
                       </div>
+                    </td>
+                    <td>
+                      <a *ngIf="order.invoice_url" [href]="order.invoice_url" target="_blank" class="view-link-btn text-purple-link">
+                        <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
+                      </a>
+                      <span *ngIf="!order.invoice_url" class="text-muted">—</span>
+                    </td>
+                    <td>
+                      <span class="p-date">{{ order.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
                     </td>
                   </tr>
                 </tbody>

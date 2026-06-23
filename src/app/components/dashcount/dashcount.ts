@@ -1,6 +1,7 @@
 import { TranslateModule } from '@ngx-translate/core';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DashboardService } from '../../services/dashboard.service';
+import { DealService } from '../../services/deal.service';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
@@ -15,6 +16,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 export class Dashcount implements OnInit {
   counts: any = {};
   loading: boolean = true;
+  totalDealOrders: number = 0;
 
   // 📈 Revenue Area Chart Header Data
   revenueHeader = {
@@ -117,14 +119,27 @@ export class Dashcount implements OnInit {
     }
   };
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(
+    private dashboardService: DashboardService,
+    private dealService: DealService
+  ) { }
 
   ngOnInit(): void {
     this.dashboardService.getAll().subscribe({
       next: (res) => {
         this.counts = res.data;
         this.updateCharts(res.data);
-        this.loading = false;
+        
+        // Fetch total deal orders count
+        this.dealService.getAllDealOrders(1).subscribe({
+          next: (orderRes) => {
+            this.totalDealOrders = orderRes.data?.total || 0;
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+          }
+        });
       },
       error: () => {
         this.loading = false;

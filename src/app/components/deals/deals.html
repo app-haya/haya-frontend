@@ -52,16 +52,18 @@
       </button>
     </div>
 
-    <!-- Search Input -->
-    <div class="search-wrap">
-      <i class="bi bi-search search-icon"></i>
-      <input
-        type="text"
-        class="form-control search-input"
-        [placeholder]="'Search by title, account number...' | translate"
-        [(ngModel)]="searchTerm"
-        (input)="search()"
-      />
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+      <!-- Search Input -->
+      <div class="search-wrap">
+        <i class="bi bi-search search-icon"></i>
+        <input
+          type="text"
+          class="form-control search-input"
+          [placeholder]="'Search by title, account number...' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="search()"
+        />
+      </div>
     </div>
   </div>
 
@@ -74,6 +76,7 @@
   <!-- Table Card -->
   <div *ngIf="!loading" class="table-card">
     <div class="table-responsive">
+      <!-- Deals Table -->
       <table class="data-table">
         <thead>
           <tr>
@@ -235,6 +238,8 @@
           </tr>
         </tbody>
       </table>
+
+
     </div>
 
     <!-- Pagination -->

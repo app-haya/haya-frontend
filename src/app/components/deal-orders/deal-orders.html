@@ -1,0 +1,161 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-receipt"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Deal Orders' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Total Deal Orders' | translate }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="total-badge" *ngIf="!loading">
+        <span>{{ total }} {{ 'entries' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Control Row -->
+  <div class="controls-row">
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+      <!-- Search Input -->
+      <div class="search-wrap">
+        <i class="bi bi-search search-icon"></i>
+        <input
+          type="text"
+          class="form-control search-input"
+          [placeholder]="'Search by title, buyer, seller...' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="search()"
+        />
+      </div>
+
+      <!-- Order Status Filter Dropdown -->
+      <div class="filter-wrap">
+        <select
+          class="form-select search-input"
+          style="padding: 9px 14px !important; min-width: 180px; background-color: var(--card-bg, #fff); color: var(--text-color, #1a1a2e);"
+          [(ngModel)]="orderStatusFilter"
+          (change)="onOrderStatusFilterChange()"
+        >
+          <option value="">{{ 'All Statuses' | translate }}</option>
+          <option value="pending">{{ 'Pending' | translate }}</option>
+          <option value="in delivery">{{ 'Out for Delivery' | translate }}</option>
+          <option value="received">{{ 'Delivered' | translate }}</option>
+          <option value="cancelled">{{ 'Cancelled' | translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading orders...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <!-- Orders Table -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Buyer' | translate }}</th>
+            <th>{{ 'Seller' | translate }}</th>
+            <th>{{ 'Deal Title' | translate }}</th>
+            <th>{{ 'Price' | translate }} ({{ 'SAR' | translate }})</th>
+            <th>{{ 'Payment Status' | translate }}</th>
+            <th>{{ 'Order Status' | translate }}</th>
+            <th>{{ 'Invoice' | translate }}</th>
+            <th>{{ 'Created At' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders" class="table-row">
+            <td>
+              <div class="title-cell">
+                <span class="deal-title-text" style="max-width: 150px;" [title]="order.user?.name || ''">{{ order.user?.name || '—' }}</span>
+                <span class="deal-id-tag">{{ order.user?.phone || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="title-cell">
+                <span class="deal-title-text" style="max-width: 150px;" [title]="order.deal?.user?.name || ''">{{ order.deal?.user?.name || '—' }}</span>
+                <span class="deal-id-tag">{{ order.deal?.user?.phone || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <a [routerLink]="['/admin/deal-details', order.deal_id]" [state]="{ deal: order.deal }" class="view-link-btn text-purple-link" [title]="'Click to view deal details' | translate">
+                {{ order.deal?.title || '—' }}
+                <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; opacity: 0.85;"></i>
+              </a>
+            </td>
+            <td>
+              <div class="amount-cell">
+                <span class="amount-value">{{ order.total_price | number:'1.0-2' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="order.payment_status === 'paid' ? 'badge-approved' : 'badge-rejected'">
+                {{ (order.payment_status === 'paid' ? 'Paid' : 'Unpaid') | translate }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="
+                order.status === 'pending'
+                  ? 'badge-pending'
+                  : order.status === 'in delivery'
+                  ? 'badge-in-progress'
+                  : order.status === 'received'
+                  ? 'badge-approved'
+                  : 'badge-rejected'
+              ">
+                {{ (order.status === 'pending' ? 'Pending' : order.status === 'in delivery' ? 'Out for Delivery' : order.status === 'received' ? 'Delivered' : 'Cancelled') | translate }}
+              </span>
+            </td>
+            <td>
+              <a *ngIf="order.invoice_url" [href]="order.invoice_url" target="_blank" class="view-link-btn text-purple-link">
+                <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
+              </a>
+              <span *ngIf="!order.invoice_url" class="text-muted">—</span>
+            </td>
+            <td>
+              <span class="geo-id">{{ order.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+            </td>
+          </tr>
+
+          <!-- Empty State for Orders -->
+          <tr *ngIf="orders.length === 0">
+            <td colspan="8" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-inbox"></i>
+                <p>{{ 'No matching orders found' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let p of getPageNumbers()"
+        [class.active]="p === currentPage"
+        (click)="loadOrders(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

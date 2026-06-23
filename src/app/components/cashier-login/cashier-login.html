@@ -1,0 +1,40 @@
+<div class="login-page">
+  <div id="particles-js" class="particles"></div>
+  <div class="login-wrapper shadow-lg">
+    <!-- Left Form Side -->
+    <div class="login-form-side" dir="rtl">
+      <h2 class="login-title">{{ 'Cashier Portal Login' | translate }}</h2>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+
+        <!-- Email or Phone Input -->
+        <div class="input-container">
+          <input type="text" name="identifier" class="custom-input" [placeholder]="'Email or Phone' | translate" [(ngModel)]="form.identifier"
+            required dir="ltr" />
+          <i class="fas fa-user input-icon"></i>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-container">
+          <input type="password" name="password" class="custom-input" [placeholder]="'Password' | translate"
+            [(ngModel)]="form.password" required dir="ltr" />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" [disabled]="!loginForm.valid || submitting">
+          <span *ngIf="!submitting">{{ 'Login' | translate }}</span>
+          <span *ngIf="submitting" class="spinner"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Image Side -->
+    <div class="login-image-side">
+      <div class="logo-wrapper">
+        <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Logo" class="logo-img" />
+        <h3 class="portal-badge">{{ 'Cashier Portal' | translate }}</h3>
+      </div>
+    </div>
+  </div>
+</div>

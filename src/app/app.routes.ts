@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { CashierLogin } from './components/cashier-login/cashier-login';
+import { CashierPortal } from './components/cashier-portal/cashier-portal';
+import { CashierAuthGuard } from './guards/cashier-auth.guard';
 import { Login } from './components/login/login';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Admins } from './components/Admin/edit-admin/admins/admins';
@@ -30,6 +33,7 @@ import { VerificationPrices } from './components/verification-prices/verificatio
 import { Roles } from './components/roles/roles';
 import { Dashcount } from './components/dashcount/dashcount';
 import { DealDetails } from './components/deals/deal-details/deal-details';
+import { DealOrders } from './components/deal-orders/deal-orders';
 
 import { WalletTransactions } from './components/wallet-transactions/wallet-transactions';
 import { Settings } from './components/settings/settings';
@@ -39,6 +43,8 @@ import { Loyalty } from './components/loyalty/loyalty';
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
   { path: 'login', component: Login },
+  { path: 'cashier/login', component: CashierLogin },
+  { path: 'cashier/dashboard', component: CashierPortal, canActivate: [CashierAuthGuard] },
   { path: 'terms', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'terms' } },
   { path: 'privacy', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'privacy' } },
   { path: 'about-us', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'about' } },
@@ -115,6 +121,7 @@ export const routes: Routes = [
       },
       { path: 'adddeal', component: AddDeal, data: { role: 'Deals' } },
       { path: 'deal-details/:id', component: DealDetails, data: { role: 'Deals' } },
+      { path: 'deal-orders', component: DealOrders, data: { role: 'Deals' } },
       { path: 'calendar', component: Calendar },
 
       { path: 'wallet', component: WalletTransactions, data: { role: 'Wallet' } },

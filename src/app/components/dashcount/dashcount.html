@@ -10,7 +10,8 @@
       { label: 'Governmental Users',  value: counts.governmentals,   icon: 'bi-bank',            color: 'indigo', trend: '0%' },
       { label: 'Cities',              value: counts.cities,         icon: 'bi-geo',             color: 'purple', trend: '+1' },
       { label: 'Countries',           value: counts.countries,      icon: 'bi-flag',            color: 'orange', trend: '0' },
-      { label: 'Interests',           value: counts.interests,      icon: 'bi-heart',           color: 'green', trend: '+3' }
+      { label: 'Interests',           value: counts.interests,      icon: 'bi-heart',           color: 'green', trend: '+3' },
+      { label: 'Total Deal Orders',   value: totalDealOrders,       icon: 'bi-receipt',         color: 'teal', trend: '0' }
     ]">
       <div class="stat-card shadow-sm" [ngClass]="item.color">
         <!-- Top: Label & Menu -->

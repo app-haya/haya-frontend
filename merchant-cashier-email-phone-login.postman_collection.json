@@ -1,0 +1,596 @@
+{
+  "info": {
+    "_postman_id": "6d7eb86b-3eb4-47df-ae7b-merchant-cashier-login",
+    "name": "Merchant Cashier - Email or Phone Login",
+    "description": "Focused collection for testing merchant cashier creation, update, and login using email or phone instead of username.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "merchant_token",
+      "value": ""
+    },
+    {
+      "key": "cashier_token",
+      "value": ""
+    },
+    {
+      "key": "cashier_id",
+      "value": ""
+    },
+    {
+      "key": "cashier_name",
+      "value": "Demo Cashier Email Phone"
+    },
+    {
+      "key": "cashier_email",
+      "value": "cashier.email.phone@haya.test"
+    },
+    {
+      "key": "cashier_phone",
+      "value": "0501234567"
+    },
+    {
+      "key": "cashier_phone_international",
+      "value": "+966501234567"
+    },
+    {
+      "key": "cashier_password",
+      "value": "password123"
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Set merchant token manually",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.request.body && pm.request.body.raw ? JSON.parse(pm.request.body.raw) : {};",
+                  "if (body.merchant_token) {",
+                  "  pm.collectionVariables.set('merchant_token', body.merchant_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"merchant_token\": \"PASTE_MERCHANT_BEARER_TOKEN_HERE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "profile"
+              ]
+            },
+            "description": "Paste a valid merchant mobile token in the body, then send this request. The test script stores it as collection variable `merchant_token`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Merchant Cashier Management",
+      "item": [
+        {
+          "name": "Create cashier with email and phone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Created or validation response returned', function () {",
+                  "  pm.expect([201, 422]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('cashier_id', json.data.id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{cashier_name}}\",\n  \"email\": \"{{cashier_email}}\",\n  \"phone\": \"{{cashier_phone}}\",\n  \"password\": \"{{cashier_password}}\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create cashier with email only",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Email Only Cashier\",\n  \"email\": \"email.only.cashier@haya.test\",\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create cashier with phone only",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Phone Only Cashier\",\n  \"phone\": \"0555550199\",\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create cashier without email or phone - expect 422",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Validation failed', function () {",
+                  "  pm.expect(pm.response.code).to.eql(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid Cashier\",\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List merchant cashiers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers?per_page=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update cashier email and phone",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{merchant_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{cashier_email}}\",\n  \"phone\": \"{{cashier_phone_international}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/merchant/cashiers/{{cashier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "merchant",
+                "cashiers",
+                "{{cashier_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cashier Auth",
+      "item": [
+        {
+          "name": "Cashier login with email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login succeeded', function () {",
+                  "  pm.expect(pm.response.code).to.eql(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('cashier_token', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{cashier_email}}\",\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/cashier/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashier",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cashier login with normalized phone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login succeeded', function () {",
+                  "  pm.expect(pm.response.code).to.eql(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('cashier_token', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{cashier_phone_international}}\",\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/cashier/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashier",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cashier login without email or phone - expect 422",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Validation failed', function () {",
+                  "  pm.expect(pm.response.code).to.eql(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{cashier_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/cashier/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashier",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cashier profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{cashier_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashier/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashier",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cashier logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{cashier_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashier/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashier",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

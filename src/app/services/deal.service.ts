@@ -74,4 +74,16 @@ export class DealService {
       { headers },
     );
   }
+  getAllDealOrders(page: number = 1, status: string = '', search: string = ''): Observable<any> {
+    const headers = this.getHeaders();
+    let url = `${this.apiUrl}admin/deals/orders?page=${page}`;
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get(url, { headers });
+  }
 }
+

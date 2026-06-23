@@ -54,7 +54,7 @@ export class Deals implements OnInit {
 
   ngOnInit(): void {
     const savedTab = sessionStorage.getItem('deals_tab') as 'pending' | 'approved' | 'rejected';
-    if (savedTab) {
+    if (savedTab && ['pending', 'approved', 'rejected'].includes(savedTab)) {
       this.activeTab = savedTab;
     }
     this.loadDeals();
@@ -118,6 +118,7 @@ export class Deals implements OnInit {
         d.account_number?.toLowerCase().includes(term)
     );
   }
+
 
   approve(id: number): void {
     this.approvingId = id;

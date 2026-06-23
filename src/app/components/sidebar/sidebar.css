@@ -47,20 +47,52 @@
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Styling for child sub-menus list to show hierarchy */
+.nav-item.dropdown ul.nav {
+  margin-inline-start: 26px !important;
+  border-inline-start: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  padding-inline-start: 6px !important;
+}
+
+:host-context(body.dark-mode) .nav-item.dropdown ul.nav {
+  border-inline-start: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+}
+
 .child-link {
-  padding: 10px 20px;
-  padding-inline-start: 24px !important; /* Slightly indented from parent */
-  font-size: 0.95rem;
-  font-weight: 600;
-  /* Increased font size */
-  color: rgba(255, 255, 255, 0.6);
+  padding: 8px 16px !important;
+  padding-inline-start: 12px !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  border-left: none !important; /* Remove the parent left border */
+  border-right: none !important;
+}
+
+.child-link:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 .child-link.active {
   color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  font-weight: 700 !important;
 }
+
+:host-context(body.dark-mode) .child-link {
+  color: #8b949e !important;
+}
+
+:host-context(body.dark-mode) .child-link:hover {
+  color: #00cfd5 !important;
+  background-color: rgba(0, 207, 213, 0.03) !important;
+}
+
+:host-context(body.dark-mode) .child-link.active {
+  color: #00cfd5 !important;
+  background-color: rgba(0, 207, 213, 0.08) !important;
+}
+
 
 .toggle-btn {
   display: flex;

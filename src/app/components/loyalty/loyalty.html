@@ -32,6 +32,10 @@
         <i class="bi bi-sliders"></i>
         {{ 'Loyalty Settings' | translate }}
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'cashiers'" (click)="switchTab('cashiers')">
+        <i class="bi bi-people-fill"></i>
+        {{ 'Cashier Management' | translate }}
+      </button>
     </div>
   </div>
 
@@ -122,6 +126,9 @@
                   </button>
                   <button class="btn-action approve" (click)="openAddCredit(m)" [title]="'Add Credit' | translate">
                     <i class="bi bi-plus-circle-dotted"></i>
+                  </button>
+                  <button class="btn-action view" (click)="manageMerchantCashiers(m)" [title]="'Cashier Management' | translate" style="background: rgba(122, 60, 160, 0.1); color: #7a3ca0;">
+                    <i class="bi bi-person-badge"></i>
                   </button>
                 </div>
               </td>
@@ -322,6 +329,96 @@
     </div>
   </div>
 
+  <!-- ===================== CASHIERS TAB ===================== -->
+  <div *ngIf="!loading && activeTab === 'cashiers'" class="tab-content-container animate-fade">
+    <div class="controls-row mb-4" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+      <!-- Merchant Selector Dropdown -->
+      <div class="filter-wrap" style="display: flex; align-items: center; gap: 10px;">
+        <label class="form-lbl m-0" style="white-space: nowrap;">{{ 'Select Merchant' | translate }}:</label>
+        <select
+          class="form-select search-input"
+          style="padding: 9px 14px !important; min-width: 220px; background-color: var(--card-bg, #fff); color: var(--text-color, #1a1a2e);"
+          [(ngModel)]="selectedMerchantId"
+          (change)="onMerchantChange()"
+        >
+          <option *ngFor="let m of merchants" [value]="m.id">{{ m.name || m.email }}</option>
+        </select>
+      </div>
+
+      <button class="btn-primary-action" (click)="openAddCashier()">
+        <i class="bi bi-plus-circle"></i>
+        {{ 'Add Cashier' | translate }}
+      </button>
+    </div>
+
+    <!-- Cashiers Table -->
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'Cashier Name' | translate }}</th>
+              <th>{{ 'Email' | translate }}</th>
+              <th>{{ 'Phone' | translate }}</th>
+              <th>{{ 'Status' | translate }}</th>
+              <th class="text-center">{{ 'Actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of cashiers" class="table-row">
+              <td>
+                <div class="merchant-name-cell">
+                  <span class="name-text">{{ c.name || '—' }}</span>
+                </div>
+              </td>
+              <td>{{ c.email || '—' }}</td>
+              <td>{{ c.phone || '—' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="c.is_active ? 'badge-approved' : 'badge-rejected'">
+                  {{ (c.is_active ? 'Active' : 'Inactive') | translate }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button class="btn-action view" (click)="openEditCashier(c)" [title]="'Edit Cashier' | translate">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button class="btn-action reject" (click)="deleteCashier(c)" [title]="'Delete Cashier' | translate">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="cashiers.length === 0">
+              <td colspan="5" class="empty-state text-center">
+                <div class="empty-content">
+                  <i class="bi bi-people"></i>
+                  <p>{{ 'No cashier accounts found for this merchant.' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination for Cashiers -->
+      <div class="pagination-bar" *ngIf="cashiersLastPage > 1">
+        <button class="page-btn" (click)="loadCashiers(selectedMerchantId, cashiersPage - 1)" [disabled]="cashiersPage === 1">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          *ngFor="let p of getPageNumbers(cashiersPage, cashiersLastPage)"
+          [class.active]="p === cashiersPage"
+          (click)="loadCashiers(selectedMerchantId, p)"
+        >{{ p }}</button>
+        <button class="page-btn" (click)="loadCashiers(selectedMerchantId, cashiersPage + 1)" [disabled]="cashiersPage === cashiersLastPage">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ===================== ADD/EDIT PACKAGE MODAL ===================== -->
@@ -372,6 +469,58 @@
       <button class="btn-primary-action" (click)="savePackage()" [disabled]="packageSubmitting">
         <span *ngIf="!packageSubmitting"><i class="bi bi-check-circle"></i> {{ 'Save' | translate }}</span>
         <span *ngIf="packageSubmitting" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADD/EDIT CASHIER MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showCashierModal" (click)="closeCashierModal()">
+  <div class="modal-box reject-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-person-badge text-purple"></i>
+        <h5>{{ (isEditCashier ? 'Edit Cashier' : 'Add Cashier') | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeCashierModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Cashier Name' | translate }} <span class="required">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="cashierForm.name" [placeholder]="'Cashier Name' | translate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Cashier Email' | translate }}</label>
+        <input type="email" class="form-control" [(ngModel)]="cashierForm.email" [placeholder]="'Cashier Email' | translate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Cashier Phone' | translate }}</label>
+        <input type="text" class="form-control" [(ngModel)]="cashierForm.phone" [placeholder]="'Cashier Phone (e.g. 05XXXXXXXX)' | translate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">
+          {{ 'Cashier Password' | translate }} 
+          <span class="required" *ngIf="!isEditCashier">*</span>
+          <span class="text-muted font-normal" *ngIf="isEditCashier">({{ 'Password (leave empty to keep current)' | translate }})</span>
+        </label>
+        <input type="password" class="form-control" [(ngModel)]="cashierForm.password" [placeholder]="'Password' | translate">
+      </div>
+
+      <div class="form-group flex-row align-items-center gap-2 mt-2">
+        <input type="checkbox" id="cashier_active" [(ngModel)]="cashierForm.is_active">
+        <label for="cashier_active" class="form-lbl m-0">{{ 'Is Active' | translate }}</label>
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeCashierModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-primary-action" (click)="saveCashier()" [disabled]="cashierSubmitting">
+        <span *ngIf="!cashierSubmitting"><i class="bi bi-check-circle"></i> {{ 'Save' | translate }}</span>
+        <span *ngIf="cashierSubmitting" class="btn-spinner"></span>
       </button>
     </div>
   </div>

@@ -1,0 +1,245 @@
+<div class="portal-wrapper animate-fade" [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'">
+  
+  <!-- Header / Navigation Bar -->
+  <header class="portal-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+    <div class="header-left-side d-flex justify-content-center w-100 w-md-auto">
+      <div class="brand-info">
+        <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Logo" class="logo-thumbnail" />
+        <span class="portal-tag">{{ 'Cashier Portal' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="header-center d-flex justify-content-center w-100 w-md-auto">
+      <div class="cashier-info" *ngIf="cashier">
+        <i class="bi bi-person-circle"></i>
+        <div class="cashier-details">
+          <span class="cashier-name">{{ cashier.name }}</span>
+          <span class="merchant-name">{{ merchant?.name || cashier.merchant_name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right-side d-flex flex-wrap justify-content-center align-items-center w-100 w-md-auto gap-2">
+      <!-- Merchant Points Balance Card -->
+      <div class="points-balance-chip w-100 w-sm-auto justify-content-center" [class.low-balance]="merchant && merchant.points_balance < merchant.low_balance_threshold" *ngIf="merchant">
+        <i class="bi bi-coin animate-pulse"></i>
+        <div class="chip-details">
+          <span class="chip-title">{{ 'Store Balance' | translate }}</span>
+          <span class="chip-value">{{ merchant.points_balance | number }} {{ 'Points' | translate }}</span>
+        </div>
+        <div class="low-warning-tooltip" *ngIf="merchant.points_balance < merchant.low_balance_threshold">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+      </div>
+
+      <!-- Language Selector -->
+      <div class="dropdown m-0 p-0 position-relative d-inline-block">
+        <button class="icon-action" type="button" (click)="toggleDropdown()" [title]="'Language' | translate">
+          <i class="bi bi-globe"></i>
+        </button>
+        <ul *ngIf="showLangDropdown" class="dropdown-menu show" [style.left]="translate.currentLang === 'ar' ? '0' : 'auto'" [style.right]="translate.currentLang === 'en' ? '0' : 'auto'" style="position:absolute; top: 120%; z-index: 1000; min-width: auto !important; width: max-content;">
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" style="cursor: pointer" (click)="changeLang('en')">
+              <img src="https://flagcdn.com/w40/us.png" alt="US Flag" style="width: 20px; height: auto; border-radius: 2px;">
+              <span>ENGLISH</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" style="cursor: pointer" (click)="changeLang('ar')">
+              <img src="https://flagcdn.com/w40/sa.png" alt="Saudi Flag" style="width: 20px; height: auto; border-radius: 2px;">
+              <span>عربي</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="icon-action" type="button" (click)="toggleDarkMode()" [title]="'Toggle Dark Mode' | translate">
+        <i [ngClass]="isDarkMode ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill text-purple'"></i>
+      </button>
+
+      <button class="logout-btn w-100 w-sm-auto justify-content-center" (click)="logout()" [title]="'Logout' | translate">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>{{ 'Logout' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Portal Layout -->
+  <main class="portal-main">
+    <div class="portal-grid">
+      
+      <!-- Operations Column -->
+      <section class="portal-card operations-card">
+        <div class="card-header">
+          <i class="bi bi-lightning-charge-fill text-purple"></i>
+          <h5>{{ 'Customer Lookup' | translate }}</h5>
+        </div>
+        <div class="card-body">
+          <!-- Search Form -->
+          <form (ngSubmit)="onLookup()" class="search-form mb-4">
+            <div class="search-input-group">
+              <input 
+                type="text" 
+                class="form-control lookup-input" 
+                [placeholder]="'Enter Customer Phone' | translate" 
+                [(ngModel)]="lookupPhone" 
+                name="lookupPhone"
+                required
+                dir="ltr"
+              />
+              <i class="bi bi-telephone-fill input-icon-left"></i>
+              <button type="submit" class="btn-primary-action search-btn" [disabled]="lookupLoading || !lookupPhone.trim()">
+                <span *ngIf="!lookupLoading"><i class="bi bi-search"></i> {{ 'Search' | translate }}</span>
+                <span *ngIf="lookupLoading" class="btn-spinner"></span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Customer Found Box -->
+          <div class="customer-status-box animate-fade" *ngIf="selectedCustomer">
+            <div class="customer-badge-found">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>{{ 'Customer Found' | translate }}</span>
+            </div>
+            <div class="customer-info-row">
+              <img [src]="selectedCustomer.avatar_url || '/images/default-avatar.png'" alt="Avatar" class="customer-avatar" onerror="this.src='/images/default-avatar.png'" />
+              <div class="customer-details">
+                <span class="cust-name">{{ selectedCustomer.name }}</span>
+                <span class="cust-phone" dir="ltr">{{ lookupPhone }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Not Found Box -->
+          <div class="customer-error-box animate-fade" *ngIf="lookupError">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span>{{ lookupError | translate }}</span>
+          </div>
+
+          <!-- Award Points Section (Only if Customer is selected) -->
+          <div class="award-points-section animate-fade" *ngIf="selectedCustomer">
+            <hr class="section-divider">
+            <div class="card-header px-0 pb-3">
+              <i class="bi bi-gift-fill text-success"></i>
+              <h5>{{ 'Award Points' | translate }}</h5>
+            </div>
+            
+            <form (ngSubmit)="submitInvoice()" #invoiceForm="ngForm" class="invoice-form">
+              <div class="form-group mb-3">
+                <label class="form-lbl">{{ 'Invoice Number' | translate }} <span class="required">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="invoiceNumber" 
+                  name="invoiceNumber" 
+                  required
+                  [placeholder]="'Invoice Number' | translate"
+                />
+              </div>
+
+              <div class="form-group mb-3">
+                <label class="form-lbl">{{ 'Sale Amount (SAR)' | translate }} <span class="required">*</span></label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="amount" 
+                  name="amount" 
+                  required 
+                  min="0.01" 
+                  step="0.01"
+                  [placeholder]="'0.00'"
+                />
+              </div>
+
+              <!-- Estimated points preview box -->
+              <div class="points-preview-card" *ngIf="amount && amount > 0">
+                <div class="preview-label">{{ 'Points to Award' | translate }}</div>
+                <div class="preview-value">
+                  <i class="bi bi-coin"></i>
+                  <span>+{{ pointsToAward | number }}</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary-action w-100 mt-3 submit-invoice-btn" [disabled]="!invoiceForm.valid || invoiceSubmitting">
+                <span *ngIf="!invoiceSubmitting"><i class="bi bi-check-circle-fill"></i> {{ 'Submit Invoice' | translate }}</span>
+                <span *ngIf="invoiceSubmitting" class="btn-spinner"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Column -->
+      <section class="portal-card history-card">
+        <div class="card-header">
+          <i class="bi bi-clock-history text-purple"></i>
+          <h5>{{ 'Recent Transactions' | translate }}</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="loading-state py-5" *ngIf="invoicesLoading">
+            <div class="spinner-ring"></div>
+            <p>{{ 'Loading...' | translate }}</p>
+          </div>
+
+          <div class="table-responsive" *ngIf="!invoicesLoading && invoices.length > 0">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>{{ 'Invoice No' | translate }}</th>
+                  <th>{{ 'Customer' | translate }}</th>
+                  <th>{{ 'Amount' | translate }}</th>
+                  <th>{{ 'Points' | translate }}</th>
+                  <th>{{ 'Date' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inv of invoices" class="table-row">
+                  <td><strong>{{ inv.invoice_number }}</strong></td>
+                  <td>
+                    <div class="customer-cell">
+                      <span>{{ inv.customer?.name || '—' }}</span>
+                    </div>
+                  </td>
+                  <td>{{ inv.amount | number:'1.0-2' }} SAR</td>
+                  <td>
+                    <span class="points-added-badge">
+                      +{{ inv.points_awarded | number }}
+                    </span>
+                  </td>
+                  <td>{{ inv.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state py-5" *ngIf="!invoicesLoading && invoices.length === 0">
+            <div class="empty-content">
+              <i class="bi bi-file-earmark-bar-graph"></i>
+              <p>{{ 'No invoice records found.' | translate }}</p>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-bar mt-auto border-top-0" *ngIf="invoicesLastPage > 1 && !invoicesLoading">
+            <button class="page-btn" (click)="loadInvoices(invoicesPage - 1)" [disabled]="invoicesPage === 1">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+            <button
+              class="page-btn"
+              *ngFor="let p of getPageNumbers(invoicesPage, invoicesLastPage)"
+              [class.active]="p === invoicesPage"
+              (click)="loadInvoices(p)"
+            >{{ p }}</button>
+            <button class="page-btn" (click)="loadInvoices(invoicesPage + 1)" [disabled]="invoicesPage === invoicesLastPage">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <app-confirm-dialog></app-confirm-dialog>
+</div>

@@ -74,4 +74,21 @@ export class LoyaltyService {
   updateSettings(data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/settings/loyalty`, data, { headers: this.getHeaders() });
   }
+
+  // Cashiers Management
+  getMerchantCashiers(merchantId: number, page: number = 1): Observable<any> {
+    return this.http.get(`${this.apiUrl}/merchants/${merchantId}/cashiers?page=${page}`, { headers: this.getHeaders() });
+  }
+
+  createMerchantCashier(merchantId: number, data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/merchants/${merchantId}/cashiers`, data, { headers: this.getHeaders() });
+  }
+
+  updateMerchantCashier(merchantId: number, cashierId: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/merchants/${merchantId}/cashiers/${cashierId}`, data, { headers: this.getHeaders() });
+  }
+
+  deleteMerchantCashier(merchantId: number, cashierId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/merchants/${merchantId}/cashiers/${cashierId}`, { headers: this.getHeaders() });
+  }
 }

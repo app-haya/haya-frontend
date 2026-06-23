@@ -44,7 +44,16 @@ export class Sidebar implements OnInit {
     },
     { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes' },
     { name: 'Loyalty Management', icon: 'bi bi-award', path: '/admin/loyalty' },
-    { name: 'Deals', icon: 'bi bi-bag-check', path: '/admin/deals' },
+    {
+      name: 'Deals',
+      icon: 'bi bi-bag-check',
+      path: '/admin/deals',
+      expanded: false,
+      children: [
+        { name: 'Deals List', path: '/admin/deals', icon: 'bi bi-list-task' },
+        { name: 'Deal Orders', path: '/admin/deal-orders', icon: 'bi bi-cart-check' },
+      ],
+    },
 
     { name: 'Interests', icon: 'bi bi-star', path: '/admin/interests' },
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities' },
@@ -97,6 +106,9 @@ export class Sidebar implements OnInit {
           }
           if (child.name === 'Paid Verification Requests') {
             child.badgeCount = data.pending_verification_requests;
+          }
+          if (child.name === 'Deals List') {
+            child.badgeCount = data.pending_deals;
           }
         });
       }

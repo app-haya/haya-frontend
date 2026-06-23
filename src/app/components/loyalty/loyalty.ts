@@ -15,7 +15,7 @@ import { DialogService } from '../../services/dialog.service';
   styleUrls: ['./loyalty.css']
 })
 export class Loyalty implements OnInit {
-  activeTab: 'packages' | 'merchants' | 'reports' | 'settings' = 'packages';
+  activeTab: 'packages' | 'merchants' | 'reports' | 'settings' | 'cashiers' = 'packages';
   activeReportTab: 'purchases' | 'invoices' = 'purchases';
   loading = false;
 
@@ -25,6 +25,7 @@ export class Loyalty implements OnInit {
   purchases: any[] = [];
   invoices: any[] = [];
   settingsData: any = { points_per_riyal: 10, merchant_low_balance_threshold: 10000 };
+  cashiers: any[] = [];
 
   // Pagination
   packagesPage = 1;
@@ -35,6 +36,8 @@ export class Loyalty implements OnInit {
   purchasesLastPage = 1;
   invoicesPage = 1;
   invoicesLastPage = 1;
+  cashiersPage = 1;
+  cashiersLastPage = 1;
 
   // Package Modal
   showPackageModal = false;
@@ -46,6 +49,13 @@ export class Loyalty implements OnInit {
   showCreditModal = false;
   creditForm = { merchantId: 0, merchantName: '', custom_points: 1000, price: 0, currency: 'SAR', note: '' };
   creditSubmitting = false;
+
+  // Cashier Modal
+  showCashierModal = false;
+  isEditCashier = false;
+  cashierForm = { id: 0, name: '', email: '', phone: '', password: '', is_active: true };
+  cashierSubmitting = false;
+  selectedMerchantId: number = 0;
 
   // Merchant Details Modal
   showDetailsModal = false;
@@ -78,10 +88,12 @@ export class Loyalty implements OnInit {
       this.loadReports();
     } else if (this.activeTab === 'settings') {
       this.loadSettings();
+    } else if (this.activeTab === 'cashiers') {
+      this.loadAllMerchantsForDropdown();
     }
   }
 
-  switchTab(tab: 'packages' | 'merchants' | 'reports' | 'settings'): void {
+  switchTab(tab: 'packages' | 'merchants' | 'reports' | 'settings' | 'cashiers'): void {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
     this.loadData();
@@ -390,6 +402,161 @@ export class Loyalty implements OnInit {
         this.notification.error(err?.error?.message || 'Error updating settings');
       }
     });
+  }
+
+  // --- CASHIERS CRUD ---
+  loadAllMerchantsForDropdown(): void {
+    this.loading = true;
+    this.loyaltyService.getMerchants(1).subscribe({
+      next: (res: any) => {
+        if (res.data?.data) {
+          this.merchants = res.data.data;
+        } else {
+          this.merchants = res.data ?? [];
+        }
+
+        if (this.merchants.length > 0 && !this.selectedMerchantId) {
+          this.selectedMerchantId = this.merchants[0].id;
+        }
+
+        if (this.selectedMerchantId) {
+          this.loadCashiers(this.selectedMerchantId, 1);
+        } else {
+          this.loading = false;
+        }
+      },
+      error: () => {
+        this.loading = false;
+        this.notification.error('Failed to load merchants list');
+      }
+    });
+  }
+
+  onMerchantChange(): void {
+    if (this.selectedMerchantId) {
+      this.loadCashiers(this.selectedMerchantId, 1);
+    } else {
+      this.cashiers = [];
+    }
+  }
+
+  loadCashiers(merchantId: number, page: number = 1): void {
+    this.loading = true;
+    this.loyaltyService.getMerchantCashiers(merchantId, page).subscribe({
+      next: (res: any) => {
+        if (res.data?.data) {
+          this.cashiers = res.data.data;
+          this.cashiersPage = res.data.current_page || 1;
+          this.cashiersLastPage = res.data.last_page || 1;
+        } else {
+          this.cashiers = res.data ?? [];
+          this.cashiersPage = 1;
+          this.cashiersLastPage = 1;
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.notification.error('Failed to load cashiers');
+      }
+    });
+  }
+
+  openAddCashier(): void {
+    if (!this.selectedMerchantId) {
+      this.notification.error('Please select a merchant first');
+      return;
+    }
+    this.isEditCashier = false;
+    this.cashierForm = { id: 0, name: '', email: '', phone: '', password: '', is_active: true };
+    this.showCashierModal = true;
+  }
+
+  openEditCashier(cashier: any): void {
+    this.isEditCashier = true;
+    this.cashierForm = {
+      id: cashier.id,
+      name: cashier.name || '',
+      email: cashier.email || '',
+      phone: cashier.phone || '',
+      password: '',
+      is_active: cashier.is_active !== undefined ? cashier.is_active : true
+    };
+    this.showCashierModal = true;
+  }
+
+  closeCashierModal(): void {
+    this.showCashierModal = false;
+  }
+
+  saveCashier(): void {
+    if (!this.cashierForm.name.trim()) {
+      this.notification.error('Name is required');
+      return;
+    }
+    if (!this.cashierForm.email.trim() && !this.cashierForm.phone.trim()) {
+      this.notification.error('Either email or phone is required');
+      return;
+    }
+    if (!this.isEditCashier && !this.cashierForm.password.trim()) {
+      this.notification.error('Password is required');
+      return;
+    }
+
+    this.cashierSubmitting = true;
+    if (this.isEditCashier) {
+      this.loyaltyService.updateMerchantCashier(this.selectedMerchantId, this.cashierForm.id, this.cashierForm).subscribe({
+        next: () => {
+          this.cashierSubmitting = false;
+          this.notification.success('Cashier updated successfully');
+          this.closeCashierModal();
+          this.loadCashiers(this.selectedMerchantId, this.cashiersPage);
+        },
+        error: (err) => {
+          this.cashierSubmitting = false;
+          this.notification.error(err?.error?.message || 'Error updating cashier');
+        }
+      });
+    } else {
+      this.loyaltyService.createMerchantCashier(this.selectedMerchantId, this.cashierForm).subscribe({
+        next: () => {
+          this.cashierSubmitting = false;
+          this.notification.success('Cashier created successfully');
+          this.closeCashierModal();
+          this.loadCashiers(this.selectedMerchantId, 1);
+        },
+        error: (err) => {
+          this.cashierSubmitting = false;
+          this.notification.error(err?.error?.message || 'Error creating cashier');
+        }
+      });
+    }
+  }
+
+  deleteCashier(cashier: any): void {
+    this.dialogService.confirm({
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete this cashier?',
+      confirmText: 'Delete',
+      type: 'danger',
+      onConfirm: () => {
+        this.loyaltyService.deleteMerchantCashier(this.selectedMerchantId, cashier.id).subscribe({
+          next: () => {
+            this.notification.success('Cashier deleted successfully');
+            this.loadCashiers(this.selectedMerchantId, this.cashiersPage);
+          },
+          error: (err) => {
+            this.notification.error(err?.error?.message || 'Error deleting cashier');
+          }
+        });
+      }
+    });
+  }
+
+  manageMerchantCashiers(merchant: any): void {
+    this.selectedMerchantId = merchant.id;
+    this.activeTab = 'cashiers';
+    this.loadCashiers(merchant.id, 1);
   }
 
   // --- PAGINATION HELPERS ---
