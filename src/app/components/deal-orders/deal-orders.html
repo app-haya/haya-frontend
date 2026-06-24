@@ -118,7 +118,7 @@
               </span>
             </td>
             <td>
-              <a *ngIf="order.invoice_url" [href]="order.invoice_url" target="_blank" class="view-link-btn text-purple-link">
+              <a *ngIf="order.invoice_url" href="javascript:void(0)" (click)="openInvoiceModal(order.invoice_url)" class="view-link-btn text-purple-link">
                 <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!order.invoice_url" class="text-muted">—</span>
@@ -158,4 +158,22 @@
     </div>
   </div>
 
+</div>
+
+<!-- Invoice Modal -->
+<div class="modal-overlay" *ngIf="showInvoiceModal" (click)="closeInvoiceModal()">
+  <div class="modal-box invoice-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-file-earmark-pdf text-purple-link" style="font-size: 1.5rem;"></i>
+        <h5>{{ 'Invoice' | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeInvoiceModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom invoice-modal-body">
+      <iframe *ngIf="safeInvoiceUrl" [src]="safeInvoiceUrl" class="invoice-iframe"></iframe>
+    </div>
+  </div>
 </div>

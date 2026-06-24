@@ -1051,3 +1051,26 @@
 :host-context(body[dir="ltr"]) .page-btn i {
   transform: rotate(180deg);
 }
+
+/* =========================================================
+   INVOICE MODAL SPECIFICS
+   ========================================================= */
+.invoice-modal {
+  max-width: 900px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-modal-body {
+  flex: 1;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.invoice-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0 0 20px 20px;
+}

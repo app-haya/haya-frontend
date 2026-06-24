@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DealService } from '../../services/deal.service';
 import { NotificationService } from '../../services/notification.service';
 import { DashboardService } from '../../services/dashboard.service';
@@ -24,11 +25,15 @@ export class DealOrders implements OnInit {
   perPage = 20;
   orderStatusFilter = '';
 
+  showInvoiceModal = false;
+  safeInvoiceUrl: SafeResourceUrl | null = null;
+
   constructor(
     private dealService: DealService,
     private notification: NotificationService,
     public translate: TranslateService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -118,5 +123,15 @@ export class DealOrders implements OnInit {
       pages.push(i);
     }
     return pages;
+  }
+
+  openInvoiceModal(url: string): void {
+    this.safeInvoiceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.formatImageUrl(url));
+    this.showInvoiceModal = true;
+  }
+
+  closeInvoiceModal(): void {
+    this.showInvoiceModal = false;
+    this.safeInvoiceUrl = null;
   }
 }

@@ -20,6 +20,9 @@ export class DealDetails implements OnInit {
   loading: boolean = true;
   loadingOrders: boolean = false;
 
+  showInvoiceModal = false;
+  safeInvoiceUrl: SafeResourceUrl | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -133,5 +136,15 @@ export class DealDetails implements OnInit {
     if (!obj) return '—';
     const currentLang = this.translate.currentLang || 'ar';
     return currentLang === 'ar' ? (obj.name_ar || obj.name_en || '—') : (obj.name_en || obj.name_ar || '—');
+  }
+
+  openInvoiceModal(url: string): void {
+    this.safeInvoiceUrl = this.getSafeUrl(url);
+    this.showInvoiceModal = true;
+  }
+
+  closeInvoiceModal(): void {
+    this.showInvoiceModal = false;
+    this.safeInvoiceUrl = null;
   }
 }
