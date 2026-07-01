@@ -107,15 +107,17 @@ export class Deals implements OnInit {
   }
 
   search(): void {
-    const term = this.searchTerm.toLowerCase();
+    const term = this.searchTerm.toLowerCase().trim();
     if (!term) {
       this.filteredDeals = [...this.deals];
       return;
     }
+    const numericTerm = term.startsWith('#') ? term.substring(1) : term;
     this.filteredDeals = this.deals.filter(
       d =>
         d.title?.toLowerCase().includes(term) ||
-        d.account_number?.toLowerCase().includes(term)
+        d.account_number?.toLowerCase().includes(term) ||
+        d.id?.toString().includes(numericTerm)
     );
   }
 
