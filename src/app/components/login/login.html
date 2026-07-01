@@ -1,44 +1,73 @@
 <div class="login-page">
   <div id="particles-js" class="particles"></div>
-  <div class="login-wrapper shadow-lg">
-    <!-- Left Form Side -->
-    <div class="login-form-side" dir="rtl">
-      <h2 class="login-title">{{ 'تسجيل الدخول' }}</h2>
+
+  <div class="login-card">
+    <!-- Left Brand Panel -->
+    <div class="login-brand">
+      <div class="brand-overlay"></div>
+      <div class="brand-content">
+        <div class="brand-logo-wrap">
+          <img src="/images/ايقونة هيا2-08(1).svg" alt="شعار هيّا" class="brand-logo" />
+        </div>
+        <h1 class="brand-title">هيّا | Haya</h1>
+        <p class="brand-tagline">لوحة تحكم المسؤولين</p>
+        <div class="brand-divider"></div>
+        <p class="brand-desc">من السعودية للعالمية بهوية نجدية</p>
+      </div>
+      <!-- Decorative elements -->
+      <span class="brand-sparkle brand-sparkle--1">✦</span>
+      <span class="brand-sparkle brand-sparkle--2">✦</span>
+      <span class="brand-sparkle brand-sparkle--3">✦</span>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="login-form-panel" dir="rtl">
+      <div class="form-header">
+        <h2 class="form-title">مرحباً بك 👋</h2>
+        <p class="form-subtitle">سجّل دخولك للوصول إلى لوحة التحكم</p>
+      </div>
 
       <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
-
-        <!-- Email Input -->
-        <div class="input-container">
-          <input type="email" name="email" class="custom-input" placeholder="admin@example.com" [(ngModel)]="form.email"
-            required dir="ltr" />
-          <i class="fas fa-envelope input-icon"></i>
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label">البريد الإلكتروني</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope field-icon"></i>
+            <input type="email" name="email" class="field-input" placeholder="admin@example.com"
+              [(ngModel)]="form.email" required dir="ltr" />
+          </div>
         </div>
 
-        <!-- Password Input -->
-        <div class="input-container">
-          <input type="password" name="password" class="custom-input" placeholder="........."
-            [(ngModel)]="form.password" required dir="ltr" />
-          <i class="fas fa-lock input-icon"></i>
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label">كلمة المرور</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock field-icon"></i>
+            <input [type]="showPassword ? 'text' : 'password'" name="password" class="field-input"
+              placeholder="••••••••" [(ngModel)]="form.password" required dir="ltr" />
+            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
         </div>
 
-        <!-- Remember Me Checkbox -->
-        <div class="remember-me">
+        <!-- Remember me -->
+        <div class="form-options">
           <label class="remember-label">
-            <span class="remember-text">تذكرني</span>
-            <input type="checkbox" name="remember" class="remember-checkbox">
+            <input type="checkbox" name="remember" class="remember-cb" />
+            <span class="cb-custom"></span>
+            <span>تذكرني</span>
           </label>
         </div>
 
-        <!-- Submit Button -->
+        <!-- Submit -->
         <button type="submit" class="submit-btn" [disabled]="!loginForm.valid">
-          {{ 'تسجيل الدخول' }}
+          <span>تسجيل الدخول</span>
+          <i class="bi bi-arrow-left"></i>
         </button>
       </form>
-    </div>
 
-    <!-- Right Image Side -->
-    <div class="login-image-side">
-      <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Logo" class="logo-img" />
+      <p class="form-footer">© {{ currentYear }} هيّا — جميع الحقوق محفوظة</p>
     </div>
   </div>
 </div>

@@ -21,6 +21,7 @@ export class Settings implements OnInit {
   loading = true;
   submitting = false;
   settingsId: number | null = null;
+  activeTab: 'terms' | 'privacy' | 'about' = 'terms';
 
 
   constructor(
@@ -37,6 +38,12 @@ export class Settings implements OnInit {
       terms_and_conditions_en: ['', Validators.required],
       about_us_ar: ['', Validators.required],
       about_us_en: ['', Validators.required],
+      terms_updated_date_ar: [''],
+      terms_updated_date_en: [''],
+      privacy_updated_date_ar: [''],
+      privacy_updated_date_en: [''],
+      about_updated_date_ar: [''],
+      about_updated_date_en: [''],
     });
   }
 
@@ -66,13 +73,18 @@ export class Settings implements OnInit {
           if (data) {
             this.settingsId = data.id;
             
-            // Map possible field names (full and shorthand)
             patchData.privacy_policy_ar = data.privacy_policy_ar || data.privacy_ar || '';
             patchData.privacy_policy_en = data.privacy_policy_en || data.privacy_en || '';
             patchData.terms_and_conditions_ar = data.terms_and_conditions_ar || data.terms_ar || '';
             patchData.terms_and_conditions_en = data.terms_and_conditions_en || data.terms_en || '';
             patchData.about_us_ar = data.about_us_ar || data.about_ar || '';
             patchData.about_us_en = data.about_us_en || data.about_en || '';
+            patchData.terms_updated_date_ar = data.terms_updated_date_ar || '';
+            patchData.terms_updated_date_en = data.terms_updated_date_en || '';
+            patchData.privacy_updated_date_ar = data.privacy_updated_date_ar || '';
+            patchData.privacy_updated_date_en = data.privacy_updated_date_en || '';
+            patchData.about_updated_date_ar = data.about_updated_date_ar || '';
+            patchData.about_updated_date_en = data.about_updated_date_en || '';
           }
         }
         
@@ -89,12 +101,28 @@ export class Settings implements OnInit {
 
         this.settingsForm.patchValue(patchData);
         this.loading = false;
+        this.adjustTextareas();
       },
       error: () => {
         this.loading = false;
         this.notification.error('Failed to load settings');
       },
     });
+  }
+
+  setActiveTab(tab: 'terms' | 'privacy' | 'about') {
+    this.activeTab = tab;
+    this.adjustTextareas();
+  }
+
+  adjustTextareas() {
+    setTimeout(() => {
+      const textareas = document.querySelectorAll('textarea');
+      textareas.forEach((textarea: any) => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      });
+    }, 100);
   }
 
   saveSettings() {
@@ -107,13 +135,18 @@ export class Settings implements OnInit {
     const formData = new FormData();
     const values = this.settingsForm.value;
     
-    // Explicitly append all 6 fields to ensure they are sent correctly
     formData.append('privacy_policy_ar', values.privacy_policy_ar);
     formData.append('privacy_policy_en', values.privacy_policy_en);
     formData.append('terms_and_conditions_ar', values.terms_and_conditions_ar);
     formData.append('terms_and_conditions_en', values.terms_and_conditions_en);
     formData.append('about_us_ar', values.about_us_ar);
     formData.append('about_us_en', values.about_us_en);
+    formData.append('terms_updated_date_ar', values.terms_updated_date_ar || '');
+    formData.append('terms_updated_date_en', values.terms_updated_date_en || '');
+    formData.append('privacy_updated_date_ar', values.privacy_updated_date_ar || '');
+    formData.append('privacy_updated_date_en', values.privacy_updated_date_en || '');
+    formData.append('about_updated_date_ar', values.about_updated_date_ar || '');
+    formData.append('about_updated_date_en', values.about_updated_date_en || '');
 
     if (this.settingsId) {
       formData.append('id', this.settingsId.toString());
@@ -146,7 +179,7 @@ export class Settings implements OnInit {
     this.dialogService.confirm({
       title: 'Confirm Delete',
       message: 'Are you sure you want to delete all settings? this cannot be undone.',
-      confirmText: 'Delete All',
+      confirmText: 'DELETE_ALL',
       type: 'danger',
       onConfirm: () => {
         this.settingsService.deleteSettings(this.settingsId!).subscribe({

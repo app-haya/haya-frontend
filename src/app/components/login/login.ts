@@ -15,6 +15,8 @@ declare var particlesJS: any;
 })
 export class Login implements OnInit, OnDestroy, AfterViewInit {
   form = { email: '', password: '' };
+  showPassword = false;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private authService: AuthService,
@@ -50,7 +52,7 @@ export class Login implements OnInit, OnDestroy, AfterViewInit {
             }
           },
           "color": {
-            "value": "#00e5ff"
+            "value": "#7a3ca0"
           },
           "shape": {
             "type": "circle",
@@ -82,7 +84,7 @@ export class Login implements OnInit, OnDestroy, AfterViewInit {
           "line_linked": {
             "enable": true,
             "distance": 150,
-            "color": "#00e5ff",
+            "color": "#7a3ca0",
             "opacity": 0.6,
             "width": 1
           },

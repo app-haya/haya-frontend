@@ -1,40 +1,65 @@
 <div class="login-page">
   <div id="particles-js" class="particles"></div>
-  <div class="login-wrapper shadow-lg">
-    <!-- Left Form Side -->
-    <div class="login-form-side" dir="rtl">
-      <h2 class="login-title">{{ 'Cashier Portal Login' | translate }}</h2>
 
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
-
-        <!-- Email or Phone Input -->
-        <div class="input-container">
-          <input type="text" name="identifier" class="custom-input" [placeholder]="'Email or Phone' | translate" [(ngModel)]="form.identifier"
-            required dir="ltr" />
-          <i class="fas fa-user input-icon"></i>
+  <div class="login-card">
+    <!-- Left Brand Panel -->
+    <div class="login-brand">
+      <div class="brand-overlay"></div>
+      <div class="brand-content">
+        <div class="brand-logo-wrap">
+          <img src="/images/ايقونة هيا2-08(1).svg" alt="شعار هيّا" class="brand-logo" />
         </div>
-
-        <!-- Password Input -->
-        <div class="input-container">
-          <input type="password" name="password" class="custom-input" [placeholder]="'Password' | translate"
-            [(ngModel)]="form.password" required dir="ltr" />
-          <i class="fas fa-lock input-icon"></i>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="submit-btn" [disabled]="!loginForm.valid || submitting">
-          <span *ngIf="!submitting">{{ 'Login' | translate }}</span>
-          <span *ngIf="submitting" class="spinner"></span>
-        </button>
-      </form>
+        <h1 class="brand-title">هيّا | Haya</h1>
+        <p class="brand-tagline">بوابة الكاشير</p>
+        <div class="brand-divider"></div>
+        <p class="brand-desc">من السعودية للعالمية بهوية نجدية</p>
+      </div>
+      <!-- Decorative elements -->
+      <span class="brand-sparkle brand-sparkle--1">✦</span>
+      <span class="brand-sparkle brand-sparkle--2">✦</span>
+      <span class="brand-sparkle brand-sparkle--3">✦</span>
     </div>
 
-    <!-- Right Image Side -->
-    <div class="login-image-side">
-      <div class="logo-wrapper">
-        <img src="/images/HayaLogo-DhdEv8BC.jpg" alt="Logo" class="logo-img" />
-        <h3 class="portal-badge">{{ 'Cashier Portal' | translate }}</h3>
+    <!-- Right Form Panel -->
+    <div class="login-form-panel" dir="rtl">
+      <div class="form-header">
+        <h2 class="form-title">مرحباً بك 👋</h2>
+        <p class="form-subtitle">سجّل دخولك للوصول إلى بوابة الكاشير</p>
       </div>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+        <!-- Email or Phone -->
+        <div class="field-group">
+          <label class="field-label">البريد الإلكتروني أو الهاتف</label>
+          <div class="input-wrap">
+            <i class="bi bi-person field-icon"></i>
+            <input type="text" name="identifier" class="field-input" [placeholder]="'Email or Phone' | translate"
+              [(ngModel)]="form.identifier" required dir="ltr" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label">كلمة المرور</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock field-icon"></i>
+            <input [type]="showPassword ? 'text' : 'password'" name="password" class="field-input"
+              placeholder="••••••••" [(ngModel)]="form.password" required dir="ltr" />
+            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" [disabled]="!loginForm.valid || submitting">
+          <span *ngIf="!submitting">تسجيل الدخول</span>
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <i *ngIf="!submitting" class="bi bi-arrow-left"></i>
+        </button>
+      </form>
+
+      <p class="form-footer">© {{ currentYear }} هيّا — جميع الحقوق محفوظة</p>
     </div>
   </div>
 </div>

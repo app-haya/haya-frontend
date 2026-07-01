@@ -40,9 +40,11 @@
     <div class="lp-container">
       <h1 class="lp-policy-hero__title">{{ title }}</h1>
       <p class="lp-policy-hero__subtitle">{{ subtitle }}</p>
-      <div class="lp-policy-hero__meta">
-        <span class="lp-policy-hero__date">{{ lastUpdated }}</span>
-      </div>
+      @if (lastUpdated) {
+        <div class="lp-policy-hero__meta">
+          <span class="lp-policy-hero__date">{{ lastUpdated }}</span>
+        </div>
+      }
     </div>
   </section>
 

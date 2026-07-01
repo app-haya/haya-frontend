@@ -18,6 +18,8 @@ declare var particlesJS: any;
 export class CashierLogin implements OnInit, OnDestroy, AfterViewInit {
   form = { identifier: '', password: '' };
   submitting = false;
+  showPassword = false;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private cashierService: CashierService,

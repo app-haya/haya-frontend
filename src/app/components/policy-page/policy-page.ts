@@ -15,7 +15,7 @@ export class PolicyPage implements OnInit {
   title = '';
   subtitle = '';
   content = '';
-  lastUpdated = 'آخر تحديث في 17 مايو 2026';
+  lastUpdated = '';
   isMobileMenuOpen = false;
   currentYear = new Date().getFullYear();
 
@@ -37,6 +37,7 @@ export class PolicyPage implements OnInit {
   }
 
   loadContent() {
+    this.lastUpdated = '';
     if (this.type === 'terms') {
       this.title = 'الشروط والأحكام';
       this.subtitle = 'نحن هنا لضمان تجربة آمنة وراقية لجميع مستخدمي هيا. يرجى قراءة هذه الاتفاقية لفهم التزاماتكم وحقوقكم.';
@@ -44,6 +45,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.lastUpdated = res.last_updated || '';
           }
         },
         error: (err) => {
@@ -58,6 +60,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.lastUpdated = res.last_updated || '';
           }
         },
         error: (err) => {
@@ -72,6 +75,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.lastUpdated = res.last_updated || '';
           }
         },
         error: (err) => {

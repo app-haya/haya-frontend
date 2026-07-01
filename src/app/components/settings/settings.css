@@ -1,6 +1,7 @@
 textarea {
-    resize: vertical;
-    min-height: 150px;
+    resize: none;
+    overflow-y: hidden;
+    min-height: 200px;
     line-height: 1.6;
 }
 
@@ -62,4 +63,52 @@ textarea {
 
 form {
     animation: fadeIn 0.5s ease forwards;
+}
+
+/* Tabs Styling */
+.settings-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(122, 60, 160, 0.2);
+    padding-bottom: 12px;
+}
+
+:host-context(body.dark-mode) .settings-tabs {
+    border-bottom: 1px solid rgba(0, 207, 213, 0.2);
+}
+
+.tab-btn {
+    border: none;
+    background: transparent;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #777;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: #7a3ca0;
+    background-color: rgba(122, 60, 160, 0.05);
+}
+
+:host-context(body.dark-mode) .tab-btn:hover {
+    color: #00cfd5;
+    background-color: rgba(0, 207, 213, 0.05);
+}
+
+.tab-btn.active {
+    background-color: #7a3ca0;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(122, 60, 160, 0.25);
+}
+
+:host-context(body.dark-mode) .tab-btn.active {
+    background-color: #00cfd5;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(0, 207, 213, 0.25);
 }
