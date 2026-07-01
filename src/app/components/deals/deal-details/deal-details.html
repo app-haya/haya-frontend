@@ -316,6 +316,11 @@
               <div class="cs-sublabel">{{ 'Current Deal Status' | translate }}</div>
             </div>
 
+            <!-- Rejection Reason -->
+            <div *ngIf="deal.status === 'rejected' && deal.rejection_reason" class="rejection-reason-box" style="margin-top: 12px; padding: 12px; border-radius: 8px; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 13px;">
+              <strong>{{ 'Rejection Reason' | translate }}:</strong> {{ deal.rejection_reason }}
+            </div>
+
             <!-- Action Buttons (Pending) -->
             <div class="cs-actions" *ngIf="deal.status === 'pending'">
               <button (click)="approve()" class="cs-btn cs-btn-approve">
