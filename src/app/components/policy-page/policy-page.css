@@ -67,6 +67,59 @@
   padding: 5rem 0 6rem;
 }
 
+/* ===== POLICY TEXT (for About Us page) ===== */
+.lp-policy-text {
+  font-size: 1.1rem;
+  line-height: 2.2;
+  color: #1a1a2e;
+  text-align: right;
+  padding: 1rem 0;
+  white-space: pre-line;
+}
+
+/* Typography styles for raw HTML content inside the policy card */
+.lp-policy-text h1, 
+.lp-policy-text h2, 
+.lp-policy-text h3 {
+  color: #1a1a2e;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.lp-policy-text h1 { font-size: 1.8rem; }
+.lp-policy-text h2 { 
+  font-size: 1.4rem; 
+  color: #9259A6;
+  border-bottom: 2px dashed #f0f0f8;
+  padding-bottom: 0.5rem;
+}
+.lp-policy-text h3 { font-size: 1.2rem; }
+
+.lp-policy-text p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.lp-policy-text ul, 
+.lp-policy-text ol {
+  padding-right: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1.75rem;
+}
+
+.lp-policy-text li {
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.lp-policy-text strong {
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
 .lp-policy-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -294,6 +347,10 @@
     padding-right: 0;
     font-size: 1.05rem;
   }
+  
+  .lp-policy-text {
+    padding: 1rem 0;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -322,5 +379,14 @@
     font-size: 0.95rem;
     margin-top: 3rem;
     padding-top: 1.75rem;
+  }
+
+  .lp-policy-text {
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+  .lp-policy-text h2 {
+    font-size: 1.2rem;
   }
 }
