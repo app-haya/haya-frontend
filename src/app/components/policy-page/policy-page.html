@@ -50,19 +50,67 @@
 
   <!-- ===== CONTENT ===== -->
   <section class="lp-policy-content">
-    <div class="lp-container">
-      <div class="lp-policy-text" [innerHTML]="content"></div>
-      
-      <!-- Suggestion link at the bottom -->
-      <div class="lp-policy-footer-link">
-        @if (type === 'privacy') {
-          <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/terms">الشروط والأحكام</a></span>
-        } @else if (type === 'terms') {
-          <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a></span>
-        } @else {
-          <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a> أو <a routerLink="/terms">الشروط والأحكام</a></span>
-        }
+    <div class="lp-container lp-policy-layout">
+
+      <!-- Sidebar Menu (Right on desktop, Top on mobile) -->
+      @if (sections.length > 1) {
+        <aside class="lp-policy-sidebar">
+          <div class="lp-policy-sidebar__sticky">
+            <h3 class="lp-policy-sidebar__title">المحتويات</h3>
+            <ul class="lp-policy-sidebar__menu">
+              @for (sec of sections; track sec.id) {
+                <li class="lp-policy-sidebar__item" [class.lp-policy-sidebar__item--active]="activeSectionId === sec.id">
+                  <a (click)="scrollToSection(sec.id)" class="lp-policy-sidebar__link">
+                    {{ sec.title }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </aside>
+      }
+
+      <!-- Main Content (Left on desktop, Bottom on mobile) -->
+      <div class="lp-policy-main">
+        <div class="lp-policy-sections">
+          @for (sec of sections; track sec.id) {
+            <div [id]="sec.id" class="lp-policy-section" [class.lp-policy-section--active]="activeSectionId === sec.id">
+              @if (sec.isIntro) {
+                <div class="lp-policy-intro-text">
+                  @for (line of sec.lines; track $index) {
+                    <p>{{ line }}</p>
+                  }
+                </div>
+              } @else {
+                <h2 class="lp-policy-section__title">
+                  <span class="lp-policy-section__num">{{ sec.index }}.</span>
+                  {{ sec.title }}
+                </h2>
+                <ul class="lp-policy-section__list">
+                  @for (line of sec.lines; track $index) {
+                    <li>
+                      <span class="lp-policy-section__bullet">•</span>
+                      <span class="lp-policy-section__item-text">{{ line }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Suggestion link at the bottom -->
+        <div class="lp-policy-footer-link">
+          @if (type === 'privacy') {
+            <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/terms">الشروط والأحكام</a></span>
+          } @else if (type === 'terms') {
+            <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a></span>
+          } @else {
+            <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a> أو <a routerLink="/terms">الشروط والأحكام</a></span>
+          }
+        </div>
       </div>
+
     </div>
   </section>
 

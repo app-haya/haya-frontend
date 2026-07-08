@@ -64,72 +64,168 @@
 /* ===== POLICY CONTENT SECTION ===== */
 .lp-policy-content {
   background: #fff;
-  padding: 4rem 0 5rem;
+  padding: 5rem 0 6rem;
 }
 
-.lp-policy-text {
-  font-size: 1.1rem;
-  line-height: 2.2;
-  color: #1a1a2e;
-  text-align: right;
-  padding: 1rem 0;
-  white-space: pre-line;
+.lp-policy-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 3.5rem;
+  align-items: start;
 }
 
-/* Typography styles for raw HTML content inside the policy card */
-.lp-policy-text h1, 
-.lp-policy-text h2, 
-.lp-policy-text h3 {
+/* ===== SIDEBAR ===== */
+.lp-policy-sidebar {
+  position: relative;
+}
+
+.lp-policy-sidebar__sticky {
+  position: sticky;
+  top: 100px; /* offset for sticky navbar */
+  z-index: 10;
+}
+
+.lp-policy-sidebar__title {
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #1a1a2e;
-  font-weight: 800;
-  line-height: 1.4;
-  margin-top: 2.5rem;
   margin-bottom: 1.25rem;
+  padding-right: 1rem;
 }
 
-.lp-policy-text h1 { font-size: 1.8rem; }
-.lp-policy-text h2 { 
-  font-size: 1.4rem; 
-  color: #7a3ca0;
-  border-bottom: 2px dashed #f0f0f8;
-  padding-bottom: 0.5rem;
+.lp-policy-sidebar__menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 2px solid #F0EAF5;
 }
-.lp-policy-text h3 { font-size: 1.2rem; }
 
-.lp-policy-text p {
-  margin-top: 0;
+.lp-policy-sidebar__item {
+  position: relative;
+  margin: 0;
+  padding: 0.6rem 0;
+}
+
+.lp-policy-sidebar__link {
+  color: #8C8C8C;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: block;
+  text-align: right;
+  padding-right: 1.25rem;
+}
+
+.lp-policy-sidebar__link:hover {
+  color: #9259A6;
+}
+
+.lp-policy-sidebar__item--active .lp-policy-sidebar__link {
+  color: #9259A6;
+  font-weight: 700;
+}
+
+/* Active indicator line on the left side of the menu (facing content) */
+.lp-policy-sidebar__item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -2px; /* sits on top of the border-left */
+  height: 100%;
+  width: 3px;
+  background-color: transparent;
+  transition: background-color 0.25s ease;
+  border-radius: 2px;
+}
+
+.lp-policy-sidebar__item--active::before {
+  background-color: #9259A6;
+}
+
+/* ===== CONTENT ===== */
+.lp-policy-main {
+  min-width: 0; /* Prevents flex/grid overflow issues */
+}
+
+.lp-policy-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.lp-policy-section {
+  scroll-margin-top: 120px; /* Crucial for smooth scrolling target alignment */
+}
+
+.lp-policy-intro-text p {
+  font-size: 1.15rem;
+  line-height: 2.1;
+  color: #4A4A4A;
   margin-bottom: 1.5rem;
   font-weight: 500;
 }
 
-.lp-policy-text ul, 
-.lp-policy-text ol {
-  padding-right: 1.5rem;
+.lp-policy-section__title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #1a1a2e;
   margin-top: 0;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.lp-policy-text li {
-  margin-bottom: 0.75rem;
+.lp-policy-section__num {
+  color: #9259A6;
+}
+
+.lp-policy-section__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.lp-policy-section__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  line-height: 1.9;
+  color: #333333;
   font-weight: 500;
 }
 
-.lp-policy-text strong {
-  color: #1a1a2e;
-  font-weight: 700;
+.lp-policy-section__bullet {
+  color: #9259A6;
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  user-select: none;
+}
+
+.lp-policy-section__item-text {
+  flex: 1;
 }
 
 /* ===== POLICY FOOTER SUGGESTION LINK ===== */
 .lp-policy-footer-link {
   text-align: center;
-  margin-top: 3.5rem;
+  margin-top: 4.5rem;
   font-size: 1.1rem;
   font-weight: 600;
   color: #6c757d;
+  border-top: 1px solid #F0F0F0;
+  padding-top: 2.5rem;
 }
 
 .lp-policy-footer-link a {
-  color: #7a3ca0;
+  color: #9259A6;
   text-decoration: none;
   font-weight: 700;
   border-bottom: 2px solid transparent;
@@ -138,40 +234,93 @@
 }
 
 .lp-policy-footer-link a:hover {
-  color: #5b2d7a;
-  border-color: #5b2d7a;
+  color: #7d4491;
+  border-color: #7d4491;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991.98px) {
+  .lp-policy-layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  
+  .lp-policy-sidebar {
+    background: #FFF;
+    border: 1px solid #ECECEC;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 10px 30px rgba(146, 89, 166, 0.04);
+    order: 1; /* Sidebar table of contents is shown first on mobile */
+  }
+  
+  .lp-policy-main {
+    order: 2; /* Main content flows after the sidebar table of contents */
+  }
+  
+  .lp-policy-sidebar__sticky {
+    position: static;
+  }
+  
+  .lp-policy-sidebar__title {
+    font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid #F6F6F6;
+    padding-bottom: 0.75rem;
+    padding-right: 0;
+  }
+  
+  .lp-policy-sidebar__menu {
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .lp-policy-sidebar__item {
+    border-bottom: 1px solid #F5F5F5;
+    padding: 0.85rem 0;
+  }
+  
+  .lp-policy-sidebar__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .lp-policy-sidebar__item::before {
+    display: none; /* Hide active vertical line on mobile */
+  }
+  
+  .lp-policy-sidebar__link {
+    padding-right: 0;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 575.98px) {
   .lp-policy-hero {
     padding: 5rem 0 4rem;
   }
   .lp-policy-content {
     padding: 3rem 0 4rem;
   }
-  .lp-policy-text {
-    padding: 1rem 0;
+  
+  .lp-policy-section__title {
+    font-size: 1.25rem;
   }
-}
-
-@media (max-width: 575.98px) {
-  .lp-policy-hero__title {
-    font-size: 1.8rem;
-  }
-  .lp-policy-hero__subtitle {
-    font-size: 0.95rem;
-  }
-  .lp-policy-text {
-    padding: 0.5rem 0;
+  
+  .lp-policy-section__list li {
     font-size: 0.95rem;
     line-height: 1.8;
   }
-  .lp-policy-text h2 {
-    font-size: 1.2rem;
+  
+  .lp-policy-intro-text p {
+    font-size: 1rem;
+    line-height: 1.9;
   }
+  
   .lp-policy-footer-link {
     font-size: 0.95rem;
-    margin-top: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 1.75rem;
   }
 }
