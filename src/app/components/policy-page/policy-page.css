@@ -390,3 +390,32 @@
     font-size: 1.2rem;
   }
 }
+
+/* ===== INLINE BUTTON STYLES ===== */
+.lp-policy-section__btn-container {
+  margin: 1.5rem 0 1rem;
+  text-align: right;
+}
+
+.lp-policy-section__btn {
+  display: inline-block;
+  background-color: #EFE8F4;
+  color: #9259A6;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.lp-policy-section__btn:hover {
+  background-color: #9259A6;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(146, 89, 166, 0.25);
+}
+

@@ -49,6 +49,7 @@ export const routes: Routes = [
   { path: 'privacy', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'privacy' } },
   { path: 'about-us', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'about' } },
   { path: 'About-us', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'about' } },
+  { path: 'join-merchant', loadComponent: () => import('./components/policy-page/policy-page').then(m => m.PolicyPage), data: { type: 'merchant' } },
   {
     path: 'admin',
     component: Dashboard,

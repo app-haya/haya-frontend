@@ -12,6 +12,7 @@
         <li><a routerLink="/about-us" class="lp-nav__link" [class.lp-nav__link--active]="type === 'about'">من نحن</a></li>
         <li><a routerLink="/privacy" class="lp-nav__link" [class.lp-nav__link--active]="type === 'privacy'">سياسة الخصوصية</a></li>
         <li><a routerLink="/terms" class="lp-nav__link" [class.lp-nav__link--active]="type === 'terms'">الشروط والأحكام</a></li>
+        <li><a routerLink="/join-merchant" class="lp-nav__link" [class.lp-nav__link--active]="type === 'merchant'">انضم كتاجر</a></li>
       </ul>
       <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">حمل التطبيق</a>
       <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
@@ -30,6 +31,7 @@
         <li><a routerLink="/about-us" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'about'">من نحن</a></li>
         <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'privacy'">سياسة الخصوصية</a></li>
         <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'terms'">الشروط والأحكام</a></li>
+        <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'merchant'">انضم كتاجر</a></li>
         <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">حمل التطبيق</a></li>
       </ul>
     </div>
@@ -98,10 +100,18 @@
                   </h2>
                   <ul class="lp-policy-section__list">
                     @for (line of sec.lines; track $index) {
-                      <li>
-                        <span class="lp-policy-section__bullet">•</span>
-                        <span class="lp-policy-section__item-text">{{ line }}</span>
-                      </li>
+                      @if (line.startsWith('[button:')) {
+                        <div class="lp-policy-section__btn-container">
+                          <a routerLink="/" fragment="download" class="lp-policy-section__btn">
+                            {{ line.replace('[button:', '').replace(']', '') }}
+                          </a>
+                        </div>
+                      } @else {
+                        <li>
+                          <span class="lp-policy-section__bullet">•</span>
+                          <span class="lp-policy-section__item-text">{{ line }}</span>
+                        </li>
+                      }
                     }
                   </ul>
                 }
@@ -148,6 +158,7 @@
             <li><a routerLink="/about-us">من نحن</a></li>
             <li><a routerLink="/privacy">سياسة الخصوصية</a></li>
             <li><a routerLink="/terms">الشروط والأحكام</a></li>
+            <li><a routerLink="/join-merchant">انضم كتاجر</a></li>
           </ul>
         </div>
 
