@@ -1,4 +1,8 @@
 {
+    "Login successful!": "تم تسجيل الدخول بنجاح!",
+    "Login failed!": "فشل تسجيل الدخول!",
+    "Validation error": "خطأ في التحقق من البيانات",
+    "Invalid credentials": "بيانات الاعتماد غير صالحة",
     "Notifications queued and sent successfully": "تمت جدولة وإرسال الإشعارات بنجاح",
     "Please fill all required fields": "يرجى ملء جميع الحقول المطلوبة",
     "Failed to load countries": "فشل في تحميل قائمة الدول",

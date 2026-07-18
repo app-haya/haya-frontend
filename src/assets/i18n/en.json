@@ -1,4 +1,8 @@
 {
+    "Login successful!": "Login successful!",
+    "Login failed!": "Login failed!",
+    "Validation error": "Validation error",
+    "Invalid credentials": "Invalid credentials",
     "Notifications queued and sent successfully": "Notifications queued and sent successfully",
     "Please fill all required fields": "Please fill all required fields",
     "Failed to load countries": "Failed to load countries",
