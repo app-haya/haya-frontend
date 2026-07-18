@@ -39,6 +39,7 @@ import { WalletTransactions } from './components/wallet-transactions/wallet-tran
 import { Settings } from './components/settings/settings';
 import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 import { Loyalty } from './components/loyalty/loyalty';
+import { SendNotifications } from './components/send-notifications/send-notifications';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
@@ -129,6 +130,7 @@ export const routes: Routes = [
       { path: 'policy-settings', component: Settings },
       { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'Users' } },
       { path: 'loyalty', component: Loyalty, data: { role: 'Merchants' } },
+      { path: 'send-notifications', component: SendNotifications },
     ],
   },
   { path: '**', redirectTo: '' },

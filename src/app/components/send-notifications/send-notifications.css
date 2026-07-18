@@ -1,0 +1,110 @@
+.add-gov-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  max-width: 800px;
+}
+
+.card-header-gradient {
+  background: linear-gradient(135deg, #5b2e7a 0%, #7a3ca0 100%);
+  padding: 1.5rem;
+  color: white;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #5b2e7a;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 8px;
+}
+
+.form-group-container {
+  padding: 2rem;
+}
+
+.styled-input {
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+input.styled-input {
+  height: 48px;
+}
+
+textarea.styled-input {
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.styled-input:focus {
+  border-color: #5b2e7a;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(91, 46, 122, 0.1);
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4b5563;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #5b2e7a 0%, #7a3ca0 100%) !important;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-weight: 700;
+  color: white;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(91, 46, 122, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(91, 46, 122, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 🌑 Dark Mode Support 🌑 */
+:host-context(.dark-mode) .add-gov-card {
+  background-color: #161b22 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+:host-context(.dark-mode) .section-title {
+  color: #00cfd5 !important;
+  border-color: #30363d !important;
+}
+
+:host-context(.dark-mode) .form-label {
+  color: #c9d1d9 !important;
+}
+
+:host-context(.dark-mode) .styled-input {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}

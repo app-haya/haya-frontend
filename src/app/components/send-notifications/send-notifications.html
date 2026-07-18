@@ -1,0 +1,72 @@
+<div class="container-fluid py-4">
+  <div class="add-gov-card mx-auto">
+    <div class="card-header-gradient text-center">
+      <h3 class="mb-0 fw-bold"><i class="bi bi-bell me-2"></i>{{ 'SEND_NOTIFICATIONS' | translate }}</h3>
+      <p class="small opacity-75 mb-0">{{ 'Send targeted bulk push notifications to users' | translate }}</p>
+    </div>
+
+    <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()" class="form-group-container">
+      
+      <!-- Section 1: Notification Content -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-chat-left-text"></i>
+          {{ 'Notification Content' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-12">
+            <label class="form-label">{{ 'Title' | translate }}</label>
+            <input formControlName="title" class="form-control styled-input" [placeholder]="'Enter notification title (e.g. Eid Mubarak)' | translate" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'Body' | translate }}</label>
+            <textarea formControlName="body" class="form-control styled-input" rows="4" [placeholder]="'Enter notification body text...' | translate"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Target Audience -->
+      <div class="mb-5">
+        <h5 class="section-title">
+          <i class="bi bi-people"></i>
+          {{ 'Target Audience' | translate }}
+        </h5>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'User Type' | translate }}</label>
+            <select formControlName="user_type" class="form-select styled-input">
+              <option value="all">{{ 'All' | translate }}</option>
+              <option value="user">{{ 'User' | translate }}</option>
+              <option value="merchant">{{ 'Merchant / Trader' | translate }}</option>
+              <option value="governmental">{{ 'Governmental' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Verification Status' | translate }}</label>
+            <select formControlName="verification_status" class="form-select styled-input">
+              <option value="all">{{ 'All' | translate }}</option>
+              <option value="verified">{{ 'Verified' | translate }}</option>
+              <option value="unverified">{{ 'Unverified' | translate }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'Country' | translate }} ({{ 'Optional' | translate }})</label>
+            <select formControlName="country_id" class="form-select styled-input">
+              <option value="">{{ 'All Countries' | translate }}</option>
+              <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center pt-4">
+        <button type="submit" class="submit-btn px-5 py-3 fs-5 w-100" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <i class="bi bi-send me-2" *ngIf="!loading"></i>
+          {{ loading ? ('Sending...' | translate) : ('Send Notifications' | translate) }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
