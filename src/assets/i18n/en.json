@@ -1,4 +1,8 @@
 {
+    "Notifications queued and sent successfully": "Notifications queued and sent successfully",
+    "Please fill all required fields": "Please fill all required fields",
+    "Failed to load countries": "Failed to load countries",
+    "Failed to send notifications": "Failed to send notifications",
     "Send targeted bulk push notifications to users": "Send targeted bulk push notifications to users",
     "Notification Content": "Notification Content",
     "Enter notification title (e.g. Eid Mubarak)": "Enter notification title (e.g. Eid Mubarak)",

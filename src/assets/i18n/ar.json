@@ -1,4 +1,8 @@
 {
+    "Notifications queued and sent successfully": "تمت جدولة وإرسال الإشعارات بنجاح",
+    "Please fill all required fields": "يرجى ملء جميع الحقول المطلوبة",
+    "Failed to load countries": "فشل في تحميل قائمة الدول",
+    "Failed to send notifications": "فشل في إرسال الإشعارات",
     "Send targeted bulk push notifications to users": "إرسال إشعارات جماعية مخصصة للمستخدمين",
     "Notification Content": "محتوى الإشعار",
     "Enter notification title (e.g. Eid Mubarak)": "أدخل عنوان الإشعار (مثال: عيد مبارك)",
