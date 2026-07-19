@@ -200,7 +200,7 @@ export class PolicyPage implements OnInit {
       });
     } else if (this.type === 'about') {
       this.title = 'من نحن';
-      this.subtitle = 'تعرّف على منصة هيّا، مستقبل الخدمات الرقمية بروح تجديدية أصيلة.';
+      this.subtitle = 'تطبيق سعودي متكامل من قلب السعودية';
       this.settingsService.getPublicAboutUs('ar').subscribe({
         next: (res) => {
           if (res && res.data) {
