@@ -42,11 +42,30 @@
   margin-bottom: 3rem;
 }
 
+.lp-section-title,
+.lp-about__title,
+.lp-services__title,
+.lp-how__competition-title,
+.lp-download__contact-title {
+  position: relative;
+  display: inline-block;
+}
+
 .lp-section-title {
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 800;
   color: #1a1a2e;
   margin: 0.4rem 0 0.75rem;
+}
+
+.lp-title-highlight-icon {
+  position: absolute;
+  top: -18px;
+  left: -16px;
+  width: 26px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .lp-section-title--light {
@@ -419,13 +438,15 @@
   top: 50%;
   transform: translateY(-50%);
   left: 0;
-  width: 120px;
-  height: 600px;
-  opacity: 0.5;
+  width: 171px;
+  height: 100%;
+  max-height: 832px;
+  opacity: 0.85;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 600'%3E%3Cpath d='M 0,0 C 40,100 40,200 0,300 C 40,400 40,500 0,600' fill='none' stroke='%23e2d6f3' stroke-width='2'/%3E%3Cpath d='M 0,0 C 55,100 55,200 0,300 C 55,400 55,500 0,600' fill='none' stroke='%23e2d6f3' stroke-width='2'/%3E%3Cpath d='M 0,0 C 70,100 70,200 0,300 C 70,400 70,500 0,600' fill='none' stroke='%23e2d6f3' stroke-width='2'/%3E%3Cpath d='M 0,0 C 85,100 85,200 0,300 C 85,400 85,500 0,600' fill='none' stroke='%23e2d6f3' stroke-width='2'/%3E%3Cpath d='M 0,0 C 100,100 100,200 0,300 C 100,400 100,500 0,600' fill='none' stroke='%23e2d6f3' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("/images/Union(6).svg");
   background-repeat: no-repeat;
-  background-position: left top;
+  background-position: left center;
+  background-size: contain;
 }
 
 .lp-services__bg-sparkle {
