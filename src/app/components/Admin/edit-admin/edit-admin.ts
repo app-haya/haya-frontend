@@ -54,16 +54,54 @@ export class EditAdmin implements OnInit {
     });
   }
 
+  formatRoleName(name: string): string {
+    if (!name) return '—';
+    const map: { [key: string]: string } = {
+      'verifycation': 'التوثيق والأسعار',
+      'verification': 'التوثيق والأسعار',
+      'users': 'المستخدمين',
+      'merchants': 'التجار',
+      'governments': 'الجهات الحكومية',
+      'top30': 'إدارة توب 30',
+      'deals': 'الصفقات وطلبات الشراء',
+      'messages': 'إرسال الإشعارات والرسائل',
+      'notifications': 'إرسال الإشعارات والرسائل',
+      'settings': 'الإعدادات والسياسات',
+      'loyalty': 'إدارة الولاء والعملات',
+      'wallet': 'المحفظة المالية',
+      'interests': 'الاهتمامات',
+      'cities': 'المدن',
+      'countries': 'الدول',
+      'banned_words': 'الكلمات المحظورة',
+      'calendar': 'التقويم والفعاليات',
+      'dashboard': 'لوحة التحكم',
+      'admins': 'المديرين والصلاحيات'
+    };
+    return map[name.toLowerCase()] || name;
+  }
+
   fetchAdminData() {
     this.loading = true;
     this.adminService.showAdmin(this.adminId).subscribe({
       next: (res: any) => {
         this.loading = false;
         if (res?.data) {
-          this.admin = { ...this.admin, ...res.data };
-          // Ensure is_super_admin is a boolean
-          this.admin.is_super_admin =
-            this.admin.is_super_admin === 1 || this.admin.is_super_admin === true;
+          const adminData = res.data;
+          let roleIds: number[] = [];
+          if (Array.isArray(adminData.roles)) {
+            roleIds = adminData.roles
+              .map((r: any) => (typeof r === 'object' && r ? r.id : Number(r)))
+              .filter((id: any) => !isNaN(id) && id !== null && id !== undefined);
+          }
+          this.admin = {
+            ...this.admin,
+            ...adminData,
+            roles: roleIds,
+            is_super_admin:
+              adminData.is_super_admin === 1 ||
+              adminData.is_super_admin === true ||
+              adminData.is_super_admin === '1',
+          };
         }
       },
       error: (err) => {
@@ -88,20 +126,34 @@ export class EditAdmin implements OnInit {
     }
   }
 
+  isRoleSelected(roleId: number): boolean {
+    if (!this.admin.roles || !Array.isArray(this.admin.roles)) return false;
+    return this.admin.roles.some((r: any) => {
+      const id = typeof r === 'object' && r ? r.id : Number(r);
+      return id === roleId;
+    });
+  }
+
   toggleRole(roleId: number, checked: boolean) {
     if (!this.admin.roles) this.admin.roles = [];
     if (checked) {
-      if (!this.admin.roles.includes(roleId)) {
+      if (!this.isRoleSelected(roleId)) {
         this.admin.roles.push(roleId);
       }
     } else {
-      this.admin.roles = this.admin.roles.filter((id: number) => id !== roleId);
+      this.admin.roles = this.admin.roles.filter((r: any) => {
+        const id = typeof r === 'object' && r ? r.id : Number(r);
+        return id !== roleId;
+      });
     }
   }
 
   toggleRoleTag(roleId: number) {
     if (!this.admin.roles) this.admin.roles = [];
-    const index = this.admin.roles.indexOf(roleId);
+    const index = this.admin.roles.findIndex((r: any) => {
+      const id = typeof r === 'object' && r ? r.id : Number(r);
+      return id === roleId;
+    });
     if (index >= 0) {
       this.admin.roles.splice(index, 1);
     } else {
@@ -126,8 +178,11 @@ export class EditAdmin implements OnInit {
     formData.append('is_super_admin', this.admin.is_super_admin ? '1' : '0');
 
     if (!this.admin.is_super_admin && Array.isArray(this.admin.roles)) {
-      this.admin.roles.forEach((id: number, index: number) => {
-        formData.append(`roles[${index}]`, id.toString());
+      this.admin.roles.forEach((r: any, index: number) => {
+        const roleId = typeof r === 'object' && r ? r.id : Number(r);
+        if (roleId) {
+          formData.append(`roles[${index}]`, roleId.toString());
+        }
       });
     }
 

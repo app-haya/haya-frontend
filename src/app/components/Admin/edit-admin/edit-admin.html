@@ -55,11 +55,11 @@
             <label class="form-label mb-3">{{ 'Specific Module Access' | translate }}</label>
             <div class="role-checkbox-group">
               <div class="role-tag" *ngFor="let role of roles" 
-                   [class.active]="admin.roles?.includes(role.id)"
+                   [class.active]="isRoleSelected(role.id)"
                    (click)="toggleRoleTag(role.id)">
-                <i class="bi" [class.bi-check-circle-fill]="admin.roles?.includes(role.id)" 
-                   [class.bi-circle]="!admin.roles?.includes(role.id)"></i>
-                {{ role.name }}
+                <i class="bi" [class.bi-check-circle-fill]="isRoleSelected(role.id)" 
+                   [class.bi-circle]="!isRoleSelected(role.id)"></i>
+                {{ formatRoleName(role.name) }}
               </div>
             </div>
           </div>

@@ -59,7 +59,7 @@
                    (click)="toggleRoleTag(role.id)">
                 <i class="bi" [class.bi-check-circle-fill]="admin.roles.includes(role.id)" 
                    [class.bi-circle]="!admin.roles.includes(role.id)"></i>
-                {{ role.name }}
+                {{ formatRoleName(role.name) }}
               </div>
             </div>
           </div>

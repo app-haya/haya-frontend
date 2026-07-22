@@ -76,7 +76,7 @@
             </td>
             <td>
               <span *ngFor="let r of admin.roles" class="status-badge badge-info-type me-1">
-                {{ r.name }}
+                {{ formatRoleName(r.name) }}
               </span>
               <span *ngIf="!admin.roles?.length">—</span>
             </td>

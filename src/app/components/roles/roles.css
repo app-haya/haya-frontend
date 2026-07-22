@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* MODAL STYLING (Light Mode) */
+/* MODAL & PERMISSION MATRIX STYLING */
 /* ========================================================= */
 .modal-overlay {
   position: fixed;
@@ -16,18 +16,26 @@
   align-items: center;
   justify-content: center;
   z-index: 1001;
+  padding: 20px;
 }
 
 .modal-content {
   background: #ffffff;
   border-radius: 20px;
   padding: 0;
-  width: 95%;
-  max-width: 450px;
+  width: 100%;
+  max-width: 500px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   animation: modalIn 0.3s ease-out;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content.modal-lg {
+  max-width: 850px;
 }
 
 .modal-header {
@@ -56,10 +64,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 1.1rem;
 }
 
 .city-form {
-  padding: 30px;
+  padding: 25px;
+  overflow-y: auto;
 }
 
 .form-group {
@@ -73,26 +83,110 @@
   color: #444;
 }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
+/* Permissions Grid Styling */
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.perm-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f8f9fa;
+  border: 1.5px solid #e9ecef;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.perm-card:hover {
+  border-color: #7a3ca0;
+  background: #f3e9fa;
+  transform: translateY(-1px);
+}
+
+.perm-card.active {
+  background: #f0e6f7;
+  border-color: #7a3ca0;
+  box-shadow: 0 4px 12px rgba(122, 60, 160, 0.12);
+}
+
+.perm-card-icon {
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
-  background: #fff;
-  color: #333;
+  background: rgba(122, 60, 160, 0.1);
+  color: #7a3ca0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.perm-card.active .perm-card-icon {
+  background: #7a3ca0;
+  color: #ffffff;
+}
+
+.perm-card-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.perm-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #2b2b2b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.perm-key {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.perm-check {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+
+.perm-card.active .perm-check {
+  color: #7a3ca0;
 }
 
 .form-actions {
   display: flex;
   gap: 15px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .form-actions .btn {
   flex: 1;
   padding: 12px;
   border-radius: 10px;
+}
+
+.btn-purple {
+  background: #7a3ca0;
+  color: #fff;
+  border: none;
+}
+
+.btn-purple:hover {
+  background: #652d87;
+  color: #fff;
 }
 
 .btn-outline {
@@ -114,6 +208,29 @@
   border-bottom: 1px solid #30363d !important;
 }
 
+:host-context(body.dark-mode) .dark-text {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .perm-card {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .perm-card:hover {
+  border-color: #9d4edd !important;
+  background: #1f1a2e !important;
+}
+
+:host-context(body.dark-mode) .perm-card.active {
+  background: #251b36 !important;
+  border-color: #9d4edd !important;
+}
+
+:host-context(body.dark-mode) .perm-name {
+  color: #f0f6fc !important;
+}
+
 :host-context(body.dark-mode) .form-group label {
   color: #ffffff !important;
 }
@@ -128,11 +245,6 @@
   background-color: #21262d !important;
   color: #c9d1d9 !important;
   border: 1px solid #30363d !important;
-}
-
-:host-context(body.dark-mode) .btn-outline:hover {
-  background-color: #30363d !important;
-  color: #ffffff !important;
 }
 
 @keyframes modalIn {

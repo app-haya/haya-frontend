@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { DashboardService } from '../../services/dashboard.service';
+import { isSuperAdmin, getUserPermissions } from '../../utils/permission-helper';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,16 +26,17 @@ export class Sidebar implements OnInit {
     private router: Router
   ) { }
 
-  menu: any[] = [
-    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/admin/dashboardcount' },
-    { name: 'Admins', icon: 'bi bi-person-gear', path: '/admin/admins' },
-    { name: 'Users', icon: 'bi bi-people', path: '/admin/users' },
-    { name: 'Merchants', icon: 'bi bi-shop', path: '/admin/merchants' },
-    { name: 'Governments', icon: 'bi bi-bank', path: '/admin/governments' },
+  allMenu: any[] = [
+    { name: 'Dashboard', icon: 'bi bi-house-door', path: '/admin/dashboardcount', perm: 'dashboard' },
+    { name: 'Admins', icon: 'bi bi-person-gear', path: '/admin/admins', perm: 'admins' },
+    { name: 'Users', icon: 'bi bi-people', path: '/admin/users', perm: 'users' },
+    { name: 'Merchants', icon: 'bi bi-shop', path: '/admin/merchants', perm: 'merchants' },
+    { name: 'Governments', icon: 'bi bi-bank', path: '/admin/governments', perm: 'governments' },
     {
       name: 'Verifycation',
       icon: 'bi bi-bag-check',
       path: '/admin/verifycation',
+      perm: 'verification',
       expanded: true,
       children: [
         { name: 'Verify Creator', path: '/admin/verify_creator', icon: 'bi bi-hourglass-split' },
@@ -42,12 +44,13 @@ export class Sidebar implements OnInit {
         { name: 'VERIFICATION_PRICES', path: '/admin/verification-prices', icon: 'bi bi-tags' },
       ],
     },
-    { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes' },
-    { name: 'Loyalty Management', icon: 'bi bi-award', path: '/admin/loyalty' },
+    { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes', perm: 'top30' },
+    { name: 'Loyalty Management', icon: 'bi bi-award', path: '/admin/loyalty', perm: 'loyalty' },
     {
       name: 'Deals',
       icon: 'bi bi-bag-check',
       path: '/admin/deals',
+      perm: 'deals',
       expanded: false,
       children: [
         { name: 'Deals List', path: '/admin/deals', icon: 'bi bi-list-task' },
@@ -55,22 +58,26 @@ export class Sidebar implements OnInit {
       ],
     },
 
-    { name: 'Interests', icon: 'bi bi-star', path: '/admin/interests' },
-    { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities' },
-    { name: 'Countries', icon: 'bi bi-globe', path: '/admin/countries' },
-    { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/admin/bannedwords' },
-    { name: 'Wallet', icon: 'bi bi-wallet2', path: '/admin/wallet' },
-    { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar' },
-    { name: 'SEND_NOTIFICATIONS', icon: 'bi bi-bell', path: '/admin/send-notifications' },
-    { name: 'SETTINGS', icon: 'bi bi-gear', path: '/admin/policy-settings' },
+    { name: 'Interests', icon: 'bi bi-star', path: '/admin/interests', perm: 'interests' },
+    { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities', perm: 'cities' },
+    { name: 'Countries', icon: 'bi bi-globe', path: '/admin/countries', perm: 'countries' },
+    { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/admin/bannedwords', perm: 'banned_words' },
+    { name: 'Wallet', icon: 'bi bi-wallet2', path: '/admin/wallet', perm: 'wallet' },
+    { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar', perm: 'calendar' },
+    { name: 'SEND_NOTIFICATIONS', icon: 'bi bi-bell', path: '/admin/send-notifications', perm: 'notifications' },
+    { name: 'SETTINGS', icon: 'bi bi-gear', path: '/admin/policy-settings', perm: 'settings' },
   ];
 
+  menu: any[] = [];
+
   ngOnInit(): void {
+    this.menu = [...this.allMenu];
     const token = localStorage.getItem('admin_token');
     if (!token) return;
     this.authService.getProfile(token).subscribe({
       next: (res) => {
         this.user = res.data || res.user || res;
+        this.filterMenu();
       },
       error: (err) => {
         console.error('Error fetching profile:', err);
@@ -79,6 +86,33 @@ export class Sidebar implements OnInit {
 
     this.dashboardService.getRefreshObservable().subscribe(() => {
       this.loadCounts();
+    });
+  }
+
+  filterMenu(): void {
+    if (!this.user) {
+      this.menu = [...this.allMenu];
+      return;
+    }
+
+    if (isSuperAdmin(this.user)) {
+      this.menu = [...this.allMenu];
+      return;
+    }
+
+    const allowedPerms = getUserPermissions(this.user);
+
+    this.menu = this.allMenu.filter((item) => {
+      if (!item.perm) return true;
+      const permKey = item.perm.toLowerCase();
+
+      return (
+        allowedPerms.has(permKey) ||
+        allowedPerms.has(item.name.toLowerCase()) ||
+        (permKey === 'verification' && (allowedPerms.has('verifycation') || allowedPerms.has('verification'))) ||
+        (permKey === 'notifications' && (allowedPerms.has('messages') || allowedPerms.has('send_notifications') || allowedPerms.has('notifications'))) ||
+        (permKey === 'top30' && (allowedPerms.has('top30') || allowedPerms.has('top 30')))
+      );
     });
   }
 

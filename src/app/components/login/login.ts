@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
+import { getFirstPermittedRoute } from '../../utils/permission-helper';
 
 declare var particlesJS: any;
 
@@ -154,7 +155,15 @@ export class Login implements OnInit, OnDestroy, AfterViewInit {
           localStorage.setItem('admin_token', res.data.token);
           localStorage.setItem('admin_user', JSON.stringify(res.data.admin));
           this.notificationService.success('Login successful!');
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboardcount';
+
+          const admin = res.data.admin;
+          const defaultRoute = getFirstPermittedRoute(admin);
+          let returnUrl = this.route.snapshot.queryParams['returnUrl'];
+
+          if (!returnUrl || returnUrl === '/' || returnUrl === '/admin' || returnUrl === '/admin/dashboardcount') {
+            returnUrl = defaultRoute;
+          }
+
           this.router.navigateByUrl(returnUrl);
         }
       },

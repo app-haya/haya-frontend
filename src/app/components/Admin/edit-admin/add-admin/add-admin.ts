@@ -47,6 +47,32 @@ export class AddAdmin implements OnInit {
     });
   }
 
+  formatRoleName(name: string): string {
+    if (!name) return '—';
+    const map: { [key: string]: string } = {
+      'verifycation': 'التوثيق والأسعار',
+      'verification': 'التوثيق والأسعار',
+      'users': 'المستخدمين',
+      'merchants': 'التجار',
+      'governments': 'الجهات الحكومية',
+      'top30': 'إدارة توب 30',
+      'deals': 'الصفقات وطلبات الشراء',
+      'messages': 'إرسال الإشعارات والرسائل',
+      'notifications': 'إرسال الإشعارات والرسائل',
+      'settings': 'الإعدادات والسياسات',
+      'loyalty': 'إدارة الولاء والعملات',
+      'wallet': 'المحفظة المالية',
+      'interests': 'الاهتمامات',
+      'cities': 'المدن',
+      'countries': 'الدول',
+      'banned_words': 'الكلمات المحظورة',
+      'calendar': 'التقويم والفعاليات',
+      'dashboard': 'لوحة التحكم',
+      'admins': 'المديرين والصلاحيات'
+    };
+    return map[name.toLowerCase()] || name;
+  }
+
   toggleRole(roleId: number, checked: boolean) {
     if (checked) {
       if (!this.admin.roles.includes(roleId)) {
