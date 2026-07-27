@@ -9,6 +9,8 @@ import { ThemeService } from '../../services/theme.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+declare var ClassicEditor: any;
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -22,7 +24,7 @@ export class Settings implements OnInit {
   submitting = false;
   settingsId: number | null = null;
   activeTab: 'terms' | 'privacy' | 'about' = 'terms';
-
+  editors: { [key: string]: any } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -102,6 +104,7 @@ export class Settings implements OnInit {
         this.settingsForm.patchValue(patchData);
         this.loading = false;
         this.adjustTextareas();
+        this.initCKEditorForTab(this.activeTab);
       },
       error: () => {
         this.loading = false;
@@ -113,6 +116,55 @@ export class Settings implements OnInit {
   setActiveTab(tab: 'terms' | 'privacy' | 'about') {
     this.activeTab = tab;
     this.adjustTextareas();
+    this.initCKEditorForTab(tab);
+  }
+
+  initCKEditorForTab(tab: 'terms' | 'privacy' | 'about') {
+    setTimeout(() => {
+      if (typeof ClassicEditor === 'undefined') return;
+
+      let fields: { id: string, name: string }[] = [];
+      if (tab === 'terms') {
+        fields = [
+          { id: 'terms_ar_editor', name: 'terms_and_conditions_ar' },
+          { id: 'terms_en_editor', name: 'terms_and_conditions_en' }
+        ];
+      } else if (tab === 'privacy') {
+        fields = [
+          { id: 'privacy_ar_editor', name: 'privacy_policy_ar' },
+          { id: 'privacy_en_editor', name: 'privacy_policy_en' }
+        ];
+      } else if (tab === 'about') {
+        fields = [
+          { id: 'about_ar_editor', name: 'about_us_ar' },
+          { id: 'about_en_editor', name: 'about_us_en' }
+        ];
+      }
+
+      fields.forEach(field => {
+        const el = document.getElementById(field.id);
+        if (el && !this.editors[field.id]) {
+          ClassicEditor.create(el, {
+            toolbar: [
+              'heading', '|',
+              'bold', 'italic', '|',
+              'bulletedList', 'numberedList', '|',
+              'blockQuote', 'undo', 'redo'
+            ]
+          }).then((editor: any) => {
+            this.editors[field.id] = editor;
+            const currentVal = this.settingsForm.get(field.name)?.value || '';
+            if (currentVal) {
+              editor.setData(currentVal);
+            }
+            editor.model.document.on('change:data', () => {
+              const data = editor.getData();
+              this.settingsForm.get(field.name)?.setValue(data, { emitEvent: false });
+            });
+          }).catch((err: any) => console.error('CKEditor init error:', err));
+        }
+      });
+    }, 150);
   }
 
   adjustTextareas() {
@@ -126,6 +178,19 @@ export class Settings implements OnInit {
   }
 
   saveSettings() {
+    // Sync all CKEditor instances before submit
+    Object.keys(this.editors).forEach(id => {
+      if (this.editors[id]) {
+        const data = this.editors[id].getData();
+        if (id === 'terms_ar_editor') this.settingsForm.get('terms_and_conditions_ar')?.setValue(data);
+        if (id === 'terms_en_editor') this.settingsForm.get('terms_and_conditions_en')?.setValue(data);
+        if (id === 'privacy_ar_editor') this.settingsForm.get('privacy_policy_ar')?.setValue(data);
+        if (id === 'privacy_en_editor') this.settingsForm.get('privacy_policy_en')?.setValue(data);
+        if (id === 'about_ar_editor') this.settingsForm.get('about_us_ar')?.setValue(data);
+        if (id === 'about_en_editor') this.settingsForm.get('about_us_en')?.setValue(data);
+      }
+    });
+
     if (this.settingsForm.invalid) {
       this.notification.error('Please fill all required fields');
       return;

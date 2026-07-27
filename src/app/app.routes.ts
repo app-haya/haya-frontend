@@ -40,6 +40,7 @@ import { Settings } from './components/settings/settings';
 import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 import { Loyalty } from './components/loyalty/loyalty';
 import { SendNotifications } from './components/send-notifications/send-notifications';
+import { CommentReports } from './components/comment-reports/comment-reports';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
@@ -131,6 +132,7 @@ export const routes: Routes = [
       { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'top30' } },
       { path: 'loyalty', component: Loyalty, data: { role: 'loyalty' } },
       { path: 'send-notifications', component: SendNotifications, data: { role: 'notifications' } },
+      { path: 'comment-reports', component: CommentReports, data: { role: 'reports' } },
     ],
   },
   { path: '**', redirectTo: '' },

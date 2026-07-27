@@ -1,0 +1,443 @@
+<div class="page-wrapper">
+
+  <!-- Toast Notification -->
+  <div *ngIf="toastMessage" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast show align-items-center text-white border-0 shadow-lg" [ngClass]="toastType === 'success' ? 'bg-success' : 'bg-danger'" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+          <span>{{ toastMessage }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-chat-right-quote-fill"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Comment Reports' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Review and manage reported comments' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ total }} {{ (total === 1 ? 'Reported Comment' : 'Reported Comments') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Tabs Bar -->
+  <div class="tabs-bar" *ngIf="!loading">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'pending'"
+      (click)="switchTab('pending')"
+    >
+      <i class="bi bi-hourglass-split"></i>
+      {{ 'Pending Review' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'reviewed'"
+      (click)="switchTab('reviewed')"
+    >
+      <i class="bi bi-check-circle"></i>
+      {{ 'Reviewed' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'resolved'"
+      (click)="switchTab('resolved')"
+    >
+      <i class="bi bi-check2-all"></i>
+      {{ 'Resolved' | translate }}
+    </button>
+  </div>
+
+  <!-- Search / Action Bar -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by user, comment text, post context or reason...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="applySearch()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading reported comments...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Commenter' | translate }}</th>
+            <th>{{ 'Comment Content' | translate }}</th>
+            <th>{{ 'Post Context' | translate }}</th>
+            <th class="text-center">{{ 'Reports' | translate }}</th>
+            <th>{{ 'Latest Report Reason' | translate }}</th>
+            <th>{{ 'Date' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredReports" class="table-row">
+
+            <!-- Commenter / User -->
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <img
+                    *ngIf="item.user?.image"
+                    [src]="item.user.image"
+                    [alt]="item.user?.name"
+                    class="avatar-img"
+                  />
+                  <div *ngIf="!item.user?.image" class="avatar-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ item.user?.name || '—' }}</span>
+                  <span class="user-id">ID: #{{ item.user?.id || '—' }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Comment Content -->
+            <td>
+              <div class="comment-content-cell">
+                <p class="comment-text" [title]="item.comment?.content">
+                  "{{ item.comment?.content || '—' }}"
+                </p>
+                <div class="comment-flags" *ngIf="item.comment?.hidden_by_admin || item.comment?.is_deleted">
+                  <span class="badge-flag danger" *ngIf="item.comment?.is_deleted">
+                    <i class="bi bi-trash"></i> {{ 'Deleted' | translate }}
+                  </span>
+                  <span class="badge-flag warning" *ngIf="item.comment?.hidden_by_admin">
+                    <i class="bi bi-eye-slash"></i> {{ 'Hidden by Admin' | translate }}
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Post Context -->
+            <td>
+              <div class="post-context-cell" *ngIf="item.post">
+                <div class="post-owner">
+                  <i class="bi bi-file-post text-primary me-1"></i>
+                  <span class="fw-semibold">{{ 'Owner' | translate }}:</span> {{ item.post.owner || '—' }}
+                </div>
+                <p class="post-snippet text-muted mb-0" [title]="item.post.content">
+                  {{ item.post.content || '—' }}
+                </p>
+              </div>
+              <span *ngIf="!item.post" class="text-muted">—</span>
+            </td>
+
+            <!-- Reports & Likes -->
+            <td class="text-center">
+              <div class="d-flex flex-column align-items-center gap-1">
+                <span class="report-count-badge" [title]="'Total Reports' | translate">
+                  <i class="bi bi-flag-fill text-danger me-1"></i> {{ item.reports_count || item.reports?.length || 0 }}
+                </span>
+                <span class="small text-muted" *ngIf="item.likes_count !== undefined">
+                  <i class="bi bi-heart-fill text-danger me-1" style="font-size: 0.7rem;"></i> {{ item.likes_count }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Latest Report Reason -->
+            <td>
+              <div class="reasons-cell" *ngIf="item.reports && item.reports.length > 0">
+                <span class="reason-pill" [title]="item.reports[0]?.reason">
+                  {{ item.reports[0]?.reason || '—' }}
+                </span>
+                <span class="more-reasons" *ngIf="item.reports.length > 1">
+                  +{{ item.reports.length - 1 }} {{ 'more' | translate }}
+                </span>
+              </div>
+              <span *ngIf="!item.reports || item.reports.length === 0" class="text-muted">—</span>
+            </td>
+
+            <!-- Date -->
+            <td>
+              <div *ngIf="item.comment?.created_at">
+                <span class="date-cell">{{ item.comment.created_at | date:'dd/MM/yyyy' }}</span>
+                <span class="time-cell">{{ item.comment.created_at | date:'HH:mm' }}</span>
+              </div>
+              <span *ngIf="!item.comment?.created_at" class="text-muted">—</span>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'badge-pending': activeTab === 'pending' && !item.comment?.hidden_by_admin && !item.comment?.is_deleted,
+                'badge-rejected': item.comment?.is_deleted,
+                'badge-warning-status': item.comment?.hidden_by_admin && !item.comment?.is_deleted,
+                'badge-approved': activeTab !== 'pending' && !item.comment?.hidden_by_admin && !item.comment?.is_deleted
+              }">
+                <ng-container *ngIf="item.comment?.is_deleted">{{ 'Deleted' | translate }}</ng-container>
+                <ng-container *ngIf="!item.comment?.is_deleted && item.comment?.hidden_by_admin">{{ 'Hidden' | translate }}</ng-container>
+                <ng-container *ngIf="!item.comment?.is_deleted && !item.comment?.hidden_by_admin">
+                  {{ (activeTab === 'pending' ? 'Pending' : (activeTab === 'reviewed' ? 'Reviewed' : 'Resolved')) | translate }}
+                </ng-container>
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="action-group">
+                <!-- Details Button -->
+                <button
+                  class="detail-btn me-1"
+                  (click)="openDetail(item)"
+                  [title]="'View Details' | translate"
+                >
+                  <i class="bi bi-eye"></i> {{ 'View' | translate }}
+                </button>
+
+                <!-- Hide Button -->
+                <button
+                  class="action-btn hide-btn me-1"
+                  (click)="openHideModal(item)"
+                  [disabled]="item.comment?.hidden_by_admin || item.comment?.is_deleted"
+                  [title]="'Hide Comment' | translate"
+                >
+                  <i class="bi bi-eye-slash"></i> {{ 'Hide' | translate }}
+                </button>
+
+                <!-- Delete Button -->
+                <button
+                  class="action-btn reject-btn"
+                  (click)="openDeleteModal(item)"
+                  [disabled]="item.comment?.is_deleted"
+                  [title]="'Delete Comment' | translate"
+                >
+                  <i class="bi bi-trash3"></i> {{ 'Delete' | translate }}
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredReports.length === 0">
+            <td colspan="8" class="empty-state">
+              <div class="empty-content">
+                <i class="bi bi-chat-square-x"></i>
+                <p>{{ 'No reported comments found' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let p of getPageNumbers()"
+        [class.active]="p === currentPage"
+        (click)="loadReports(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== HIDE COMMENT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showHideModal" (click)="closeHideModal()">
+  <div class="modal-box hide-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-eye-slash-fill text-warning"></i>
+        <h5>{{ 'Hide Comment' | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeHideModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+
+      <div class="preview-box warning-preview" *ngIf="selectedItem?.comment">
+        <div class="preview-user mb-1">
+          <strong class="small">{{ selectedItem.user?.name || 'User' }}:</strong>
+        </div>
+        <p class="preview-text">"{{ selectedItem.comment.content }}"</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Reason for Hiding' | translate }} <span class="optional">({{ 'Optional' | translate }})</span></label>
+        <textarea
+          class="form-textarea"
+          rows="3"
+          [(ngModel)]="actionReason"
+          [placeholder]="'Write optional reason (sent to comment owner via notification)...' | translate"
+        ></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeHideModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-hide-confirm" (click)="submitHide()" [disabled]="modalLoading">
+        <span *ngIf="!modalLoading"><i class="bi bi-eye-slash-fill"></i> {{ 'Confirm Hide' | translate }}</span>
+        <span *ngIf="modalLoading" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DELETE COMMENT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <div class="modal-box delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+        <h5>{{ 'Delete Comment Permanently' | translate }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeDeleteModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body-custom">
+
+      <div class="alert alert-danger d-flex align-items-center gap-2 mb-2 py-2" role="alert" style="font-size: 0.85rem;">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>{{ 'This action will permanently remove the comment.' | translate }}</span>
+      </div>
+
+      <div class="preview-box danger-preview" *ngIf="selectedItem?.comment">
+        <div class="preview-user mb-1">
+          <strong class="small">{{ selectedItem.user?.name || 'User' }}:</strong>
+        </div>
+        <p class="preview-text">"{{ selectedItem.comment.content }}"</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-lbl">{{ 'Deletion Reason' | translate }} <span class="optional">({{ 'Optional' | translate }})</span></label>
+        <textarea
+          class="form-textarea"
+          rows="3"
+          [(ngModel)]="actionReason"
+          [placeholder]="'Write optional reason (sent to comment owner via notification)...' | translate"
+        ></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeDeleteModal()">{{ 'Cancel' | translate }}</button>
+      <button class="btn-delete-confirm" (click)="submitDelete()" [disabled]="modalLoading">
+        <span *ngIf="!modalLoading"><i class="bi bi-trash3-fill"></i> {{ 'Confirm Deletion' | translate }}</span>
+        <span *ngIf="modalLoading" class="btn-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DETAIL MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetail()">
+  <div class="modal-box detail-modal" (click)="$event.stopPropagation()" *ngIf="selectedItem">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <i class="bi bi-chat-right-quote-fill text-primary"></i>
+        <h5>{{ 'Report Details' | translate }} #{{ selectedItem.comment?.id }}</h5>
+      </div>
+      <button class="modal-close" (click)="closeDetail()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom detail-body">
+
+      <!-- Comment & Author Info -->
+      <div class="detail-section">
+        <h6 class="section-title"><i class="bi bi-chat-square-text-fill text-primary"></i> {{ 'Comment Information' | translate }}</h6>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Comment ID' | translate }}</span>
+            <span class="detail-val font-monospace">#{{ selectedItem.comment?.id }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Author' | translate }}</span>
+            <span class="detail-val fw-semibold">{{ selectedItem.user?.name || '—' }} (ID: {{ selectedItem.user?.id }})</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Comment Content' | translate }}</span>
+            <span class="detail-val comment-full-text">"{{ selectedItem.comment?.content }}"</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Created At' | translate }}</span>
+            <span class="detail-val">{{ selectedItem.comment?.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="detail-row" *ngIf="selectedItem.comment?.moderation_reason">
+            <span class="detail-lbl">{{ 'Moderation Reason' | translate }}</span>
+            <span class="detail-val text-danger fw-semibold">{{ selectedItem.comment.moderation_reason }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post Context Info -->
+      <div class="detail-section" *ngIf="selectedItem.post">
+        <h6 class="section-title"><i class="bi bi-file-post text-info"></i> {{ 'Post Context' | translate }}</h6>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Post ID' | translate }}</span>
+            <span class="detail-val font-monospace">#{{ selectedItem.post.id }} ({{ selectedItem.post.uuid }})</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Post Owner' | translate }}</span>
+            <span class="detail-val fw-semibold">{{ selectedItem.post.owner || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-lbl">{{ 'Post Content' | translate }}</span>
+            <span class="detail-val text-muted">"{{ selectedItem.post.content }}"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports List -->
+      <div class="detail-section">
+        <h6 class="section-title danger-title">
+          <i class="bi bi-flag-fill text-danger"></i> {{ 'Reports List' | translate }} ({{ selectedItem.reports?.length || 0 }})
+        </h6>
+        <div class="reports-list-wrap mt-2" *ngIf="selectedItem.reports && selectedItem.reports.length > 0">
+          <div class="report-item-card" *ngFor="let rep of selectedItem.reports">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="fw-bold text-dark small"><i class="bi bi-person me-1"></i> {{ rep.reported_by || 'Anonymous' }}</span>
+              <span class="small text-muted">{{ rep.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <p class="mb-0 small text-danger font-semibold">
+              <i class="bi bi-exclamation-circle me-1"></i> {{ rep.reason || 'No reason provided' }}
+            </p>
+          </div>
+        </div>
+        <div *ngIf="!selectedItem.reports || selectedItem.reports.length === 0" class="text-muted small">
+          {{ 'No detailed reports found' | translate }}
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" (click)="closeDetail()">{{ 'Close' | translate }}</button>
+    </div>
+  </div>
+</div>

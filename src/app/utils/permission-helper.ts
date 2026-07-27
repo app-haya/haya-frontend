@@ -99,6 +99,13 @@ const nameToKeyMap: { [key: string]: string } = {
   'اعدادات': 'settings',
   'الاعدادات والسياسات': 'settings',
   'settings': 'settings',
+
+  'بلاغات التعليقات': 'reports',
+  'بلاغات': 'reports',
+  'البلاغات': 'reports',
+  'reports': 'reports',
+  'comment_reports': 'reports',
+  'reports_comments': 'reports',
 };
 
 export function getUserPermissions(user: any): Set<string> {
@@ -168,6 +175,7 @@ export function getFirstPermittedRoute(user: any): string {
     'cities': '/admin/cities',
     'countries': '/admin/countries',
     'banned_words': '/admin/bannedwords',
+    'reports': '/admin/comment-reports',
     'wallet': '/admin/wallet',
     'calendar': '/admin/calendar',
     'notifications': '/admin/send-notifications',

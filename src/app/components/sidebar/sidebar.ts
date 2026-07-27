@@ -62,6 +62,7 @@ export class Sidebar implements OnInit {
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities', perm: 'cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/admin/countries', perm: 'countries' },
     { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/admin/bannedwords', perm: 'banned_words' },
+    { name: 'Comment Reports', icon: 'bi bi-chat-right-quote', path: '/admin/comment-reports', perm: 'reports' },
     { name: 'Wallet', icon: 'bi bi-wallet2', path: '/admin/wallet', perm: 'wallet' },
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar', perm: 'calendar' },
     { name: 'SEND_NOTIFICATIONS', icon: 'bi bi-bell', path: '/admin/send-notifications', perm: 'notifications' },
@@ -111,7 +112,8 @@ export class Sidebar implements OnInit {
         allowedPerms.has(item.name.toLowerCase()) ||
         (permKey === 'verification' && (allowedPerms.has('verifycation') || allowedPerms.has('verification'))) ||
         (permKey === 'notifications' && (allowedPerms.has('messages') || allowedPerms.has('send_notifications') || allowedPerms.has('notifications'))) ||
-        (permKey === 'top30' && (allowedPerms.has('top30') || allowedPerms.has('top 30')))
+        (permKey === 'top30' && (allowedPerms.has('top30') || allowedPerms.has('top 30'))) ||
+        (permKey === 'reports' && (allowedPerms.has('reports') || allowedPerms.has('reports_comments') || allowedPerms.has('comment_reports') || allowedPerms.has('بلاغات')))
       );
     });
   }
