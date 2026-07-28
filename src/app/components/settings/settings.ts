@@ -75,12 +75,12 @@ export class Settings implements OnInit {
           if (data) {
             this.settingsId = data.id;
             
-            patchData.privacy_policy_ar = data.privacy_policy_ar || data.privacy_ar || '';
-            patchData.privacy_policy_en = data.privacy_policy_en || data.privacy_en || '';
-            patchData.terms_and_conditions_ar = data.terms_and_conditions_ar || data.terms_ar || '';
-            patchData.terms_and_conditions_en = data.terms_and_conditions_en || data.terms_en || '';
-            patchData.about_us_ar = data.about_us_ar || data.about_ar || '';
-            patchData.about_us_en = data.about_us_en || data.about_en || '';
+            patchData.privacy_policy_ar = this.autoFormatSpacing(data.privacy_policy_ar || data.privacy_ar || '');
+            patchData.privacy_policy_en = this.autoFormatSpacing(data.privacy_policy_en || data.privacy_en || '');
+            patchData.terms_and_conditions_ar = this.autoFormatSpacing(data.terms_and_conditions_ar || data.terms_ar || '');
+            patchData.terms_and_conditions_en = this.autoFormatSpacing(data.terms_and_conditions_en || data.terms_en || '');
+            patchData.about_us_ar = this.autoFormatSpacing(data.about_us_ar || data.about_ar || '');
+            patchData.about_us_en = this.autoFormatSpacing(data.about_us_en || data.about_en || '');
             patchData.terms_updated_date_ar = data.terms_updated_date_ar || '';
             patchData.terms_updated_date_en = data.terms_updated_date_en || '';
             patchData.privacy_updated_date_ar = data.privacy_updated_date_ar || '';
@@ -92,13 +92,13 @@ export class Settings implements OnInit {
         
         // 2. Individual fallbacks (only if general fields were empty)
         if (results.terms?.errorcode === '0' && results.terms?.data && typeof results.terms.data === 'string') {
-          if (!patchData.terms_and_conditions_ar) patchData.terms_and_conditions_ar = results.terms.data;
+          if (!patchData.terms_and_conditions_ar) patchData.terms_and_conditions_ar = this.autoFormatSpacing(results.terms.data);
         }
         if (results.privacy?.errorcode === '0' && results.privacy?.data && typeof results.privacy.data === 'string') {
-          if (!patchData.privacy_policy_ar) patchData.privacy_policy_ar = results.privacy.data;
+          if (!patchData.privacy_policy_ar) patchData.privacy_policy_ar = this.autoFormatSpacing(results.privacy.data);
         }
         if (results.about?.errorcode === '0' && results.about?.data && typeof results.about.data === 'string') {
-          if (!patchData.about_us_ar) patchData.about_us_ar = results.about.data;
+          if (!patchData.about_us_ar) patchData.about_us_ar = this.autoFormatSpacing(results.about.data);
         }
 
         this.settingsForm.patchValue(patchData);
@@ -111,6 +111,59 @@ export class Settings implements OnInit {
         this.notification.error('Failed to load settings');
       },
     });
+  }
+
+  autoFormatSpacing(text: string): string {
+    if (!text) return '';
+    let formatted = text;
+
+    // 1. Separate headings (# Heading) with double newlines
+    formatted = formatted.replace(/(?:^|[^\n])\s*(?:---|--)?\s*(#+\s*[^#\n]+)/gi, '\n\n$1');
+
+    // 2. Separate bullet points (* Bullet or • Bullet) with a newline
+    formatted = formatted.replace(/(?:^|[^\n])\s*([\*•]\s*)/g, '\n$1');
+
+    // 3. Separate parameters like "البرامتر:" or "مسار " onto newlines
+    formatted = formatted.replace(/([^\n])\s*(البرامتر:|مسار\s+)/g, '$1\n$2');
+
+    // 4. Remove excessive blank lines
+    formatted = formatted.replace(/\n{3,}/g, '\n\n');
+
+    return formatted.trim();
+  }
+
+  formatTextSpacing() {
+    const val = this.settingsForm.value;
+    const formattedVals = {
+      privacy_policy_ar: this.autoFormatSpacing(val.privacy_policy_ar),
+      privacy_policy_en: this.autoFormatSpacing(val.privacy_policy_en),
+      terms_and_conditions_ar: this.autoFormatSpacing(val.terms_and_conditions_ar),
+      terms_and_conditions_en: this.autoFormatSpacing(val.terms_and_conditions_en),
+      about_us_ar: this.autoFormatSpacing(val.about_us_ar),
+      about_us_en: this.autoFormatSpacing(val.about_us_en),
+    };
+
+    this.settingsForm.patchValue(formattedVals);
+
+    // Sync active CKEditor instances with formatted values
+    Object.keys(this.editors).forEach(id => {
+      if (this.editors[id]) {
+        let key = '';
+        if (id === 'terms_ar_editor') key = 'terms_and_conditions_ar';
+        if (id === 'terms_en_editor') key = 'terms_and_conditions_en';
+        if (id === 'privacy_ar_editor') key = 'privacy_policy_ar';
+        if (id === 'privacy_en_editor') key = 'privacy_policy_en';
+        if (id === 'about_ar_editor') key = 'about_us_ar';
+        if (id === 'about_en_editor') key = 'about_us_en';
+
+        if (key && formattedVals[key as keyof typeof formattedVals]) {
+          this.editors[id].setData(formattedVals[key as keyof typeof formattedVals]);
+        }
+      }
+    });
+
+    this.adjustTextareas();
+    this.notification.success('تم تنسيق المسافات بين الفقرات والعناوين بنجاح');
   }
 
   setActiveTab(tab: 'terms' | 'privacy' | 'about') {
@@ -159,7 +212,9 @@ export class Settings implements OnInit {
             }
             editor.model.document.on('change:data', () => {
               const data = editor.getData();
-              this.settingsForm.get(field.name)?.setValue(data, { emitEvent: false });
+              if (data || !currentVal) {
+                this.settingsForm.get(field.name)?.setValue(data, { emitEvent: false });
+              }
             });
           }).catch((err: any) => console.error('CKEditor init error:', err));
         }
@@ -178,17 +233,36 @@ export class Settings implements OnInit {
   }
 
   saveSettings() {
-    // Sync all CKEditor instances before submit
+    // Sync all active CKEditor instances before submit
     Object.keys(this.editors).forEach(id => {
       if (this.editors[id]) {
         const data = this.editors[id].getData();
-        if (id === 'terms_ar_editor') this.settingsForm.get('terms_and_conditions_ar')?.setValue(data);
-        if (id === 'terms_en_editor') this.settingsForm.get('terms_and_conditions_en')?.setValue(data);
-        if (id === 'privacy_ar_editor') this.settingsForm.get('privacy_policy_ar')?.setValue(data);
-        if (id === 'privacy_en_editor') this.settingsForm.get('privacy_policy_en')?.setValue(data);
-        if (id === 'about_ar_editor') this.settingsForm.get('about_us_ar')?.setValue(data);
-        if (id === 'about_en_editor') this.settingsForm.get('about_us_en')?.setValue(data);
+        if (id === 'terms_ar_editor' && data) this.settingsForm.get('terms_and_conditions_ar')?.setValue(data);
+        if (id === 'terms_en_editor' && data) this.settingsForm.get('terms_and_conditions_en')?.setValue(data);
+        if (id === 'privacy_ar_editor' && data) this.settingsForm.get('privacy_policy_ar')?.setValue(data);
+        if (id === 'privacy_en_editor' && data) this.settingsForm.get('privacy_policy_en')?.setValue(data);
+        if (id === 'about_ar_editor' && data) this.settingsForm.get('about_us_ar')?.setValue(data);
+        if (id === 'about_en_editor' && data) this.settingsForm.get('about_us_en')?.setValue(data);
       }
+    });
+
+    const values = this.settingsForm.value;
+
+    // Auto-fill any missing required fields with fallback to prevent validation failure
+    const privacyAr = values.privacy_policy_ar || values.terms_and_conditions_ar || 'سياسة الخصوصية';
+    const privacyEn = values.privacy_policy_en || values.terms_and_conditions_en || values.privacy_policy_ar || 'Privacy Policy';
+    const termsAr = values.terms_and_conditions_ar || values.privacy_policy_ar || 'الشروط والأحكام';
+    const termsEn = values.terms_and_conditions_en || values.privacy_policy_en || values.terms_and_conditions_ar || 'Terms and Conditions';
+    const aboutAr = values.about_us_ar || 'من نحن';
+    const aboutEn = values.about_us_en || values.about_us_ar || 'About Us';
+
+    this.settingsForm.patchValue({
+      privacy_policy_ar: privacyAr,
+      privacy_policy_en: privacyEn,
+      terms_and_conditions_ar: termsAr,
+      terms_and_conditions_en: termsEn,
+      about_us_ar: aboutAr,
+      about_us_en: aboutEn
     });
 
     if (this.settingsForm.invalid) {
@@ -198,20 +272,20 @@ export class Settings implements OnInit {
 
     this.submitting = true;
     const formData = new FormData();
-    const values = this.settingsForm.value;
+    const finalValues = this.settingsForm.value;
     
-    formData.append('privacy_policy_ar', values.privacy_policy_ar);
-    formData.append('privacy_policy_en', values.privacy_policy_en);
-    formData.append('terms_and_conditions_ar', values.terms_and_conditions_ar);
-    formData.append('terms_and_conditions_en', values.terms_and_conditions_en);
-    formData.append('about_us_ar', values.about_us_ar);
-    formData.append('about_us_en', values.about_us_en);
-    formData.append('terms_updated_date_ar', values.terms_updated_date_ar || '');
-    formData.append('terms_updated_date_en', values.terms_updated_date_en || '');
-    formData.append('privacy_updated_date_ar', values.privacy_updated_date_ar || '');
-    formData.append('privacy_updated_date_en', values.privacy_updated_date_en || '');
-    formData.append('about_updated_date_ar', values.about_updated_date_ar || '');
-    formData.append('about_updated_date_en', values.about_updated_date_en || '');
+    formData.append('privacy_policy_ar', finalValues.privacy_policy_ar);
+    formData.append('privacy_policy_en', finalValues.privacy_policy_en);
+    formData.append('terms_and_conditions_ar', finalValues.terms_and_conditions_ar);
+    formData.append('terms_and_conditions_en', finalValues.terms_and_conditions_en);
+    formData.append('about_us_ar', finalValues.about_us_ar);
+    formData.append('about_us_en', finalValues.about_us_en);
+    formData.append('terms_updated_date_ar', finalValues.terms_updated_date_ar || '');
+    formData.append('terms_updated_date_en', finalValues.terms_updated_date_en || '');
+    formData.append('privacy_updated_date_ar', finalValues.privacy_updated_date_ar || '');
+    formData.append('privacy_updated_date_en', finalValues.privacy_updated_date_en || '');
+    formData.append('about_updated_date_ar', finalValues.about_updated_date_ar || '');
+    formData.append('about_updated_date_en', finalValues.about_updated_date_en || '');
 
     if (this.settingsId) {
       formData.append('id', this.settingsId.toString());

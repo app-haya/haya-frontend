@@ -9,6 +9,10 @@
             <p class="mb-0 small">{{ 'MANAGE_POLICIES_AND_TERMS' | translate }}</p>
           </div>
           <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-primary rounded-pill px-3 d-flex align-items-center" (click)="formatTextSpacing()">
+              <i class="bi bi-text-paragraph me-2"></i>
+              <span>تنسيق المسافات والفقرات</span>
+            </button>
             <button *ngIf="settingsId" class="btn btn-outline-danger rounded-pill px-4" (click)="deleteSettings()">
               <i class="bi bi-trash me-2"></i>{{ 'DELETE_ALL' | translate }}
             </button>

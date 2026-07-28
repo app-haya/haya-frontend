@@ -266,6 +266,51 @@
   flex: 1;
 }
 
+.lp-policy-section__content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333333;
+  font-weight: 500;
+}
+
+.lp-policy-section__content p {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: #333333;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-weight: 500;
+}
+
+.lp-policy-section__content ul,
+.lp-policy-section__content ol {
+  padding-right: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.lp-policy-section__content li {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333333;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.lp-policy-section__content strong,
+.lp-policy-section__content b {
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
+.lp-policy-section__content h3,
+.lp-policy-section__content h4 {
+  color: #1a1a2e;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
 /* ===== POLICY FOOTER SUGGESTION LINK ===== */
 .lp-policy-footer-link {
   text-align: center;
@@ -393,66 +438,81 @@
 
 /* ===== INLINE BUTTON STYLES ===== */
 .lp-policy-section__btn-container {
-  margin: 1.5rem 0 1rem;
+  margin: 1.75rem 0 1.25rem;
   text-align: center;
+  width: 100%;
 }
 
+.lp-policy-section__content a.lp-policy-section__btn,
+.lp-policy-intro-text a.lp-policy-section__btn,
+a.lp-policy-section__btn,
 .lp-policy-section__btn {
-  display: inline-block;
-  background-color: #EFE8F4;
-  color: #9259A6;
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-  cursor: pointer;
-  border: none;
-  outline: none;
+  display: inline-block !important;
+  background-color: #EFE8F4 !important;
+  color: #9259A6 !important;
+  padding: 0.75rem 2.25rem !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  font-size: 0.95rem !important;
+  cursor: pointer !important;
+  border: none !important;
+  outline: none !important;
+  margin: 0.5rem 0 !important;
 }
 
+.lp-policy-section__content a.lp-policy-section__btn:hover,
+.lp-policy-intro-text a.lp-policy-section__btn:hover,
+a.lp-policy-section__btn:hover,
 .lp-policy-section__btn:hover {
-  background-color: #9259A6;
-  color: #fff;
+  background-color: #9259A6 !important;
+  color: #fff !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(146, 89, 166, 0.25);
 }
 
 /* ===== API ROUTE BADGES ===== */
+.lp-policy-section__content .lp-policy-section__api-route,
+.lp-policy-intro-text .lp-policy-section__api-route,
 .lp-policy-section__api-route {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background-color: #f5f6fa;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  font-size: 0.95rem;
-  margin: 0.75rem 0;
-  direction: ltr;
-  text-align: left;
-  border: 1px solid #eef0f6;
-  width: 100%;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  background-color: #f5f6fa !important;
+  padding: 0.6rem 1rem !important;
+  border-radius: 8px !important;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important;
+  font-size: 0.95rem !important;
+  margin: 0.85rem 0 !important;
+  direction: ltr !important;
+  text-align: left !important;
+  border: 1px solid #eef0f6 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .lp-policy-section__api-method {
-  background-color: #24b47e;
-  color: #fff;
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
+  background-color: #24b47e !important;
+  color: #fff !important;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.5px !important;
+  display: inline-block !important;
 }
 
 .lp-policy-section__api-method--post {
-  background-color: #248fb4;
+  background-color: #248fb4 !important;
 }
 
 .lp-policy-section__api-path {
-  color: #2c3e50;
-  font-weight: 600;
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-family: inherit !important;
 }
 
 

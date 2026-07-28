@@ -52,11 +52,11 @@
 
   <!-- ===== CONTENT ===== -->
   <section class="lp-policy-content">
-    <div class="lp-container" [class.lp-policy-layout]="type !== 'about'">
+    <div class="lp-container" [class.lp-policy-layout]="type !== 'about' && sections.length > 1">
 
       @if (type === 'about') {
         <div class="lp-policy-main">
-          <div class="lp-policy-text" [innerHTML]="content"></div>
+          <div class="lp-policy-text" [innerHTML]="safeContent"></div>
           
           <!-- Suggestion link at the bottom -->
           <div class="lp-policy-footer-link">
@@ -88,39 +88,13 @@
             @for (sec of sections; track sec.id) {
               <div [id]="sec.id" class="lp-policy-section" [class.lp-policy-section--active]="activeSectionId === sec.id">
                 @if (sec.isIntro) {
-                  <div class="lp-policy-intro-text">
-                    @for (line of sec.lines; track $index) {
-                      <p>{{ line }}</p>
-                    }
-                  </div>
+                  <div class="lp-policy-intro-text" [innerHTML]="sec.htmlContent"></div>
                 } @else {
                   <h2 class="lp-policy-section__title">
                     <span class="lp-policy-section__num">{{ sec.index }}.</span>
                     {{ sec.title }}
                   </h2>
-                  <ul class="lp-policy-section__list">
-                    @for (line of sec.lines; track $index) {
-                      @if (line.startsWith('[button:')) {
-                        <div class="lp-policy-section__btn-container">
-                          <a routerLink="/" fragment="download" class="lp-policy-section__btn">
-                            {{ line.replace('[button:', '').replace(']', '') }}
-                          </a>
-                        </div>
-                      } @else if (line.startsWith('GET ') || line.startsWith('POST ')) {
-                        <div class="lp-policy-section__api-route">
-                          <span class="lp-policy-section__api-method" [class.lp-policy-section__api-method--post]="line.startsWith('POST ')">
-                            {{ line.startsWith('GET ') ? 'GET' : 'POST' }}
-                          </span>
-                          <code class="lp-policy-section__api-path">{{ line.substring(line.indexOf(' ')) }}</code>
-                        </div>
-                      } @else {
-                        <li>
-                          <span class="lp-policy-section__bullet">•</span>
-                          <span class="lp-policy-section__item-text">{{ line }}</span>
-                        </li>
-                      }
-                    }
-                  </ul>
+                  <div class="lp-policy-section__content" [innerHTML]="sec.htmlContent"></div>
                 }
               </div>
             }

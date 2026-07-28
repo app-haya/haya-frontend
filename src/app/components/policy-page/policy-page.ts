@@ -1,27 +1,42 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+export interface PolicySection {
+  id: string;
+  title: string;
+  htmlContent: SafeHtml;
+  isIntro: boolean;
+  index: number;
+}
 
 @Component({
   selector: 'app-policy-page',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './policy-page.html',
-  styleUrl: './policy-page.css'
+  styleUrl: './policy-page.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class PolicyPage implements OnInit {
   type: 'terms' | 'privacy' | 'about' | 'merchant' = 'terms';
   title = '';
   subtitle = '';
   content = '';
+  safeContent: SafeHtml = '';
   lastUpdated = '';
   isMobileMenuOpen = false;
   currentYear = new Date().getFullYear();
-  sections: any[] = [];
+  sections: PolicySection[] = [];
   activeSectionId = 'intro';
 
-  constructor(private route: ActivatedRoute, private settingsService: SettingsService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private settingsService: SettingsService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.route.data.subscribe(data => {
@@ -77,86 +92,202 @@ export class PolicyPage implements OnInit {
     }
   }
 
-  parseSections(rawText: string): any[] {
+  formatBodyContent(bodyHtml: string): string {
+    if (!bodyHtml) return '';
+
+    // 1. Replace [button:Label] globally anywhere in bodyHtml
+    let html = bodyHtml.replace(/(?:<p[^>]*>|<li[^>]*>|<ul[^>]*>|<div[^>]*>|<br\s*\/?>|\r?\n|^)\s*\[button:(.*?)\]\s*(?:<\/p>|<\/li>|<\/ul>|<\/div>|\r?\n|$)/gi, (match, btnText) => {
+      const cleanBtn = btnText.replace(/<[^>]*>/g, '').trim();
+      return `\n<div class="lp-policy-section__btn-container" style="margin: 1.5rem 0; text-align: center; width: 100%;"><a href="/#download" class="lp-policy-section__btn" style="display: inline-block; background-color: #EFE8F4; color: #9259A6; padding: 0.75rem 2.25rem; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.95rem; cursor: pointer; border: none;">${cleanBtn}</a></div>\n`;
+    });
+
+    html = html.replace(/\[button:(.*?)\]/gi, (match, btnText) => {
+      const cleanBtn = btnText.replace(/<[^>]*>/g, '').trim();
+      return `\n<div class="lp-policy-section__btn-container" style="margin: 1.5rem 0; text-align: center; width: 100%;"><a href="/#download" class="lp-policy-section__btn" style="display: inline-block; background-color: #EFE8F4; color: #9259A6; padding: 0.75rem 2.25rem; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.95rem; cursor: pointer; border: none;">${cleanBtn}</a></div>\n`;
+    });
+
+    // 2. Replace GET/api/... or POST/api/... globally anywhere in bodyHtml
+    html = html.replace(/(?:<p[^>]*>|<li[^>]*>|<br\s*\/?>|\r?\n|^)[•\-\*\s]*(GET|POST)\s*(\/api\/[^\s<]+)(?:<\/p>|<\/li>|\r?\n|$)/gi, (match, method, path) => {
+      const m = method.toUpperCase();
+      const p = path.replace(/<[^>]*>/g, '').trim();
+      const methodClass = m === 'POST' ? 'lp-policy-section__api-method--post' : '';
+      const badgeBg = m === 'POST' ? '#248fb4' : '#24b47e';
+      return `\n<div class="lp-policy-section__api-route" style="display: flex; align-items: center; gap: 0.75rem; background-color: #f5f6fa; padding: 0.6rem 1rem; border-radius: 8px; font-family: Consolas, Monaco, monospace; font-size: 0.95rem; margin: 0.85rem 0; direction: ltr; text-align: left; border: 1px solid #eef0f6; width: 100%; box-sizing: border-box;"><span class="lp-policy-section__api-method ${methodClass}" style="background-color: ${badgeBg}; color: #ffffff; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px; display: inline-block; line-height: 1;">${m}</span><code class="lp-policy-section__api-path" style="color: #2c3e50; font-weight: 600; background: transparent; padding: 0; font-family: inherit;">${p}</code></div>\n`;
+    });
+
+    html = html.replace(/(?:^|\s|\n)(GET|POST)\s*(\/api\/[^\s<]+)/gi, (match, method, path) => {
+      const m = method.toUpperCase();
+      const p = path.replace(/<[^>]*>/g, '').trim();
+      const methodClass = m === 'POST' ? 'lp-policy-section__api-method--post' : '';
+      const badgeBg = m === 'POST' ? '#248fb4' : '#24b47e';
+      return `\n<div class="lp-policy-section__api-route" style="display: flex; align-items: center; gap: 0.75rem; background-color: #f5f6fa; padding: 0.6rem 1rem; border-radius: 8px; font-family: Consolas, Monaco, monospace; font-size: 0.95rem; margin: 0.85rem 0; direction: ltr; text-align: left; border: 1px solid #eef0f6; width: 100%; box-sizing: border-box;"><span class="lp-policy-section__api-method ${methodClass}" style="background-color: ${badgeBg}; color: #ffffff; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px; display: inline-block; line-height: 1;">${m}</span><code class="lp-policy-section__api-path" style="color: #2c3e50; font-weight: 600; background: transparent; padding: 0; font-family: inherit;">${p}</code></div>\n`;
+    });
+
+    // 3. Format remaining text lines as bullet items if not already styled divs/lists
+    const lines = html.replace(/<\/?p[^>]*>/gi, '\n').split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    const finalResult: string[] = [];
+
+    for (let line of lines) {
+      if (/<(div|ul|ol|h[1-6]|table|iframe)[^>]*>/i.test(line)) {
+        finalResult.push(line);
+      } else {
+        const cleanText = line.replace(/^[•\-\*]\s*/, '').replace(/<[^>]*>/g, '').trim();
+        if (cleanText) {
+          finalResult.push(`<ul class="lp-policy-section__list"><li><span class="lp-policy-section__bullet">•</span><span class="lp-policy-section__item-text">${cleanText}</span></li></ul>`);
+        }
+      }
+    }
+
+    return finalResult.length > 0 ? finalResult.join('') : html;
+  }
+
+  parseSections(rawText: string): PolicySection[] {
     if (!rawText) return [];
     
-    // Split text into lines, trim each line, and filter out empty ones
-    const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    
-    const matchedHeadings = this.type === 'privacy' ? [
+    // Clean out footer link if present in rawText
+    let text = rawText
+      .replace(/<p>\s*تبحث عن معلومات أخرى؟.*?<\/p>/gi, '')
+      .replace(/تبحث عن معلومات أخرى؟.*/gi, '');
+
+    // Normalize existing HTML headings h1, h3, h4, h5, h6 to h2
+    text = text.replace(/<h[13456][^>]*>(.*?)<\/h[13456]>/gi, '<h2>$1</h2>');
+
+    // Comprehensive list of known Arabic policy section heading phrases
+    const knownHeadings = [
       'البيانات التي نجمعها',
       'كيف نستخدم بياناتك؟',
+      'كيف نستخدم بياناتك',
       'مشاركة البيانات وحمايتها',
+      'مشاركة البيانات',
       'حقوق المستخدم والتحكم بالبيانات',
-      'أسئلة'
-    ] : this.type === 'terms' ? [
+      'حقوق المستخدم',
+      'حماية البيانات والأمان',
+      'حماية البيانات',
+      'ملفات تعريف الارتباط',
+      'التعديلات على سياسة الخصوصية',
+      'قبول الشروط والأحكام',
+      'قبول الشروط',
       'شروط الحساب والأمان',
+      'شروط الحساب',
+      'إنشاء حساب وتمكين التحقق من الهوية',
+      'إنشاء حساب',
+      'أهلية الاستخدام',
+      'السلوك والمحتوى المحظور',
+      'السلوك والمحتوى',
       'سياسة الاستخدام العادل والمحتوى الاجتماعي',
       'المعاملات التجارية والحجوزات',
+      'المعاملات التجارية',
+      'المحتوى الذي تنشره',
+      'الحسابات',
+      'العقوبات والإجراءات',
+      'العقوبات',
       'سياسة توب 30',
-      'أسئلة'
-    ] : this.type === 'merchant' ? [
+      'توب 30',
+      'عدالة التنافس',
+      'مكافحة الاحتيال',
+      'القرارات النهائية',
       'المميزات',
       'إنشاء حساب تاجر',
       'دليل ربط API',
       'لوحة تحكم التاجر',
-      'سياسة توب 30',
-      'الدعم الفني'
-    ] : [];
+      'الدعم الفني',
+      'أسئلة'
+    ];
 
-    if (matchedHeadings.length === 0) {
+    // 1. Replace # Known Heading with <h2>Known Heading</h2>
+    for (const h of knownHeadings) {
+      const escaped = h.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = new RegExp(`(?:---|--|:|\\.|\\s|<p>|<br\\s*\\/?>|^)*#\\s*(${escaped})(?::|\\s+|\\?|\\؟|<|\\n|$)`, 'gi');
+      text = text.replace(regex, `\n<h2>$1</h2>\n`);
+    }
+
+    // 2. Match any remaining short title (1 to 5 words) after #
+    text = text.replace(/(?:---|--|:\s*)*#\s*([\u0600-\u06FF\w\s]{2,35})(?=\s+[\u0600-\u06FF\w]{3,}|\n|$)/gi, (match, title) => {
+      const words = title.trim().split(/\s+/);
+      if (words.length <= 5) {
+        return `\n<h2>${title.trim()}</h2>\n`;
+      }
+      return match;
+    });
+
+    // Clean up empty tags around <h2>
+    text = text.replace(/<p>\s*<h2>/gi, '<h2>').replace(/<\/h2>\s*<\/p>/gi, '</h2>');
+    text = text.replace(/<p>\s*<\/p>/gi, '');
+
+    // If text has no <h2>, check for numbered headers like 1. Title
+    if (!text.includes('<h2>')) {
+      text = text.replace(/(?:<p>|\r?\n|^)\s*(\d+[\.\-]\s*[^<\n]{2,40})(?:<\/p>|\r?\n|$)/gi, (match, title) => {
+        return `<h2>${title.trim()}</h2>`;
+      });
+      text = text.replace(/<p>\s*<\/p>/gi, '');
+    }
+
+    // If still no <h2>, treat entire content as single section
+    if (!text.includes('<h2>')) {
+      const formattedIntro = this.formatBodyContent(text);
       return [{
         id: 'intro',
         title: 'مقدمة',
-        lines: lines,
+        htmlContent: this.sanitizer.bypassSecurityTrustHtml(formattedIntro),
         isIntro: true,
         index: 0
       }];
     }
 
-    const sections: any[] = [];
-    
-    // The first section is always the introduction ("مقدمة")
-    let currentSection = {
-      id: 'intro',
-      title: 'مقدمة',
-      lines: [] as string[],
-      isIntro: true,
-      index: 0
-    };
-    
-    sections.push(currentSection);
-    let sectionIndex = 1;
+    // Split text by <h2>
+    const parts = text.split(/<h2[^>]*>/i);
+    const sections: PolicySection[] = [];
 
-    for (const line of lines) {
-      // Find if this line is a heading (exact match after trimming OR starts with #)
-      const startsWithHash = line.startsWith('#');
-      const isHeading = matchedHeadings.some(h => line === h) || startsWithHash;
-      
-      if (isHeading) {
-        // Strip the '#' symbol and any leading spaces
-        const headingTitle = startsWithHash ? line.replace(/^#+\s*/, '') : line;
-        
-        currentSection = {
-          id: `section-${sectionIndex}`,
-          title: headingTitle,
-          lines: [] as string[],
+    // Content before first <h2> is Intro
+    const rawIntro = parts[0].replace(/<p>\s*<\/p>/gi, '').replace(/<[^>]*>/g, '').trim();
+    if (rawIntro) {
+      const introHtml = this.formatBodyContent(parts[0]);
+      sections.push({
+        id: 'intro',
+        title: 'مقدمة',
+        htmlContent: this.sanitizer.bypassSecurityTrustHtml(introHtml),
+        isIntro: true,
+        index: 0
+      });
+    }
+
+    let secIndex = 1;
+    for (let i = 1; i < parts.length; i++) {
+      const part = parts[i];
+      const closingIndex = part.indexOf('</h2>');
+      if (closingIndex === -1) continue;
+
+      let titleText = part.substring(0, closingIndex).replace(/<[^>]*>/g, '').trim();
+      let rawBody = part.substring(closingIndex + 5).replace(/^<\/p>/i, '').replace(/<p>\s*<\/p>/gi, '').trim();
+
+      const bodyHtml = this.formatBodyContent(rawBody);
+
+      // Clean title text for sidebar menu
+      const cleanTitle = titleText.replace(/^\d+[\.\-]\s*/, '').replace(/^#+\s*/, '');
+
+      if (cleanTitle || bodyHtml) {
+        sections.push({
+          id: `section-${secIndex}`,
+          title: cleanTitle || titleText || `قسم ${secIndex}`,
+          htmlContent: this.sanitizer.bypassSecurityTrustHtml(bodyHtml),
           isIntro: false,
-          index: sectionIndex
-        };
-        sections.push(currentSection);
-        sectionIndex++;
-      } else {
-        // Filter out footer suggestion if it came in the raw API data
-        if (line.includes('تبحث عن معلومات أخرى') || line.includes('اطّلع على سياسة الخصوصية')) {
-          continue;
-        }
-        currentSection.lines.push(line);
+          index: secIndex
+        });
+        secIndex++;
       }
     }
 
-    // Clean up empty sections if any
-    return sections.filter(sec => sec.isIntro || sec.lines.length > 0);
+    if (sections.length === 0) {
+      sections.push({
+        id: 'intro',
+        title: 'مقدمة',
+        htmlContent: this.sanitizer.bypassSecurityTrustHtml(text),
+        isIntro: true,
+        index: 0
+      });
+    }
+
+    return sections;
   }
 
   loadContent() {
@@ -171,6 +302,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
             this.sections = this.parseSections(this.content);
           }
@@ -178,6 +310,7 @@ export class PolicyPage implements OnInit {
         error: (err) => {
           console.error('Error loading terms:', err);
           this.content = 'عذراً، فشل تحميل الشروط والأحكام حالياً. يرجى المحاولة لاحقاً.';
+          this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
           this.sections = this.parseSections(this.content);
         }
       });
@@ -188,6 +321,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
             this.sections = this.parseSections(this.content);
           }
@@ -195,6 +329,7 @@ export class PolicyPage implements OnInit {
         error: (err) => {
           console.error('Error loading privacy:', err);
           this.content = 'عذراً، فشل تحميل سياسة الخصوصية حالياً. يرجى المحاولة لاحقاً.';
+          this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
           this.sections = this.parseSections(this.content);
         }
       });
@@ -205,6 +340,7 @@ export class PolicyPage implements OnInit {
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
+            this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
             this.sections = this.parseSections(this.content);
           }
@@ -212,6 +348,7 @@ export class PolicyPage implements OnInit {
         error: (err) => {
           console.error('Error loading about us:', err);
           this.content = 'عذراً، فشل تحميل معلومات من نحن حالياً. يرجى المحاولة لاحقاً.';
+          this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
           this.sections = this.parseSections(this.content);
         }
       });
@@ -269,6 +406,7 @@ POST /api/v1/cashier/invoices
 
 # الدعم الفني
 إذا كان لديك أي استفسارات أو شكاوى أو اقتراحات، يمكنك التواصل معنا على الرقم الموحد HAYA-APP-800. سنبذل قصارى جهدنا لمعالجة شكواك في أسرع فرصة.`;
+      this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
       this.sections = this.parseSections(this.content);
     }
   }
