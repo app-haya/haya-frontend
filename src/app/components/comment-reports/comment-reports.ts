@@ -69,11 +69,11 @@ export class CommentReports implements OnInit {
     this.currentPage = page;
 
     this.commentReportsService.getCommentReports(this.activeTab, page, this.perPage).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.loading = false;
-        if (res && (res.errorcode === '0' || res.status === 200) && res.data) {
+        if (res && (res.errorcode === '0' || res.errorcode === 0 || res.status === 200 || res.status === '200') && res.data) {
           const paginatedData = res.data;
-          this.reports = paginatedData.data || [];
+          this.reports = Array.isArray(paginatedData.data) ? paginatedData.data : (Array.isArray(paginatedData) ? paginatedData : []);
           this.currentPage = paginatedData.current_page || page;
           this.lastPage = paginatedData.last_page || 1;
           this.total = paginatedData.total !== undefined ? paginatedData.total : this.reports.length;
