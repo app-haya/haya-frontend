@@ -1,20 +1,25 @@
-<div dir="rtl" class="lp-root">
+<div [attr.dir]="isEn ? 'ltr' : 'rtl'" class="lp-root" [class.lp-root-en]="isEn">
 
   <!-- ===== NAVBAR ===== -->
   <nav class="lp-nav">
     <div class="lp-container lp-nav__inner">
       <a routerLink="/" class="lp-nav__brand">
-        <img src="/images/ايقونة هيا2-08.svg" alt="شعار هيّا" class="lp-nav__logo" />
+        <img src="/images/ايقونة هيا2-08.svg" [alt]="isEn ? 'Haya Logo' : 'شعار هيّا'" class="lp-nav__logo" />
         <span class="lp-nav__name">هيّا | Haya</span>
       </a>
       <ul class="lp-nav__links">
-        <li><a routerLink="/" class="lp-nav__link">الرئيسية</a></li>
-        <li><a routerLink="/about-us" class="lp-nav__link" [class.lp-nav__link--active]="type === 'about'">من نحن</a></li>
-        <li><a routerLink="/privacy" class="lp-nav__link" [class.lp-nav__link--active]="type === 'privacy'">سياسة الخصوصية</a></li>
-        <li><a routerLink="/terms" class="lp-nav__link" [class.lp-nav__link--active]="type === 'terms'">الشروط والأحكام</a></li>
-        <li><a routerLink="/join-merchant" class="lp-nav__link" [class.lp-nav__link--active]="type === 'merchant'">إنضم كتاجر</a></li>
+        <li><a routerLink="/" class="lp-nav__link">{{ isEn ? 'Home' : 'الرئيسية' }}</a></li>
+        <li><a routerLink="/about-us" class="lp-nav__link" [class.lp-nav__link--active]="type === 'about'">{{ isEn ? 'About Us' : 'من نحن' }}</a></li>
+        <li><a routerLink="/privacy" class="lp-nav__link" [class.lp-nav__link--active]="type === 'privacy'">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a></li>
+        <li><a routerLink="/terms" class="lp-nav__link" [class.lp-nav__link--active]="type === 'terms'">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a></li>
+        <li><a routerLink="/join-merchant" class="lp-nav__link" [class.lp-nav__link--active]="type === 'merchant'">{{ isEn ? 'Join as Merchant' : 'إنضم كتاجر' }}</a></li>
       </ul>
-      <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">حمل التطبيق</a>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <button (click)="toggleLanguage()" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-weight: 600; font-size: 0.85rem;" [title]="isEn ? 'Switch to Arabic' : 'تغيير إلى الإنجليزية'">
+          <i class="bi bi-globe me-1"></i>{{ isEn ? 'العربية' : 'English' }}
+        </button>
+        <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">{{ isEn ? 'Download App' : 'حمل التطبيق' }}</a>
+      </div>
       <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
         @if (isMobileMenuOpen) {
           <i class="bi bi-x lp-nav__toggle-close"></i>
@@ -27,12 +32,17 @@
     <!-- Mobile Menu Dropdown -->
     <div class="lp-nav__mobile-menu" [class.lp-nav__mobile-menu--open]="isMobileMenuOpen">
       <ul>
-        <li><a routerLink="/" (click)="closeMobileMenu()" class="lp-nav__mobile-link">الرئيسية</a></li>
-        <li><a routerLink="/about-us" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'about'">من نحن</a></li>
-        <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'privacy'">سياسة الخصوصية</a></li>
-        <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'terms'">الشروط والأحكام</a></li>
-        <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'merchant'">إنضم كتاجر</a></li>
-        <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">حمل التطبيق</a></li>
+        <li><a routerLink="/" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ isEn ? 'Home' : 'الرئيسية' }}</a></li>
+        <li><a routerLink="/about-us" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'about'">{{ isEn ? 'About Us' : 'من نحن' }}</a></li>
+        <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'privacy'">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a></li>
+        <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'terms'">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a></li>
+        <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'merchant'">{{ isEn ? 'Join as Merchant' : 'إنضم كتاجر' }}</a></li>
+        <li class="py-2 text-center">
+          <button (click)="toggleLanguage(); closeMobileMenu()" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+            <i class="bi bi-globe me-1"></i>{{ isEn ? 'العربية' : 'English' }}
+          </button>
+        </li>
+        <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">{{ isEn ? 'Download App' : 'حمل التطبيق' }}</a></li>
       </ul>
     </div>
   </nav>
@@ -60,15 +70,20 @@
           
           <!-- Suggestion link at the bottom -->
           <div class="lp-policy-footer-link">
-            <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a> أو <a routerLink="/terms">الشروط والأحكام</a></span>
+            <span>
+              {{ isEn ? 'Looking for other information? Check out ' : 'تبحث عن معلومات أخرى؟ اطلع على ' }}
+              <a routerLink="/privacy">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a>
+              {{ isEn ? ' or ' : ' أو ' }}
+              <a routerLink="/terms">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a>
+            </span>
           </div>
         </div>
       } @else {
-        <!-- Sidebar Menu (Right on desktop, Top on mobile) -->
+        <!-- Sidebar Menu (Right on desktop for RTL, Left for LTR, Top on mobile) -->
         @if (sections.length > 1) {
           <aside class="lp-policy-sidebar">
             <div class="lp-policy-sidebar__sticky">
-              <h3 class="lp-policy-sidebar__title">المحتويات</h3>
+              <h3 class="lp-policy-sidebar__title">{{ isEn ? 'Contents' : 'المحتويات' }}</h3>
               <ul class="lp-policy-sidebar__menu">
                 @for (sec of sections; track sec.id) {
                   <li class="lp-policy-sidebar__item" [class.lp-policy-sidebar__item--active]="activeSectionId === sec.id">
@@ -82,7 +97,7 @@
           </aside>
         }
 
-        <!-- Main Content (Left on desktop, Bottom on mobile) -->
+        <!-- Main Content -->
         <div class="lp-policy-main">
           <div class="lp-policy-sections">
             @for (sec of sections; track sec.id) {
@@ -103,11 +118,22 @@
           <!-- Suggestion link at the bottom -->
           <div class="lp-policy-footer-link">
             @if (type === 'privacy') {
-              <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/terms">الشروط والأحكام</a></span>
+              <span>
+                {{ isEn ? 'Looking for other information? Check out ' : 'تبحث عن معلومات أخرى؟ اطلع على ' }}
+                <a routerLink="/terms">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a>
+              </span>
             } @else if (type === 'terms') {
-              <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a></span>
+              <span>
+                {{ isEn ? 'Looking for other information? Check out ' : 'تبحث عن معلومات أخرى؟ اطلع على ' }}
+                <a routerLink="/privacy">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a>
+              </span>
             } @else {
-              <span>تبحث عن معلومات أخرى؟ اطلع على <a routerLink="/privacy">سياسة الخصوصية</a> أو <a routerLink="/terms">الشروط والأحكام</a></span>
+              <span>
+                {{ isEn ? 'Looking for other information? Check out ' : 'تبحث عن معلومات أخرى؟ اطلع على ' }}
+                <a routerLink="/privacy">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a>
+                {{ isEn ? ' or ' : ' أو ' }}
+                <a routerLink="/terms">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a>
+              </span>
             }
           </div>
         </div>
@@ -126,30 +152,36 @@
         <!-- Right Section: Brand -->
         <div class="lp-footer__brand">
           <div class="lp-footer__logo-wrapper">
-            <img src="/images/ايقونة هيا2-08.svg" alt="شعار هيّا" class="lp-footer__logo-icon" />
+            <img src="/images/ايقونة هيا2-08.svg" [alt]="isEn ? 'Haya Logo' : 'شعار هيّا'" class="lp-footer__logo-icon" />
             <span class="lp-footer__name">Haya | هيّا</span>
           </div>
-          <p class="lp-footer__tagline">مستقبل الخدمات الرقمية بروح نجدية<br>أصيلة ومنظومة متكاملة تجمع التواصل<br>والتجارة والذكاء لتلبي كافة تطلعاتك</p>
+          <p class="lp-footer__tagline">
+            @if (isEn) {
+              The future of digital services with an authentic Najdi spirit<br>and an integrated ecosystem for communication,<br>commerce, and intelligence.
+            } @else {
+              مستقبل الخدمات الرقمية بروح نجدية<br>أصيلة ومنظومة متكاملة تجمع التواصل<br>والتجارة والذكاء لتلبي كافة تطلعاتك
+            }
+          </p>
         </div>
 
         <!-- Middle Section: Quick Links -->
         <div class="lp-footer__links">
-          <h4>روابط سريعة</h4>
+          <h4>{{ isEn ? 'Quick Links' : 'روابط سريعة' }}</h4>
           <ul>
-            <li><a routerLink="/about-us">من نحن</a></li>
-            <li><a routerLink="/privacy">سياسة الخصوصية</a></li>
-            <li><a routerLink="/terms">الشروط والأحكام</a></li>
-            <li><a routerLink="/join-merchant">إنضم كتاجر</a></li>
+            <li><a routerLink="/about-us">{{ isEn ? 'About Us' : 'من نحن' }}</a></li>
+            <li><a routerLink="/privacy">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a></li>
+            <li><a routerLink="/terms">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a></li>
+            <li><a routerLink="/join-merchant">{{ isEn ? 'Join as Merchant' : 'إنضم كتاجر' }}</a></li>
           </ul>
         </div>
 
         <!-- Left Section: Contact & Download -->
         <div class="lp-footer__contact">
-          <h4>تواصل معنا</h4>
-          <p class="lp-footer__phone">الرقم الموحد: <span class="lp-footer__phone-number">800-HAYA-APP</span></p>
+          <h4>{{ isEn ? 'Contact Us' : 'تواصل معنا' }}</h4>
+          <p class="lp-footer__phone">{{ isEn ? 'Toll-free: ' : 'الرقم الموحد: ' }}<span class="lp-footer__phone-number">800-HAYA-APP</span></p>
           
           <div class="lp-footer__download">
-            <h4>حمل التطبيق</h4>
+            <h4>{{ isEn ? 'Download App' : 'حمل التطبيق' }}</h4>
             <div class="lp-footer__store-btns">
               <a href="#" class="lp-footer__store-btn-full">
                 <i class="bi bi-apple"></i>
@@ -173,9 +205,10 @@
       <!-- Bottom Section -->
       <div class="lp-footer__bottom">
         <span class="lp-footer__sparkle">✦</span>
-        <p>© {{ currentYear }} جميع الحقوق محفوظة لدى هيّا | All Rights Reserved</p>
+        <p>© {{ currentYear }} {{ isEn ? 'All Rights Reserved by Haya' : 'جميع الحقوق محفوظة لدى هيّا | All Rights Reserved' }}</p>
       </div>
     </div>
   </footer>
 
 </div>
+

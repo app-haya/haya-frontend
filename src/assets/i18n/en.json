@@ -736,5 +736,128 @@
     "Failed to delete comment": "Failed to delete comment",
     "Pending Review": "Pending Review",
     "Reviewed": "Reviewed",
-    "Resolved": "Resolved"
+    "Resolved": "Resolved",
+    "LANDING": {
+        "NAV": {
+            "BRAND": "Haya | هيّا",
+            "HOME": "Home",
+            "ABOUT": "About Us",
+            "PRIVACY": "Privacy Policy",
+            "TERMS": "Terms & Conditions",
+            "JOIN_MERCHANT": "Join as Merchant",
+            "DOWNLOAD": "Download App",
+            "LANG_BTN": "العربية",
+            "LANG_CODE": "AR"
+        },
+        "HERO": {
+            "ALT": "Haya - From Saudi Arabia to the World with Najdi Identity"
+        },
+        "ABOUT": {
+            "TITLE": "Who We Are?",
+            "CARD1_TITLE": "Social Platform",
+            "CARD1_DESC": "Connect with the community through encrypted public and private chats and interactive videos",
+            "CARD2_TITLE": "Smart Services",
+            "CARD2_DESC": "Shop, book services, and get the best exclusive deals",
+            "CARD3_TITLE": "Rewards System",
+            "CARD3_DESC": "Collect points monthly with every transaction and compete to reach the global Top 30 list"
+        },
+        "SERVICES": {
+            "TITLE": "Our Integrated Services",
+            "STAT1_VAL": "7+",
+            "STAT1_LABEL": "Integrated Services",
+            "STAT2_VAL": "24/7",
+            "STAT2_LABEL": "Continuous Support",
+            "STAT3_VAL": "100%",
+            "STAT3_LABEL": "Secure & Fast",
+            "CARD1_TITLE": "Smart Bookings",
+            "CARD1_DESC": "Your stay starts here<br>Easy bookings and diverse options",
+            "CARD2_TITLE": "Public Chat",
+            "CARD2_DESC": "Share your thoughts and moments your way<br>Your words, opinion, and interaction in one place",
+            "CARD3_TITLE": "Deals",
+            "CARD3_DESC": "Buy and sell at competitive prices<br>and incredible offers",
+            "CARD4_TITLE": "Private Chat",
+            "CARD4_DESC": "Connect with your friends directly and securely<br>Messages, photos, and instant sharing with ease",
+            "CARD5_TITLE": "Delivery Orders",
+            "CARD5_DESC": "Order with speed and comfort, leave the rest to us",
+            "CARD6_TITLE": "Short Videos",
+            "CARD6_DESC": "Short clips expressing you<br>Creativity, fun, and new discovery every day",
+            "TOP30_TITLE": "Top 30",
+            "TOP30_DESC": "Connect - Share - Interact - Book - Order - Shop & Win"
+        },
+        "HOW": {
+            "TITLE": "How Does the Top 30 System Work?",
+            "USER_TITLE": "User Earns Points",
+            "USER_DESC": "Through daily interaction, booking, chat, and sharing,<br>the user collects points to rise in global rankings",
+            "MERCHANT_TITLE": "Merchant Distributes Points",
+            "MERCHANT_DESC": "The merchant is the engine, offering points as customer rewards<br>upon purchase or using services via Haya API",
+            "CTA_TITLE": "Use, collect points, and enter the Top 30 race",
+            "CTA_BTN": "Compete Now",
+            "STEP1_TITLE": "Register in Haya",
+            "STEP1_DESC": "Create your profile<br>and start your extraordinary journey",
+            "STEP2_TITLE": "Interact & Buy",
+            "STEP2_DESC": "Every chat, booking, or purchase<br>grants you instant points",
+            "STEP3_TITLE": "Collect Points",
+            "STEP3_DESC": "Monitor your points balance grow<br>in the Top 30 service",
+            "STEP4_TITLE": "Enter the Challenge",
+            "STEP4_DESC": "Compete to reach<br>the top 30 users in your region",
+            "STEP5_TITLE": "Win Prizes",
+            "STEP5_DESC": "Exclusive prizes and real gains<br>for top engagers",
+            "COMPETITION_TITLE": "For Merchants: Don't compete in Top 30... Create Loyalty!",
+            "COMPETITION_DESC": "Empower your business by directly integrating your services into Haya, distributing points to your customers, and raising brand loyalty using our advanced tech tools",
+            "FEATURE1": "Seamless and simple API integration",
+            "FEATURE2": "Integrated dashboard for analyzing customer behavior",
+            "FEATURE3": "Direct access to an active user base",
+            "JOIN_MERCHANT_BTN": "Join as Merchant"
+        },
+        "WHY": {
+            "TITLE": "Why Haya is the Best Destination for Your Business Growth?",
+            "CARD1_TITLE": "Accelerated Growth",
+            "CARD1_DESC": "Globally scalable business model<br>starting from the Saudi power center",
+            "CARD2_TITLE": "Integrated Ecosystem",
+            "CARD2_DESC": "Merging social interaction with commerce creates<br>sustainable value",
+            "CARD3_TITLE": "Deep Insights",
+            "CARD3_DESC": "Accurate consumer behavior analytics supporting<br>smart decision making",
+            "CARD4_TITLE": "Unique Identity",
+            "CARD4_DESC": "Using Najdi heritage as soft power in<br>design and technology"
+        },
+        "BENEFITS": {
+            "TITLE": "Merchant Benefits & Solutions",
+            "CARD1_TITLE": "Increase Sales",
+            "CARD1_DESC": "Automatic conversion of your followers into real customers for your store",
+            "CARD2_TITLE": "Dedicated Community",
+            "CARD2_DESC": "Build long-term customer relationships through activity",
+            "CARD3_TITLE": "Targeted Ads",
+            "CARD3_DESC": "Reach the right audience at the right time",
+            "CARD4_TITLE": "Instant Reports",
+            "CARD4_DESC": "Analytics dashboard to track campaign performance with extreme precision",
+            "CARD5_TITLE": "Tech Scalability",
+            "CARD5_DESC": "Flexible API solutions suited for companies of all sizes",
+            "CARD6_TITLE": "Global Presence",
+            "CARD6_DESC": "Join a platform targeting the global market from day one"
+        },
+        "DOWNLOAD": {
+            "BANNER_ITEMS": [
+                "Download App",
+                "Sign In",
+                "Enjoy",
+                "Interact",
+                "Order",
+                "Compete",
+                "Enjoy"
+            ],
+            "TITLE": "Download <span class=\"lp-highlight\">Haya </span><span class=\"lp-highlight\">App</span> Now..<br>And Enjoy Endless Features",
+            "DESC": "Discover smart services and authentic identity in one platform<br>And dive into monthly Top 30 competition to win extraordinary prizes",
+            "CONTACT_TITLE": "Contact Us in Total Privacy",
+            "CONTACT_DESC": "We are available to serve you directly via private communication channels inside Haya app<br>where privacy and security are embedded in our design",
+            "UNIFIED_NUMBER": "Unified Number"
+        },
+        "FOOTER": {
+            "TAGLINE": "The future of digital services with an authentic Najdi spirit<br>and an integrated system combining social, commerce, and intelligence to fulfill all your aspirations",
+            "QUICK_LINKS": "Quick Links",
+            "CONTACT_US": "Contact Us",
+            "UNIFIED_NUMBER_LABEL": "Unified Number:",
+            "DOWNLOAD_APP": "Download App",
+            "RIGHTS": "All Rights Reserved by Haya | جميع الحقوق محفوظة"
+        }
+    }
 }

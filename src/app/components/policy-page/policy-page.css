@@ -515,4 +515,39 @@ a.lp-policy-section__btn:hover,
   font-family: inherit !important;
 }
 
+/* ===== LTR SUPPORT OVERRIDES ===== */
+.lp-root[dir="ltr"] .lp-policy-text {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-policy-sidebar__title {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+.lp-root[dir="ltr"] .lp-policy-sidebar__menu {
+  border-left: none;
+  border-right: 2px solid #F0EAF5;
+}
+
+.lp-root[dir="ltr"] .lp-policy-sidebar__link {
+  text-align: left;
+  padding-right: 0;
+  padding-left: 1.25rem;
+}
+
+.lp-root[dir="ltr"] .lp-policy-sidebar__item::before {
+  left: auto;
+  right: -2px;
+}
+
+.lp-root[dir="ltr"] .lp-policy-section__content ul,
+.lp-root[dir="ltr"] .lp-policy-section__content ol,
+.lp-root[dir="ltr"] .lp-policy-text ul,
+.lp-root[dir="ltr"] .lp-policy-text ol {
+  padding-right: 0;
+  padding-left: 1.5rem;
+}
+
+
 

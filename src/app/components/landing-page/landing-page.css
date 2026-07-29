@@ -11,6 +11,134 @@
   overflow-x: hidden;
 }
 
+.lp-root[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-services__title-wrap {
+  align-items: flex-start;
+}
+
+.lp-root[dir="ltr"] .lp-services__title::after {
+  left: 0;
+  right: auto;
+}
+
+.lp-root[dir="ltr"] .lp-services__stats {
+  margin-left: auto;
+  margin-right: calc(-50vw + 50%);
+  width: calc(50% + (50vw - 50%));
+}
+
+.lp-root[dir="ltr"] .lp-services__stat:not(:last-child)::after {
+  right: -0.75rem;
+  left: auto;
+}
+
+.lp-root[dir="ltr"] .lp-services__card {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-services__icon {
+  left: -0.5rem;
+  right: auto;
+}
+
+.lp-root[dir="ltr"] .lp-services__top30 {
+  text-align: left;
+}
+
+@media (min-width: 992px) {
+  .lp-root[dir="ltr"] .lp-services__card:nth-child(3),
+  .lp-root[dir="ltr"] .lp-services__card:nth-child(4) {
+    transform: translateX(50px);
+  }
+}
+
+.lp-root[dir="ltr"] .lp-how__card {
+  text-align: center;
+}
+
+.lp-root[dir="ltr"] .lp-how__cta {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-how__cta-content {
+  align-items: flex-start;
+  margin-right: 0;
+  margin-left: calc(-50vw + 50%);
+  padding-right: 2rem;
+  padding-left: calc(50vw - 50% + 2rem);
+}
+
+.lp-root[dir="ltr"] .lp-how__cta-btn {
+  margin-left: 0;
+  margin-right: 2rem;
+}
+
+.lp-root[dir="ltr"] .lp-how__competition-right,
+.lp-root[dir="ltr"] .lp-how__competition-left {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-why__card {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-why__card:first-child,
+.lp-root[dir="ltr"] .lp-why__card:nth-child(4) {
+  border-radius: 0 20px 0 20px;
+}
+
+.lp-root[dir="ltr"] .lp-merchant-benefits__title {
+  text-align: left;
+}
+
+@media (min-width: 992px) {
+  .lp-root[dir="ltr"] .lp-merchant-benefits__card {
+    align-items: flex-start;
+  }
+  .lp-root[dir="ltr"] .lp-merchant-benefits__header {
+    justify-content: flex-start;
+  }
+  .lp-root[dir="ltr"] .lp-merchant-benefits__desc {
+    text-align: left;
+    padding-right: 0;
+    padding-left: 56px;
+  }
+}
+
+.lp-root[dir="ltr"] .lp-download__contact-content {
+  text-align: left;
+}
+
+.lp-root[dir="ltr"] .lp-footer__brand,
+.lp-root[dir="ltr"] .lp-footer__links,
+.lp-root[dir="ltr"] .lp-footer__contact {
+  text-align: left;
+}
+
+.lp-btn--lang {
+  background: #f3f0f7;
+  color: #7a3ca0;
+  border: 1px solid rgba(122, 60, 160, 0.2);
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.lp-btn--lang:hover {
+  background: #7a3ca0;
+  color: #fff;
+  border-color: #7a3ca0;
+}
+
 .lp-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -708,7 +836,8 @@
   content: '';
   position: absolute;
   top: 0;
-  right: -6%;
+  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 350' preserveAspectRatio='none'%3E%3Cpath d='M 100,35 Q 150,35 200,175 Q 250,315 300,315 Q 350,315 400,175 Q 450,35 500,35 Q 550,35 600,175 Q 650,315 700,315 Q 750,315 800,175 Q 850,35 900,35' fill='none' stroke='%23bbbbbb' stroke-width='2.5' stroke-dasharray='10,6' stroke-linecap='round' /%3E%3C/svg%3E");
@@ -719,7 +848,7 @@
 }
 
 .lp-how__card {
-  text-align: right;
+  text-align: center;
   padding: 2rem 1.5rem;
   border-radius: 16px;
   background: transparent;
@@ -728,6 +857,9 @@
   transition: all 0.3s ease;
   box-shadow: none;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .lp-how__card:hover {
@@ -746,15 +878,7 @@
   margin-bottom: -10rem;
 }
 
-/* Move card 3 to the right */
-.lp-how__card:nth-child(3) {
-  transform: translateX(2rem);
-}
 
-/* Adjust card 4 down on desktop to align its step circle on the dashed curve */
-.lp-how__card:nth-child(4) {
-  transform: translateY(18px);
-}
 
 .lp-how__step {
   position: relative;
@@ -1541,12 +1665,25 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.lp-root[dir="ltr"] .lp-download__banner-track {
+  animation: marquee-ltr 25s linear infinite;
+}
+
 @keyframes marquee {
-  from {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
     transform: translate3d(50%, 0, 0);
   }
-  to {
+}
+
+@keyframes marquee-ltr {
+  0% {
     transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 

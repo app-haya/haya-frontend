@@ -1,8 +1,10 @@
-import { Component, OnInit, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 export interface PolicySection {
   id: string;
@@ -15,12 +17,12 @@ export interface PolicySection {
 @Component({
   selector: 'app-policy-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './policy-page.html',
   styleUrl: './policy-page.css',
   encapsulation: ViewEncapsulation.None
 })
-export class PolicyPage implements OnInit {
+export class PolicyPage implements OnInit, OnDestroy {
   type: 'terms' | 'privacy' | 'about' | 'merchant' = 'terms';
   title = '';
   subtitle = '';
@@ -31,11 +33,15 @@ export class PolicyPage implements OnInit {
   currentYear = new Date().getFullYear();
   sections: PolicySection[] = [];
   activeSectionId = 'intro';
+  isEn = false;
+  private langSub?: Subscription;
+  private querySub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -43,6 +49,45 @@ export class PolicyPage implements OnInit {
       this.type = data['type'];
       this.loadContent();
     });
+
+    this.querySub = this.route.queryParams.subscribe(() => {
+      this.loadContent();
+    });
+
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      this.loadContent();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.langSub) {
+      this.langSub.unsubscribe();
+    }
+    if (this.querySub) {
+      this.querySub.unsubscribe();
+    }
+  }
+
+  getCurrentLang(): string {
+    const qLang = this.route.snapshot.queryParams['lang'];
+    if (qLang && (qLang === 'en' || qLang === 'ar')) {
+      return qLang;
+    }
+    return this.translate.currentLang || localStorage.getItem('lang') || 'en';
+  }
+
+  toggleLanguage() {
+    const nextLang = this.isEn ? 'ar' : 'en';
+    this.translate.use(nextLang);
+    localStorage.setItem('lang', nextLang);
+    document.body.setAttribute('dir', nextLang === 'ar' ? 'rtl' : 'ltr');
+    const bsLink = document.getElementById('bootstrap-css') as HTMLLinkElement;
+    if (bsLink) {
+      bsLink.href = nextLang === 'ar' 
+        ? 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css' 
+        : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+    }
+    this.loadContent();
   }
 
   toggleMobileMenu() {
@@ -141,19 +186,66 @@ export class PolicyPage implements OnInit {
     return finalResult.length > 0 ? finalResult.join('') : html;
   }
 
-  parseSections(rawText: string): PolicySection[] {
+  parseSections(rawText: string, lang: string = 'ar'): PolicySection[] {
     if (!rawText) return [];
     
+    const isEnglish = lang === 'en';
+    const introTitle = isEnglish ? 'Introduction' : 'مقدمة';
+    const sectionPrefix = isEnglish ? 'Section' : 'قسم';
+
     // Clean out footer link if present in rawText
     let text = rawText
       .replace(/<p>\s*تبحث عن معلومات أخرى؟.*?<\/p>/gi, '')
-      .replace(/تبحث عن معلومات أخرى؟.*/gi, '');
+      .replace(/تبحث عن معلومات أخرى؟.*/gi, '')
+      .replace(/<p>\s*Looking for other information\?.*?<\/p>/gi, '')
+      .replace(/Looking for other information\?.*/gi, '');
 
     // Normalize existing HTML headings h1, h3, h4, h5, h6 to h2
     text = text.replace(/<h[13456][^>]*>(.*?)<\/h[13456]>/gi, '<h2>$1</h2>');
 
-    // Comprehensive list of known Arabic policy section heading phrases
+    // Comprehensive list of known Arabic & English policy section heading phrases
     const knownHeadings = [
+      // English headings
+      'Information We Collect',
+      'Data We Collect',
+      'How We Use Your Information',
+      'How We Use Your Data',
+      'How We Use Information',
+      'Data Sharing and Protection',
+      'Data Sharing & Protection',
+      'Data Sharing',
+      'User Rights and Data Control',
+      'User Rights',
+      'Data Security and Protection',
+      'Data Security',
+      'Security',
+      'Cookies and Tracking',
+      'Cookies',
+      'Changes to Privacy Policy',
+      'Changes to This Policy',
+      'Acceptance of Terms and Conditions',
+      'Acceptance of Terms',
+      'Account Terms and Security',
+      'Account Security',
+      'Account Terms',
+      'Eligibility',
+      'Prohibited Conduct and Content',
+      'Prohibited Content',
+      'Commercial Transactions and Bookings',
+      'Commercial Transactions',
+      'Content You Post',
+      'Accounts',
+      'Penalties and Measures',
+      'Top 30 Policy',
+      'Fair Competition',
+      'Anti-Fraud',
+      'Final Decisions',
+      'Features',
+      'Create Merchant Account',
+      'API Integration Guide',
+      'Merchant Dashboard',
+      'Technical Support',
+      // Arabic headings
       'البيانات التي نجمعها',
       'كيف نستخدم بياناتك؟',
       'كيف نستخدم بياناتك',
@@ -201,10 +293,10 @@ export class PolicyPage implements OnInit {
       text = text.replace(regex, `\n<h2>$1</h2>\n`);
     }
 
-    // 2. Match any remaining short title (1 to 5 words) after #
-    text = text.replace(/(?:---|--|:\s*)*#\s*([\u0600-\u06FF\w\s]{2,35})(?=\s+[\u0600-\u06FF\w]{3,}|\n|$)/gi, (match, title) => {
+    // 2. Match any remaining short title (1 to 6 words) after #
+    text = text.replace(/(?:---|--|:\s*)*#\s*([a-zA-Z0-9\u0600-\u06FF\w\s\-\,\.\&\?]{2,45})(?=\s+[a-zA-Z0-9\u0600-\u06FF]{3,}|\n|$)/gi, (match, title) => {
       const words = title.trim().split(/\s+/);
-      if (words.length <= 5) {
+      if (words.length <= 6) {
         return `\n<h2>${title.trim()}</h2>\n`;
       }
       return match;
@@ -227,7 +319,7 @@ export class PolicyPage implements OnInit {
       const formattedIntro = this.formatBodyContent(text);
       return [{
         id: 'intro',
-        title: 'مقدمة',
+        title: introTitle,
         htmlContent: this.sanitizer.bypassSecurityTrustHtml(formattedIntro),
         isIntro: true,
         index: 0
@@ -244,7 +336,7 @@ export class PolicyPage implements OnInit {
       const introHtml = this.formatBodyContent(parts[0]);
       sections.push({
         id: 'intro',
-        title: 'مقدمة',
+        title: introTitle,
         htmlContent: this.sanitizer.bypassSecurityTrustHtml(introHtml),
         isIntro: true,
         index: 0
@@ -268,7 +360,7 @@ export class PolicyPage implements OnInit {
       if (cleanTitle || bodyHtml) {
         sections.push({
           id: `section-${secIndex}`,
-          title: cleanTitle || titleText || `قسم ${secIndex}`,
+          title: cleanTitle || titleText || `${sectionPrefix} ${secIndex}`,
           htmlContent: this.sanitizer.bypassSecurityTrustHtml(bodyHtml),
           isIntro: false,
           index: secIndex
@@ -280,7 +372,7 @@ export class PolicyPage implements OnInit {
     if (sections.length === 0) {
       sections.push({
         id: 'intro',
-        title: 'مقدمة',
+        title: introTitle,
         htmlContent: this.sanitizer.bypassSecurityTrustHtml(text),
         isIntro: true,
         index: 0
@@ -291,72 +383,141 @@ export class PolicyPage implements OnInit {
   }
 
   loadContent() {
+    const lang = this.getCurrentLang();
+    this.isEn = lang === 'en';
     this.lastUpdated = '';
     this.sections = [];
     this.activeSectionId = 'intro';
     
     if (this.type === 'terms') {
-      this.title = 'الشروط والأحكام';
-      this.subtitle = 'نحن هنا لضمان تجربة آمنة وراقية لجميع مستخدمي هيا. يرجى قراءة هذه الاتفاقية لفهم التزاماتكم وحقوقكم.';
-      this.settingsService.getPublicTerms('ar').subscribe({
+      this.title = this.isEn ? 'Terms & Conditions' : 'الشروط والأحكام';
+      this.subtitle = this.isEn
+        ? 'We are here to ensure a safe and premium experience for all Haya users. Please read this agreement to understand your rights and obligations.'
+        : 'نحن هنا لضمان تجربة آمنة وراقية لجميع مستخدمي هيا. يرجى قراءة هذه الاتفاقية لفهم التزاماتكم وحقوقكم.';
+      
+      this.settingsService.getPublicTerms(lang).subscribe({
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
             this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
-            this.sections = this.parseSections(this.content);
+            this.sections = this.parseSections(this.content, lang);
           }
         },
         error: (err) => {
           console.error('Error loading terms:', err);
-          this.content = 'عذراً، فشل تحميل الشروط والأحكام حالياً. يرجى المحاولة لاحقاً.';
+          this.content = this.isEn
+            ? 'Sorry, failed to load Terms and Conditions at this time. Please try again later.'
+            : 'عذراً، فشل تحميل الشروط والأحكام حالياً. يرجى المحاولة لاحقاً.';
           this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
-          this.sections = this.parseSections(this.content);
+          this.sections = this.parseSections(this.content, lang);
         }
       });
     } else if (this.type === 'privacy') {
-      this.title = 'سياسة الخصوصية';
-      this.subtitle = 'نحن في هيّا نلتزم بحماية خصوصيتك وضمان أمان بياناتك الشخصية كجزء لا يتجزأ من هويتنا السعودية العريقة.';
-      this.settingsService.getPublicPrivacy('ar').subscribe({
+      this.title = this.isEn ? 'Privacy Policy' : 'سياسة الخصوصية';
+      this.subtitle = this.isEn
+        ? 'At Haya, we are committed to protecting your privacy and ensuring the security of your personal data as an integral part of our authentic Saudi identity.'
+        : 'نحن في هيّا نلتزم بحماية خصوصيتك وضمان أمان بياناتك الشخصية كجزء لا يتجزأ من هويتنا السعودية العريقة.';
+      
+      this.settingsService.getPublicPrivacy(lang).subscribe({
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
             this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
-            this.sections = this.parseSections(this.content);
+            this.sections = this.parseSections(this.content, lang);
           }
         },
         error: (err) => {
           console.error('Error loading privacy:', err);
-          this.content = 'عذراً، فشل تحميل سياسة الخصوصية حالياً. يرجى المحاولة لاحقاً.';
+          this.content = this.isEn
+            ? 'Sorry, failed to load Privacy Policy at this time. Please try again later.'
+            : 'عذراً، فشل تحميل سياسة الخصوصية حالياً. يرجى المحاولة لاحقاً.';
           this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
-          this.sections = this.parseSections(this.content);
+          this.sections = this.parseSections(this.content, lang);
         }
       });
     } else if (this.type === 'about') {
-      this.title = 'من نحن';
-      this.subtitle = 'تطبيق سعودي متكامل من قلب السعودية';
-      this.settingsService.getPublicAboutUs('ar').subscribe({
+      this.title = this.isEn ? 'About Us' : 'من نحن';
+      this.subtitle = this.isEn
+        ? 'An integrated Saudi application from the heart of Saudi Arabia'
+        : 'تطبيق سعودي متكامل من قلب السعودية';
+      
+      this.settingsService.getPublicAboutUs(lang).subscribe({
         next: (res) => {
           if (res && res.data) {
             this.content = res.data;
             this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
             this.lastUpdated = res.last_updated || '';
-            this.sections = this.parseSections(this.content);
+            this.sections = this.parseSections(this.content, lang);
           }
         },
         error: (err) => {
           console.error('Error loading about us:', err);
-          this.content = 'عذراً، فشل تحميل معلومات من نحن حالياً. يرجى المحاولة لاحقاً.';
+          this.content = this.isEn
+            ? 'Sorry, failed to load About Us information at this time. Please try again later.'
+            : 'عذراً، فشل تحميل معلومات من نحن حالياً. يرجى المحاولة لاحقاً.';
           this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
-          this.sections = this.parseSections(this.content);
+          this.sections = this.parseSections(this.content, lang);
         }
       });
     } else if (this.type === 'merchant') {
-      this.title = 'ربط متجرك مع هيّا';
-      this.subtitle = 'وسّع نطاق مبيعاتك من خلال ربط متجرك مع تطبيق هيّا عبر واجهة برمجة التطبيقات (API)، وتمكين مزامنة المنتجات والطلبات بسهولة وأمان.';
-      this.lastUpdated = 'آخر تحديث في 17 مايو 2026';
-      this.content = `مرحباً بك في صفحة مطوري هيّا.
+      this.title = this.isEn ? 'Connect Your Store with Haya' : 'ربط متجرك مع هيّا';
+      this.subtitle = this.isEn
+        ? 'Expand your sales by connecting your store with Haya app via API, enabling seamless product and order synchronization.'
+        : 'وسّع نطاق مبيعاتك من خلال ربط متجرك مع تطبيق هيّا عبر واجهة برمجة التطبيقات (API)، وتمكين مزامنة المنتجات والطلبات بسهولة وأمان.';
+      this.lastUpdated = this.isEn ? 'Last updated May 17, 2026' : 'آخر تحديث في 17 مايو 2026';
+      
+      if (this.isEn) {
+        this.content = `Welcome to the Haya Developers page.
+The Haya app provides an API that allows e-commerce stores to directly connect their systems with the app, facilitating automated and smooth product and order management.
+
+# Features
+Direct API integration.
+Automatic product synchronization.
+Instant order receiving.
+Order status updates.
+Secure authentication using API Key.
+Fast integration with various systems.
+
+# Create Merchant Account
+Before starting the integration process, you must create a merchant account inside the Haya app.
+Account creation steps:
+Download Haya app.
+Create an account using phone number.
+Go to profile.
+Fill in business details.
+Wait for approval.
+[button:Download App]
+
+# API Integration Guide
+Cashier login route:
+POST /api/v1/cashier/login
+Parameters: email (optional), phone (optional if no email), password (cashier password)
+
+Customer lookup route:
+GET /api/v1/cashier/customers/lookup?phone=966xxxxxxxx
+Parameters: phone (customer phone number)
+
+Create invoice route:
+POST /api/v1/cashier/invoices
+Parameters: phone (customer phone), invoice_number (invoice number), amount (invoice value in SAR)
+
+# Merchant Dashboard
+If you don't have an online store system with API support, contact us and the Haya team will activate a dedicated dashboard for your business.
+Contact us via:
+Official account HAYA-APP-800.
+
+# Top 30 Policy
+Fair Competition: Points are calculated based on genuine user activities inside the application.
+Anti-Fraud: Using external tools, exploits, or fake accounts to inflate points is strictly prohibited.
+Penalties: Haya management reserves the right to reset points or permanently ban violating accounts.
+Final Decisions: Top 30 leaderboard results declared at month-end are final.
+
+# Technical Support
+If you have any inquiries or complaints, contact us on HAYA-APP-800.`;
+      } else {
+        this.content = `مرحباً بك في صفحة مطوري هيّا.
 يوفر تطبيق هيّا واجهة برمجة تطبيقات (API) تتيح للمتاجر الإلكترونية ربط أنظمتها مباشرة مع التطبيق، مما يساهم في إدارة المنتجات والطلبات بشكل آلي وسلس.
 سواء كنت تمتلك متجراً إلكترونياً أو نظاماً خاصاً، يمكنك دمجه مع هيّا والاستفادة من قاعدة مستخدمينا دون الحاجة إلى إدارة الطلبات يدوياً.
 
@@ -406,8 +567,10 @@ POST /api/v1/cashier/invoices
 
 # الدعم الفني
 إذا كان لديك أي استفسارات أو شكاوى أو اقتراحات، يمكنك التواصل معنا على الرقم الموحد HAYA-APP-800. سنبذل قصارى جهدنا لمعالجة شكواك في أسرع فرصة.`;
+      }
       this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
-      this.sections = this.parseSections(this.content);
+      this.sections = this.parseSections(this.content, lang);
     }
   }
 }
+
