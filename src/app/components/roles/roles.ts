@@ -46,6 +46,9 @@ export class Roles implements OnInit {
     { key: 'wallet', name_ar: 'المحفظة المالية', name_en: 'Wallet', icon: 'bi-wallet2', category: 'finance' },
     { key: 'calendar', name_ar: 'التقويم والفعاليات', name_en: 'Calendar', icon: 'bi-calendar-event', category: 'features' },
     { key: 'notifications', name_ar: 'إرسال الإشعارات', name_en: 'Send Notifications', icon: 'bi-bell', category: 'communication' },
+    { key: 'comment_reports', name_ar: 'بلاغات التعليقات', name_en: 'Comment Reports', icon: 'bi-chat-right-quote', category: 'moderation' },
+    { key: 'post_reports', name_ar: 'بلاغات المنشورات', name_en: 'Post Reports', icon: 'bi-file-earmark-post', category: 'moderation' },
+    { key: 'support', name_ar: 'نظام الدعم الفني والمحادثات', name_en: 'Support System & Chats', icon: 'bi-headset', category: 'communication' },
     { key: 'settings', name_ar: 'الإعدادات والسياسات', name_en: 'Settings', icon: 'bi-gear', category: 'system' },
   ];
 

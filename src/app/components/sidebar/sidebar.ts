@@ -62,7 +62,28 @@ export class Sidebar implements OnInit {
     { name: 'Cities', icon: 'bi bi-geo-alt', path: '/admin/cities', perm: 'cities' },
     { name: 'Countries', icon: 'bi bi-globe', path: '/admin/countries', perm: 'countries' },
     { name: 'Banned Words', icon: 'bi bi-slash-circle', path: '/admin/bannedwords', perm: 'banned_words' },
-    { name: 'Comment Reports', icon: 'bi bi-chat-right-quote', path: '/admin/comment-reports', perm: 'reports' },
+    {
+      name: 'Reports',
+      icon: 'bi bi-flag',
+      path: '/admin/comment-reports',
+      perm: 'reports',
+      expanded: false,
+      children: [
+        { name: 'Comment Reports', path: '/admin/comment-reports', icon: 'bi bi-chat-right-quote' },
+        { name: 'Post Reports', path: '/admin/post-reports', icon: 'bi bi-file-earmark-post' },
+      ],
+    },
+    {
+      name: 'Support System',
+      icon: 'bi bi-headset',
+      path: '/admin/support-departments',
+      perm: 'support',
+      expanded: false,
+      children: [
+        { name: 'Support Settings & Departments', path: '/admin/support-departments', icon: 'bi bi-diagram-3' },
+        { name: 'Support Conversations', path: '/admin/support-chats', icon: 'bi bi-chat-dots' },
+      ],
+    },
     { name: 'Wallet', icon: 'bi bi-wallet2', path: '/admin/wallet', perm: 'wallet' },
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar', perm: 'calendar' },
     { name: 'SEND_NOTIFICATIONS', icon: 'bi bi-bell', path: '/admin/send-notifications', perm: 'notifications' },
@@ -113,7 +134,8 @@ export class Sidebar implements OnInit {
         (permKey === 'verification' && (allowedPerms.has('verifycation') || allowedPerms.has('verification'))) ||
         (permKey === 'notifications' && (allowedPerms.has('messages') || allowedPerms.has('send_notifications') || allowedPerms.has('notifications'))) ||
         (permKey === 'top30' && (allowedPerms.has('top30') || allowedPerms.has('top 30'))) ||
-        (permKey === 'reports' && (allowedPerms.has('reports') || allowedPerms.has('reports_comments') || allowedPerms.has('comment_reports') || allowedPerms.has('بلاغات')))
+        (permKey === 'reports' && (allowedPerms.has('reports') || allowedPerms.has('reports_comments') || allowedPerms.has('comment_reports') || allowedPerms.has('post_reports') || allowedPerms.has('بلاغات'))) ||
+        (permKey === 'support' && (allowedPerms.has('support') || allowedPerms.has('support_departments') || allowedPerms.has('support_chats') || allowedPerms.has('الدعم')))
       );
     });
   }

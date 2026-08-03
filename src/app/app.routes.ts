@@ -41,6 +41,9 @@ import { TopUsersNotes } from './components/top-users-notes/top-users-notes';
 import { Loyalty } from './components/loyalty/loyalty';
 import { SendNotifications } from './components/send-notifications/send-notifications';
 import { CommentReports } from './components/comment-reports/comment-reports';
+import { PostReports } from './components/post-reports/post-reports';
+import { SupportDepartments } from './components/support-departments/support-departments';
+import { SupportChats } from './components/support-chats/support-chats';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./components/landing-page/landing-page').then(m => m.LandingPage) },
@@ -133,6 +136,9 @@ export const routes: Routes = [
       { path: 'loyalty', component: Loyalty, data: { role: 'loyalty' } },
       { path: 'send-notifications', component: SendNotifications, data: { role: 'notifications' } },
       { path: 'comment-reports', component: CommentReports, data: { role: 'reports' } },
+      { path: 'post-reports', component: PostReports, data: { role: 'reports' } },
+      { path: 'support-departments', component: SupportDepartments, data: { role: 'support' } },
+      { path: 'support-chats', component: SupportChats, data: { role: 'support' } },
     ],
   },
   { path: '**', redirectTo: '' },

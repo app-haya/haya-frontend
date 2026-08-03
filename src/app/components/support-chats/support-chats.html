@@ -1,0 +1,204 @@
+<div class="page-wrapper">
+
+  <!-- Toast Notification -->
+  <div *ngIf="toastMessage" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast show align-items-center text-white border-0 shadow-lg" [ngClass]="toastType === 'success' ? 'bg-success' : 'bg-danger'" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+          <span>{{ toastMessage }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-chat-dots-fill"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Support Conversations' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Live messaging inbox with official support account responses' | translate }}</p>
+      </div>
+    </div>
+    <div class="header-right" *ngIf="departments.length > 0">
+      <select class="form-select border-0 shadow-sm" [(ngModel)]="selectedDepartmentId" (change)="onDepartmentChange()">
+        <option [ngValue]="null">{{ 'All Departments' | translate }}</option>
+        <option *ngFor="let dept of departments" [ngValue]="dept.id">
+          {{ dept.name_ar || dept.name_en || dept.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main Chat Inbox Layout -->
+  <div class="chat-container">
+
+    <!-- Right Sidebar: Chats List -->
+    <div class="chats-sidebar">
+      <!-- Search Input -->
+      <div class="sidebar-search p-3 border-bottom">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            [placeholder]="'Search chats...' | translate"
+            [(ngModel)]="searchTerm"
+            (input)="filterChats()"
+          />
+        </div>
+      </div>
+
+      <!-- Chats Loading -->
+      <div *ngIf="loadingChats" class="text-center py-5">
+        <div class="spinner-border spinner-border-sm text-primary"></div>
+        <p class="small text-muted mt-2">{{ 'Loading conversations...' | translate }}</p>
+      </div>
+
+      <!-- Chats List -->
+      <div *ngIf="!loadingChats" class="chats-list">
+        <div
+          *ngFor="let chat of filteredChats"
+          class="chat-item"
+          [class.active]="selectedChat?.id === chat.id || selectedChat?.uuid === chat.uuid"
+          (click)="selectChat(chat)"
+        >
+          <div class="user-avatar-circle">
+            <img *ngIf="chat.user?.image" [src]="chat.user.image" [alt]="chat.user?.name" />
+            <div *ngIf="!chat.user?.image" class="avatar-fallback">
+              <i class="bi bi-person-fill"></i>
+            </div>
+          </div>
+          <div class="chat-meta">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="user-name mb-0">{{ chat.user?.name || chat.name || ('Support Chat' | translate) }}</h6>
+              <span class="chat-time text-muted small" *ngIf="chat.updated_at || chat.last_message_at">
+                {{ (chat.updated_at || chat.last_message_at | date:'shortTime') }}
+              </span>
+            </div>
+            <p class="last-message mb-1 text-muted">
+              {{ chat.last_message || chat.message || ('No messages yet' | translate) }}
+            </p>
+            <div class="d-flex align-items-center gap-1" *ngIf="chat.department">
+              <span class="badge bg-secondary-subtle text-secondary border px-2 py-0" style="font-size: 0.7rem;">
+                {{ chat.department.name_ar || chat.department.name_en }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="filteredChats.length === 0" class="text-center py-5 text-muted">
+          <i class="bi bi-chat-left-dots fs-3 d-block mb-1"></i>
+          <p class="small mb-0">{{ 'No conversations found' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Left Main Area: Active Chat Messages Thread -->
+    <div class="chat-main-area">
+
+      <!-- Chat Selected Header -->
+      <div *ngIf="selectedChat" class="chat-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="user-avatar-circle">
+            <img *ngIf="selectedChat.user?.image" [src]="selectedChat.user.image" />
+            <div *ngIf="!selectedChat.user?.image" class="avatar-fallback">
+              <i class="bi bi-person-fill"></i>
+            </div>
+          </div>
+          <div>
+            <h6 class="mb-0 fw-bold text-dark">{{ selectedChat.user?.name || selectedChat.name || ('Support User' | translate) }}</h6>
+            <span class="text-muted small" *ngIf="selectedChat.user?.email || selectedChat.user?.phone">
+              {{ selectedChat.user?.email || selectedChat.user?.phone }}
+            </span>
+          </div>
+        </div>
+        <div *ngIf="selectedChat.department" class="badge bg-purple px-3 py-2" style="background-color: #7a3ca0;">
+          {{ selectedChat.department.name_ar || selectedChat.department.name_en }}
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div *ngIf="selectedChat" #chatScrollContainer class="messages-body">
+        <div *ngIf="loadingMessages" class="text-center py-5">
+          <div class="spinner-border text-primary"></div>
+          <p class="small text-muted mt-2">{{ 'Loading messages...' | translate }}</p>
+        </div>
+
+        <div *ngIf="!loadingMessages" class="messages-list">
+          <div
+            *ngFor="let msg of messages"
+            class="message-bubble-wrapper"
+            [class.outgoing]="msg.sender_type === 'official' || msg.is_official || msg.user_id === selectedChat.official_id"
+            [class.incoming]="msg.sender_type !== 'official' && !msg.is_official && msg.user_id !== selectedChat.official_id"
+          >
+            <div class="message-bubble">
+              <div class="sender-name" *ngIf="msg.sender_name || msg.user?.name">
+                {{ msg.sender_name || msg.user?.name }}
+              </div>
+              <p class="message-content mb-1" *ngIf="msg.message || msg.content">
+                {{ msg.message || msg.content }}
+              </p>
+              <div *ngIf="msg.file || msg.attachment" class="attachment-preview mb-1">
+                <a [href]="msg.file || msg.attachment" target="_blank" class="btn btn-sm btn-light border">
+                  <i class="bi bi-paperclip me-1"></i> {{ 'View Attachment' | translate }}
+                </a>
+              </div>
+              <div class="message-time text-end" style="font-size: 0.65rem; opacity: 0.75;">
+                {{ (msg.created_at | date:'shortTime') }}
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="messages.length === 0" class="text-center py-5 text-muted">
+            <p>{{ 'No message history yet.' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reply Box -->
+      <div *ngIf="selectedChat" class="chat-reply-box">
+        <div *ngIf="selectedFile" class="attachment-bar p-2 bg-light border-bottom d-flex align-items-center justify-content-between">
+          <span class="small text-truncate"><i class="bi bi-file-earmark me-1"></i> {{ selectedFile.name }}</span>
+          <button class="btn btn-sm btn-link text-danger p-0" (click)="removeSelectedFile()">&times;</button>
+        </div>
+        <div class="d-flex align-items-center gap-2 p-3 bg-white">
+          <label class="btn btn-light btn-icon text-muted mb-0" title="Attach file">
+            <i class="bi bi-paperclip fs-5"></i>
+            <input type="file" (change)="onFileSelected($event)" hidden />
+          </label>
+          <input
+            type="text"
+            class="form-control form-control-lg border-0 bg-light"
+            [placeholder]="'Type your reply as Official Support...' | translate"
+            [(ngModel)]="replyText"
+            (keyup.enter)="sendReply()"
+          />
+          <button
+            class="btn-send"
+            [disabled]="sendingReply || (!replyText.trim() && !selectedFile)"
+            (click)="sendReply()"
+          >
+            <span *ngIf="!sendingReply">{{ 'Send' | translate }}</span>
+            <i *ngIf="!sendingReply" class="bi bi-send-fill"></i>
+            <span *ngIf="sendingReply" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Unselected State -->
+      <div *ngIf="!selectedChat" class="unselected-state text-center py-5">
+        <i class="bi bi-headset fs-1 text-muted mb-3 d-block"></i>
+        <h5>{{ 'Select a support conversation' | translate }}</h5>
+        <p class="text-muted">{{ 'Choose a chat from the sidebar to read messages and respond as official support.' | translate }}</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

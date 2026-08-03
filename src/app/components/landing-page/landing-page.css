@@ -263,6 +263,29 @@
   text-decoration: underline;
 }
 
+.lp-btn--lang-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(122, 60, 160, 0.08);
+  color: #7a3ca0;
+  border: 1.5px solid rgba(122, 60, 160, 0.25);
+  font-size: 1.15rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.lp-btn--lang-icon:hover {
+  background: #7a3ca0;
+  color: #ffffff;
+  border-color: #7a3ca0;
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(122, 60, 160, 0.25);
+}
+
 /* ============================================================
    NAVBAR
    ============================================================ */

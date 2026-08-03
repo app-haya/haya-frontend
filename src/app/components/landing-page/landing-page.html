@@ -15,9 +15,8 @@
         <li><a routerLink="/join-merchant" class="lp-nav__link">{{ 'LANDING.NAV.JOIN_MERCHANT' | translate }}</a></li>
       </ul>
       <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <button class="lp-btn lp-btn--lang" (click)="toggleLanguage()" aria-label="Toggle Language">
+        <button class="lp-btn--lang-icon" (click)="toggleLanguage()" [title]="'LANDING.NAV.LANG_BTN' | translate" aria-label="Toggle Language">
           <i class="bi bi-globe"></i>
-          <span>{{ 'LANDING.NAV.LANG_BTN' | translate }}</span>
         </button>
         <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">{{ 'LANDING.NAV.DOWNLOAD' | translate }}</a>
       </div>
@@ -38,10 +37,9 @@
         <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.PRIVACY' | translate }}</a></li>
         <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.TERMS' | translate }}</a></li>
         <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.JOIN_MERCHANT' | translate }}</a></li>
-        <li>
-          <button class="lp-btn lp-btn--lang lp-nav__mobile-btn" (click)="toggleLanguage(); closeMobileMenu()">
+        <li class="d-flex justify-content-center py-2">
+          <button class="lp-btn--lang-icon" (click)="toggleLanguage(); closeMobileMenu()" [title]="'LANDING.NAV.LANG_BTN' | translate">
             <i class="bi bi-globe"></i>
-            <span>{{ 'LANDING.NAV.LANG_BTN' | translate }}</span>
           </button>
         </li>
         <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">{{ 'LANDING.NAV.DOWNLOAD' | translate }}</a></li>

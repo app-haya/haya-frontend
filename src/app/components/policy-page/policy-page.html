@@ -15,8 +15,8 @@
         <li><a routerLink="/join-merchant" class="lp-nav__link" [class.lp-nav__link--active]="type === 'merchant'">{{ isEn ? 'Join as Merchant' : 'إنضم كتاجر' }}</a></li>
       </ul>
       <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <button (click)="toggleLanguage()" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-weight: 600; font-size: 0.85rem;" [title]="isEn ? 'Switch to Arabic' : 'تغيير إلى الإنجليزية'">
-          <i class="bi bi-globe me-1"></i>{{ isEn ? 'العربية' : 'English' }}
+        <button (click)="toggleLanguage()" class="lp-btn--lang-icon" [title]="isEn ? 'التحويل إلى العربية' : 'Switch to English'" aria-label="Toggle Language">
+          <i class="bi bi-globe"></i>
         </button>
         <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">{{ isEn ? 'Download App' : 'حمل التطبيق' }}</a>
       </div>
@@ -37,9 +37,9 @@
         <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'privacy'">{{ isEn ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a></li>
         <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'terms'">{{ isEn ? 'Terms & Conditions' : 'الشروط والأحكام' }}</a></li>
         <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link" [class.lp-nav__mobile-link--active]="type === 'merchant'">{{ isEn ? 'Join as Merchant' : 'إنضم كتاجر' }}</a></li>
-        <li class="py-2 text-center">
-          <button (click)="toggleLanguage(); closeMobileMenu()" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
-            <i class="bi bi-globe me-1"></i>{{ isEn ? 'العربية' : 'English' }}
+        <li class="py-2 d-flex justify-content-center">
+          <button (click)="toggleLanguage(); closeMobileMenu()" class="lp-btn--lang-icon" [title]="isEn ? 'التحويل إلى العربية' : 'Switch to English'">
+            <i class="bi bi-globe"></i>
           </button>
         </li>
         <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">{{ isEn ? 'Download App' : 'حمل التطبيق' }}</a></li>

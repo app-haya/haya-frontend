@@ -100,12 +100,24 @@ const nameToKeyMap: { [key: string]: string } = {
   'الاعدادات والسياسات': 'settings',
   'settings': 'settings',
 
-  'بلاغات التعليقات': 'reports',
+  'بلاغات التعليقات': 'comment_reports',
+  'comment_reports': 'comment_reports',
+  'reports_comments': 'comment_reports',
+  'بلاغات المنشورات': 'post_reports',
+  'post_reports': 'post_reports',
+  'reports_posts': 'post_reports',
   'بلاغات': 'reports',
   'البلاغات': 'reports',
   'reports': 'reports',
-  'comment_reports': 'reports',
-  'reports_comments': 'reports',
+
+  'الدعم': 'support',
+  'الدعم الفني': 'support',
+  'اقسام الدعم': 'support',
+  'محادثات الدعم': 'support',
+  'نظام الدعم الفني': 'support',
+  'support': 'support',
+  'support_departments': 'support',
+  'support_chats': 'support',
 };
 
 export function getUserPermissions(user: any): Set<string> {
@@ -175,7 +187,10 @@ export function getFirstPermittedRoute(user: any): string {
     'cities': '/admin/cities',
     'countries': '/admin/countries',
     'banned_words': '/admin/bannedwords',
+    'comment_reports': '/admin/comment-reports',
+    'post_reports': '/admin/post-reports',
     'reports': '/admin/comment-reports',
+    'support': '/admin/support-departments',
     'wallet': '/admin/wallet',
     'calendar': '/admin/calendar',
     'notifications': '/admin/send-notifications',
@@ -200,3 +215,4 @@ export function getFirstPermittedRoute(user: any): string {
 
   return '/admin/policy-settings';
 }
+

@@ -1,0 +1,343 @@
+<div class="page-wrapper">
+
+  <!-- Toast Notification -->
+  <div *ngIf="toastMessage" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast show align-items-center text-white border-0 shadow-lg" [ngClass]="toastType === 'success' ? 'bg-success' : 'bg-danger'" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+          <span>{{ toastMessage }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-file-earmark-post-fill"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Post Reports' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Review and manage reported posts' | translate }}</p>
+      </div>
+    </div>
+    <div class="total-badge" *ngIf="!loading">
+      <span>{{ total }} {{ (total === 1 ? 'Reported Post' : 'Reported Posts') | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Tabs Bar -->
+  <div class="tabs-bar" *ngIf="!loading">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'pending'"
+      (click)="switchTab('pending')"
+    >
+      <i class="bi bi-hourglass-split"></i>
+      {{ 'Pending Review' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'reviewed'"
+      (click)="switchTab('reviewed')"
+    >
+      <i class="bi bi-check-circle"></i>
+      {{ 'Reviewed' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'resolved'"
+      (click)="switchTab('resolved')"
+    >
+      <i class="bi bi-check2-all"></i>
+      {{ 'Resolved' | translate }}
+    </button>
+  </div>
+
+  <!-- Search / Action Bar -->
+  <div class="action-bar" *ngIf="!loading">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by owner, post content or reason...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="applySearch()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading reported posts...' | translate }}</p>
+  </div>
+
+  <!-- Table Card -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'Post Creator' | translate }}</th>
+            <th>{{ 'Post Content' | translate }}</th>
+            <th class="text-center">{{ 'Interactions' | translate }}</th>
+            <th class="text-center">{{ 'Reports Count' | translate }}</th>
+            <th>{{ 'Latest Report Reason' | translate }}</th>
+            <th>{{ 'Date' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredReports" class="table-row">
+
+            <!-- Post Creator / Owner -->
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <img
+                    *ngIf="item.post?.user?.image || item.user?.image"
+                    [src]="item.post?.user?.image || item.user?.image"
+                    [alt]="item.post?.user?.name || item.user?.name"
+                    class="avatar-img"
+                  />
+                  <div *ngIf="!(item.post?.user?.image || item.user?.image)" class="avatar-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ item.post?.user?.name || item.post?.owner || item.user?.name || '—' }}</span>
+                  <span class="user-id">ID: #{{ item.post?.user?.id || item.user?.id || '—' }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Post Content -->
+            <td>
+              <div class="comment-content-cell">
+                <p class="comment-text" [title]="item.post?.content || item.content">
+                  "{{ item.post?.content || item.content || '—' }}"
+                </p>
+                <div class="comment-flags" *ngIf="item.post?.is_hidden || item.post?.is_deleted">
+                  <span class="badge-flag danger" *ngIf="item.post?.is_deleted">
+                    <i class="bi bi-trash"></i> {{ 'Deleted' | translate }}
+                  </span>
+                  <span class="badge-flag warning" *ngIf="item.post?.is_hidden">
+                    <i class="bi bi-eye-slash"></i> {{ 'Hidden by Admin' | translate }}
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Interactions Stats -->
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2 text-muted small">
+                <span title="Likes"><i class="bi bi-heart-fill text-danger me-1"></i>{{ item.post?.likes_count || 0 }}</span>
+                <span title="Comments"><i class="bi bi-chat-fill text-primary me-1"></i>{{ item.post?.comments_count || 0 }}</span>
+                <span title="Shares"><i class="bi bi-share-fill text-success me-1"></i>{{ item.post?.shares_count || 0 }}</span>
+              </div>
+            </td>
+
+            <!-- Reports Count -->
+            <td class="text-center">
+              <span class="reports-count-badge">
+                <i class="bi bi-flag-fill"></i>
+                {{ item.reports_count || (item.reports?.length) || 1 }}
+              </span>
+            </td>
+
+            <!-- Latest Reason -->
+            <td>
+              <span class="reason-text" [title]="item.latest_reason || item.reason || (item.reports && item.reports[0]?.reason)">
+                {{ item.latest_reason || item.reason || (item.reports && item.reports[0]?.reason) || ('No reason provided' | translate) }}
+              </span>
+            </td>
+
+            <!-- Date -->
+            <td>
+              <span class="date-text">
+                {{ (item.created_at | date:'mediumDate') || '—' }}
+              </span>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="status-badge" [ngClass]="item.status || 'pending'">
+                {{ (item.status || 'pending') | translate }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  class="icon-btn info"
+                  [title]="'View Details' | translate"
+                  (click)="openDetail(item)"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button
+                  class="icon-btn warning"
+                  [title]="'Hide Post' | translate"
+                  (click)="openHideModal(item)"
+                >
+                  <i class="bi bi-eye-slash"></i>
+                </button>
+                <button
+                  class="icon-btn danger"
+                  [title]="'Delete Post' | translate"
+                  (click)="openDeleteModal(item)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="filteredReports.length === 0">
+            <td colspan="8" class="empty-state-cell">
+              <div class="empty-state">
+                <i class="bi bi-shield-check"></i>
+                <h5>{{ 'No post reports found' | translate }}</h5>
+                <p>{{ 'There are no reported posts matching your search criteria.' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="lastPage > 1">
+      <span class="pagination-info">
+        {{ 'Showing page' | translate }} {{ currentPage }} {{ 'of' | translate }} {{ lastPage }} ({{ total }} {{ 'total' | translate }})
+      </span>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="prevPage()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          *ngFor="let p of getPageNumbers()"
+          class="page-btn"
+          [class.active]="p === currentPage"
+          (click)="loadReports(p)"
+        >
+          {{ p }}
+        </button>
+        <button class="page-btn" [disabled]="currentPage === lastPage" (click)="nextPage()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIDE MODAL -->
+  <div *ngIf="showHideModal" class="modal-backdrop-custom">
+    <div class="modal-card">
+      <div class="modal-header-custom warning">
+        <div class="modal-icon warning">
+          <i class="bi bi-eye-slash-fill"></i>
+        </div>
+        <div>
+          <h5 class="modal-title-custom">{{ 'Hide Post' | translate }}</h5>
+          <p class="modal-subtitle-custom">{{ 'Specify reason to notify creator' | translate }}</p>
+        </div>
+        <button class="btn-close-modal" (click)="closeHideModal()">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="form-group mb-3">
+          <label class="form-label-custom">{{ 'Reason for hiding (Optional)' | translate }}</label>
+          <textarea
+            class="form-control-custom"
+            rows="3"
+            [placeholder]="'Enter reason to send in notification...' | translate"
+            [(ngModel)]="actionReason"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-cancel" (click)="closeHideModal()">{{ 'Cancel' | translate }}</button>
+        <button class="btn-action warning" [disabled]="modalLoading" (click)="submitHide()">
+          <span *ngIf="!modalLoading">{{ 'Confirm Hide' | translate }}</span>
+          <span *ngIf="modalLoading" class="spinner-border spinner-border-sm me-1"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div *ngIf="showDeleteModal" class="modal-backdrop-custom">
+    <div class="modal-card">
+      <div class="modal-header-custom danger">
+        <div class="modal-icon danger">
+          <i class="bi bi-trash-fill"></i>
+        </div>
+        <div>
+          <h5 class="modal-title-custom">{{ 'Delete Post' | translate }}</h5>
+          <p class="modal-subtitle-custom">{{ 'This action is permanent' | translate }}</p>
+        </div>
+        <button class="btn-close-modal" (click)="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="form-group mb-3">
+          <label class="form-label-custom">{{ 'Reason for deletion (Optional)' | translate }}</label>
+          <textarea
+            class="form-control-custom"
+            rows="3"
+            [placeholder]="'Enter reason to send in notification...' | translate"
+            [(ngModel)]="actionReason"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-cancel" (click)="closeDeleteModal()">{{ 'Cancel' | translate }}</button>
+        <button class="btn-action danger" [disabled]="modalLoading" (click)="submitDelete()">
+          <span *ngIf="!modalLoading">{{ 'Confirm Delete' | translate }}</span>
+          <span *ngIf="modalLoading" class="spinner-border spinner-border-sm me-1"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS MODAL -->
+  <div *ngIf="showDetailModal && selectedItem" class="modal-backdrop-custom">
+    <div class="modal-card wide">
+      <div class="modal-header-custom info">
+        <div class="modal-icon info">
+          <i class="bi bi-file-earmark-text-fill"></i>
+        </div>
+        <div>
+          <h5 class="modal-title-custom">{{ 'Report Details' | translate }}</h5>
+          <p class="modal-subtitle-custom">ID: #{{ selectedItem.id }}</p>
+        </div>
+        <button class="btn-close-modal" (click)="closeDetail()">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="detail-section mb-3">
+          <h6 class="detail-label">{{ 'Post Content' | translate }}</h6>
+          <div class="detail-box font-mono">
+            "{{ selectedItem.post?.content || selectedItem.content || '—' }}"
+          </div>
+        </div>
+        <div class="detail-section mb-3">
+          <h6 class="detail-label">{{ 'Creator Information' | translate }}</h6>
+          <div class="detail-box">
+            <p class="mb-1"><strong>{{ 'Name' | translate }}:</strong> {{ selectedItem.post?.user?.name || selectedItem.user?.name || '—' }}</p>
+            <p class="mb-0"><strong>{{ 'Email' | translate }}:</strong> {{ selectedItem.post?.user?.email || selectedItem.user?.email || '—' }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-cancel" (click)="closeDetail()">{{ 'Close' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
+</div>
