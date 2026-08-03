@@ -170,6 +170,9 @@
 /* =========================================================
    TABLE CARD & DATA TABLE
    ========================================================= */
+/* =========================================================
+   TABLE CARD & DATA TABLE
+   ========================================================= */
 .table-card {
   background: #fff;
   border-radius: 16px;
@@ -179,18 +182,21 @@
 }
 
 .table-responsive {
-  overflow-x: auto;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.82rem;
 }
 
 .data-table th {
   background: #fafafa;
-  padding: 14px 16px;
-  font-size: 0.82rem;
+  padding: 10px 6px;
+  font-size: 0.76rem;
   font-weight: 700;
   color: #374151;
   border-bottom: 1px solid #e5e7eb;
@@ -198,11 +204,24 @@
 }
 
 .data-table td {
-  padding: 14px 16px;
+  padding: 10px 6px;
   border-bottom: 1px solid #f3f4f6;
   vertical-align: middle;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+/* Specific Column Widths */
+.data-table th:nth-child(1), .data-table td:nth-child(1) { width: 16%; } /* Creator */
+.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 22%; } /* Content */
+.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 11%; } /* Interactions */
+.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 9%; }  /* Reports Count */
+.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 18%; } /* Reason */
+.data-table th:nth-child(6), .data-table td:nth-child(6) { width: 9%; }  /* Date */
+.data-table th:nth-child(7), .data-table td:nth-child(7) { width: 7%; }  /* Status */
+.data-table th:nth-child(8), .data-table td:nth-child(8) { width: 8%; }  /* Actions */
 
 .table-row:hover {
   background: #fcfaff;
@@ -211,12 +230,13 @@
 .user-cell {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  overflow: hidden;
 }
 
 .user-avatar {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   overflow: hidden;
   background: #f3f4f6;
@@ -234,26 +254,32 @@
 
 .avatar-placeholder {
   color: #9ca3af;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .user-name {
   font-weight: 600;
   color: #1a1a2e;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-id {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #9ca3af;
 }
 
 .comment-content-cell {
-  max-width: 280px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .comment-text {
@@ -262,25 +288,26 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.82rem;
 }
 
 .reports-count-badge {
   background: #fee2e2;
   color: #dc2626;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .reason-text {
   color: #4b5563;
-  font-size: 0.85rem;
-  display: inline-block;
-  max-width: 180px;
+  font-size: 0.8rem;
+  display: block;
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -288,13 +315,13 @@
 
 .date-text {
   color: #6b7280;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .status-badge {
-  padding: 4px 12px;
+  padding: 3px 8px;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -315,21 +342,21 @@
 
 .action-buttons {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: center;
 }
 
 .icon-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .icon-btn.info {
