@@ -1,4 +1,4 @@
-<div [attr.dir]="getCurrentDir()" class="lp-root">
+<div [attr.dir]="getCurrentDir()" class="lp-root" [class.lp-dark-mode]="isDarkMode">
 
   <!-- ===== NAVBAR ===== -->
   <nav class="lp-nav">
@@ -14,19 +14,22 @@
         <li><a routerLink="/terms" class="lp-nav__link">{{ 'LANDING.NAV.TERMS' | translate }}</a></li>
         <li><a routerLink="/join-merchant" class="lp-nav__link">{{ 'LANDING.NAV.JOIN_MERCHANT' | translate }}</a></li>
       </ul>
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="lp-nav__actions">
         <button class="lp-btn--lang-icon" (click)="toggleLanguage()" [title]="'LANDING.NAV.LANG_BTN' | translate" aria-label="Toggle Language">
           <i class="bi bi-globe"></i>
         </button>
+        <button class="lp-btn--lang-icon" (click)="toggleDarkMode()" [title]="isDarkMode ? 'Light Mode' : 'Dark Mode'" aria-label="Toggle Dark Mode">
+          <i class="bi" [class.bi-sun-fill]="isDarkMode" [class.bi-moon-stars-fill]="!isDarkMode"></i>
+        </button>
         <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">{{ 'LANDING.NAV.DOWNLOAD' | translate }}</a>
+        <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+          @if (isMobileMenuOpen) {
+            <i class="bi bi-x lp-nav__toggle-close"></i>
+          } @else {
+            <i class="bi bi-list"></i>
+          }
+        </button>
       </div>
-      <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
-        @if (isMobileMenuOpen) {
-          <i class="bi bi-x lp-nav__toggle-close"></i>
-        } @else {
-          <i class="bi bi-list"></i>
-        }
-      </button>
     </div>
 
     <!-- Mobile Menu Dropdown -->
@@ -37,11 +40,6 @@
         <li><a routerLink="/privacy" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.PRIVACY' | translate }}</a></li>
         <li><a routerLink="/terms" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.TERMS' | translate }}</a></li>
         <li><a routerLink="/join-merchant" (click)="closeMobileMenu()" class="lp-nav__mobile-link">{{ 'LANDING.NAV.JOIN_MERCHANT' | translate }}</a></li>
-        <li class="d-flex justify-content-center py-2">
-          <button class="lp-btn--lang-icon" (click)="toggleLanguage(); closeMobileMenu()" [title]="'LANDING.NAV.LANG_BTN' | translate">
-            <i class="bi bi-globe"></i>
-          </button>
-        </li>
         <li><a routerLink="/" fragment="download" (click)="closeMobileMenu()" class="lp-btn lp-btn--primary lp-nav__mobile-btn">{{ 'LANDING.NAV.DOWNLOAD' | translate }}</a></li>
       </ul>
     </div>
@@ -49,8 +47,8 @@
 
   <!-- ===== HERO (Banner Image) ===== -->
   <section class="lp-hero" id="hero">
-    <img src="/images/معتمد_ 1.png" [alt]="'LANDING.HERO.ALT' | translate" class="lp-hero__img lp-hero__img--desktop" />
-    <img src="/images/بنر موبايل.png" [alt]="'LANDING.HERO.ALT' | translate" class="lp-hero__img lp-hero__img--mobile" />
+    <img src="/images/معتمد_ 1.png" [alt]="'LANDING.HERO.ALT' | translate" class="lp-hero__img lp-hero__img--desktop" fetchpriority="high" decoding="async" />
+    <img src="/images/بنر موبايل.png" [alt]="'LANDING.HERO.ALT' | translate" class="lp-hero__img lp-hero__img--mobile" fetchpriority="high" decoding="async" />
   </section>
 
   <!-- ===== WHO WE ARE ===== -->
@@ -330,11 +328,13 @@
     <div class="lp-container">
       <!-- Phone mockup with floating icons -->
       <div class="lp-download__phone-section">
-        <img src="/images/iPhone 13 Pro.png" [alt]="'LANDING.FOOTER.DOWNLOAD_APP' | translate" class="lp-download__phone-img" />
+        <img src="/images/iPhone 13 Pro.png" [alt]="'LANDING.FOOTER.DOWNLOAD_APP' | translate" class="lp-download__phone-img" loading="lazy" decoding="async" />
         
         <!-- Purple banner with text - Marquee -->
         <div class="lp-download__banner">
           <div class="lp-download__banner-track">
+            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
             <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
             <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
           </div>
@@ -342,25 +342,25 @@
         
         <!-- Floating service icons -->
         <div class="lp-download__floating-icon lp-download__floating-icon--1">
-          <img src="/images/طلبات توصيل.svg" alt="" />
+          <img src="/images/طلبات توصيل.svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--2">
-          <img src="/images/حجوزات ذكية.svg" alt="" />
+          <img src="/images/حجوزات ذكية.svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--3">
-          <img src="/images/فيديوهات قصيرة.svg" alt="" />
+          <img src="/images/فيديوهات قصيرة.svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--4">
-          <img src="/images/دردشة عامة.svg" alt="" />
+          <img src="/images/دردشة عامة.svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--5">
-          <img src="/images/دردشة خاصة.svg" alt="" />
+          <img src="/images/دردشة خاصة.svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--6">
-          <img src="/images/Vector(1).svg" alt="" />
+          <img src="/images/Vector(1).svg" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-download__floating-icon lp-download__floating-icon--7">
-          <img src="/images/Group.svg" alt="" />
+          <img src="/images/Group.svg" alt="" loading="lazy" decoding="async" />
         </div>
         
         <!-- Sparkles -->

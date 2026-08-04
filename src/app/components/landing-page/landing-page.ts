@@ -14,17 +14,24 @@ import { Subscription } from 'rxjs';
 export class LandingPage implements OnInit, OnDestroy {
   currentYear = new Date().getFullYear();
   isMobileMenuOpen = false;
+  isDarkMode = false;
   private langSub?: Subscription;
 
   constructor(public translate: TranslateService) {}
 
   ngOnInit() {
+    this.isDarkMode = localStorage.getItem('lp_theme') === 'dark';
     this.updateDir();
     this.loadLocalizedData();
     this.langSub = this.translate.onLangChange.subscribe(() => {
       this.updateDir();
       this.loadLocalizedData();
     });
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('lp_theme', this.isDarkMode ? 'dark' : 'light');
   }
 
   ngOnDestroy() {
