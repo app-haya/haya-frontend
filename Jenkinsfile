@@ -137,7 +137,13 @@ pipeline {
         sh '''
           set -e
 
-          npm run build
+          if [ "${ENVIRONMENT}" = "prod" ]; then
+            echo "Building for PRODUCTION (api.hayaapp.sa)"
+            npm run build:prod
+          else
+            echo "Building for DEVELOPMENT (dev-api.hayaapp.sa)"
+            npm run build:dev
+          fi
 
           if [ ! -d "${BUILD_DIR}" ]; then
             echo "ERROR: Build directory does not exist: ${BUILD_DIR}"
