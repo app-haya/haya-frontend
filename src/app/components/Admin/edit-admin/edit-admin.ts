@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
+import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
@@ -37,6 +38,7 @@ export class EditAdmin implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
+    private authService: AuthService,
     private notificationService: NotificationService,
     private router: Router
   ) {}
@@ -113,12 +115,8 @@ export class EditAdmin implements OnInit {
               .filter((id: any) => !isNaN(id) && id !== null && id !== undefined);
           }
 
-          let formattedImageUrl = adminData.image_url || '';
-          if (!formattedImageUrl && adminData.image) {
-            formattedImageUrl = adminData.image.startsWith('http')
-              ? adminData.image
-              : environment.apiUrl.replace('/api', '') + '/admin_images/' + adminData.image;
-          }
+          const rawImg = adminData.image_url || adminData.image;
+          const formattedImageUrl = this.authService.formatImageUrl(rawImg);
 
           this.admin = {
             ...this.admin,
@@ -226,26 +224,23 @@ export class EditAdmin implements OnInit {
         this.loading = false;
         if (res?.errorcode === '0') {
           const updatedAdmin = res.data || {};
-          let newImgUrl = updatedAdmin.image_url || this.admin.image_url;
-          if (!newImgUrl && updatedAdmin.image) {
-            newImgUrl = updatedAdmin.image.startsWith('http')
-              ? updatedAdmin.image
-              : environment.apiUrl.replace('/api', '') + '/admin_images/' + updatedAdmin.image;
-          }
+          const rawImg = updatedAdmin.image_url || updatedAdmin.image || this.admin.image_url;
+          const formattedImageUrl = this.authService.formatImageUrl(rawImg);
 
           if (this.isSelfProfile) {
-            const userStr = localStorage.getItem('admin_user');
-            if (userStr) {
+            const currentUserInStorage = localStorage.getItem('admin_user');
+            let mergedUser = {
+              ...this.admin,
+              ...updatedAdmin,
+              image_url: formattedImageUrl
+            };
+            if (currentUserInStorage) {
               try {
-                const u = JSON.parse(userStr);
-                u.name = this.admin.name;
-                u.email = this.admin.email;
-                u.phone = this.admin.phone;
-                if (newImgUrl) u.image_url = newImgUrl;
-                if (updatedAdmin.image) u.image = updatedAdmin.image;
-                localStorage.setItem('admin_user', JSON.stringify(u));
+                mergedUser = { ...JSON.parse(currentUserInStorage), ...mergedUser };
               } catch (e) {}
             }
+            this.authService.setCurrentUser(mergedUser);
+
             this.notificationService.success('Profile updated successfully!');
             this.fetchAdminData();
           } else {

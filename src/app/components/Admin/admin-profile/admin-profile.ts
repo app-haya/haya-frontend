@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../services/admin.service';
+import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification.service';
 import { environment } from '../../../../environments/environment';
 
@@ -31,6 +32,7 @@ export class AdminProfile implements OnInit {
 
   constructor(
     private adminService: AdminService,
+    private authService: AuthService,
     private notificationService: NotificationService,
     public translate: TranslateService
   ) {}
@@ -52,12 +54,8 @@ export class AdminProfile implements OnInit {
         this.loading = false;
         if (res?.data) {
           const adminData = res.data;
-          let formattedImageUrl = adminData.image_url || '';
-          if (!formattedImageUrl && adminData.image) {
-            formattedImageUrl = adminData.image.startsWith('http')
-              ? adminData.image
-              : environment.apiUrl.replace('/api', '') + '/admin_images/' + adminData.image;
-          }
+          const rawImg = adminData.image_url || adminData.image;
+          const formattedImageUrl = this.authService.formatImageUrl(rawImg);
 
           this.admin = {
             ...this.admin,
@@ -68,6 +66,19 @@ export class AdminProfile implements OnInit {
               adminData.is_super_admin === true ||
               adminData.is_super_admin === '1',
           };
+
+          const currentUserInStorage = localStorage.getItem('admin_user');
+          if (currentUserInStorage) {
+            try {
+              const parsed = JSON.parse(currentUserInStorage);
+              const merged = { ...parsed, ...this.admin };
+              this.authService.setCurrentUser(merged);
+            } catch (e) {
+              this.authService.setCurrentUser(this.admin);
+            }
+          } else {
+            this.authService.setCurrentUser(this.admin);
+          }
         }
       },
       error: (err) => {
@@ -89,6 +100,11 @@ export class AdminProfile implements OnInit {
         reader.readAsDataURL(this.imageFile);
       }
     }
+  }
+
+  onImageError(event: any): void {
+    this.admin.image_url = null;
+    this.imagePreview = null;
   }
 
   formatRoleName(name: any): string {
@@ -140,28 +156,28 @@ export class AdminProfile implements OnInit {
         this.loading = false;
         if (res?.errorcode === '0') {
           const updatedAdmin = res.data || {};
-          let newImgUrl = updatedAdmin.image_url || this.admin.image_url;
-          if (!newImgUrl && updatedAdmin.image) {
-            newImgUrl = updatedAdmin.image.startsWith('http')
-              ? updatedAdmin.image
-              : environment.apiUrl.replace('/api', '') + '/admin_images/' + updatedAdmin.image;
-          }
+          const rawImg = updatedAdmin.image_url || updatedAdmin.image || this.admin.image_url;
+          const formattedImageUrl = this.authService.formatImageUrl(rawImg);
 
-          const userStr = localStorage.getItem('admin_user');
-          if (userStr) {
+          this.admin = {
+            ...this.admin,
+            ...updatedAdmin,
+            image_url: formattedImageUrl,
+          };
+
+          const currentUserInStorage = localStorage.getItem('admin_user');
+          let mergedUser = { ...this.admin };
+          if (currentUserInStorage) {
             try {
-              const u = JSON.parse(userStr);
-              u.name = this.admin.name;
-              u.email = this.admin.email;
-              u.phone = this.admin.phone;
-              if (newImgUrl) u.image_url = newImgUrl;
-              if (updatedAdmin.image) u.image = updatedAdmin.image;
-              localStorage.setItem('admin_user', JSON.stringify(u));
+              mergedUser = { ...JSON.parse(currentUserInStorage), ...this.admin };
             } catch (e) {}
           }
+          this.authService.setCurrentUser(mergedUser);
 
           this.notificationService.success('Profile updated successfully!');
           this.admin.password = '';
+          this.imageFile = null;
+          this.imagePreview = null;
           this.fetchAdminData();
         } else {
           this.notificationService.error(res.message || 'Failed to update profile');
@@ -179,3 +195,4 @@ export class AdminProfile implements OnInit {
     });
   }
 }
+

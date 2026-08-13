@@ -12,7 +12,7 @@
         
         <!-- Avatar with Overlay Badge -->
         <div class="profile-avatar-wrapper position-relative">
-          <img [src]="imagePreview || admin.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Avatar" class="profile-avatar" />
+          <img [src]="imagePreview || admin.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" (error)="onImageError($event)" alt="Avatar" class="profile-avatar" />
           <label class="avatar-edit-badge" [title]="'Change Photo' | translate">
             <i class="bi bi-camera-fill"></i>
             <input type="file" (change)="onFileChange($event)" accept="image/*" class="d-none" />

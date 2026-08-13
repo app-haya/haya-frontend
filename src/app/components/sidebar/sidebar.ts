@@ -95,21 +95,39 @@ export class Sidebar implements OnInit {
 
   ngOnInit(): void {
     this.menu = [...this.allMenu];
-    const token = localStorage.getItem('admin_token');
-    if (!token) return;
-    this.authService.getProfile(token).subscribe({
-      next: (res) => {
-        this.user = res.data || res.user || res;
+    
+    this.authService.currentUser$.subscribe((userData) => {
+      if (userData) {
+        this.user = { ...userData };
+        const rawImg = this.user.image_url || this.user.image;
+        if (rawImg) {
+          this.user.image_url = this.authService.formatImageUrl(rawImg);
+        }
         this.filterMenu();
-      },
-      error: (err) => {
-        console.error('Error fetching profile:', err);
-      },
+      }
     });
+
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      this.authService.getProfile(token).subscribe({
+        next: () => {
+          this.filterMenu();
+        },
+        error: (err) => {
+          console.error('Error fetching profile:', err);
+        },
+      });
+    }
 
     this.dashboardService.getRefreshObservable().subscribe(() => {
       this.loadCounts();
     });
+  }
+
+  onImageError(event: any) {
+    if (this.user) {
+      this.user.image_url = null;
+    }
   }
 
   filterMenu(): void {

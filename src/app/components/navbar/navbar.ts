@@ -69,16 +69,22 @@ export class Navbar implements OnInit {
   }
 
   loadAdminUser() {
-    const userStr = localStorage.getItem('admin_user');
-    if (userStr) {
-      try {
-        this.adminUser = JSON.parse(userStr);
-        if (this.adminUser.image && !this.adminUser.image_url) {
-          this.adminUser.image_url = this.adminUser.image.startsWith('http')
-            ? this.adminUser.image
-            : environment.apiUrl.replace('/api', '') + '/admin_images/' + this.adminUser.image;
+    this.authService.currentUser$.subscribe((user) => {
+      if (user) {
+        this.adminUser = { ...user };
+        const rawImg = this.adminUser.image_url || this.adminUser.image;
+        if (rawImg) {
+          this.adminUser.image_url = this.authService.formatImageUrl(rawImg);
         }
-      } catch (e) {}
+      } else {
+        this.adminUser = null;
+      }
+    });
+  }
+
+  onImageError(event: any) {
+    if (this.adminUser) {
+      this.adminUser.image_url = null;
     }
   }
 
