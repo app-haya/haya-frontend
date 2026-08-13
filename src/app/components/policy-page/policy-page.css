@@ -711,6 +711,9 @@ a.lp-policy-section__btn:hover,
   text-decoration: none !important;
   font-weight: 700;
   cursor: pointer;
+  display: inline-block;
+  unicode-bidi: isolate;
+  margin: 0 4px;
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
