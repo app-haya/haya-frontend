@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LoyaltyService } from '../../services/loyalty.service';
 import { NotificationService } from '../../services/notification.service';
 import { DialogService } from '../../services/dialog.service';
@@ -42,7 +42,7 @@ export class Loyalty implements OnInit {
   // Package Modal
   showPackageModal = false;
   isEditPackage = false;
-  packageForm = { id: 0, name: '', points: 1000, price: 10, currency: 'SAR', is_active: true, sort_order: 99 };
+  packageForm = { id: 0, name: '', name_ar: '', name_en: '', points: 1000, price: 10, currency: 'SAR', is_active: true, sort_order: 99 };
   packageSubmitting = false;
 
   // Credit Modal
@@ -72,7 +72,8 @@ export class Loyalty implements OnInit {
   constructor(
     private loyaltyService: LoyaltyService,
     private notification: NotificationService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    public translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -130,7 +131,7 @@ export class Loyalty implements OnInit {
 
   openAddPackage(): void {
     this.isEditPackage = false;
-    this.packageForm = { id: 0, name: '', points: 5000, price: 50, currency: 'SAR', is_active: true, sort_order: 99 };
+    this.packageForm = { id: 0, name: '', name_ar: '', name_en: '', points: 5000, price: 50, currency: 'SAR', is_active: true, sort_order: 99 };
     this.showPackageModal = true;
   }
 
@@ -139,6 +140,8 @@ export class Loyalty implements OnInit {
     this.packageForm = {
       id: pkg.id,
       name: pkg.name || '',
+      name_ar: pkg.name_ar || pkg.name || '',
+      name_en: pkg.name_en || pkg.name || '',
       points: pkg.points || 0,
       price: pkg.price || 0,
       currency: pkg.currency || 'SAR',
@@ -153,10 +156,12 @@ export class Loyalty implements OnInit {
   }
 
   savePackage(): void {
-    if (!this.packageForm.name.trim() || this.packageForm.points <= 0 || this.packageForm.price < 0) {
+    if ((!this.packageForm.name_ar.trim() && !this.packageForm.name_en.trim()) || this.packageForm.points <= 0 || this.packageForm.price < 0) {
       this.notification.error('Please fill in all fields correctly');
       return;
     }
+
+    this.packageForm.name = this.packageForm.name_ar || this.packageForm.name_en;
 
     this.packageSubmitting = true;
     if (this.isEditPackage) {

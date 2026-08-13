@@ -34,6 +34,7 @@ export class PolicyPage implements OnInit, OnDestroy {
   sections: PolicySection[] = [];
   activeSectionId = 'intro';
   isEn = false;
+  isDarkMode = false;
   private langSub?: Subscription;
   private querySub?: Subscription;
 
@@ -45,6 +46,9 @@ export class PolicyPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isDarkMode = localStorage.getItem('lp_theme') === 'dark' || localStorage.getItem('darkMode') === 'true';
+    this.applyTheme();
+
     this.route.data.subscribe(data => {
       this.type = data['type'];
       this.loadContent();
@@ -88,6 +92,21 @@ export class PolicyPage implements OnInit, OnDestroy {
         : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
     }
     this.loadContent();
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('lp_theme', this.isDarkMode ? 'dark' : 'light');
+    localStorage.setItem('darkMode', String(this.isDarkMode));
+    this.applyTheme();
+  }
+
+  private applyTheme() {
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }
 
   toggleMobileMenu() {
@@ -351,6 +370,29 @@ export class PolicyPage implements OnInit, OnDestroy {
 
       let titleText = part.substring(0, closingIndex).replace(/<[^>]*>/g, '').trim();
       let rawBody = part.substring(closingIndex + 5).replace(/^<\/p>/i, '').replace(/<p>\s*<\/p>/gi, '').trim();
+
+      // If titleText is excessively long, extract short heading and move extra text to body
+      if (titleText.length > 60 || (titleText.length > 35 && (titleText.includes('.') || titleText.includes('!') || titleText.includes('?')))) {
+        let breakIdx = -1;
+        const match = titleText.match(/[:\.\!\?\n]/);
+        if (match && match.index !== undefined && match.index > 3 && match.index < 60) {
+          breakIdx = match.index + (match[0] === ':' ? 1 : 0);
+        } else if (titleText.length > 50) {
+          const lastSpace = titleText.substring(0, 50).lastIndexOf(' ');
+          if (lastSpace > 10) {
+            breakIdx = lastSpace;
+          }
+        }
+
+        if (breakIdx > 0) {
+          const extractedTitle = titleText.substring(0, breakIdx).trim();
+          const extraContent = titleText.substring(breakIdx).trim();
+          titleText = extractedTitle;
+          if (extraContent) {
+            rawBody = `<p>${extraContent}</p>` + rawBody;
+          }
+        }
+      }
 
       const bodyHtml = this.formatBodyContent(rawBody);
 

@@ -36,32 +36,113 @@
     <div class="spinner-ring"></div>
   </div>
 
-  <div *ngIf="!loading" class="settings-tabs">
-    <button type="button" class="tab-btn" [class.active]="activeTab === 'terms'" (click)="setActiveTab('terms')">
-      <i class="bi bi-file-earmark-text"></i>
-      <span>{{ 'TERMS_AND_CONDITIONS' | translate }}</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab === 'privacy'" (click)="setActiveTab('privacy')">
-      <i class="bi bi-shield-check"></i>
-      <span>{{ 'PRIVACY_POLICY' | translate }}</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">
-      <i class="bi bi-info-circle"></i>
-      <span>{{ 'ABOUT_US' | translate }}</span>
-    </button>
+  <div *ngIf="!loading" class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div class="settings-tabs m-0">
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'terms'" (click)="setActiveTab('terms')">
+        <i class="bi bi-file-earmark-text"></i>
+        <span>{{ 'TERMS_AND_CONDITIONS' | translate }}</span>
+      </button>
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'privacy'" (click)="setActiveTab('privacy')">
+        <i class="bi bi-shield-check"></i>
+        <span>{{ 'PRIVACY_POLICY' | translate }}</span>
+      </button>
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">
+        <i class="bi bi-info-circle"></i>
+        <span>{{ 'ABOUT_US' | translate }}</span>
+      </button>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="editor-mode-toggle">
+      <button type="button" class="mode-btn" [class.active]="editorMode === 'builder'" (click)="toggleEditorMode('builder')">
+        <i class="bi bi-grid-1x2-fill me-1"></i> منشئ الأقسام التفاعلي
+      </button>
+      <button type="button" class="mode-btn" [class.active]="editorMode === 'raw'" (click)="toggleEditorMode('raw')">
+        <i class="bi bi-code-slash me-1"></i> المحرر المباشر
+      </button>
+    </div>
   </div>
 
   <form [formGroup]="settingsForm" *ngIf="!loading">
     <div class="row g-4">
-      <!-- Terms & Conditions Section -->
+
+      <!-- ===================== TERMS & CONDITIONS ===================== -->
       <div class="col-12" *ngIf="activeTab === 'terms'">
         <div class="card shadow-none rounded-4 overflow-hidden custom-border"
              [style.background-color]="isDarkMode ? '#161b22' : '#fff'">
-          <div class="card-header py-3 bg-transparent custom-border-bottom">
+          <div class="card-header py-3 bg-transparent custom-border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>{{ 'TERMS_AND_CONDITIONS' | translate }}</h5>
+            <span class="badge rounded-pill bg-purple px-3 py-2" *ngIf="editorMode === 'builder'">
+              منشئ الأقسام ({{ sections.terms.ar.length }} بنود بالعربية / {{ sections.terms.en.length }} بالإنجليزية)
+            </span>
           </div>
           <div class="card-body p-4">
-            <div class="row">
+
+            <!-- SECTION BUILDER MODE -->
+            <div class="row" *ngIf="editorMode === 'builder'">
+              <!-- Arabic Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'TERMS_AR' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('terms', 'ar')">
+                    <i class="bi bi-plus-lg me-1"></i>إضافة بند بالعربية
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.terms.ar; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">البند #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('terms', 'ar', i)" [disabled]="i === 0" title="أعلى"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('terms', 'ar', i)" [disabled]="i === sections.terms.ar.length - 1" title="أسفل"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('terms', 'ar', i)" title="حذف البند"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">عنوان البند / الفقرة</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('terms', 'ar')" placeholder="مثال: قبول الشروط والتعاملات">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">محتوى وتفاصيل البند</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('terms', 'ar')" rows="3" placeholder="اكتب تفاصيل أو نقاط البند هنا... (يمكنك بدء السطر بـ * لعرضه كـ قائمة نقطية)"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- English Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'TERMS_EN' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('terms', 'en')">
+                    <i class="bi bi-plus-lg me-1"></i>Add English Section
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.terms.en; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">Section #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('terms', 'en', i)" [disabled]="i === 0" title="Up"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('terms', 'en', i)" [disabled]="i === sections.terms.en.length - 1" title="Down"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('terms', 'en', i)" title="Delete"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">Section Title</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('terms', 'en')" placeholder="e.g. Acceptance of Terms">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">Section Content</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('terms', 'en')" rows="3" placeholder="Enter section details or bullet points (* Bullet item)..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RAW EDITOR MODE -->
+            <div class="row" *ngIf="editorMode === 'raw'">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">{{ 'TERMS_AR' | translate }}</label>
                 <textarea id="terms_ar_editor" class="form-control rounded-3" formControlName="terms_and_conditions_ar" rows="8"
@@ -73,7 +154,9 @@
                   (input)="adjustTextareas()" placeholder="{{ 'ENTER_TERMS_EN' | translate }}"></textarea>
               </div>
             </div>
-            <div class="row">
+
+            <!-- Updated Dates -->
+            <div class="row pt-3 border-top">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">تاريخ التحديث (بالعربية)</label>
                 <input type="text" class="form-control rounded-3" formControlName="terms_updated_date_ar"
@@ -85,19 +168,88 @@
                   placeholder="مثال: Last updated on May 17, 2026">
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      <!-- Privacy Policy Section -->
+      <!-- ===================== PRIVACY POLICY ===================== -->
       <div class="col-12" *ngIf="activeTab === 'privacy'">
         <div class="card shadow-none rounded-4 overflow-hidden custom-border"
              [style.background-color]="isDarkMode ? '#161b22' : '#fff'">
-          <div class="card-header py-3 bg-transparent custom-border-bottom">
+          <div class="card-header py-3 bg-transparent custom-border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2"></i>{{ 'PRIVACY_POLICY' | translate }}</h5>
+            <span class="badge rounded-pill bg-purple px-3 py-2" *ngIf="editorMode === 'builder'">
+              منشئ الأقسام ({{ sections.privacy.ar.length }} بنود بالعربية / {{ sections.privacy.en.length }} بالإنجليزية)
+            </span>
           </div>
           <div class="card-body p-4">
-            <div class="row">
+
+            <!-- SECTION BUILDER MODE -->
+            <div class="row" *ngIf="editorMode === 'builder'">
+              <!-- Arabic Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'PRIVACY_AR' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('privacy', 'ar')">
+                    <i class="bi bi-plus-lg me-1"></i>إضافة بند بالعربية
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.privacy.ar; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">البند #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('privacy', 'ar', i)" [disabled]="i === 0" title="أعلى"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('privacy', 'ar', i)" [disabled]="i === sections.privacy.ar.length - 1" title="أسفل"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('privacy', 'ar', i)" title="حذف البند"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">عنوان البند / الفقرة</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('privacy', 'ar')" placeholder="مثال: جمع البيانات وحمايتها">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">محتوى وتفاصيل البند</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('privacy', 'ar')" rows="3" placeholder="اكتب تفاصيل أو نقاط البند هنا..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- English Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'PRIVACY_EN' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('privacy', 'en')">
+                    <i class="bi bi-plus-lg me-1"></i>Add English Section
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.privacy.en; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">Section #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('privacy', 'en', i)" [disabled]="i === 0" title="Up"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('privacy', 'en', i)" [disabled]="i === sections.privacy.en.length - 1" title="Down"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('privacy', 'en', i)" title="Delete"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">Section Title</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('privacy', 'en')" placeholder="e.g. Data Collection & Safety">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">Section Content</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('privacy', 'en')" rows="3" placeholder="Enter section details..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RAW EDITOR MODE -->
+            <div class="row" *ngIf="editorMode === 'raw'">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">{{ 'PRIVACY_AR' | translate }}</label>
                 <textarea id="privacy_ar_editor" class="form-control rounded-3" formControlName="privacy_policy_ar" rows="8"
@@ -109,7 +261,9 @@
                   (input)="adjustTextareas()" placeholder="{{ 'ENTER_PRIVACY_EN' | translate }}"></textarea>
               </div>
             </div>
-            <div class="row">
+
+            <!-- Updated Dates -->
+            <div class="row pt-3 border-top">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">تاريخ التحديث (بالعربية)</label>
                 <input type="text" class="form-control rounded-3" formControlName="privacy_updated_date_ar"
@@ -121,19 +275,88 @@
                   placeholder="مثال: Last updated on May 17, 2026">
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      <!-- About Us Section -->
+      <!-- ===================== ABOUT US ===================== -->
       <div class="col-12" *ngIf="activeTab === 'about'">
         <div class="card shadow-none rounded-4 overflow-hidden custom-border"
              [style.background-color]="isDarkMode ? '#161b22' : '#fff'">
-          <div class="card-header py-3 bg-transparent custom-border-bottom">
+          <div class="card-header py-3 bg-transparent custom-border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>{{ 'ABOUT_US' | translate }}</h5>
+            <span class="badge rounded-pill bg-purple px-3 py-2" *ngIf="editorMode === 'builder'">
+              منشئ الأقسام ({{ sections.about.ar.length }} بنود بالعربية / {{ sections.about.en.length }} بالإنجليزية)
+            </span>
           </div>
           <div class="card-body p-4">
-            <div class="row">
+
+            <!-- SECTION BUILDER MODE -->
+            <div class="row" *ngIf="editorMode === 'builder'">
+              <!-- Arabic Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'ABOUT_AR' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('about', 'ar')">
+                    <i class="bi bi-plus-lg me-1"></i>إضافة بند بالعربية
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.about.ar; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">البند #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('about', 'ar', i)" [disabled]="i === 0" title="أعلى"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('about', 'ar', i)" [disabled]="i === sections.about.ar.length - 1" title="أسفل"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('about', 'ar', i)" title="حذف البند"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">عنوان البند / الفقرة</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('about', 'ar')" placeholder="مثال: من نحن ورؤيتنا">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">محتوى وتفاصيل البند</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('about', 'ar')" rows="3" placeholder="اكتب تفاصيل أو رغبات المنصة..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- English Sections -->
+              <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold m-0 text-purple"><i class="bi bi-translate me-1"></i>{{ 'ABOUT_EN' | translate }}</h6>
+                  <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="addSection('about', 'en')">
+                    <i class="bi bi-plus-lg me-1"></i>Add English Section
+                  </button>
+                </div>
+                <div class="section-card-list">
+                  <div *ngFor="let sec of sections.about.en; let i = index" class="section-card p-3 rounded-3 mb-3" [style.background-color]="isDarkMode ? '#1f242d' : '#f9f9fc'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge rounded-pill bg-purple text-white px-2 py-1 fs-7">Section #{{ i + 1 }}</span>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionUp('about', 'en', i)" [disabled]="i === 0" title="Up"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="moveSectionDown('about', 'en', i)" [disabled]="i === sections.about.en.length - 1" title="Down"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteSection('about', 'en', i)" title="Delete"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label small fw-bold mb-1">Section Title</label>
+                      <input type="text" class="form-control form-control-sm rounded-2" [(ngModel)]="sec.title" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('about', 'en')" placeholder="e.g. Who We Are">
+                    </div>
+                    <div>
+                      <label class="form-label small fw-bold mb-1">Section Content</label>
+                      <textarea class="form-control form-control-sm rounded-2" [(ngModel)]="sec.content" [ngModelOptions]="{standalone: true}" (ngModelChange)="syncSectionsToForm('about', 'en')" rows="3" placeholder="Enter details..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RAW EDITOR MODE -->
+            <div class="row" *ngIf="editorMode === 'raw'">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">{{ 'ABOUT_AR' | translate }}</label>
                 <textarea id="about_ar_editor" class="form-control rounded-3" formControlName="about_us_ar" rows="8"
@@ -145,7 +368,9 @@
                   (input)="adjustTextareas()" placeholder="{{ 'ENTER_ABOUT_EN' | translate }}"></textarea>
               </div>
             </div>
-            <div class="row">
+
+            <!-- Updated Dates -->
+            <div class="row pt-3 border-top">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">تاريخ التحديث (بالعربية)</label>
                 <input type="text" class="form-control rounded-3" formControlName="about_updated_date_ar"
@@ -157,6 +382,7 @@
                   placeholder="مثال: Last updated on May 17, 2026">
               </div>
             </div>
+
           </div>
         </div>
       </div>

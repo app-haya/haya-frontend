@@ -1,0 +1,419 @@
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Primary Accent */
+.text-purple {
+  color: #86469C !important;
+}
+
+/* =========================================================
+   1. HERO BANNER CARD (Vibrant Header in both Light/Dark)
+   ========================================================= */
+.profile-hero-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.hero-cover {
+  height: 140px;
+  position: relative;
+  background: linear-gradient(135deg, #86469C 0%, #6b21a8 60%, #4c1d95 100%);
+  overflow: hidden;
+}
+
+.cover-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.6;
+}
+
+.cover-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.25), transparent);
+}
+
+/* Avatar Row & Overlap */
+.avatar-row {
+  margin-top: -55px;
+}
+
+.profile-avatar-wrapper {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #a855f7, #86469C);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  background: #f8fafc;
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #86469C;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+  border: 2px solid #ffffff;
+}
+
+[dir="rtl"] .avatar-edit-badge {
+  right: auto;
+  left: 4px;
+}
+
+.avatar-edit-badge:hover {
+  background: #703385;
+  transform: scale(1.1);
+}
+
+/* User Info Header in Hero */
+.user-name {
+  font-size: 1.5rem;
+  letter-spacing: -0.3px;
+  color: #0f172a;
+}
+
+.user-email {
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.hero-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(134, 70, 156, 0.12);
+  color: #86469C;
+  border: 1px solid rgba(134, 70, 156, 0.3);
+}
+
+/* =========================================================
+   2. LIGHT MODE (DEFAULT) CARDS & INPUTS
+   ========================================================= */
+.profile-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.section-title {
+  color: #0f172a;
+  font-size: 1.15rem;
+}
+
+.section-subtitle {
+  color: #64748b;
+}
+
+.form-label {
+  color: #334155;
+}
+
+/* Inputs & Icon Group */
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #86469C;
+  font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[dir="rtl"] .input-icon {
+  left: auto;
+  right: 14px;
+}
+
+.custom-input {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 12px 14px 12px 42px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+[dir="rtl"] .custom-input {
+  padding: 12px 42px 12px 14px;
+}
+
+.custom-input:focus {
+  border-color: #86469C;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(134, 70, 156, 0.12);
+  outline: none;
+}
+
+.custom-input::placeholder {
+  color: #94a3b8;
+}
+
+.readonly-input {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #64748b;
+  padding: 4px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+}
+
+[dir="rtl"] .password-toggle-btn {
+  right: auto;
+  left: 12px;
+}
+
+.password-toggle-btn:hover {
+  color: #86469C;
+}
+
+/* Save Button */
+.btn-save-profile {
+  background: linear-gradient(135deg, #86469C 0%, #6b21a8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(134, 70, 156, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-save-profile:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9d4edd 0%, #7b2cbf 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(157, 78, 221, 0.4);
+  color: #ffffff;
+}
+
+.btn-save-profile:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Super Admin Banner Card */
+.super-admin-card {
+  background: rgba(134, 70, 156, 0.06);
+  border: 1px solid rgba(134, 70, 156, 0.2);
+}
+
+.card-box-title {
+  color: #0f172a;
+}
+
+.card-box-desc {
+  color: #64748b;
+}
+
+.icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(134, 70, 156, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Permissions Pill Tags */
+.perm-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.perm-pill:hover {
+  background: rgba(134, 70, 156, 0.1);
+  border-color: rgba(134, 70, 156, 0.3);
+  color: #86469C;
+}
+
+.no-roles-box {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   3. DARK MODE OVERRIDES (:host-context(body.dark-mode))
+   ========================================================= */
+:host-context(body.dark-mode) .text-purple {
+  color: #c084fc !important;
+}
+
+:host-context(body.dark-mode) .profile-hero-card {
+  background: rgba(26, 31, 51, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+}
+
+:host-context(body.dark-mode) .user-name {
+  color: #ffffff;
+}
+
+:host-context(body.dark-mode) .user-email {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .hero-role-badge {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+:host-context(body.dark-mode) .profile-avatar {
+  border-color: #1a1f33;
+  background: #111625;
+}
+
+:host-context(body.dark-mode) .avatar-edit-badge {
+  border-color: #1a1f33;
+}
+
+:host-context(body.dark-mode) .profile-card {
+  background: rgba(26, 31, 51, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+:host-context(body.dark-mode) .section-title {
+  color: #ffffff;
+}
+
+:host-context(body.dark-mode) .section-subtitle {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .form-label {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark-mode) .input-icon {
+  color: #c084fc;
+}
+
+:host-context(body.dark-mode) .custom-input {
+  background: #151a2e;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .custom-input:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.15);
+}
+
+:host-context(body.dark-mode) .custom-input::placeholder {
+  color: #64748b;
+}
+
+:host-context(body.dark-mode) .readonly-input {
+  background: rgba(15, 20, 35, 0.6);
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .password-toggle-btn {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .password-toggle-btn:hover {
+  color: #c084fc;
+}
+
+:host-context(body.dark-mode) .super-admin-card {
+  background: rgba(134, 70, 156, 0.18);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+:host-context(body.dark-mode) .card-box-title {
+  color: #ffffff;
+}
+
+:host-context(body.dark-mode) .card-box-desc {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .icon-circle {
+  background: rgba(168, 85, 247, 0.18);
+}
+
+:host-context(body.dark-mode) .perm-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+}
+
+:host-context(body.dark-mode) .perm-pill:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: #ffffff;
+}
+
+:host-context(body.dark-mode) .no-roles-box {
+  background: rgba(15, 20, 35, 0.5);
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .border-bottom,
+:host-context(body.dark-mode) .border-top {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}

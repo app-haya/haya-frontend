@@ -331,12 +331,16 @@
         <img src="/images/iPhone 13 Pro.png" [alt]="'LANDING.FOOTER.DOWNLOAD_APP' | translate" class="lp-download__phone-img" loading="lazy" decoding="async" />
         
         <!-- Purple banner with text - Marquee -->
-        <div class="lp-download__banner">
+        <div class="lp-download__banner" dir="ltr">
           <div class="lp-download__banner-track">
-            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
-            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
-            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
-            <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+            <div class="lp-download__banner-group">
+              <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+              <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+            </div>
+            <div class="lp-download__banner-group" aria-hidden="true">
+              <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+              <span class="lp-download__banner-text" [innerHTML]="getMarqueeText()"></span>
+            </div>
           </div>
         </div>
         

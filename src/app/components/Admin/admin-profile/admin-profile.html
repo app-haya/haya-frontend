@@ -1,0 +1,174 @@
+<div class="profile-container py-4 px-3 px-md-4">
+  
+  <!-- Hero Banner Card -->
+  <div class="profile-hero-card mb-4">
+    <div class="hero-cover">
+      <div class="cover-pattern"></div>
+      <div class="cover-gradient"></div>
+    </div>
+    
+    <div class="hero-body px-4 pb-4 position-relative">
+      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end gap-3 avatar-row">
+        
+        <!-- Avatar with Overlay Badge -->
+        <div class="profile-avatar-wrapper position-relative">
+          <img [src]="imagePreview || admin.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Avatar" class="profile-avatar" />
+          <label class="avatar-edit-badge" [title]="'Change Photo' | translate">
+            <i class="bi bi-camera-fill"></i>
+            <input type="file" (change)="onFileChange($event)" accept="image/*" class="d-none" />
+          </label>
+        </div>
+
+        <!-- Admin Info Header -->
+        <div class="user-hero-info flex-grow-1 text-center text-md-start mb-1">
+          <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1 flex-wrap">
+            <h2 class="user-name m-0 fw-bold">{{ admin.name || ('Admin Profile' | translate) }}</h2>
+            <span class="hero-role-badge">
+              <i class="bi bi-shield-check me-1"></i>
+              {{ admin.is_super_admin ? ('Super Admin' | translate) : ('Supervisor' | translate) }}
+            </span>
+          </div>
+          <p class="user-email m-0 dir-ltr text-center text-md-start">
+            <i class="bi bi-envelope me-1"></i> {{ admin.email || '—' }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="row g-4">
+    
+    <!-- Left Main Column: Form Controls -->
+    <div class="col-lg-8">
+      <div class="profile-card p-4">
+        
+        <div class="card-header-box mb-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+          <div>
+            <h5 class="fw-bold m-0 section-title d-flex align-items-center gap-2">
+              <i class="bi bi-person-lines-fill text-purple"></i>
+              {{ 'Personal Information' | translate }}
+            </h5>
+            <span class="small section-subtitle mt-1 d-block">{{ 'Update your profile identity and contact details' | translate }}</span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="saveProfile()">
+          <div class="row g-4">
+            
+            <!-- Full Name -->
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">{{ 'Full Name' | translate }}</label>
+              <div class="input-icon-group">
+                <i class="bi bi-person input-icon"></i>
+                <input type="text" class="form-control custom-input" [(ngModel)]="admin.name" name="name" [placeholder]="'Enter full name' | translate" required />
+              </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">{{ 'Email Address' | translate }}</label>
+              <div class="input-icon-group">
+                <i class="bi bi-envelope input-icon"></i>
+                <input type="email" class="form-control custom-input" [(ngModel)]="admin.email" name="email" [placeholder]="'admin@haya.com' | translate" required />
+              </div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">{{ 'Phone Number' | translate }}</label>
+              <div class="input-icon-group">
+                <i class="bi bi-telephone input-icon"></i>
+                <input type="text" class="form-control custom-input" [(ngModel)]="admin.phone" name="phone" [placeholder]="'+966...' | translate" />
+              </div>
+            </div>
+
+            <!-- Account Type (Readonly) -->
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">{{ 'Account Type' | translate }}</label>
+              <div class="input-icon-group">
+                <i class="bi bi-shield-lock input-icon"></i>
+                <input type="text" class="form-control custom-input readonly-input" [value]="admin.is_super_admin ? ('Super Admin' | translate) : ('Supervisor' | translate)" readonly />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Password Section -->
+          <div class="card-header-box mt-5 mb-4 pb-3 border-bottom">
+            <h5 class="fw-bold m-0 section-title d-flex align-items-center gap-2">
+              <i class="bi bi-key-fill text-purple"></i>
+              {{ 'Security & Password' | translate }}
+            </h5>
+            <span class="small section-subtitle mt-1 d-block">{{ 'Leave empty if you do not wish to change your password' | translate }}</span>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-8">
+              <label class="form-label small fw-semibold">{{ 'New Password' | translate }}</label>
+              <div class="input-icon-group">
+                <i class="bi bi-lock input-icon"></i>
+                <input [type]="showPassword ? 'text' : 'password'" class="form-control custom-input" [(ngModel)]="admin.password" name="password" [placeholder]="'Set new secure password' | translate" />
+                <button type="button" class="password-toggle-btn" (click)="showPassword = !showPassword" tabindex="-1">
+                  <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save Button -->
+          <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+            <button type="submit" class="btn btn-save-profile px-5 py-3 fw-bold d-flex align-items-center gap-2" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+              <i class="bi bi-check2-circle fs-5" *ngIf="!loading"></i>
+              <span>{{ loading ? ('Saving...' | translate) : ('Save Changes' | translate) }}</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- Right Sidebar Column: Permissions & Overview -->
+    <div class="col-lg-4">
+      <div class="profile-card p-4">
+        
+        <h5 class="fw-bold mb-3 section-title d-flex align-items-center gap-2">
+          <i class="bi bi-shield-check text-purple"></i>
+          {{ 'Assigned Roles & Permissions' | translate }}
+        </h5>
+        
+        <div *ngIf="admin.is_super_admin" class="super-admin-card p-4 text-center rounded-3 mb-3">
+          <div class="icon-circle mx-auto mb-3">
+            <i class="bi bi-shield-fill-check fs-2 text-purple"></i>
+          </div>
+          <h6 class="fw-bold card-box-title mb-2">{{ 'Super Administrator' | translate }}</h6>
+          <p class="small card-box-desc m-0">
+            {{ 'You have full unrestricted access to all modules, settings, and features in the administration dashboard.' | translate }}
+          </p>
+        </div>
+
+        <div *ngIf="!admin.is_super_admin">
+          <p class="small section-subtitle mb-3">{{ 'Modules you currently have access to:' | translate }}</p>
+          
+          <div class="d-flex flex-wrap gap-2" *ngIf="admin.roles && admin.roles.length > 0">
+            <div *ngFor="let role of admin.roles" class="perm-pill">
+              <i class="bi bi-check-circle-fill text-purple me-1"></i>
+              <span>{{ formatRoleName(role) }}</span>
+            </div>
+          </div>
+
+          <div *ngIf="!admin.roles || admin.roles.length === 0" class="p-3 text-center rounded no-roles-box small">
+            <i class="bi bi-info-circle me-1"></i>
+            {{ 'Standard supervisor access' | translate }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -11,6 +11,12 @@ import { catchError } from 'rxjs/operators';
 
 declare var ClassicEditor: any;
 
+export interface SectionItem {
+  id: string;
+  title: string;
+  content: string;
+}
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -24,7 +30,18 @@ export class Settings implements OnInit {
   submitting = false;
   settingsId: number | null = null;
   activeTab: 'terms' | 'privacy' | 'about' = 'terms';
+  editorMode: 'builder' | 'raw' = 'builder';
   editors: { [key: string]: any } = {};
+
+  sections: {
+    terms: { ar: SectionItem[]; en: SectionItem[] };
+    privacy: { ar: SectionItem[]; en: SectionItem[] };
+    about: { ar: SectionItem[]; en: SectionItem[] };
+  } = {
+    terms: { ar: [], en: [] },
+    privacy: { ar: [], en: [] },
+    about: { ar: [], en: [] },
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -102,9 +119,12 @@ export class Settings implements OnInit {
         }
 
         this.settingsForm.patchValue(patchData);
+        this.parseAllSectionsFromForm();
         this.loading = false;
         this.adjustTextareas();
-        this.initCKEditorForTab(this.activeTab);
+        if (this.editorMode === 'raw') {
+          this.initCKEditorForTab(this.activeTab);
+        }
       },
       error: () => {
         this.loading = false;
@@ -115,21 +135,68 @@ export class Settings implements OnInit {
 
   autoFormatSpacing(text: string): string {
     if (!text) return '';
-    let formatted = text;
 
-    // 1. Separate headings (# Heading) with double newlines
-    formatted = formatted.replace(/(?:^|[^\n])\s*(?:---|--)?\s*(#+\s*[^#\n]+)/gi, '\n\n$1');
+    // If it's already HTML (contains <h3>, <p>, <ul>), clean any remaining stray # in <p>
+    if (/<(h[1-6]|ul|ol|li|blockquote)\b[^>]*>/i.test(text)) {
+      let cleaned = text.replace(/<p>\s*#+\s*(.*?)\s*<\/p>/gi, '<h3>$1</h3>');
+      return cleaned.trim();
+    }
 
+    let raw = text;
+    // 1. Separate inline `# Heading` or `#Heading` into newlines
+    raw = raw.replace(/(?:^|[^\n])\s*(#+\s*[^#\n]+)/g, '\n\n$1\n\n');
     // 2. Separate bullet points (* Bullet or • Bullet) with a newline
-    formatted = formatted.replace(/(?:^|[^\n])\s*([\*•]\s*)/g, '\n$1');
+    raw = raw.replace(/(?:^|[^\n])\s*([\*•]\s*)/g, '\n$1');
 
-    // 3. Separate parameters like "البرامتر:" or "مسار " onto newlines
-    formatted = formatted.replace(/([^\n])\s*(البرامتر:|مسار\s+)/g, '$1\n$2');
+    const lines = raw.split('\n');
+    let htmlOutput: string[] = [];
+    let inList = false;
 
-    // 4. Remove excessive blank lines
-    formatted = formatted.replace(/\n{3,}/g, '\n\n');
+    for (let line of lines) {
+      let trimmed = line.trim();
+      if (!trimmed) {
+        if (inList) {
+          htmlOutput.push('</ul>');
+          inList = false;
+        }
+        continue;
+      }
 
-    return formatted.trim();
+      // Markdown Header (# Header)
+      if (/^#+\s*(.+)$/.test(trimmed)) {
+        if (inList) {
+          htmlOutput.push('</ul>');
+          inList = false;
+        }
+        const headingText = trimmed.replace(/^#+\s*/, '').trim();
+        htmlOutput.push(`<h3>${headingText}</h3>`);
+        continue;
+      }
+
+      // Bullet List (* Item or • Item or - Item)
+      if (/^[\*\-•]\s*(.+)$/.test(trimmed)) {
+        if (!inList) {
+          htmlOutput.push('<ul>');
+          inList = true;
+        }
+        const itemText = trimmed.replace(/^[\*\-•]\s*/, '').trim();
+        htmlOutput.push(`<li>${itemText}</li>`);
+        continue;
+      }
+
+      if (inList) {
+        htmlOutput.push('</ul>');
+        inList = false;
+      }
+
+      htmlOutput.push(`<p>${trimmed}</p>`);
+    }
+
+    if (inList) {
+      htmlOutput.push('</ul>');
+    }
+
+    return htmlOutput.join('');
   }
 
   formatTextSpacing() {
@@ -208,7 +275,9 @@ export class Settings implements OnInit {
             this.editors[field.id] = editor;
             const currentVal = this.settingsForm.get(field.name)?.value || '';
             if (currentVal) {
-              editor.setData(currentVal);
+              const formattedHtml = this.autoFormatSpacing(currentVal);
+              this.settingsForm.get(field.name)?.setValue(formattedHtml, { emitEvent: false });
+              editor.setData(formattedHtml);
             }
             editor.model.document.on('change:data', () => {
               const data = editor.getData();
@@ -335,5 +404,268 @@ export class Settings implements OnInit {
         });
       }
     });
+  }
+
+  // --- SECTION BUILDER METHODS ---
+  toggleEditorMode(mode: 'builder' | 'raw') {
+    if (this.editorMode === mode) return;
+    this.editorMode = mode;
+    if (mode === 'builder') {
+      this.parseAllSectionsFromForm();
+    } else {
+      this.initCKEditorForTab(this.activeTab);
+    }
+  }
+
+  parseAllSectionsFromForm() {
+    const val = this.settingsForm.value;
+    this.sections.terms.ar = this.parseTextToSections(val.terms_and_conditions_ar);
+    this.sections.terms.en = this.parseTextToSections(val.terms_and_conditions_en);
+    this.sections.privacy.ar = this.parseTextToSections(val.privacy_policy_ar);
+    this.sections.privacy.en = this.parseTextToSections(val.privacy_policy_en);
+    this.sections.about.ar = this.parseTextToSections(val.about_us_ar);
+    this.sections.about.en = this.parseTextToSections(val.about_us_en);
+
+    // Provide default empty item if empty
+    (['terms', 'privacy', 'about'] as const).forEach(tab => {
+      (['ar', 'en'] as const).forEach(lang => {
+        if (this.sections[tab][lang].length === 0) {
+          this.sections[tab][lang].push({ id: this.generateId(), title: '', content: '' });
+        }
+      });
+    });
+  }
+
+  parseTextToSections(htmlOrText: string): SectionItem[] {
+    if (!htmlOrText || !htmlOrText.trim()) return [];
+
+    const items: SectionItem[] = [];
+
+    // Check for HTML headings <h1>-<h6>
+    if (/<h[1-6]\b[^>]*>/i.test(htmlOrText)) {
+      const headingRegex = /<h[1-6]\b[^>]*>(.*?)<\/h[1-6]>/gi;
+      let match: RegExpExecArray | null;
+      const matches: { title: string; index: number; length: number }[] = [];
+
+      while ((match = headingRegex.exec(htmlOrText)) !== null) {
+        matches.push({
+          title: match[1].replace(/<[^>]*>/g, '').trim(),
+          index: match.index,
+          length: match[0].length,
+        });
+      }
+
+      if (matches.length > 0) {
+        if (matches[0].index > 0) {
+          const prefixText = this.cleanHtmlToPlainText(htmlOrText.substring(0, matches[0].index));
+          if (prefixText) {
+            items.push({ id: this.generateId(), title: 'المقدمة', content: prefixText });
+          }
+        }
+
+        for (let i = 0; i < matches.length; i++) {
+          const m = matches[i];
+          const startContent = m.index + m.length;
+          const endContent = i < matches.length - 1 ? matches[i + 1].index : htmlOrText.length;
+          const cleanContent = this.cleanHtmlToPlainText(htmlOrText.substring(startContent, endContent));
+
+          const normalized = this.normalizeSectionTitleAndContent(m.title, cleanContent);
+
+          items.push({
+            id: this.generateId(),
+            title: normalized.title,
+            content: normalized.content,
+          });
+        }
+        return items;
+      }
+    }
+
+    // Markdown or plain text
+    const raw = htmlOrText.replace(/\\n/g, '\n').replace(/\r\n|\r/g, '\n');
+    const lines = raw.split('\n');
+
+    let currentTitle = '';
+    let currentLines: string[] = [];
+
+    for (let line of lines) {
+      let trimmed = line.trim();
+      if (!trimmed) continue;
+
+      if (/^#+\s*(.+)$/.test(trimmed)) {
+        if (currentTitle || currentLines.length > 0) {
+          const normalized = this.normalizeSectionTitleAndContent(currentTitle, currentLines.join('\n'));
+          items.push({
+            id: this.generateId(),
+            title: normalized.title,
+            content: normalized.content,
+          });
+          currentLines = [];
+        }
+        currentTitle = trimmed.replace(/^#+\s*/, '').trim();
+      } else {
+        currentLines.push(trimmed);
+      }
+    }
+
+    if (currentTitle || currentLines.length > 0) {
+      const normalized = this.normalizeSectionTitleAndContent(currentTitle, currentLines.join('\n'));
+      items.push({
+        id: this.generateId(),
+        title: normalized.title,
+        content: normalized.content,
+      });
+    }
+
+    return items;
+  }
+
+  normalizeSectionTitleAndContent(rawTitle: string, rawContent: string): { title: string; content: string } {
+    let title = (rawTitle || '').trim();
+    let content = (rawContent || '').trim();
+
+    // If title is excessively long or contains multiple sentences/phrases
+    if (title.length > 60 || (title.length > 35 && (title.includes('.') || title.includes('!') || title.includes('?')))) {
+      let breakIdx = -1;
+      const match = title.match(/[:\.\!\?\n]/);
+      if (match && match.index !== undefined && match.index > 3 && match.index < 60) {
+        breakIdx = match.index + (match[0] === ':' ? 1 : 0);
+      } else if (title.length > 50) {
+        const lastSpace = title.substring(0, 50).lastIndexOf(' ');
+        if (lastSpace > 10) {
+          breakIdx = lastSpace;
+        }
+      }
+
+      if (breakIdx > 0) {
+        const extractedTitle = title.substring(0, breakIdx).trim().replace(/^[\.\:\!\?]+/, '');
+        const extractedContent = title.substring(breakIdx).trim().replace(/^[\.\:\!\?]+/, '').trim();
+
+        title = extractedTitle;
+        if (extractedContent) {
+          content = content ? extractedContent + '\n\n' + content : extractedContent;
+        }
+      }
+    }
+
+    return { title, content };
+  }
+
+  cleanHtmlToPlainText(html: string): string {
+    if (!html) return '';
+    let text = html.replace(/<li\b[^>]*>(.*?)<\/li>/gi, '• $1\n');
+    text = text.replace(/<p\b[^>]*>(.*?)<\/p>/gi, '$1\n');
+    text = text.replace(/<br\s*\/?>/gi, '\n');
+    text = text.replace(/<[^>]*>/g, '');
+    text = text.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    text = text.replace(/\n{3,}/g, '\n\n');
+    return text.trim();
+  }
+
+  generateHtmlFromSections(items: SectionItem[]): string {
+    if (!items || items.length === 0) return '';
+
+    let htmlParts: string[] = [];
+
+    for (let item of items) {
+      const normalized = this.normalizeSectionTitleAndContent(item.title, item.content);
+      const title = (normalized.title || '').trim();
+      const content = (normalized.content || '').trim();
+
+      if (!title && !content) continue;
+
+      if (title) {
+        htmlParts.push(`<h3>${title}</h3>`);
+      }
+
+      if (content) {
+        const lines = content.split('\n');
+        let inList = false;
+
+        for (let line of lines) {
+          let trimmed = line.trim();
+          if (!trimmed) {
+            if (inList) {
+              htmlParts.push('</ul>');
+              inList = false;
+            }
+            continue;
+          }
+
+          if (/^[\*\-•]\s*(.+)$/.test(trimmed)) {
+            if (!inList) {
+              htmlParts.push('<ul>');
+              inList = true;
+            }
+            const itemText = trimmed.replace(/^[\*\-•]\s*/, '').trim();
+            htmlParts.push(`<li>${itemText}</li>`);
+            continue;
+          }
+
+          if (inList) {
+            htmlParts.push('</ul>');
+            inList = false;
+          }
+
+          htmlParts.push(`<p>${trimmed}</p>`);
+        }
+
+        if (inList) {
+          htmlParts.push('</ul>');
+        }
+      }
+    }
+
+    return htmlParts.join('');
+  }
+
+  generateId(): string {
+    return Math.random().toString(36).substring(2, 9);
+  }
+
+  addSection(tab: 'terms' | 'privacy' | 'about', lang: 'ar' | 'en') {
+    this.sections[tab][lang].push({
+      id: this.generateId(),
+      title: '',
+      content: '',
+    });
+    this.syncSectionsToForm(tab, lang);
+  }
+
+  deleteSection(tab: 'terms' | 'privacy' | 'about', lang: 'ar' | 'en', index: number) {
+    if (this.sections[tab][lang].length <= 1) {
+      this.sections[tab][lang] = [{ id: this.generateId(), title: '', content: '' }];
+    } else {
+      this.sections[tab][lang].splice(index, 1);
+    }
+    this.syncSectionsToForm(tab, lang);
+  }
+
+  moveSectionUp(tab: 'terms' | 'privacy' | 'about', lang: 'ar' | 'en', index: number) {
+    if (index <= 0) return;
+    const list = this.sections[tab][lang];
+    const temp = list[index];
+    list[index] = list[index - 1];
+    list[index - 1] = temp;
+    this.syncSectionsToForm(tab, lang);
+  }
+
+  moveSectionDown(tab: 'terms' | 'privacy' | 'about', lang: 'ar' | 'en', index: number) {
+    const list = this.sections[tab][lang];
+    if (index >= list.length - 1) return;
+    const temp = list[index];
+    list[index] = list[index + 1];
+    list[index + 1] = temp;
+    this.syncSectionsToForm(tab, lang);
+  }
+
+  syncSectionsToForm(tab: 'terms' | 'privacy' | 'about', lang: 'ar' | 'en') {
+    let formControlName = '';
+    if (tab === 'terms') formControlName = lang === 'ar' ? 'terms_and_conditions_ar' : 'terms_and_conditions_en';
+    if (tab === 'privacy') formControlName = lang === 'ar' ? 'privacy_policy_ar' : 'privacy_policy_en';
+    if (tab === 'about') formControlName = lang === 'ar' ? 'about_us_ar' : 'about_us_en';
+
+    const html = this.generateHtmlFromSections(this.sections[tab][lang]);
+    this.settingsForm.get(formControlName)?.setValue(html, { emitEvent: false });
   }
 }

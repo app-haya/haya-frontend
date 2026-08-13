@@ -11,6 +11,12 @@
         <p class="page-subtitle">{{ 'Manage merchant loyalty packages, balances, invoices, and settings' | translate }}</p>
       </div>
     </div>
+    <div class="header-actions">
+      <button *ngIf="activeTab === 'packages'" class="btn-primary-action" (click)="openAddPackage()">
+        <i class="bi bi-plus-circle"></i>
+        {{ 'Add Package' | translate }}
+      </button>
+    </div>
   </div>
 
   <!-- Tabs Navigation Bar -->
@@ -47,18 +53,17 @@
 
   <!-- ===================== PACKAGES TAB ===================== -->
   <div *ngIf="!loading && activeTab === 'packages'" class="tab-content-container animate-fade">
-    <div class="section-actions-row mb-4">
-      <button class="btn-primary-action" (click)="openAddPackage()">
-        <i class="bi bi-plus-circle"></i>
-        {{ 'Add Package' | translate }}
-      </button>
-    </div>
 
     <!-- Package Grid -->
     <div class="packages-grid" *ngIf="packages.length > 0">
       <div class="package-card" *ngFor="let pkg of packages" [class.inactive]="!pkg.is_active">
         <div class="package-card-header">
-          <h5 class="pkg-title">{{ pkg.name }}</h5>
+          <div>
+            <h5 class="pkg-title">{{ (translate.currentLang === 'en' ? (pkg.name_en || pkg.name) : (pkg.name_ar || pkg.name)) }}</h5>
+            <small *ngIf="pkg.name_ar && pkg.name_en && pkg.name_ar !== pkg.name_en" class="text-muted opacity-75 d-block" style="font-size: 0.8rem;">
+              {{ translate.currentLang === 'en' ? pkg.name_ar : pkg.name_en }}
+            </small>
+          </div>
           <span class="pkg-badge">{{ pkg.points | number }} {{ 'Points' | translate }}</span>
         </div>
         <div class="package-card-body">
@@ -434,9 +439,14 @@
       </button>
     </div>
     <div class="modal-body-custom">
-      <div class="form-group">
-        <label class="form-lbl">{{ 'Package Name' | translate }} <span class="required">*</span></label>
-        <input type="text" class="form-control" [(ngModel)]="packageForm.name" [placeholder]="'Package Name' | translate">
+      <div class="form-group mb-3">
+        <label class="form-lbl">{{ 'Arabic Name' | translate }} <span class="required">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="packageForm.name_ar" [placeholder]="'Arabic Name' | translate">
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-lbl">{{ 'English Name' | translate }} <span class="required">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="packageForm.name_en" [placeholder]="'English Name' | translate">
       </div>
 
       <div class="form-group">

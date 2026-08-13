@@ -549,5 +549,163 @@ a.lp-policy-section__btn:hover,
   padding-left: 1.5rem;
 }
 
+/* ============================================================
+   POLICY PAGE DARK MODE STYLES (#313131 / #2b2b2b)
+   ============================================================ */
+.lp-root.lp-dark-mode .lp-policy-hero {
+  background: linear-gradient(135deg, #3d2247 0%, #201a24 100%) !important;
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-hero__title {
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-hero__subtitle {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-hero__date {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-content {
+  background-color: #313131 !important;
+  color: #e0e0e0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-text {
+  color: #e0e0e0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-text h1,
+.lp-root.lp-dark-mode .lp-policy-text h2,
+.lp-root.lp-dark-mode .lp-policy-text h3,
+.lp-root.lp-dark-mode .lp-policy-text strong {
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-text h2 {
+  color: #c48df0 !important;
+  border-bottom-color: #484848 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar {
+  background-color: transparent;
+}
+
+@media (max-width: 991.98px) {
+  .lp-root.lp-dark-mode .lp-policy-sidebar {
+    background-color: #383838 !important;
+    border-color: #484848 !important;
+    box-shadow: none !important;
+  }
+
+  .lp-root.lp-dark-mode .lp-policy-sidebar__title {
+    border-bottom-color: #484848 !important;
+  }
+
+  .lp-root.lp-dark-mode .lp-policy-sidebar__item {
+    border-bottom-color: #484848 !important;
+  }
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar__title {
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar__menu {
+  border-left-color: #484848 !important;
+}
+
+.lp-root[dir="ltr"].lp-dark-mode .lp-policy-sidebar__menu {
+  border-right-color: #484848 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar__link {
+  color: #a0a0b8 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar__link:hover,
+.lp-root.lp-dark-mode .lp-policy-sidebar__item--active .lp-policy-sidebar__link {
+  color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-sidebar__item--active::before {
+  background-color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section {
+  color: #e0e0e0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__title {
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__num {
+  color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__content,
+.lp-root.lp-dark-mode .lp-policy-intro-text,
+.lp-root.lp-dark-mode .lp-policy-section__item-text,
+.lp-root.lp-dark-mode .lp-policy-section__list li,
+.lp-root.lp-dark-mode .lp-policy-section__content p,
+.lp-root.lp-dark-mode .lp-policy-section__content li,
+.lp-root.lp-dark-mode .lp-policy-intro-text p {
+  color: #d0d0e0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__content strong,
+.lp-root.lp-dark-mode .lp-policy-section__content b,
+.lp-root.lp-dark-mode .lp-policy-section__content h3,
+.lp-root.lp-dark-mode .lp-policy-section__content h4,
+.lp-root.lp-dark-mode .lp-policy-intro-text strong {
+  color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__bullet {
+  color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-footer-link {
+  color: #b0b0c0 !important;
+  border-top-color: #484848 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-footer-link a {
+  color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-footer-link a:hover {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__api-route {
+  background-color: #26262e !important;
+  border-color: #3d3d4a !important;
+}
+
+.lp-root.lp-dark-mode .lp-policy-section__api-path {
+  color: #e0e0e0 !important;
+}
+
+.lp-root.lp-dark-mode a.lp-policy-section__btn,
+.lp-root.lp-dark-mode .lp-policy-section__btn {
+  background-color: #442a52 !important;
+  color: #c48df0 !important;
+}
+
+.lp-root.lp-dark-mode a.lp-policy-section__btn:hover,
+.lp-root.lp-dark-mode .lp-policy-section__btn:hover {
+  background-color: #9259A6 !important;
+  color: #ffffff !important;
+}
+
+
 
 

@@ -425,7 +425,7 @@
 .lp-nav__mobile-menu {
   display: none;
   background: #fff;
-  border-top: 1px solid #f0f0f0;
+  border: none;
   position: absolute;
   top: 100%;
   left: 0;
@@ -1672,17 +1672,25 @@
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
   z-index: 5;
+  direction: ltr !important;
 }
 
 .lp-download__banner-track {
   display: flex;
-  direction: ltr;
+  direction: ltr !important;
   flex-direction: row;
   width: max-content;
   white-space: nowrap;
-  animation: marquee 20s linear infinite;
+  animation: lp-marquee-smooth 30s linear infinite !important;
   will-change: transform;
   backface-visibility: hidden;
+}
+
+.lp-download__banner-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .lp-download__banner-text {
@@ -1692,30 +1700,19 @@
   white-space: nowrap;
   display: inline-block;
   flex-shrink: 0;
-  padding: 0 2rem;
+  padding: 0 1rem;
+  direction: rtl;
+  unicode-bidi: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.lp-root[dir="ltr"] .lp-download__banner-track {
-  animation: marquee-ltr 25s linear infinite;
-}
-
-@keyframes marquee {
+@keyframes lp-marquee-smooth {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
     transform: translate3d(-50%, 0, 0);
-  }
-}
-
-@keyframes marquee-ltr {
-  0% {
-    transform: translate3d(-50%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -2289,55 +2286,56 @@
   .lp-download__phone-section {
     display: block;
     position: relative;
-    min-height: 380px;
-    padding: 1.5rem 0 0;
-    margin-bottom: 0;
+    min-height: 440px;
+    padding: 3rem 0 2rem;
+    margin-bottom: 1rem;
   }
   .lp-download__phone-img {
     max-width: 190px;
   }
   .lp-download__floating-icon {
     display: flex;
-    width: 42px;
-    height: 42px;
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(122, 60, 160, 0.25);
+    width: 46px;
+    height: 46px;
+    padding: 9px;
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(122, 60, 160, 0.35);
+    background: #ffffff;
+  }
+  .lp-download__floating-icon--7 {
+    top: -12%;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .lp-download__floating-icon--1 {
-    top: 7%;
-    left: calc(50% - 158px);
+    top: 3%;
+    left: calc(50% - 175px);
     right: auto;
   }
   .lp-download__floating-icon--2 {
-    top: 7%;
-    right: calc(50% - 158px);
+    top: 3%;
+    right: calc(50% - 175px);
     left: auto;
   }
   .lp-download__floating-icon--3 {
-    top: 36%;
-    left: calc(50% - 168px);
+    top: 38%;
+    left: calc(50% - 210px);
     right: auto;
   }
   .lp-download__floating-icon--4 {
-    top: 36%;
-    right: calc(50% - 168px);
+    top: 38%;
+    right: calc(50% - 210px);
     left: auto;
   }
   .lp-download__floating-icon--5 {
-    top: 62%;
-    left: calc(50% - 158px);
+    top: 73%;
+    left: calc(50% - 175px);
     right: auto;
   }
   .lp-download__floating-icon--6 {
-    top: 62%;
-    right: calc(50% - 158px);
+    top: 73%;
+    right: calc(50% - 175px);
     left: auto;
-  }
-  .lp-download__floating-icon--7 {
-    top: -9%;
-    left: 50%;
-    transform: translateX(-50%);
   }
   .lp-download__banner {
     display: block;
@@ -2582,7 +2580,8 @@
 
 .lp-root.lp-dark-mode .lp-nav {
   background: #313131 !important;
-  border-bottom-color: #444;
+  border-bottom: none !important;
+  box-shadow: none !important;
 }
 
 .lp-root.lp-dark-mode .lp-nav__link {
@@ -2616,11 +2615,13 @@
 
 .lp-root.lp-dark-mode .lp-nav__mobile-menu {
   background: #313131 !important;
-  border-bottom-color: #444;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .lp-root.lp-dark-mode .lp-nav__mobile-link {
   color: #e0e0e0;
+  border-bottom-color: #444;
 }
 
 /* Hero Section */
@@ -2832,6 +2833,16 @@
 
 .lp-root.lp-dark-mode .lp-download__contact-box {
   background-color: #383838;
+}
+
+.lp-root.lp-dark-mode .lp-download__floating-icon {
+  background-color: #383838 !important;
+  border: 1px solid #484848;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.lp-root.lp-dark-mode .lp-download__floating-icon img {
+  filter: brightness(0) invert(1) !important;
 }
 
 .lp-root.lp-dark-mode .lp-download__contact-title {

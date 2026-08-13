@@ -1,4 +1,4 @@
-<div [attr.dir]="isEn ? 'ltr' : 'rtl'" class="lp-root" [class.lp-root-en]="isEn">
+<div [attr.dir]="isEn ? 'ltr' : 'rtl'" class="lp-root" [class.lp-root-en]="isEn" [class.lp-dark-mode]="isDarkMode">
 
   <!-- ===== NAVBAR ===== -->
   <nav class="lp-nav">
@@ -17,6 +17,9 @@
       <div class="lp-nav__actions">
         <button (click)="toggleLanguage()" class="lp-btn--lang-icon" [title]="isEn ? 'التحويل إلى العربية' : 'Switch to English'" aria-label="Toggle Language">
           <i class="bi bi-globe"></i>
+        </button>
+        <button class="lp-btn--lang-icon" (click)="toggleDarkMode()" [title]="isDarkMode ? (isEn ? 'Light Mode' : 'الوضع الفاتح') : (isEn ? 'Dark Mode' : 'الوضع الداكن')" aria-label="Toggle Dark Mode">
+          <i class="bi" [class.bi-sun-fill]="isDarkMode" [class.bi-moon-stars-fill]="!isDarkMode"></i>
         </button>
         <a routerLink="/" fragment="download" class="lp-btn lp-btn--download">{{ isEn ? 'Download App' : 'حمل التطبيق' }}</a>
         <button class="lp-nav__toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">

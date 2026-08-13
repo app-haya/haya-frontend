@@ -112,3 +112,76 @@ form {
     color: #000 !important;
     box-shadow: 0 4px 12px rgba(0, 207, 213, 0.25);
 }
+
+/* Section Builder Styles */
+.section-card {
+    transition: all 0.25s ease;
+    border: 1px solid rgba(122, 60, 160, 0.15);
+}
+
+.section-card:hover {
+    box-shadow: 0 4px 15px rgba(122, 60, 160, 0.1);
+    border-color: rgba(122, 60, 160, 0.35);
+}
+
+:host-context(body.dark-mode) .section-card {
+    border: 1px solid rgba(0, 207, 213, 0.15);
+}
+
+:host-context(body.dark-mode) .section-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 207, 213, 0.1);
+    border-color: rgba(0, 207, 213, 0.35);
+}
+
+.bg-purple {
+    background-color: #7a3ca0 !important;
+}
+
+:host-context(body.dark-mode) .bg-purple {
+    background-color: #00cfd5 !important;
+    color: #000 !important;
+}
+
+.border-dash {
+    border-style: dashed !important;
+    border-width: 2px !important;
+}
+
+.editor-mode-toggle {
+    display: flex;
+    background: rgba(122, 60, 160, 0.08);
+    padding: 4px;
+    border-radius: 30px;
+    gap: 4px;
+}
+
+:host-context(body.dark-mode) .editor-mode-toggle {
+    background: rgba(0, 207, 213, 0.08);
+}
+
+.mode-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+:host-context(body.dark-mode) .mode-btn {
+    color: #aaa;
+}
+
+.mode-btn.active {
+    background: #7a3ca0;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(122, 60, 160, 0.3);
+}
+
+:host-context(body.dark-mode) .mode-btn.active {
+    background: #00cfd5;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(0, 207, 213, 0.3);
+}

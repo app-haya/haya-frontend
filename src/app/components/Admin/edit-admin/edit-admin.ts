@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { NotificationService } from '../../../services/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-edit-admin',
@@ -15,6 +16,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class EditAdmin implements OnInit {
   adminId!: number;
+  isSelfProfile = false;
+  isSuperAdminUser = false;
   admin: any = {
     name: '',
     email: '',
@@ -40,9 +43,25 @@ export class EditAdmin implements OnInit {
 
   ngOnInit(): void {
     this.loadRoles();
+    const userStr = localStorage.getItem('admin_user');
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+    const currentUserId = currentUser ? currentUser.id : null;
+    this.isSuperAdminUser = currentUser
+      ? currentUser.is_super_admin === 1 || currentUser.is_super_admin === true || currentUser.is_super_admin === '1'
+      : false;
+
     this.route.params.subscribe((params) => {
-      this.adminId = +params['id'];
-      if (this.adminId) this.fetchAdminData();
+      if (params['id']) {
+        this.adminId = +params['id'];
+        this.isSelfProfile = this.adminId === currentUserId;
+      } else {
+        this.adminId = currentUserId;
+        this.isSelfProfile = true;
+      }
+
+      if (this.adminId) {
+        this.fetchAdminData();
+      }
     });
   }
 
@@ -93,10 +112,19 @@ export class EditAdmin implements OnInit {
               .map((r: any) => (typeof r === 'object' && r ? r.id : Number(r)))
               .filter((id: any) => !isNaN(id) && id !== null && id !== undefined);
           }
+
+          let formattedImageUrl = adminData.image_url || '';
+          if (!formattedImageUrl && adminData.image) {
+            formattedImageUrl = adminData.image.startsWith('http')
+              ? adminData.image
+              : environment.apiUrl.replace('/api', '') + '/admin_images/' + adminData.image;
+          }
+
           this.admin = {
             ...this.admin,
             ...adminData,
             roles: roleIds,
+            image_url: formattedImageUrl,
             is_super_admin:
               adminData.is_super_admin === 1 ||
               adminData.is_super_admin === true ||
@@ -197,8 +225,33 @@ export class EditAdmin implements OnInit {
       next: (res: any) => {
         this.loading = false;
         if (res?.errorcode === '0') {
-          this.notificationService.success('Admin updated successfully!');
-          this.router.navigate(['/admin/admins']);
+          const updatedAdmin = res.data || {};
+          let newImgUrl = updatedAdmin.image_url || this.admin.image_url;
+          if (!newImgUrl && updatedAdmin.image) {
+            newImgUrl = updatedAdmin.image.startsWith('http')
+              ? updatedAdmin.image
+              : environment.apiUrl.replace('/api', '') + '/admin_images/' + updatedAdmin.image;
+          }
+
+          if (this.isSelfProfile) {
+            const userStr = localStorage.getItem('admin_user');
+            if (userStr) {
+              try {
+                const u = JSON.parse(userStr);
+                u.name = this.admin.name;
+                u.email = this.admin.email;
+                u.phone = this.admin.phone;
+                if (newImgUrl) u.image_url = newImgUrl;
+                if (updatedAdmin.image) u.image = updatedAdmin.image;
+                localStorage.setItem('admin_user', JSON.stringify(u));
+              } catch (e) {}
+            }
+            this.notificationService.success('Profile updated successfully!');
+            this.fetchAdminData();
+          } else {
+            this.notificationService.success('Admin updated successfully!');
+            this.router.navigate(['/admin/admins']);
+          }
         } else {
           this.notificationService.error(
             res.message || 'Failed to update admin'

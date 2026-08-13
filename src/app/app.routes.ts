@@ -18,6 +18,7 @@ import { Calendar } from './components/calendar/calendar';
 import { AuthGuard } from './guards/auth.guard';
 import { AddAdmin } from './components/Admin/edit-admin/add-admin/add-admin';
 import { EditAdmin } from './components/Admin/edit-admin/edit-admin';
+import { AdminProfile } from './components/Admin/admin-profile/admin-profile';
 import { AddUser } from './components/User/users/adduser/adduser';
 import { EditUser } from './components/User/users/edituser/edituser';
 import { AddMerchant } from './components/add-merchant/add-merchant';
@@ -116,6 +117,7 @@ export const routes: Routes = [
       { path: 'addadmin', component: AddAdmin, data: { role: 'Admins' } },
       { path: 'roles', component: Roles, data: { role: 'Admins' } },
       { path: 'editadmin/:id', component: EditAdmin, data: { role: 'Admins' } },
+      { path: 'profile', component: AdminProfile },
       { path: 'interests', component: Interests, data: { role: 'Interests' } },
       { path: 'cities', component: Cities, data: { role: 'Cities' } },
       { path: 'countries', component: Countries, data: { role: 'Countries' } },

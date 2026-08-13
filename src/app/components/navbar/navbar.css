@@ -64,3 +64,48 @@
   min-width: auto;
   z-index: 1000;
 }
+
+.unread-notif {
+  background-color: rgba(122, 60, 160, 0.06);
+}
+
+.notif-item:hover {
+  background-color: rgba(122, 60, 160, 0.12) !important;
+}
+
+:host-context(body.dark-mode) .notif-item {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:host-context(body.dark-mode) .notif-item.unread-notif {
+  background-color: rgba(168, 85, 247, 0.15) !important;
+}
+
+:host-context(body.dark-mode) .dropdown-menu {
+  background-color: #1a1f33 !important;
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .notif-item .text-dark {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .notif-item p {
+  color: #94a3b8 !important;
+}
+
+/* Dynamic Notification Dropdown Alignment */
+.notif-dropdown-menu {
+  left: 0 !important;
+  right: auto !important;
+}
+
+:host-context([dir="ltr"]) .notif-dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+}
+
+:host-context([dir="rtl"]) .notif-dropdown-menu {
+  left: 0 !important;
+  right: auto !important;
+}

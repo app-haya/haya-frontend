@@ -20,7 +20,8 @@ export class LandingPage implements OnInit, OnDestroy {
   constructor(public translate: TranslateService) {}
 
   ngOnInit() {
-    this.isDarkMode = localStorage.getItem('lp_theme') === 'dark';
+    this.isDarkMode = localStorage.getItem('lp_theme') === 'dark' || localStorage.getItem('darkMode') === 'true';
+    this.applyTheme();
     this.updateDir();
     this.loadLocalizedData();
     this.langSub = this.translate.onLangChange.subscribe(() => {
@@ -32,6 +33,16 @@ export class LandingPage implements OnInit, OnDestroy {
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('lp_theme', this.isDarkMode ? 'dark' : 'light');
+    localStorage.setItem('darkMode', String(this.isDarkMode));
+    this.applyTheme();
+  }
+
+  private applyTheme() {
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }
 
   ngOnDestroy() {
@@ -172,6 +183,6 @@ export class LandingPage implements OnInit, OnDestroy {
         : 'حمل التطبيق &nbsp;&nbsp;◆&nbsp;&nbsp; سجل دخول &nbsp;&nbsp;◆&nbsp;&nbsp; إستمتع &nbsp;&nbsp;◆&nbsp;&nbsp; تفاعل &nbsp;&nbsp;◆&nbsp;&nbsp; أطلب &nbsp;&nbsp;◆&nbsp;&nbsp; نافس &nbsp;&nbsp;◆&nbsp;&nbsp; إستمتع &nbsp;&nbsp;◆&nbsp;&nbsp;';
     }
     const phrase = items.join(' &nbsp;&nbsp;◆&nbsp;&nbsp; ') + ' &nbsp;&nbsp;◆&nbsp;&nbsp; ';
-    return phrase.repeat(4);
+    return phrase.repeat(3);
   }
 }

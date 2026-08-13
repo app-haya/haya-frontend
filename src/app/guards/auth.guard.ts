@@ -25,6 +25,10 @@ export class AuthGuard implements CanActivateChild {
     const perms = getUserPermissions(user);
     const currentUrl = state.url || '';
 
+    if (currentUrl.includes('/admin/profile') || route.routeConfig?.path === 'profile') {
+      return true;
+    }
+
     // If attempting to open default dashboard route without explicit dashboard permission
     if ((currentUrl === '/admin' || currentUrl.includes('/admin/dashboardcount')) && !perms.has('dashboard')) {
       const firstRoute = getFirstPermittedRoute(user);

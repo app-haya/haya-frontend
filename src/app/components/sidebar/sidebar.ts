@@ -88,6 +88,7 @@ export class Sidebar implements OnInit {
     { name: 'Calendar', icon: 'bi bi-calendar-event', path: '/admin/calendar', perm: 'calendar' },
     { name: 'SEND_NOTIFICATIONS', icon: 'bi bi-bell', path: '/admin/send-notifications', perm: 'notifications' },
     { name: 'SETTINGS', icon: 'bi bi-gear', path: '/admin/policy-settings', perm: 'settings' },
+    { name: 'Profile', icon: 'bi bi-person-circle', path: '/admin/profile' },
   ];
 
   menu: any[] = [];

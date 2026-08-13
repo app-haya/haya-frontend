@@ -34,27 +34,101 @@
         </ul>
       </div>
 
-      <!-- Settings -->
-      <button class="icon-action d-none d-md-flex" title="Settings">
+      <!-- Settings / Profile -->
+      <button class="icon-action d-none d-md-flex" (click)="openProfile()" [title]="'Profile Settings' | translate">
         <i class="bi bi-gear"></i>
       </button>
 
-      <!-- Notifications -->
-      <button class="icon-action d-none d-md-flex" title="Notifications">
-        <i class="bi bi-bell"></i>
-      </button>
+      <!-- Notifications Dropdown -->
+      <div class="dropdown m-0 p-0 position-relative">
+        <button class="icon-action d-none d-md-flex position-relative" (click)="toggleNotifDropdown($event)" [title]="'Notifications' | translate">
+          <i class="bi bi-bell"></i>
+          <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px; padding: 3px 6px;">
+            {{ unreadCount }}
+          </span>
+        </button>
+
+        <div *ngIf="showNotifDropdown" class="dropdown-menu show shadow-lg notif-dropdown-menu" style="position:absolute; top: 125%; z-index: 1050; width: 340px; max-width: calc(100vw - 30px); border-radius: 16px; padding: 0; overflow: hidden;">
+          
+          <!-- Dropdown Header -->
+          <div class="p-3 bg-purple text-white d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-bell-fill"></i>
+              <h6 class="m-0 fw-bold">{{ 'Notifications' | translate }}</h6>
+              <span *ngIf="unreadCount > 0" class="badge bg-light text-purple rounded-pill">{{ unreadCount }}</span>
+            </div>
+            <button *ngIf="unreadCount > 0" class="btn btn-link text-white btn-sm text-decoration-none p-0" (click)="markAllAsRead()" style="font-size: 12px;">
+              {{ 'Mark all as read' | translate }}
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div *ngIf="loadingNotifs" class="p-4 text-center text-muted">
+            <div class="spinner-border spinner-border-sm text-purple mb-2"></div>
+            <p class="small m-0">{{ 'Loading...' | translate }}</p>
+          </div>
+
+          <!-- Notifications List -->
+          <div *ngIf="!loadingNotifs && notificationsList.length > 0" class="notif-scroll-container" style="max-height: 360px; overflow-y: auto;">
+            <div *ngFor="let notif of notificationsList" 
+                 class="notif-item p-3 border-bottom d-flex align-items-start gap-3" 
+                 [class.unread-notif]="!notif.isRead"
+                 (click)="onNotificationClick(notif)"
+                 style="cursor: pointer; transition: background 0.2s;">
+              
+              <div class="notif-icon-circle flex-shrink-0" [ngClass]="notif.module === 'deals' ? 'bg-purple-subtle text-purple' : 'bg-warning-subtle text-warning'" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="bi" [class.bi-bag-check-fill]="notif.module === 'deals'" [class.bi-patch-check-fill]="notif.module === 'verification'"></i>
+              </div>
+
+              <div class="flex-grow-1 overflow-hidden">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="fw-bold small text-truncate d-block" style="color: inherit;">{{ notif.title }}</span>
+                  <span *ngIf="!notif.isRead" class="unread-dot bg-danger rounded-circle d-inline-block" style="width: 8px; height: 8px;"></span>
+                </div>
+                <p class="small text-muted mb-0 lh-sm">{{ notif.body }}</p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!loadingNotifs && notificationsList.length === 0" class="p-4 text-center text-muted">
+            <i class="bi bi-bell-slash fs-2 d-block mb-2 text-secondary opacity-50"></i>
+            <p class="small m-0">{{ 'No notifications for your assigned modules' | translate }}</p>
+          </div>
+
+        </div>
+      </div>
 
       <!-- Dark Mode -->
       <button class="icon-action" (click)="toggleDarkMode()" title="Toggle Dark Mode">
         <i [ngClass]="isDarkMode ? 'bi bi-moon-stars' : 'bi bi-sun'"></i>
       </button>
 
-      <!-- User Profile Pill -->
-      <button class="user-pill d-none d-md-flex align-items-center">
-        <i class="bi bi-person-circle fs-5 mx-1"></i>
-        <span class="mx-1 fs-6">{{ translate.currentLang === 'en' ? 'Admin' : 'المدير' }}</span>
-        <i class="bi bi-chevron-down mx-1" style="font-size: 10px;"></i>
-      </button>
+      <!-- User Profile Dropdown -->
+      <div class="dropdown m-0 p-0 position-relative">
+        <button class="user-pill d-none d-md-flex align-items-center" (click)="toggleUserDropdown($event)" style="cursor: pointer;">
+          <img *ngIf="adminUser?.image_url" [src]="adminUser.image_url" class="rounded-circle me-1" style="width: 24px; height: 24px; object-fit: cover;" />
+          <i *ngIf="!adminUser?.image_url" class="bi bi-person-circle fs-5 mx-1"></i>
+          <span class="mx-1 fs-6">{{ adminUser?.name || (translate.currentLang === 'en' ? 'Admin' : 'المدير') }}</span>
+          <i class="bi bi-chevron-down mx-1" style="font-size: 10px;"></i>
+        </button>
+        <ul *ngIf="showUserDropdown" class="dropdown-menu show shadow-lg" style="position:absolute; right:0; top: 125%; z-index: 1000; min-width: 190px; border-radius: 12px; padding: 6px;">
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" style="cursor: pointer" (click)="goToProfile()">
+              <i class="bi bi-person-circle text-purple fs-5"></i>
+              <span>{{ 'Profile' | translate }}</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider my-1"></li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger rounded" style="cursor: pointer" (click)="logout()">
+              <i class="bi bi-box-arrow-right fs-5"></i>
+              <span>{{ 'LOGOUT' | translate }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
     </div>
   </div>
