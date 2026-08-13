@@ -706,6 +706,19 @@ a.lp-policy-section__btn:hover,
   color: #ffffff !important;
 }
 
+.footer-admin-link {
+  color: #c084fc !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.footer-admin-link:hover {
+  color: #e9d5ff !important;
+  text-decoration: underline !important;
+}
+
 
 
 
