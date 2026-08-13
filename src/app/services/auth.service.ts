@@ -33,16 +33,19 @@ export class AuthService {
     if (!urlOrFilename) return '';
     if (urlOrFilename.startsWith('data:image')) return urlOrFilename;
 
-    let formatted = urlOrFilename;
-    if (!formatted.startsWith('http://') && !formatted.startsWith('https://')) {
-      const baseUrl = environment.apiUrl.replace('/api', '');
-      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-      const cleanPath = formatted.startsWith('/') ? formatted : '/' + formatted;
-      formatted = cleanPath.includes('admin_images')
-        ? `${cleanBase}${cleanPath}`
-        : `${cleanBase}/admin_images${cleanPath}`;
+    const apiDomainBase = environment.apiUrl.replace('/api', '').replace(/\/$/, '');
+
+    if (
+      urlOrFilename.includes('admin_images') ||
+      urlOrFilename.includes('localhost') ||
+      urlOrFilename.includes('127.0.0.1') ||
+      !urlOrFilename.startsWith('http')
+    ) {
+      const cleanFilename = urlOrFilename.split('/').pop() || urlOrFilename;
+      return `${apiDomainBase}/admin_images/${cleanFilename}`;
     }
 
+    let formatted = urlOrFilename;
     if (typeof window !== 'undefined' && window.location.protocol === 'https:' && formatted.startsWith('http://')) {
       formatted = formatted.replace('http://', 'https://');
     }

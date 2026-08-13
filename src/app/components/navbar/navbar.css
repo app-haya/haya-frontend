@@ -131,6 +131,20 @@
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
 }
 
+:host-context(body.dark-mode) .dropdown-menu .dropdown-item,
+:host-context(body.dark-mode) .dropdown-menu .dropdown-item span {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .dropdown-menu .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .dropdown-menu .dropdown-divider {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 :host-context(body.dark-mode) .notif-item {
   background-color: #161b2c !important;
   border-color: rgba(255, 255, 255, 0.06) !important;

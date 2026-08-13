@@ -144,6 +144,23 @@ body.dark-mode .sidebar {
   color: #ffffff !important;
 }
 
+body.dark-mode .dropdown-menu {
+  background-color: #161b22 !important;
+  border: 1px solid #30363d !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .dropdown-menu .dropdown-item,
+body.dark-mode .dropdown-menu .dropdown-item span {
+  color: #ffffff !important;
+}
+
+body.dark-mode .dropdown-menu .dropdown-item:hover,
+body.dark-mode .dropdown-menu .dropdown-item:focus {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
 /* 🗯️ GLOBAL MODAL OVERRIDES (Dark Mode) 🗯️ */
 body.dark-mode .modal-content,
 body.dark-mode .modal-dialog .modal-content {

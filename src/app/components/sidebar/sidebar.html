@@ -2,8 +2,7 @@
   <div class="text-center mb-5 mt-2">
     <div class="position-relative d-inline-block">
       <img
-        *ngIf="user?.image_url"
-        [src]="user.image_url"
+        [src]="user?.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"
         (error)="onImageError($event)"
         alt="Admin Image"
         width="60"
@@ -11,9 +10,6 @@
         class="rounded-circle mb-2 border border-3 border-white shadow-sm"
         style="object-fit:cover;"
       />
-      <div *ngIf="!user?.image_url" class="rounded-circle mb-2 border border-3 border-white shadow-sm d-inline-flex align-items-center justify-content-center bg-light text-purple mx-auto" style="width: 60px; height: 60px;">
-        <i class="bi bi-person-fill fs-2"></i>
-      </div>
       <span
         class="position-absolute bottom-0 end-0 translate-middle bg-success border border-white rounded-circle"
         style="width: 14px; height: 14px;"

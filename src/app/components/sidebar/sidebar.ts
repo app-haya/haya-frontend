@@ -125,8 +125,8 @@ export class Sidebar implements OnInit {
   }
 
   onImageError(event: any) {
-    if (this.user) {
-      this.user.image_url = null;
+    if (event?.target) {
+      event.target.src = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
     }
   }
 
