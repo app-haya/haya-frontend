@@ -65,33 +65,101 @@
   z-index: 1000;
 }
 
+/* Header Pill Badge */
+.notif-header-badge {
+  background-color: #ffffff !important;
+  color: #7a3ca0 !important;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 50px;
+  display: inline-block;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Notification Item Elements in Light Mode */
+.notif-item {
+  background-color: #ffffff;
+  border-color: #f1f5f9 !important;
+}
+
 .unread-notif {
-  background-color: rgba(122, 60, 160, 0.06);
+  background-color: #fbf7fc !important;
 }
 
 .notif-item:hover {
-  background-color: rgba(122, 60, 160, 0.12) !important;
+  background-color: #f3ebf7 !important;
+}
+
+.notif-title {
+  color: #0f172a !important;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.notif-body {
+  color: #475569 !important;
+  font-size: 0.8rem;
+}
+
+.notif-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.notif-icon-deals {
+  background-color: rgba(122, 60, 160, 0.12);
+  color: #7a3ca0;
+}
+
+.notif-icon-verification {
+  background-color: rgba(234, 179, 8, 0.18);
+  color: #ca8a04;
+}
+
+/* Dark Mode Overrides */
+:host-context(body.dark-mode) .dropdown-menu {
+  background-color: #111625 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
 }
 
 :host-context(body.dark-mode) .notif-item {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #161b2c !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
 :host-context(body.dark-mode) .notif-item.unread-notif {
-  background-color: rgba(168, 85, 247, 0.15) !important;
+  background-color: rgba(122, 60, 160, 0.22) !important;
 }
 
-:host-context(body.dark-mode) .dropdown-menu {
-  background-color: #1a1f33 !important;
+:host-context(body.dark-mode) .notif-item:hover {
+  background-color: rgba(122, 60, 160, 0.35) !important;
+}
+
+:host-context(body.dark-mode) .notif-title {
   color: #ffffff !important;
 }
 
-:host-context(body.dark-mode) .notif-item .text-dark {
-  color: #ffffff !important;
+:host-context(body.dark-mode) .notif-body {
+  color: #cbd5e1 !important;
 }
 
-:host-context(body.dark-mode) .notif-item p {
-  color: #94a3b8 !important;
+:host-context(body.dark-mode) .notif-icon-deals {
+  background-color: rgba(168, 85, 247, 0.22);
+  color: #c084fc;
+}
+
+:host-context(body.dark-mode) .notif-icon-verification {
+  background-color: rgba(234, 179, 8, 0.25);
+  color: #fde047;
 }
 
 /* Dynamic Notification Dropdown Alignment */
