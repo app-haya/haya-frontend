@@ -6,7 +6,7 @@ export class ThemeService {
   private dark = false;
   constructor() {
     const saved = localStorage.getItem('darkMode');
-    this.dark = saved !== 'false';
+    this.dark = saved === 'true';
     this.applyTheme();
   }
   toggle() {
