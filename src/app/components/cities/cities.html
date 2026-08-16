@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ filteredCities.length }} {{ (filteredCities.length === 1 ? 'City' : 'Cities') | translate }}</span>
+      <span>{{ (total || filteredCities.length) }} {{ ((total || filteredCities.length) === 1 ? 'City' : 'Cities') | translate }}</span>
     </div>
   </div>
 
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-bar" *ngIf="total > 0 && lastPage > 1">
+    <div class="pagination-bar" *ngIf="lastPage > 1">
       <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
         <i class="bi bi-chevron-right"></i>
       </button>
