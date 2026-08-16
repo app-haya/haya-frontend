@@ -378,14 +378,14 @@
         <h2 class="lp-download__title" [innerHTML]="'LANDING.DOWNLOAD.TITLE' | translate"></h2>
         <p class="lp-download__desc" [innerHTML]="'LANDING.DOWNLOAD.DESC' | translate"></p>
         <div class="lp-download__btns">
-          <a href="#" class="lp-download__store-btn">
+          <a href="https://play.google.com/store/apps/details?id=com.haya.haya" target="_blank" rel="noopener noreferrer" class="lp-download__store-btn">
             <img src="/images/logos_google-play.svg" alt="Google Play" />
             <span>
               <small>GET IT ON</small>
               <strong>Google Play</strong>
             </span>
           </a>
-          <a href="#" class="lp-download__store-btn">
+          <a href="https://apps.apple.com/sa/app/haya/id6796128618" target="_blank" rel="noopener noreferrer" class="lp-download__store-btn">
             <i class="bi bi-apple"></i>
             <span>
               <small>Download on the</small>
@@ -405,11 +405,10 @@
             </h3>
             <p class="lp-download__contact-desc" [innerHTML]="'LANDING.DOWNLOAD.CONTACT_DESC' | translate"></p>
           </div>
-          <a href="tel:800-HAYA-APP" class="lp-download__contact-btn">
+          <a href="hayaapp://chat" (click)="openHayaApp($event)" class="lp-download__contact-btn">
             <img src="/images/ايقونة هيا2-08(1).svg" alt="هيّا" class="lp-download__contact-logo" />
             <span>
-              <small>{{ 'LANDING.DOWNLOAD.UNIFIED_NUMBER' | translate }}</small>
-              <strong>800-HAYA-APP</strong>
+              <strong style="font-size: 1.1rem; text-wrap: nowrap;">تواصل مع هيّا | HAYA</strong>
             </span>
           </a>
         </div>
@@ -447,19 +446,23 @@
         <!-- Left Section: Contact & Download -->
         <div class="lp-footer__contact">
           <h4>{{ 'LANDING.FOOTER.CONTACT_US' | translate }}</h4>
-          <p class="lp-footer__phone">{{ 'LANDING.FOOTER.UNIFIED_NUMBER_LABEL' | translate }} <span class="lp-footer__phone-number">800-HAYA-APP</span></p>
+          <p class="lp-footer__phone">
+            <a href="tel:+966596904229" style="text-decoration: none;">
+              <span class="lp-footer__phone-number" style="color: #5b2d7a; font-weight: 700; font-size: 0.95rem;">{{ 'LANDING.FOOTER.UNIFIED_NUMBER_LABEL' | translate }}</span>
+            </a>
+          </p>
           
           <div class="lp-footer__download">
             <h4>{{ 'LANDING.FOOTER.DOWNLOAD_APP' | translate }}</h4>
             <div class="lp-footer__store-btns">
-              <a href="#" class="lp-footer__store-btn-full">
+              <a href="https://apps.apple.com/sa/app/haya/id6796128618" target="_blank" rel="noopener noreferrer" class="lp-footer__store-btn-full">
                 <i class="bi bi-apple"></i>
                 <span>
                   <small>Download on the</small>
                   <strong>App Store</strong>
                 </span>
               </a>
-              <a href="#" class="lp-footer__store-btn-full">
+              <a href="https://play.google.com/store/apps/details?id=com.haya.haya" target="_blank" rel="noopener noreferrer" class="lp-footer__store-btn-full">
                 <img src="/images/logos_google-play.svg" alt="Google Play" class="lp-footer__store-icon" />
                 <span>
                   <small>GET IT ON</small>

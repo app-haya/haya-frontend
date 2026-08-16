@@ -33,6 +33,21 @@ export class PolicyPage implements OnInit, OnDestroy {
   currentYear = new Date().getFullYear();
   sections: PolicySection[] = [];
   activeSectionId = 'intro';
+  openHayaApp(event: Event) {
+    event.preventDefault();
+    const deepLink = 'hayaapp://chat';
+    const start = Date.now();
+    window.location.href = deepLink;
+
+    setTimeout(() => {
+      if (Date.now() - start < 2000) {
+        const downloadSec = document.querySelector('.lp-footer__download, .lp-download__store-btns');
+        if (downloadSec) {
+          downloadSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }, 1500);
+  }
   isEn = false;
   isDarkMode = false;
   private langSub?: Subscription;
@@ -548,7 +563,7 @@ Parameters: phone (customer phone), invoice_number (invoice number), amount (inv
 # Merchant Dashboard
 If you don't have an online store system with API support, contact us and the Haya team will activate a dedicated dashboard for your business.
 Contact us via:
-Official account HAYA-APP-800.
+Official account +966 59 690 4229.
 
 # Top 30 Policy
 Fair Competition: Points are calculated based on genuine user activities inside the application.
@@ -557,7 +572,7 @@ Penalties: Haya management reserves the right to reset points or permanently ban
 Final Decisions: Top 30 leaderboard results declared at month-end are final.
 
 # Technical Support
-If you have any inquiries or complaints, contact us on HAYA-APP-800.`;
+If you have any inquiries or complaints, contact us on +966 59 690 4229.`;
       } else {
         this.content = `مرحباً بك في صفحة مطوري هيّا.
 يوفر تطبيق هيّا واجهة برمجة تطبيقات (API) تتيح للمتاجر الإلكترونية ربط أنظمتها مباشرة مع التطبيق، مما يساهم في إدارة المنتجات والطلبات بشكل آلي وسلس.
@@ -599,7 +614,7 @@ POST /api/v1/cashier/invoices
 # لوحة تحكم التاجر
 إذا لم يكن لديك متجر إلكتروني أو نظام يدعم التكامل عبر API، يمكنك التواصل معنا، وسيقوم فريق هيّا بإنشاء حساب تاجر وتفعيل لوحة التحكم المناسبة لنشاطك.
 تواصل معنا عبر:
-الحساب الرسمي هيّا HAYA-APP-800.
+الحساب الرسمي هيّا +966 59 690 4229.
 
 # سياسة توب 30
 عدالة التنافس: يتم احتساب النقاط بناءً على الأنشطة الحقيقية والمشروعة للمستخدم داخل التطبيق (التفاعل، الاستخدام، المعاملات).
@@ -608,7 +623,7 @@ POST /api/v1/cashier/invoices
 القرارات النهائية: تعتبر لوحة الصدارة لـ توب 30 المعلنة نهاية كل شهر ميلادي قطعية ولا يجوز الطعن فيها بعد مراجعتها تقنياً من فريق الدعم.
 
 # الدعم الفني
-إذا كان لديك أي استفسارات أو شكاوى أو اقتراحات، يمكنك التواصل معنا على الرقم الموحد HAYA-APP-800. سنبذل قصارى جهدنا لمعالجة شكواك في أسرع فرصة.`;
+إذا كان لديك أي استفسارات أو شكاوى أو اقتراحات، يمكنك التواصل معنا على الرقم +966 59 690 4229. سنبذل قصارى جهدنا لمعالجة شكواك في أسرع فرصة.`;
       }
       this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.content);
       this.sections = this.parseSections(this.content, lang);

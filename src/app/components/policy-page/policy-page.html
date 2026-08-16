@@ -176,19 +176,23 @@
         <!-- Left Section: Contact & Download -->
         <div class="lp-footer__contact">
           <h4>{{ isEn ? 'Contact Us' : 'تواصل معنا' }}</h4>
-          <p class="lp-footer__phone">{{ isEn ? 'Toll-free: ' : 'الرقم الموحد: ' }}<span class="lp-footer__phone-number">800-HAYA-APP</span></p>
+          <p class="lp-footer__phone">
+            <a href="tel:+966596904229" style="text-decoration: none;">
+              <span class="lp-footer__phone-number" style="color: #5b2d7a; font-weight: 700; font-size: 0.95rem;">{{ isEn ? 'Haya Support | HAYA' : 'دعم هيّا | HAYA' }}</span>
+            </a>
+          </p>
           
           <div class="lp-footer__download">
             <h4>{{ isEn ? 'Download App' : 'حمل التطبيق' }}</h4>
             <div class="lp-footer__store-btns">
-              <a href="#" class="lp-footer__store-btn-full">
+              <a href="https://apps.apple.com/sa/app/haya/id6796128618" target="_blank" rel="noopener noreferrer" class="lp-footer__store-btn-full">
                 <i class="bi bi-apple"></i>
                 <span>
                   <small>Download on the</small>
                   <strong>App Store</strong>
                 </span>
               </a>
-              <a href="#" class="lp-footer__store-btn-full">
+              <a href="https://play.google.com/store/apps/details?id=com.haya.haya" target="_blank" rel="noopener noreferrer" class="lp-footer__store-btn-full">
                 <img src="/images/logos_google-play.svg" alt="Google Play" class="lp-footer__store-icon" />
                 <span>
                   <small>GET IT ON</small>
