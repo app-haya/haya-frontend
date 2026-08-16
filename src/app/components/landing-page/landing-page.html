@@ -447,8 +447,8 @@
         <div class="lp-footer__contact">
           <h4>{{ 'LANDING.FOOTER.CONTACT_US' | translate }}</h4>
           <p class="lp-footer__phone">
-            <a href="tel:+966596904229" style="text-decoration: none;">
-              <span class="lp-footer__phone-number" style="color: #5b2d7a; font-weight: 700; font-size: 0.95rem;">{{ 'LANDING.FOOTER.UNIFIED_NUMBER_LABEL' | translate }}</span>
+            <a href="hayaapp://chat" (click)="openHayaApp($event)" style="text-decoration: none;">
+              <span class="lp-footer__phone-number" style="color: #584466 !important; font-weight: 700; cursor: pointer;">{{ 'LANDING.FOOTER.UNIFIED_NUMBER_LABEL' | translate }}</span>
             </a>
           </p>
           

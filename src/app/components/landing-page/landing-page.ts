@@ -38,19 +38,31 @@ export class LandingPage implements OnInit, OnDestroy {
   }
 
   openHayaApp(event: Event) {
-    event.preventDefault();
-    const deepLink = 'hayaapp://chat';
-    const start = Date.now();
-    window.location.href = deepLink;
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+    let targetUrl = 'hayaapp://chat';
+    if (isAndroid) {
+      targetUrl = 'intent://chat#Intent;scheme=hayaapp;package=com.osus.haya;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.haya.haya;end';
+    }
+
+    window.location.href = targetUrl;
+
+    const start = Date.now();
     setTimeout(() => {
       if (Date.now() - start < 2000) {
-        const downloadSec = document.querySelector('.lp-download__store-btns, .lp-download__store-btn-full');
-        if (downloadSec) {
-          downloadSec.scrollIntoView({ behavior: 'smooth' });
+        if (isIOS) {
+          window.location.href = 'https://apps.apple.com/sa/app/haya/id6796128618';
+        } else if (isAndroid) {
+          window.location.href = 'https://play.google.com/store/apps/details?id=com.haya.haya';
+        } else {
+          const downloadSec = document.querySelector('.lp-download__store-btns, .lp-download__store-btn-full, .lp-download__btns');
+          if (downloadSec) {
+            downloadSec.scrollIntoView({ behavior: 'smooth' });
+          }
         }
       }
-    }, 1500);
+    }, 1200);
   }
 
   private applyTheme() {
