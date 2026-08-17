@@ -33,33 +33,11 @@ export class PolicyPage implements OnInit, OnDestroy {
   currentYear = new Date().getFullYear();
   sections: PolicySection[] = [];
   activeSectionId = 'intro';
-  openHayaApp(event: Event) {
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    // Deep link to support chat in Haya App
-    let targetUrl = 'hayaapp://chat?type=support';
-    if (isAndroid) {
-      targetUrl = 'intent://chat?type=support#Intent;scheme=hayaapp;package=com.haya.haya;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.haya.haya;end';
+  openHayaApp(event?: Event) {
+    if (event) {
+      event.preventDefault();
     }
-
-    window.location.href = targetUrl;
-
-    const start = Date.now();
-    setTimeout(() => {
-      if (Date.now() - start < 2000) {
-        if (isIOS) {
-          window.location.href = 'https://apps.apple.com/sa/app/haya/id6796128618';
-        } else if (isAndroid) {
-          window.location.href = 'https://play.google.com/store/apps/details?id=com.haya.haya';
-        } else {
-          const downloadSec = document.querySelector('.lp-footer__download, .lp-download__store-btns');
-          if (downloadSec) {
-            downloadSec.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-      }
-    }, 1200);
+    window.location.href = 'tel:+966596904229';
   }
   isEn = false;
   isDarkMode = false;
