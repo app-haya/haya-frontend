@@ -41,9 +41,10 @@ export class LandingPage implements OnInit, OnDestroy {
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    let targetUrl = 'hayaapp://chat';
+    // Deep link to support chat in Haya App
+    let targetUrl = 'hayaapp://chat?type=support';
     if (isAndroid) {
-      targetUrl = 'intent://chat#Intent;scheme=hayaapp;package=com.osus.haya;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.haya.haya;end';
+      targetUrl = 'intent://chat?type=support#Intent;scheme=hayaapp;package=com.haya.haya;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.haya.haya;end';
     }
 
     window.location.href = targetUrl;
