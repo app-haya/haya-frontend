@@ -1,3 +1,11 @@
+def isProdBranch(String branchName) {
+  return branchName in ['main', 'master', 'production']
+}
+
+def isDevBranch(String branchName) {
+  return branchName in ['develop', 'development', 'dev']
+}
+
 pipeline {
   agent any
 
@@ -8,11 +16,17 @@ pipeline {
     timeout(time: 30, unit: 'MINUTES')
   }
 
+  triggers {
+    // Webhooks fire immediately when configured in the Jenkins job.
+    // pollSCM is a fallback if the GitHub webhook is missing or delayed.
+    pollSCM('H/2 * * * *')
+  }
+
   parameters {
     choice(
       name: 'ENVIRONMENT',
-      choices: ['dev', 'prod'],
-      description: 'Target deployment environment'
+      choices: ['auto', 'dev', 'prod', 'none'],
+      description: 'auto: develop/dev -> development, main/master/production -> production'
     )
 
     string(
@@ -52,10 +66,65 @@ pipeline {
             ]
           ]
 
-          def target = targets[params.ENVIRONMENT]
+          String branchName =
+            env.BRANCH_NAME ?:
+            env.GIT_BRANCH?.replaceFirst(/^origin\//, '') ?:
+            ''
+
+          String requestedTarget =
+            params.ENVIRONMENT ?: 'auto'
+
+          if (requestedTarget == 'none') {
+            env.DEPLOY_ENV = 'none'
+
+          } else if (requestedTarget in ['dev', 'prod']) {
+            if (requestedTarget == 'prod' && !isProdBranch(branchName)) {
+              error """
+Production deployment is allowed only from:
+main, master, or production.
+
+Current branch: ${branchName}
+"""
+            }
+
+            env.DEPLOY_ENV = requestedTarget
+
+          } else if (isProdBranch(branchName)) {
+            env.DEPLOY_ENV = 'prod'
+
+          } else if (isDevBranch(branchName)) {
+            env.DEPLOY_ENV = 'dev'
+
+          } else {
+            env.DEPLOY_ENV = 'none'
+          }
+
+          // Keep ENVIRONMENT in sync so later shell steps keep working.
+          env.ENVIRONMENT = env.DEPLOY_ENV
+
+          echo """
+Deployment resolution:
+Branch: ${branchName ?: 'unknown'}
+Requested target: ${requestedTarget}
+Resolved target: ${env.DEPLOY_ENV}
+
+Automatic deploy mapping (no Jenkins approval):
+- develop / development / dev -> development
+- main / master / production -> production
+- other branches -> no deploy
+
+Protect main/master in GitHub (required PR + review) so production deploys only happen after merge.
+"""
+
+          if (env.DEPLOY_ENV == 'none') {
+            echo 'No matching deploy branch. Skipping build and deploy.'
+            return
+          }
+
+          def target = targets[env.DEPLOY_ENV]
 
           if (!target) {
-            error "Unknown ENVIRONMENT: ${params.ENVIRONMENT}"
+            error "Unknown ENVIRONMENT: ${env.DEPLOY_ENV}"
           }
 
           env.DEPLOY_HOST = target.host
@@ -65,32 +134,35 @@ pipeline {
 
           echo """
           Deployment target:
-          Environment: ${params.ENVIRONMENT}
+          Environment: ${env.DEPLOY_ENV}
           Server: ${env.DEPLOY_LABEL}
           Host: ${env.DEPLOY_HOST}
           Path: ${params.DEPLOY_PATH}
           Credential: ${env.SSH_CREDENTIALS_ID}
           """
-
-          if (params.ENVIRONMENT == 'prod') {
-            timeout(time: 10, unit: 'MINUTES') {
-              input(
-                message: "Deploy commit ${env.GIT_COMMIT ?: 'current build'} to PRODUCTION (${target.host})?",
-                ok: 'Deploy to production'
-              )
-            }
-          }
         }
       }
     }
 
     stage('Checkout') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         checkout scm
       }
     }
 
     stage('Setup Node') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sh '''
           set -e
@@ -120,7 +192,7 @@ pipeline {
     stage('Install dependencies') {
       when {
         expression {
-          return !params.SKIP_INSTALL
+          return env.DEPLOY_ENV != 'none' && !params.SKIP_INSTALL
         }
       }
 
@@ -133,11 +205,17 @@ pipeline {
     }
 
     stage('Build') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sh '''
           set -e
 
-          if [ "${ENVIRONMENT}" = "prod" ]; then
+          if [ "${DEPLOY_ENV}" = "prod" ]; then
             echo "Building for PRODUCTION (api.hayaapp.sa)"
             npm run build:prod
           else
@@ -162,6 +240,12 @@ pipeline {
     }
 
     stage('Deploy') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
           sh '''
@@ -204,6 +288,12 @@ pipeline {
     }
 
     stage('Verify deployment') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sh '''
           set -e
@@ -226,15 +316,15 @@ pipeline {
 
   post {
     success {
-      echo "Pipeline succeeded — ${params.ENVIRONMENT} (${env.DEPLOY_LABEL})"
+      echo "Pipeline succeeded — ${env.DEPLOY_ENV ?: params.ENVIRONMENT} (${env.DEPLOY_LABEL ?: 'no deploy'}). Automatic on branch update."
     }
 
     failure {
-      echo "Pipeline failed — ${params.ENVIRONMENT}"
+      echo "Pipeline failed — ${env.DEPLOY_ENV ?: params.ENVIRONMENT}"
     }
 
     aborted {
-      echo "Pipeline aborted — ${params.ENVIRONMENT}"
+      echo "Pipeline aborted — ${env.DEPLOY_ENV ?: params.ENVIRONMENT}"
     }
 
     always {
