@@ -246,7 +246,7 @@ pipeline {
         '''
       }
     }
-  }
+  } 
 
   post {
     success {
