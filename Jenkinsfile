@@ -8,11 +8,17 @@ pipeline {
     timeout(time: 30, unit: 'MINUTES')
   }
 
+  // Poll Git as a fallback if a webhook is not configured.
+  // Prefer a GitHub/Git webhook on this job so pushes deploy immediately.
+  triggers {
+    pollSCM('H/2 * * * *')
+  }
+
   parameters {
     choice(
       name: 'ENVIRONMENT',
-      choices: ['dev', 'prod'],
-      description: 'Target deployment environment'
+      choices: ['auto', 'dev', 'prod'],
+      description: 'auto derives the target from the git branch (development→dev, production→prod). Use dev/prod only to override a manual build.'
     )
 
     string(
@@ -42,22 +48,46 @@ pipeline {
               host: '172.16.3.108',
               user: 'ubuntu',
               label: 'Angular-Dev',
-              credential: 'angular-vm-ssh'
+              credential: 'angular-vm-ssh',
+              branch: 'development'
             ],
             prod: [
               host: '172.16.1.75',
               user: 'ubuntu',
               label: 'Angular-prod',
-              credential: 'angular-prod-vm-ssh'
+              credential: 'angular-prod-vm-ssh',
+              branch: 'production'
             ]
           ]
 
-          def target = targets[params.ENVIRONMENT]
+          def branchName = (env.BRANCH_NAME ?: env.GIT_BRANCH ?: '')
+            .replaceFirst('^refs/heads/', '')
+            .replaceFirst('^origin/', '')
 
-          if (!target) {
-            error "Unknown ENVIRONMENT: ${params.ENVIRONMENT}"
+          def resolvedEnv = params.ENVIRONMENT
+
+          if (!resolvedEnv || resolvedEnv == 'auto') {
+            if (branchName == 'development') {
+              resolvedEnv = 'dev'
+            } else if (branchName == 'production') {
+              resolvedEnv = 'prod'
+            } else {
+              error """
+              No automatic deployment for branch '${branchName ?: '(unknown)'}'.
+              Push to 'development' or 'production', or start a manual build with ENVIRONMENT=dev or prod.
+              """
+            }
           }
 
+          def target = targets[resolvedEnv]
+
+          if (!target) {
+            error "Unknown ENVIRONMENT: ${resolvedEnv}"
+          }
+
+          // Keep env.ENVIRONMENT in sync so later shell stages (Build) use the resolved value.
+          env.ENVIRONMENT = resolvedEnv
+          env.GIT_BRANCH_NAME = branchName
           env.DEPLOY_HOST = target.host
           env.DEPLOY_USER = target.user
           env.DEPLOY_LABEL = target.label
@@ -65,21 +95,13 @@ pipeline {
 
           echo """
           Deployment target:
-          Environment: ${params.ENVIRONMENT}
+          Branch: ${branchName ?: '(unknown)'}
+          Environment: ${env.ENVIRONMENT}
           Server: ${env.DEPLOY_LABEL}
           Host: ${env.DEPLOY_HOST}
           Path: ${params.DEPLOY_PATH}
           Credential: ${env.SSH_CREDENTIALS_ID}
           """
-
-          if (params.ENVIRONMENT == 'prod') {
-            timeout(time: 10, unit: 'MINUTES') {
-              input(
-                message: "Deploy commit ${env.GIT_COMMIT ?: 'current build'} to PRODUCTION (${target.host})?",
-                ok: 'Deploy to production'
-              )
-            }
-          }
         }
       }
     }
@@ -226,15 +248,15 @@ pipeline {
 
   post {
     success {
-      echo "Pipeline succeeded — ${params.ENVIRONMENT} (${env.DEPLOY_LABEL})"
+      echo "Pipeline succeeded — ${env.ENVIRONMENT} (${env.DEPLOY_LABEL})"
     }
 
     failure {
-      echo "Pipeline failed — ${params.ENVIRONMENT}"
+      echo "Pipeline failed — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
     }
 
     aborted {
-      echo "Pipeline aborted — ${params.ENVIRONMENT}"
+      echo "Pipeline aborted — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
     }
 
     always {
