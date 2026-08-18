@@ -85,13 +85,15 @@ pipeline {
             error "Unknown ENVIRONMENT: ${resolvedEnv}"
           }
 
-          // Keep env.ENVIRONMENT in sync so later shell stages (Build) use the resolved value.
+          // Parameters are not always exported into the shell env on Multibranch jobs.
+          // Copy every value the later `sh` steps need onto `env.*`.
           env.ENVIRONMENT = resolvedEnv
           env.GIT_BRANCH_NAME = branchName
           env.DEPLOY_HOST = target.host
           env.DEPLOY_USER = target.user
           env.DEPLOY_LABEL = target.label
           env.SSH_CREDENTIALS_ID = target.credential
+          env.DEPLOY_PATH = (params.DEPLOY_PATH ?: '').trim() ?: '/var/www/html'
 
           echo """
           Deployment target:
@@ -99,7 +101,7 @@ pipeline {
           Environment: ${env.ENVIRONMENT}
           Server: ${env.DEPLOY_LABEL}
           Host: ${env.DEPLOY_HOST}
-          Path: ${params.DEPLOY_PATH}
+          Path: ${env.DEPLOY_PATH}
           Credential: ${env.SSH_CREDENTIALS_ID}
           """
         }
