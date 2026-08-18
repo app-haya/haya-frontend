@@ -37,6 +37,22 @@ export class LandingPage implements OnInit, OnDestroy {
     this.applyTheme();
   }
 
+  openHayaApp(event: Event) {
+    event.preventDefault();
+    const deepLink = 'hayaapp://chat';
+    const start = Date.now();
+    window.location.href = deepLink;
+
+    setTimeout(() => {
+      if (Date.now() - start < 2000) {
+        const downloadSec = document.querySelector('.lp-download__store-btns, .lp-download__store-btn-full');
+        if (downloadSec) {
+          downloadSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }, 1500);
+  }
+
   private applyTheme() {
     if (this.isDarkMode) {
       document.body.classList.add('dark-mode');
