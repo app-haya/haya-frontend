@@ -302,18 +302,27 @@ export class Settings implements OnInit {
   }
 
   saveSettings() {
-    // Sync all active CKEditor instances before submit
-    Object.keys(this.editors).forEach(id => {
-      if (this.editors[id]) {
-        const data = this.editors[id].getData();
-        if (id === 'terms_ar_editor' && data) this.settingsForm.get('terms_and_conditions_ar')?.setValue(data);
-        if (id === 'terms_en_editor' && data) this.settingsForm.get('terms_and_conditions_en')?.setValue(data);
-        if (id === 'privacy_ar_editor' && data) this.settingsForm.get('privacy_policy_ar')?.setValue(data);
-        if (id === 'privacy_en_editor' && data) this.settingsForm.get('privacy_policy_en')?.setValue(data);
-        if (id === 'about_ar_editor' && data) this.settingsForm.get('about_us_ar')?.setValue(data);
-        if (id === 'about_en_editor' && data) this.settingsForm.get('about_us_en')?.setValue(data);
-      }
-    });
+    if (this.editorMode === 'raw') {
+      // Sync all active CKEditor instances in raw mode
+      Object.keys(this.editors).forEach(id => {
+        if (this.editors[id]) {
+          const data = this.editors[id].getData();
+          if (id === 'terms_ar_editor' && data !== undefined) this.settingsForm.get('terms_and_conditions_ar')?.setValue(data);
+          if (id === 'terms_en_editor' && data !== undefined) this.settingsForm.get('terms_and_conditions_en')?.setValue(data);
+          if (id === 'privacy_ar_editor' && data !== undefined) this.settingsForm.get('privacy_policy_ar')?.setValue(data);
+          if (id === 'privacy_en_editor' && data !== undefined) this.settingsForm.get('privacy_policy_en')?.setValue(data);
+          if (id === 'about_ar_editor' && data !== undefined) this.settingsForm.get('about_us_ar')?.setValue(data);
+          if (id === 'about_en_editor' && data !== undefined) this.settingsForm.get('about_us_en')?.setValue(data);
+        }
+      });
+    } else {
+      // In builder mode, sync all tabs and languages from sections to reactive form
+      (['terms', 'privacy', 'about'] as const).forEach(tab => {
+        (['ar', 'en'] as const).forEach(lang => {
+          this.syncSectionsToForm(tab, lang);
+        });
+      });
+    }
 
     const values = this.settingsForm.value;
 
@@ -439,17 +448,21 @@ export class Settings implements OnInit {
   parseTextToSections(htmlOrText: string): SectionItem[] {
     if (!htmlOrText || !htmlOrText.trim()) return [];
 
+    let rawInput = htmlOrText;
+    // Decode HTML entities if present
+    rawInput = rawInput.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
     const items: SectionItem[] = [];
 
     // Check for HTML headings <h1>-<h6>
-    if (/<h[1-6]\b[^>]*>/i.test(htmlOrText)) {
+    if (/<h[1-6]\b[^>]*>/i.test(rawInput)) {
       const headingRegex = /<h[1-6]\b[^>]*>(.*?)<\/h[1-6]>/gi;
       let match: RegExpExecArray | null;
       const matches: { title: string; index: number; length: number }[] = [];
 
-      while ((match = headingRegex.exec(htmlOrText)) !== null) {
+      while ((match = headingRegex.exec(rawInput)) !== null) {
         matches.push({
-          title: match[1].replace(/<[^>]*>/g, '').trim(),
+          title: this.cleanHtmlToPlainText(match[1]),
           index: match.index,
           length: match[0].length,
         });
@@ -457,7 +470,7 @@ export class Settings implements OnInit {
 
       if (matches.length > 0) {
         if (matches[0].index > 0) {
-          const prefixText = this.cleanHtmlToPlainText(htmlOrText.substring(0, matches[0].index));
+          const prefixText = this.cleanHtmlToPlainText(rawInput.substring(0, matches[0].index));
           if (prefixText) {
             items.push({ id: this.generateId(), title: 'المقدمة', content: prefixText });
           }
@@ -466,8 +479,8 @@ export class Settings implements OnInit {
         for (let i = 0; i < matches.length; i++) {
           const m = matches[i];
           const startContent = m.index + m.length;
-          const endContent = i < matches.length - 1 ? matches[i + 1].index : htmlOrText.length;
-          const cleanContent = this.cleanHtmlToPlainText(htmlOrText.substring(startContent, endContent));
+          const endContent = i < matches.length - 1 ? matches[i + 1].index : rawInput.length;
+          const cleanContent = this.cleanHtmlToPlainText(rawInput.substring(startContent, endContent));
 
           const normalized = this.normalizeSectionTitleAndContent(m.title, cleanContent);
 
@@ -481,10 +494,11 @@ export class Settings implements OnInit {
       }
     }
 
-    // Markdown or plain text
-    const raw = htmlOrText.replace(/\\n/g, '\n').replace(/\r\n|\r/g, '\n');
-    const lines = raw.split('\n');
+    // If no HTML headings, clean HTML tags completely to plain text
+    const cleanText = this.cleanHtmlToPlainText(rawInput);
+    if (!cleanText) return [];
 
+    const lines = cleanText.split('\n');
     let currentTitle = '';
     let currentLines: string[] = [];
 
@@ -553,11 +567,32 @@ export class Settings implements OnInit {
 
   cleanHtmlToPlainText(html: string): string {
     if (!html) return '';
-    let text = html.replace(/<li\b[^>]*>(.*?)<\/li>/gi, '• $1\n');
-    text = text.replace(/<p\b[^>]*>(.*?)<\/p>/gi, '$1\n');
+    let text = html;
+
+    // Decode HTML entities
+    text = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
+    // Remove empty paragraph tags with &nbsp; or whitespace
+    text = text.replace(/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '\n');
+
+    // Replace list items
+    text = text.replace(/<li\b[^>]*>(.*?)<\/li>/gi, '• $1\n');
+
+    // Replace block tags with newline
+    text = text.replace(/<\/p>/gi, '\n');
+    text = text.replace(/<p\b[^>]*>/gi, '');
     text = text.replace(/<br\s*\/?>/gi, '\n');
+    text = text.replace(/<\/div>/gi, '\n');
+    text = text.replace(/<div\b[^>]*>/gi, '');
+
+    // Strip remaining tags
     text = text.replace(/<[^>]*>/g, '');
-    text = text.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+
+    // Replace non-breaking spaces
+    text = text.replace(/&nbsp;/gi, ' ');
+
+    // Normalize spacing
+    text = text.split('\n').map(l => l.trim()).join('\n');
     text = text.replace(/\n{3,}/g, '\n\n');
     return text.trim();
   }
@@ -568,7 +603,9 @@ export class Settings implements OnInit {
     let htmlParts: string[] = [];
 
     for (let item of items) {
-      const normalized = this.normalizeSectionTitleAndContent(item.title, item.content);
+      const cleanTitle = this.cleanHtmlToPlainText(item.title);
+      const cleanContent = this.cleanHtmlToPlainText(item.content);
+      const normalized = this.normalizeSectionTitleAndContent(cleanTitle, cleanContent);
       const title = (normalized.title || '').trim();
       const content = (normalized.content || '').trim();
 
