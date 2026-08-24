@@ -134,8 +134,7 @@ Response: ${apiMessage}
     )
 
   } catch (err) {
-    echo "WARNING: Could not record GitHub deployment status: ${err}"
-    unstable("GitHub deployment status could not be recorded: ${err.message}")
+    echo "WARNING: Skipping GitHub deployment status (does not affect this deploy): ${err}"
   }
 }
 
@@ -192,8 +191,7 @@ Response: ${apiMessage}
     }
 
   } catch (err) {
-    echo "WARNING: Could not update GitHub deployment status to ${state}: ${err}"
-    unstable("GitHub deployment status could not be updated: ${err.message}")
+    echo "WARNING: Skipping GitHub deployment status update to ${state} (does not affect this deploy): ${err}"
   }
 }
 
@@ -265,12 +263,12 @@ pipeline {
     BUILD_DIR = 'dist/haya/browser'
 
     /*
-     * GitHub Deployments API. Checkout can stay on github-pat-readonly,
-     * but that PAT must also be allowed to write deployment statuses:
+     * Optional GitHub Deployments API (commit/environment status in GitHub).
+     * github-pat-readonly can clone but cannot write deployments (HTTP 403).
+     * Failures are logged and ignored so a successful deploy stays SUCCESS.
+     * To record statuses, give this PAT write access:
      *   - classic: repo or repo_deployment
      *   - fine-grained: Deployments Read and write on app-haya/haya-frontend
-     *
-     * Statuses appear on the commit and under the repo Environments tab.
      */
     GITHUB_DEPLOYMENT_CREDENTIALS_ID = 'github-pat-readonly'
     GITHUB_API_URL = 'https://api.github.com'
