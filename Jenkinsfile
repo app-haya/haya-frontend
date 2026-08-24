@@ -9,7 +9,7 @@ def githubRepository() {
 }
 
 def githubEnvironmentUrl() {
-  return "http://${env.DEPLOY_HOST}/"
+  return env.GITHUB_ENVIRONMENT_URL ?: "http://${env.DEPLOY_HOST}/"
 }
 
 def withGithubToken(Closure body) {
@@ -73,126 +73,128 @@ def githubDeploymentIsTerminal() {
   ]
 }
 
-def createGithubDeployment() {
-  if (!env.GITHUB_ENVIRONMENT || !env.GIT_COMMIT) {
-    return
-  }
+def githubDeploymentPermissionError(String httpCode, String apiMessage) {
+  return """
+GitHub Deployments API failed (HTTP ${httpCode}) for ${githubRepository()} environment '${env.GITHUB_ENVIRONMENT}'.
+Jenkins credential '${env.GITHUB_DEPLOYMENT_CREDENTIALS_ID}' can clone the repo but cannot write Deployments.
 
-  try {
-    withGithubToken {
-      withEnv([
-        "GH_REF=${env.GIT_COMMIT}",
-        "GH_ENVIRONMENT=${env.GITHUB_ENVIRONMENT}",
-        "GH_DESCRIPTION=Jenkins ${env.GITHUB_ENVIRONMENT} frontend deploy #${env.BUILD_NUMBER}",
-        "GH_PRODUCTION=${env.ENVIRONMENT == 'prod' ? 'true' : 'false'}"
-      ]) {
-        sh '''
-          set -e
-          mkdir -p build
+Grant write access, then re-run this job. Until then the GitHub repo sidebar will not update.
 
-          node -e "
-            const fs = require('fs');
-            fs.writeFileSync(
-              'build/github-request.json',
-              JSON.stringify({
-                ref: process.env.GH_REF,
-                environment: process.env.GH_ENVIRONMENT,
-                description: process.env.GH_DESCRIPTION,
-                auto_merge: false,
-                required_contexts: [],
-                production_environment: process.env.GH_PRODUCTION === 'true',
-                transient_environment: false
-              })
-            );
-          "
-        '''
-      }
+Fine-grained PAT (Settings → Developer settings → Personal access tokens):
+  Repository access: ${githubRepository()}
+  Permissions → Deployments: Read and write
+  If the org uses SAML SSO, authorize the token for the organization
 
-      String httpCode = githubCurl(
-        'POST',
-        "/repos/${githubRepository()}/deployments"
-      )
-      String deploymentId = githubResponseId()
+Classic PAT: enable repo or repo_deployment, then update the same Jenkins credential
 
-      if (httpCode != '201' || !deploymentId) {
-        String apiMessage = githubResponseMessage()
-        error """
-GitHub deployment could not be created (HTTP ${httpCode}).
-The Jenkins credential ${env.GITHUB_DEPLOYMENT_CREDENTIALS_ID} needs permission to write deployment statuses on ${githubRepository()}.
-Classic PAT: repo or repo_deployment. Fine-grained: Deployments Read and write.
 Response: ${apiMessage}
 """
-      }
+}
 
-      env.GITHUB_DEPLOYMENT_ID = deploymentId
-      echo "Created GitHub ${env.GITHUB_ENVIRONMENT} deployment ${env.GITHUB_DEPLOYMENT_ID}"
+def createGithubDeployment() {
+  if (!env.GITHUB_ENVIRONMENT || !env.GIT_COMMIT) {
+    error 'GitHub environment or GIT_COMMIT is missing; cannot record a GitHub deployment.'
+  }
+
+  withGithubToken {
+    withEnv([
+      "GH_REF=${env.GIT_COMMIT}",
+      "GH_ENVIRONMENT=${env.GITHUB_ENVIRONMENT}",
+      "GH_DESCRIPTION=Jenkins ${env.GITHUB_ENVIRONMENT} frontend deploy #${env.BUILD_NUMBER}",
+      "GH_PRODUCTION=${env.ENVIRONMENT == 'prod' ? 'true' : 'false'}"
+    ]) {
+      sh '''
+        set -e
+        mkdir -p build
+
+        node -e "
+          const fs = require('fs');
+          fs.writeFileSync(
+            'build/github-request.json',
+            JSON.stringify({
+              ref: process.env.GH_REF,
+              environment: process.env.GH_ENVIRONMENT,
+              description: process.env.GH_DESCRIPTION,
+              task: 'deploy',
+              auto_merge: false,
+              required_contexts: [],
+              production_environment: process.env.GH_PRODUCTION === 'true',
+              transient_environment: false
+            })
+          );
+        "
+      '''
     }
 
-    setGithubDeploymentStatus(
-      'in_progress',
-      "Deploying ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
+    String httpCode = githubCurl(
+      'POST',
+      "/repos/${githubRepository()}/deployments"
     )
+    String deploymentId = githubResponseId()
 
-  } catch (err) {
-    echo "WARNING: Skipping GitHub deployment status (does not affect this deploy): ${err}"
+    if (httpCode != '201' || !deploymentId) {
+      error githubDeploymentPermissionError(httpCode, githubResponseMessage())
+    }
+
+    env.GITHUB_DEPLOYMENT_ID = deploymentId
+    echo "Created GitHub ${env.GITHUB_ENVIRONMENT} deployment ${env.GITHUB_DEPLOYMENT_ID}"
   }
 }
 
 def setGithubDeploymentStatus(String state, String description) {
   if (!env.GITHUB_DEPLOYMENT_ID) {
-    return
+    error 'GitHub deployment id is missing; cannot update deployment status.'
   }
 
-  try {
-    withGithubToken {
-      withEnv([
-        "GH_STATE=${state}",
-        "GH_DESCRIPTION=${description.take(140)}",
-        "GH_ENVIRONMENT=${env.GITHUB_ENVIRONMENT}",
-        "GH_LOG_URL=${env.BUILD_URL ?: ''}",
-        "GH_ENVIRONMENT_URL=${githubEnvironmentUrl()}"
-      ]) {
-        sh '''
-          set -e
-          mkdir -p build
+  withGithubToken {
+    withEnv([
+      "GH_STATE=${state}",
+      "GH_DESCRIPTION=${description.take(140)}",
+      "GH_ENVIRONMENT=${env.GITHUB_ENVIRONMENT}",
+      "GH_LOG_URL=${env.BUILD_URL ?: ''}",
+      "GH_ENVIRONMENT_URL=${githubEnvironmentUrl()}"
+    ]) {
+      sh '''
+        set -e
+        mkdir -p build
 
-          node -e "
-            const fs = require('fs');
-            fs.writeFileSync(
-              'build/github-request.json',
-              JSON.stringify({
-                state: process.env.GH_STATE,
-                description: process.env.GH_DESCRIPTION,
-                environment: process.env.GH_ENVIRONMENT,
-                log_url: process.env.GH_LOG_URL,
-                environment_url: process.env.GH_ENVIRONMENT_URL,
-                auto_inactive: true
-              })
-            );
-          "
-        '''
-      }
-
-      String httpCode = githubCurl(
-        'POST',
-        "/repos/${githubRepository()}/deployments/${env.GITHUB_DEPLOYMENT_ID}/statuses"
-      )
-
-      if (httpCode != '201' && httpCode != '200') {
-        String apiMessage = githubResponseMessage()
-        error """
-GitHub deployment status '${state}' failed (HTTP ${httpCode}).
-Response: ${apiMessage}
-"""
-      }
-
-      env.GITHUB_DEPLOYMENT_STATE = state
-      echo "GitHub ${env.GITHUB_ENVIRONMENT} deployment ${env.GITHUB_DEPLOYMENT_ID}: ${state}"
+        node -e "
+          const fs = require('fs');
+          fs.writeFileSync(
+            'build/github-request.json',
+            JSON.stringify({
+              state: process.env.GH_STATE,
+              description: process.env.GH_DESCRIPTION,
+              environment: process.env.GH_ENVIRONMENT,
+              log_url: process.env.GH_LOG_URL,
+              environment_url: process.env.GH_ENVIRONMENT_URL,
+              auto_inactive: true
+            })
+          );
+        "
+      '''
     }
 
-  } catch (err) {
-    echo "WARNING: Skipping GitHub deployment status update to ${state} (does not affect this deploy): ${err}"
+    String httpCode = githubCurl(
+      'POST',
+      "/repos/${githubRepository()}/deployments/${env.GITHUB_DEPLOYMENT_ID}/statuses"
+    )
+
+    if (httpCode != '201' && httpCode != '200') {
+      error githubDeploymentPermissionError(httpCode, githubResponseMessage())
+    }
+
+    env.GITHUB_DEPLOYMENT_STATE = state
+    echo "GitHub ${env.GITHUB_ENVIRONMENT} deployment ${env.GITHUB_DEPLOYMENT_ID}: ${state}"
   }
+}
+
+def publishGithubDeployment(String state, String description) {
+  if (!env.GITHUB_DEPLOYMENT_ID) {
+    createGithubDeployment()
+  }
+
+  setGithubDeploymentStatus(state, description)
 }
 
 def finalizeGithubDeployment() {
@@ -263,12 +265,11 @@ pipeline {
     BUILD_DIR = 'dist/haya/browser'
 
     /*
-     * Optional GitHub Deployments API (commit/environment status in GitHub).
-     * github-pat-readonly can clone but cannot write deployments (HTTP 403).
-     * Failures are logged and ignored so a successful deploy stays SUCCESS.
-     * To record statuses, give this PAT write access:
-     *   - classic: repo or repo_deployment
-     *   - fine-grained: Deployments Read and write on app-haya/haya-frontend
+     * GitHub Deployments sidebar (repo → Deployments).
+     * github-pat-readonly must be allowed to WRITE deployments or GitHub
+     * returns 403 and the sidebar will not change.
+     * Fine-grained PAT: Deployments Read and write on app-haya/haya-frontend
+     * Classic PAT: repo or repo_deployment
      */
     GITHUB_DEPLOYMENT_CREDENTIALS_ID = 'github-pat-readonly'
     GITHUB_API_URL = 'https://api.github.com'
@@ -284,14 +285,18 @@ pipeline {
               user: 'ubuntu',
               label: 'Angular-Dev',
               credential: 'angular-vm-ssh',
-              branch: 'development'
+              branch: 'development',
+              githubEnvironment: 'development',
+              environmentUrl: 'http://172.16.3.108/'
             ],
             prod: [
               host: '172.16.1.75',
               user: 'ubuntu',
               label: 'Angular-prod',
               credential: 'angular-prod-vm-ssh',
-              branch: 'production'
+              branch: 'production',
+              githubEnvironment: 'production',
+              environmentUrl: 'http://172.16.1.75/'
             ]
           ]
 
@@ -323,7 +328,8 @@ pipeline {
           // Parameters are not always exported into the shell env on Multibranch jobs.
           // Copy every value the later `sh` steps need onto `env.*`.
           env.ENVIRONMENT = resolvedEnv
-          env.GITHUB_ENVIRONMENT = (resolvedEnv == 'prod') ? 'production' : 'development'
+          env.GITHUB_ENVIRONMENT = target.githubEnvironment
+          env.GITHUB_ENVIRONMENT_URL = target.environmentUrl
           env.GIT_BRANCH_NAME = branchName
           env.DEPLOY_HOST = target.host
           env.DEPLOY_USER = target.user
@@ -336,6 +342,7 @@ pipeline {
           Branch: ${branchName ?: '(unknown)'}
           Environment: ${env.ENVIRONMENT}
           GitHub environment: ${env.GITHUB_ENVIRONMENT}
+          GitHub environment URL: ${env.GITHUB_ENVIRONMENT_URL}
           Server: ${env.DEPLOY_LABEL}
           Host: ${env.DEPLOY_HOST}
           Path: ${env.DEPLOY_PATH}
@@ -424,10 +431,6 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        script {
-          createGithubDeployment()
-        }
-
         sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
           sh '''
             set -e
@@ -470,35 +473,32 @@ pipeline {
 
     stage('Verify deployment') {
       steps {
-        script {
-          try {
-            sh '''
-              set -e
+        sh '''
+          set -e
 
-              echo "Checking website from Jenkins..."
+          echo "Checking website from Jenkins..."
 
-              curl \
-                --fail \
-                --silent \
-                --show-error \
-                --connect-timeout 10 \
-                --max-time 20 \
-                "http://${DEPLOY_HOST}/" > /dev/null
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --connect-timeout 10 \
+            --max-time 20 \
+            "http://${DEPLOY_HOST}/" > /dev/null
 
-              echo "Website returned a successful HTTP response."
-            '''
+          echo "Website returned a successful HTTP response."
+        '''
+      }
+    }
 
-            setGithubDeploymentStatus(
+    stage('Update GitHub Deployments') {
+      steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          script {
+            publishGithubDeployment(
               'success',
-              "Health check passed on ${env.GITHUB_ENVIRONMENT}"
+              "Deployed ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
             )
-
-          } catch (err) {
-            setGithubDeploymentStatus(
-              'failure',
-              "Health check failed on ${env.GITHUB_ENVIRONMENT}"
-            )
-            throw err
           }
         }
       }
@@ -512,15 +512,41 @@ pipeline {
 
     failure {
       echo "Pipeline failed — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
+
+      script {
+        try {
+          publishGithubDeployment(
+            'failure',
+            "Jenkins ${env.GITHUB_ENVIRONMENT} deploy failed"
+          )
+        } catch (err) {
+          echo "WARNING: Could not record GitHub failure status: ${err}"
+        }
+      }
     }
 
     aborted {
       echo "Pipeline aborted — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
+
+      script {
+        try {
+          publishGithubDeployment(
+            'error',
+            "Jenkins ${env.GITHUB_ENVIRONMENT} deploy was aborted"
+          )
+        } catch (err) {
+          echo "WARNING: Could not record GitHub aborted status: ${err}"
+        }
+      }
     }
 
     always {
       script {
-        finalizeGithubDeployment()
+        try {
+          finalizeGithubDeployment()
+        } catch (err) {
+          echo "WARNING: Could not finalize GitHub deployment status: ${err}"
+        }
       }
 
       cleanWs(deleteDirs: true, notFailBuild: true)
