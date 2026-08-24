@@ -505,7 +505,7 @@ pipeline {
         }
       }
     }
-  } 
+  }
 
   post {
     success {
