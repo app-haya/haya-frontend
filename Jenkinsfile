@@ -207,7 +207,7 @@ def finalizeGithubDeployment() {
     return
   }
 
-  String result = currentBuild.currentResult
+  String result = currentBuild.result ?: currentBuild.currentResult
 
   if (result == 'SUCCESS' || result == 'UNSTABLE') {
     setGithubDeploymentStatus(
@@ -222,8 +222,9 @@ def finalizeGithubDeployment() {
     )
 
   } else {
+    // FAILURE, NOT_BUILT, or any other non-success result
     setGithubDeploymentStatus(
-      'error',
+      'failure',
       "Jenkins ${env.GITHUB_ENVIRONMENT} deploy failed"
     )
   }
@@ -441,42 +442,50 @@ pipeline {
         script {
           createGithubDeployment()
 
-          sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
-            sh '''
-              set -e
+          try {
+            sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
+              sh '''
+                set -e
 
-              SSH_OPTIONS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
+                SSH_OPTIONS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
 
-              echo "Testing SSH connection..."
+                echo "Testing SSH connection..."
 
-              ssh ${SSH_OPTIONS} \
-                "${DEPLOY_USER}@${DEPLOY_HOST}" \
-                "whoami && hostname"
+                ssh ${SSH_OPTIONS} \
+                  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                  "whoami && hostname"
 
-              echo "Preparing deployment directory..."
+                echo "Preparing deployment directory..."
 
-              ssh ${SSH_OPTIONS} \
-                "${DEPLOY_USER}@${DEPLOY_HOST}" \
-                "sudo mkdir -p '${DEPLOY_PATH}' &&
-                 sudo chown -R '${DEPLOY_USER}':'${DEPLOY_USER}' '${DEPLOY_PATH}'"
+                ssh ${SSH_OPTIONS} \
+                  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                  "sudo mkdir -p '${DEPLOY_PATH}' &&
+                   sudo chown -R '${DEPLOY_USER}':'${DEPLOY_USER}' '${DEPLOY_PATH}'"
 
-              echo "Uploading Angular build..."
+                echo "Uploading Angular build..."
 
-              rsync -az --delete \
-                -e "ssh ${SSH_OPTIONS}" \
-                "${BUILD_DIR}/" \
-                "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+                rsync -az --delete \
+                  -e "ssh ${SSH_OPTIONS}" \
+                  "${BUILD_DIR}/" \
+                  "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
-              echo "Validating deployed application..."
+                echo "Validating deployed application..."
 
-              ssh ${SSH_OPTIONS} \
-                "${DEPLOY_USER}@${DEPLOY_HOST}" \
-                "test -f '${DEPLOY_PATH}/index.html' &&
-                 sudo nginx -t &&
-                 sudo systemctl reload nginx"
+                ssh ${SSH_OPTIONS} \
+                  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                  "test -f '${DEPLOY_PATH}/index.html' &&
+                   sudo nginx -t &&
+                   sudo systemctl reload nginx"
 
-              echo "Deployed successfully to ${DEPLOY_LABEL} (${DEPLOY_HOST})"
-            '''
+                echo "Deployed successfully to ${DEPLOY_LABEL} (${DEPLOY_HOST})"
+              '''
+            }
+          } catch (err) {
+            setGithubDeploymentStatus(
+              'failure',
+              "Deploy to ${env.GITHUB_ENVIRONMENT} failed in Jenkins #${env.BUILD_NUMBER}"
+            )
+            throw err
           }
         }
       }
@@ -485,26 +494,34 @@ pipeline {
     stage('Verify deployment') {
       steps {
         script {
-          sh '''
-            set -e
+          try {
+            sh '''
+              set -e
 
-            echo "Checking website from Jenkins..."
+              echo "Checking website from Jenkins..."
 
-            curl \
-              --fail \
-              --silent \
-              --show-error \
-              --connect-timeout 10 \
-              --max-time 20 \
-              "http://${DEPLOY_HOST}/" > /dev/null
+              curl \
+                --fail \
+                --silent \
+                --show-error \
+                --connect-timeout 10 \
+                --max-time 20 \
+                "http://${DEPLOY_HOST}/" > /dev/null
 
-            echo "Website returned a successful HTTP response."
-          '''
+              echo "Website returned a successful HTTP response."
+            '''
 
-          setGithubDeploymentStatus(
-            'success',
-            "Deployed ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
-          )
+            setGithubDeploymentStatus(
+              'success',
+              "Deployed ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
+            )
+          } catch (err) {
+            setGithubDeploymentStatus(
+              'failure',
+              "Verify ${env.GITHUB_ENVIRONMENT} failed in Jenkins #${env.BUILD_NUMBER}"
+            )
+            throw err
+          }
         }
       }
     }
@@ -513,6 +530,8 @@ pipeline {
   post {
     always {
       script {
+        // Safety net: always close out a non-terminal GitHub deployment
+        // (covers failures before Deploy try/catch, aborts, etc.)
         finalizeGithubDeployment()
       }
 
@@ -530,10 +549,28 @@ GitHub deployment: ${env.GITHUB_DEPLOYMENT_ID ?: 'none'} (${env.GITHUB_DEPLOYMEN
     }
 
     failure {
+      script {
+        // Explicit failure path so GitHub is updated even if always/finalize
+        // cannot see the final build result yet.
+        if (env.GITHUB_DEPLOYMENT_ID && !githubDeploymentIsTerminal()) {
+          setGithubDeploymentStatus(
+            'failure',
+            "Jenkins ${env.GITHUB_ENVIRONMENT} deploy failed"
+          )
+        }
+      }
       echo "Pipeline failed — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
     }
 
     aborted {
+      script {
+        if (env.GITHUB_DEPLOYMENT_ID && !githubDeploymentIsTerminal()) {
+          setGithubDeploymentStatus(
+            'error',
+            "Jenkins ${env.GITHUB_ENVIRONMENT} deploy was aborted"
+          )
+        }
+      }
       echo "Pipeline aborted — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
     }
   }
