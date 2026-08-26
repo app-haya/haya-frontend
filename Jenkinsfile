@@ -9,7 +9,7 @@ def githubRepository() {
 }
 
 def githubEnvironmentUrl() {
-  return "http://${env.DEPLOY_HOST}/"
+  return env.GITHUB_ENVIRONMENT_URL ?: "http://${env.DEPLOY_HOST}/"
 }
 
 def withGithubToken(Closure body) {
@@ -49,7 +49,7 @@ def githubCurl(String method, String path) {
 def githubResponseId() {
   return sh(
     script: '''
-      node -e "const fs=require('fs'); const json=JSON.parse(fs.readFileSync('build/github-response.json','utf8')); process.stdout.write(String(json.id||''));"
+      node -e 'const fs=require("fs"); const json=JSON.parse(fs.readFileSync("build/github-response.json","utf8")); process.stdout.write(String(json.id||""));'
     ''',
     returnStdout: true
   ).trim()
@@ -58,7 +58,12 @@ def githubResponseId() {
 def githubResponseMessage() {
   return sh(
     script: '''
-      node -e "const fs=require('fs'); const text=fs.readFileSync('build/github-response.json','utf8'); const json=JSON.parse(text); process.stdout.write(json.message||text);"
+      node -e '
+        const fs = require("fs");
+        const text = fs.readFileSync("build/github-response.json", "utf8");
+        const json = JSON.parse(text);
+        process.stdout.write(json.message || text);
+      '
     ''',
     returnStdout: true
   ).trim()
@@ -90,21 +95,21 @@ def createGithubDeployment() {
           set -e
           mkdir -p build
 
-          node -e "
-            const fs = require('fs');
+          node -e '
+            const fs = require("fs");
             fs.writeFileSync(
-              'build/github-request.json',
+              "build/github-request.json",
               JSON.stringify({
                 ref: process.env.GH_REF,
                 environment: process.env.GH_ENVIRONMENT,
                 description: process.env.GH_DESCRIPTION,
                 auto_merge: false,
                 required_contexts: [],
-                production_environment: process.env.GH_PRODUCTION === 'true',
+                production_environment: process.env.GH_PRODUCTION === "true",
                 transient_environment: false
               })
             );
-          "
+          '
         '''
       }
 
@@ -118,7 +123,7 @@ def createGithubDeployment() {
         String apiMessage = githubResponseMessage()
         error """
 GitHub deployment could not be created (HTTP ${httpCode}).
-The Jenkins credential ${env.GITHUB_DEPLOYMENT_CREDENTIALS_ID} needs permission to write deployment statuses on ${githubRepository()}.
+The Jenkins credential ${env.GITHUB_DEPLOYMENT_CREDENTIALS_ID} needs permission to write deployment statuses.
 Classic PAT: repo or repo_deployment. Fine-grained: Deployments Read and write.
 Response: ${apiMessage}
 """
@@ -134,7 +139,8 @@ Response: ${apiMessage}
     )
 
   } catch (err) {
-    echo "WARNING: Skipping GitHub deployment status (does not affect this deploy): ${err}"
+    echo "WARNING: Could not record GitHub deployment status: ${err}"
+    unstable("GitHub deployment status could not be recorded: ${err.message}")
   }
 }
 
@@ -156,10 +162,10 @@ def setGithubDeploymentStatus(String state, String description) {
           set -e
           mkdir -p build
 
-          node -e "
-            const fs = require('fs');
+          node -e '
+            const fs = require("fs");
             fs.writeFileSync(
-              'build/github-request.json',
+              "build/github-request.json",
               JSON.stringify({
                 state: process.env.GH_STATE,
                 description: process.env.GH_DESCRIPTION,
@@ -169,7 +175,7 @@ def setGithubDeploymentStatus(String state, String description) {
                 auto_inactive: true
               })
             );
-          "
+          '
         '''
       }
 
@@ -191,7 +197,8 @@ Response: ${apiMessage}
     }
 
   } catch (err) {
-    echo "WARNING: Skipping GitHub deployment status update to ${state} (does not affect this deploy): ${err}"
+    echo "WARNING: Could not update GitHub deployment status to ${state}: ${err}"
+    unstable("GitHub deployment status could not be updated: ${err.message}")
   }
 }
 
@@ -263,12 +270,13 @@ pipeline {
     BUILD_DIR = 'dist/haya/browser'
 
     /*
-     * Optional GitHub Deployments API (commit/environment status in GitHub).
-     * github-pat-readonly can clone but cannot write deployments (HTTP 403).
-     * Failures are logged and ignored so a successful deploy stays SUCCESS.
-     * To record statuses, give this PAT write access:
+     * Same credential as haya-backend Jenkinsfile.
+     * Checkout can stay on github-pat-readonly, but that PAT must also be
+     * allowed to write deployment statuses on app-haya/haya-frontend:
      *   - classic: repo or repo_deployment
      *   - fine-grained: Deployments Read and write on app-haya/haya-frontend
+     *
+     * Statuses appear on the commit and under the repo Environments tab.
      */
     GITHUB_DEPLOYMENT_CREDENTIALS_ID = 'github-pat-readonly'
     GITHUB_API_URL = 'https://api.github.com'
@@ -284,14 +292,18 @@ pipeline {
               user: 'ubuntu',
               label: 'Angular-Dev',
               credential: 'angular-vm-ssh',
-              branch: 'development'
+              branch: 'development',
+              githubEnvironment: 'development',
+              environmentUrl: 'http://172.16.3.108/'
             ],
             prod: [
               host: '172.16.1.75',
               user: 'ubuntu',
               label: 'Angular-prod',
               credential: 'angular-prod-vm-ssh',
-              branch: 'production'
+              branch: 'production',
+              githubEnvironment: 'production',
+              environmentUrl: 'http://172.16.1.75/'
             ]
           ]
 
@@ -323,7 +335,8 @@ pipeline {
           // Parameters are not always exported into the shell env on Multibranch jobs.
           // Copy every value the later `sh` steps need onto `env.*`.
           env.ENVIRONMENT = resolvedEnv
-          env.GITHUB_ENVIRONMENT = (resolvedEnv == 'prod') ? 'production' : 'development'
+          env.GITHUB_ENVIRONMENT = target.githubEnvironment
+          env.GITHUB_ENVIRONMENT_URL = target.environmentUrl
           env.GIT_BRANCH_NAME = branchName
           env.DEPLOY_HOST = target.host
           env.DEPLOY_USER = target.user
@@ -336,6 +349,7 @@ pipeline {
           Branch: ${branchName ?: '(unknown)'}
           Environment: ${env.ENVIRONMENT}
           GitHub environment: ${env.GITHUB_ENVIRONMENT}
+          GitHub environment URL: ${env.GITHUB_ENVIRONMENT_URL}
           Server: ${env.DEPLOY_LABEL}
           Host: ${env.DEPLOY_HOST}
           Path: ${env.DEPLOY_PATH}
@@ -426,44 +440,44 @@ pipeline {
       steps {
         script {
           createGithubDeployment()
-        }
 
-        sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
-          sh '''
-            set -e
+          sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
+            sh '''
+              set -e
 
-            SSH_OPTIONS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
+              SSH_OPTIONS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
 
-            echo "Testing SSH connection..."
+              echo "Testing SSH connection..."
 
-            ssh ${SSH_OPTIONS} \
-              "${DEPLOY_USER}@${DEPLOY_HOST}" \
-              "whoami && hostname"
+              ssh ${SSH_OPTIONS} \
+                "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                "whoami && hostname"
 
-            echo "Preparing deployment directory..."
+              echo "Preparing deployment directory..."
 
-            ssh ${SSH_OPTIONS} \
-              "${DEPLOY_USER}@${DEPLOY_HOST}" \
-              "sudo mkdir -p '${DEPLOY_PATH}' &&
-               sudo chown -R '${DEPLOY_USER}':'${DEPLOY_USER}' '${DEPLOY_PATH}'"
+              ssh ${SSH_OPTIONS} \
+                "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                "sudo mkdir -p '${DEPLOY_PATH}' &&
+                 sudo chown -R '${DEPLOY_USER}':'${DEPLOY_USER}' '${DEPLOY_PATH}'"
 
-            echo "Uploading Angular build..."
+              echo "Uploading Angular build..."
 
-            rsync -az --delete \
-              -e "ssh ${SSH_OPTIONS}" \
-              "${BUILD_DIR}/" \
-              "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+              rsync -az --delete \
+                -e "ssh ${SSH_OPTIONS}" \
+                "${BUILD_DIR}/" \
+                "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
-            echo "Validating deployed application..."
+              echo "Validating deployed application..."
 
-            ssh ${SSH_OPTIONS} \
-              "${DEPLOY_USER}@${DEPLOY_HOST}" \
-              "test -f '${DEPLOY_PATH}/index.html' &&
-               sudo nginx -t &&
-               sudo systemctl reload nginx"
+              ssh ${SSH_OPTIONS} \
+                "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                "test -f '${DEPLOY_PATH}/index.html' &&
+                 sudo nginx -t &&
+                 sudo systemctl reload nginx"
 
-            echo "Deployed successfully to ${DEPLOY_LABEL} (${DEPLOY_HOST})"
-          '''
+              echo "Deployed successfully to ${DEPLOY_LABEL} (${DEPLOY_HOST})"
+            '''
+          }
         }
       }
     }
@@ -471,43 +485,48 @@ pipeline {
     stage('Verify deployment') {
       steps {
         script {
-          try {
-            sh '''
-              set -e
+          sh '''
+            set -e
 
-              echo "Checking website from Jenkins..."
+            echo "Checking website from Jenkins..."
 
-              curl \
-                --fail \
-                --silent \
-                --show-error \
-                --connect-timeout 10 \
-                --max-time 20 \
-                "http://${DEPLOY_HOST}/" > /dev/null
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --connect-timeout 10 \
+              --max-time 20 \
+              "http://${DEPLOY_HOST}/" > /dev/null
 
-              echo "Website returned a successful HTTP response."
-            '''
+            echo "Website returned a successful HTTP response."
+          '''
 
-            setGithubDeploymentStatus(
-              'success',
-              "Health check passed on ${env.GITHUB_ENVIRONMENT}"
-            )
-
-          } catch (err) {
-            setGithubDeploymentStatus(
-              'failure',
-              "Health check failed on ${env.GITHUB_ENVIRONMENT}"
-            )
-            throw err
-          }
+          setGithubDeploymentStatus(
+            'success',
+            "Deployed ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
+          )
         }
       }
     }
   }
 
   post {
+    always {
+      script {
+        finalizeGithubDeployment()
+      }
+
+      cleanWs(deleteDirs: true, notFailBuild: true)
+    }
+
     success {
-      echo "Pipeline succeeded — ${env.ENVIRONMENT} (${env.DEPLOY_LABEL}) GitHub: ${env.GITHUB_DEPLOYMENT_ID ?: 'none'} (${env.GITHUB_DEPLOYMENT_STATE ?: 'n/a'})"
+      echo """
+Angular pipeline completed successfully.
+
+Environment: ${env.ENVIRONMENT ?: 'none'}
+Server: ${env.DEPLOY_LABEL ?: 'n/a'}
+GitHub deployment: ${env.GITHUB_DEPLOYMENT_ID ?: 'none'} (${env.GITHUB_DEPLOYMENT_STATE ?: 'n/a'})
+"""
     }
 
     failure {
@@ -516,14 +535,6 @@ pipeline {
 
     aborted {
       echo "Pipeline aborted — ${env.ENVIRONMENT ?: params.ENVIRONMENT}"
-    }
-
-    always {
-      script {
-        finalizeGithubDeployment()
-      }
-
-      cleanWs(deleteDirs: true, notFailBuild: true)
     }
   }
 }
