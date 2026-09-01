@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GiftService } from '../../services/gift.service';
 import { NotificationService } from '../../services/notification.service';
 import { DialogService } from '../../services/dialog.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-gifts',
@@ -214,7 +215,7 @@ export class Gifts implements OnInit {
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     
     // Based on the server structure screenshot: storage/app/public/gifts/
-    return `https://hayaapp.online/storage/gifts/${cleanPath}`;
+    return `${environment.storageUrl}/storage/gifts/${cleanPath}`;
   }
 
   // Pagination
