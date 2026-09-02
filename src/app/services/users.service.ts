@@ -42,6 +42,10 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/update`, data, { headers: this.getHeaders() });
   }
 
+  changeUserRole(id: number, role: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/role`, { id, role }, { headers: this.getHeaders() });
+  }
+
   deleteUser(id: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/delete`, { id }, { headers: this.getHeaders() });
   }
