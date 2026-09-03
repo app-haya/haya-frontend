@@ -83,31 +83,73 @@ export class EditUser implements OnInit {
   loadUser() {
     this.loading = true;
     this.usersService.showUser(this.userId).subscribe({
-      next: (res) => {
-        const user = res.user;
-        const interests =
-          user.interests?.map((interest: any) => interest.id) || [];
-        this.userImageUrl = user.image_url || '';
+      next: (res: any) => {
+        const user = res?.user || res?.data?.user || res?.data || res;
+
+        if (!user || (typeof user === 'object' && !user.id && !user.name && !user.email)) {
+          console.error('User data not found in response:', res);
+          this.notification.error('Failed to load user data');
+          this.loading = false;
+          return;
+        }
+
+        // Interests mapping
+        let interests: number[] = [];
+        if (Array.isArray(user.interests)) {
+          interests = user.interests.map((item: any) => typeof item === 'object' ? Number(item.id) : Number(item));
+        } else if (typeof user.interests === 'string') {
+          try {
+            const parsed = JSON.parse(user.interests.replace(/'/g, '"'));
+            if (Array.isArray(parsed)) interests = parsed.map((i: any) => Number(i));
+          } catch (e) {
+            console.error('Failed to parse interests:', e);
+          }
+        }
+
+        this.userImageUrl = user.image_url || user.image || '';
+
+        // Gender mapping (1: Male, 2: Female)
+        let genderVal: number = 1;
+        if (user.gender !== undefined && user.gender !== null) {
+          const gStr = user.gender.toString().toLowerCase();
+          if (gStr === '2' || gStr === 'female' || gStr === 'أنثى') {
+            genderVal = 2;
+          } else {
+            genderVal = 1;
+          }
+        }
+
+        const countryVal = user.country_id !== undefined && user.country_id !== null ? Number(user.country_id) : '';
+        const cityVal = user.city_id !== undefined && user.city_id !== null ? Number(user.city_id) : '';
+
+        let birthDateVal = user.birth_date || user.dob || user.date_of_birth || '';
+        if (typeof birthDateVal === 'string' && birthDateVal.includes(' ')) {
+          birthDateVal = birthDateVal.split(' ')[0];
+        }
+
         this.userForm.patchValue({
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          gender: user.gender.toString(),
-          birth_date: user.birth_date,
-          country_id: user.country_id.toString(),
-          city_id: user.city_id.toString(),
-          account_type: user.type,
-          is_active: user.status,
-          is_private: user.is_private,
+          name: user.name || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          gender: genderVal,
+          birth_date: birthDateVal,
+          country_id: countryVal,
+          city_id: cityVal,
+          account_type: user.type || user.account_type || 'user',
+          is_active: user.status !== undefined ? (user.status == 1 ? '1' : '0') : (user.is_active !== undefined ? (user.is_active == 1 ? '1' : '0') : '1'),
+          is_private: user.is_private !== undefined ? (user.is_private == 1 ? '1' : '0') : '0',
           interests: interests,
           image: '',
         });
-        if (user.country_id) {
-          this.loadCities(user.country_id);
+
+        if (countryVal) {
+          this.loadCities(Number(countryVal));
         }
+
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
+        console.error('Error loading user:', err);
         this.notification.error('Failed to load user data');
         this.loading = false;
       },

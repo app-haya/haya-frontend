@@ -53,7 +53,7 @@ export class SupportService {
 
   updateDepartmentAdmins(departmentId: number, adminIds: number[]): Observable<any> {
     const headers = this.getHeaders().set('Content-Type', 'application/json');
-    return this.http.put(`${this.baseUrl}/departments/${departmentId}/admins`, { admin_ids: adminIds }, { headers });
+    return this.http.put(`${this.baseUrl}/departments/${departmentId}/admins`, { admin_ids: adminIds, admins: adminIds }, { headers });
   }
 
   // Support Chats
@@ -76,8 +76,12 @@ export class SupportService {
 
     if (file) {
       const formData = new FormData();
-      if (message) formData.append('message', message);
+      if (message) {
+        formData.append('message', message);
+        formData.append('text', message);
+      }
       formData.append('file', file);
+      formData.append('attachment', file);
 
       const headers = new HttpHeaders({
         Authorization: `Bearer ${token}`,
@@ -90,7 +94,7 @@ export class SupportService {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       });
-      return this.http.post(`${this.baseUrl}/chats/${chatUuid}/reply`, { message }, { headers });
+      return this.http.post(`${this.baseUrl}/chats/${chatUuid}/reply`, { message, text: message }, { headers });
     }
   }
 }

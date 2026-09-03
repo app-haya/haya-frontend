@@ -253,7 +253,12 @@
       </div>
       <div class="modal-body-custom" style="max-height: 350px; overflow-y: auto;">
         <p class="text-muted small mb-3">{{ 'Select admins who can view and manage chats in this department:' | translate }}</p>
-        <div class="list-group">
+        <div *ngIf="allAdmins.length === 0" class="text-center py-4 text-muted">
+          <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
+          <p class="small mb-0">{{ 'Loading admins list...' | translate }}</p>
+        </div>
+
+        <div *ngIf="allAdmins.length > 0" class="list-group">
           <label
             *ngFor="let admin of allAdmins"
             class="list-group-item d-flex align-items-center gap-3 cursor-pointer"
@@ -265,8 +270,8 @@
               (change)="toggleAdminSelection(admin.id)"
             />
             <div>
-              <span class="fw-bold d-block">{{ admin.name }}</span>
-              <span class="text-muted small">{{ admin.email }}</span>
+              <span class="fw-bold d-block">{{ admin.name || admin.email }}</span>
+              <span class="text-muted small" *ngIf="admin.name && admin.email">{{ admin.email }}</span>
             </div>
           </label>
         </div>
