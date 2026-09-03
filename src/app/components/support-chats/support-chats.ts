@@ -107,6 +107,69 @@ export class SupportChats implements OnInit {
     this.loadChats(1);
   }
 
+  getLastMessageText(chat: any): string {
+    if (!chat) return '';
+    const last = chat.last_message;
+    if (!last) {
+      if (typeof chat.message === 'string') return chat.message;
+      if (chat.message && typeof chat.message === 'object') {
+        return chat.message.text || chat.message.message || chat.message.content || chat.message.body || '';
+      }
+      return '';
+    }
+    if (typeof last === 'string') {
+      return last;
+    }
+    if (typeof last === 'object') {
+      return last.text || last.message || last.content || last.body || (last.file || last.attachment ? '📎 [ملف]' : '');
+    }
+    return '';
+  }
+
+  getMessageText(msg: any): string {
+    if (!msg) return '';
+    if (typeof msg === 'string') return msg;
+    return msg.message || msg.text || msg.content || msg.body || '';
+  }
+
+  isOutgoingMessage(msg: any): boolean {
+    if (!msg) return false;
+
+    // Explicit outgoing/incoming flags
+    if (msg.is_outgoing === true || msg.is_outgoing === 1) return true;
+    if (msg.is_incoming === true || msg.is_incoming === 1) return false;
+
+    // Explicit official/admin indicators
+    const senderType = (msg.sender_type || msg.type || msg.sender_role || msg.role || '').toString().toLowerCase();
+    if (senderType === 'official' || senderType === 'admin' || senderType === 'support' || senderType === 'staff' || senderType === 'system') {
+      return true;
+    }
+    if (msg.is_official === true || msg.is_official === 1 || msg.is_admin === true || msg.is_admin === 1 || msg.from_admin) {
+      return true;
+    }
+
+    if (msg.admin_id || msg.official_id) {
+      return true;
+    }
+
+    // Compare sender ID with selected chat's user/client ID
+    const chatUserId = this.selectedChat?.user_id || this.selectedChat?.user?.id || this.selectedChat?.client_id || this.selectedChat?.customer_id;
+    const msgUserId = msg.user_id || msg.sender_id || msg.user?.id;
+
+    if (chatUserId && msgUserId) {
+      if (Number(msgUserId) === Number(chatUserId)) {
+        return false; // Message from customer/user -> INCOMING
+      }
+      return true; // Message from support/admin -> OUTGOING
+    }
+
+    if (senderType === 'user' || senderType === 'client' || senderType === 'customer') {
+      return false;
+    }
+
+    return false;
+  }
+
   filterChats(): void {
     if (!this.searchTerm || !this.searchTerm.trim()) {
       this.filteredChats = [...this.chats];
@@ -117,7 +180,7 @@ export class SupportChats implements OnInit {
     this.filteredChats = this.chats.filter((c) => {
       const userName = (c.user?.name || c.name || '').toLowerCase();
       const userEmail = (c.user?.email || c.email || '').toLowerCase();
-      const lastMsg = (c.last_message || c.message || '').toLowerCase();
+      const lastMsg = this.getLastMessageText(c).toLowerCase();
       const deptName = (c.department?.name_ar || c.department?.name_en || '').toLowerCase();
 
       return (
@@ -129,21 +192,38 @@ export class SupportChats implements OnInit {
     });
   }
 
+  getChatUuid(chat: any): string {
+    if (!chat) return '';
+    return chat.uuid || chat.chat_uuid || chat.conversation_uuid || chat.id || '';
+  }
+
   selectChat(chat: any): void {
     this.selectedChat = chat;
     this.messages = [];
     this.replyText = '';
     this.selectedFile = null;
-    this.loadMessages(chat.uuid || chat.id);
+    const uuid = this.getChatUuid(chat);
+    this.loadMessages(uuid);
+  }
+
+  sortMessagesChronologically(msgs: any[]): any[] {
+    if (!Array.isArray(msgs) || msgs.length <= 1) return msgs;
+    return [...msgs].sort((a, b) => {
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0);
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0);
+      return timeA - timeB;
+    });
   }
 
   loadMessages(chatUuid: string): void {
+    if (!chatUuid) return;
     this.loadingMessages = true;
     this.supportService.getChatMessages(chatUuid).subscribe({
       next: (res: any) => {
         this.loadingMessages = false;
         const data = res.data || res.messages || res;
-        this.messages = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        const rawList = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        this.messages = this.sortMessagesChronologically(rawList);
         this.scrollToBottom();
       },
       error: (err) => {
@@ -172,7 +252,7 @@ export class SupportChats implements OnInit {
       return;
     }
 
-    const chatUuid = this.selectedChat.uuid || this.selectedChat.id;
+    const chatUuid = this.getChatUuid(this.selectedChat);
     this.sendingReply = true;
 
     this.supportService.replyToChat(chatUuid, this.replyText.trim(), this.selectedFile || undefined).subscribe({
@@ -180,9 +260,13 @@ export class SupportChats implements OnInit {
         this.sendingReply = false;
         const newMsg = res.data || res.message || {
           message: this.replyText.trim(),
+          text: this.replyText.trim(),
           sender_type: 'official',
           created_at: new Date().toISOString()
         };
+        if (this.selectedChat) {
+          this.selectedChat.last_message = newMsg;
+        }
         this.messages.push(newMsg);
         this.replyText = '';
         this.selectedFile = null;

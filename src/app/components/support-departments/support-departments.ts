@@ -120,7 +120,19 @@ export class SupportDepartments implements OnInit {
   loadAdmins(): void {
     this.adminService.getAllAdmins().subscribe({
       next: (res: any) => {
-        this.allAdmins = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : []);
+        if (res && res.data) {
+          if (Array.isArray(res.data.data)) {
+            this.allAdmins = res.data.data;
+          } else if (Array.isArray(res.data)) {
+            this.allAdmins = res.data;
+          } else {
+            this.allAdmins = [];
+          }
+        } else if (Array.isArray(res)) {
+          this.allAdmins = res;
+        } else {
+          this.allAdmins = [];
+        }
       },
       error: (err: any) => console.error('Error fetching admins:', err)
     });
@@ -211,8 +223,9 @@ export class SupportDepartments implements OnInit {
   openAdminsModal(dept: any): void {
     this.selectedDeptForAdmins = dept;
     const currentAdmins = dept.admins || dept.admin_ids || [];
-    this.selectedAdminIds = currentAdmins.map((a: any) => typeof a === 'object' ? a.id : a);
+    this.selectedAdminIds = currentAdmins.map((a: any) => typeof a === 'object' ? (a.id || a.admin_id) : a);
     this.showAdminsModal = true;
+    this.loadAdmins();
   }
 
   closeAdminsModal(): void {
@@ -237,6 +250,12 @@ export class SupportDepartments implements OnInit {
 
   saveDepartmentAdmins(): void {
     if (!this.selectedDeptForAdmins) return;
+
+    if (this.selectedAdminIds.length === 0) {
+      this.showToast(this.translate.instant('Please select at least one admin supervisor'), 'danger');
+      return;
+    }
+
     this.savingAdmins = true;
 
     this.supportService.updateDepartmentAdmins(this.selectedDeptForAdmins.id, this.selectedAdminIds).subscribe({

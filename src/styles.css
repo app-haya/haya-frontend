@@ -1155,4 +1155,418 @@ body.dark-mode .header-select:focus {
   box-shadow: 0 0 0 3px rgba(0, 207, 213, 0.15);
 }
 
+/* =========================================================
+   DARK MODE OVERRIDES (Support Departments & Support Chats)
+   ========================================================= */
+body.dark-mode .custom-card {
+  background: #11161d !important;
+  border-color: #30363d !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .card-header-custom {
+  background: #161b22 !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .card-title-custom {
+  color: #00cfd5 !important;
+}
+
+body.dark-mode .form-label-custom {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .form-control-custom {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .form-control-custom:focus {
+  border-color: #00cfd5 !important;
+  box-shadow: 0 0 0 3px rgba(0, 207, 213, 0.2) !important;
+}
+
+body.dark-mode .data-table th {
+  background: #161b22 !important;
+  color: #9ca3af !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .data-table td {
+  border-bottom-color: #21262d !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .table-row:hover {
+  background: #161b22 !important;
+}
+
+body.dark-mode .bg-light {
+  background-color: #161b22 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .modal-card {
+  background: #161b22 !important;
+  border: 1px solid #30363d !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.dark-mode .modal-body-custom {
+  background: #161b22 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .modal-footer-custom {
+  background: #11161d !important;
+  border-top-color: #30363d !important;
+}
+
+body.dark-mode .btn-cancel {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .list-group-item {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .list-group-item:hover {
+  background: #161b22 !important;
+}
+
+/* Support Chats Dark Mode */
+body.dark-mode .chat-container {
+  background: #11161d !important;
+  border-color: #30363d !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .chats-sidebar {
+  background: #161b22 !important;
+  border-inline-end-color: #30363d !important;
+}
+
+body.dark-mode .sidebar-search {
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .sidebar-search .input-group-text,
+body.dark-mode .sidebar-search .form-control {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .chat-item {
+  border-bottom-color: #21262d !important;
+}
+
+body.dark-mode .chat-item:hover {
+  background-color: #1c2128 !important;
+}
+
+body.dark-mode .chat-item.active {
+  background-color: rgba(0, 207, 213, 0.15) !important;
+  border-inline-start-color: #00cfd5 !important;
+}
+
+body.dark-mode .user-name {
+  color: #f3f4f6 !important;
+}
+
+body.dark-mode .last-message {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .chat-main-area {
+  background: #0d1117 !important;
+}
+
+body.dark-mode .chat-header {
+  background: #161b22 !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .messages-body {
+  background: #0b0e14 !important;
+}
+
+body.dark-mode .message-bubble-wrapper.incoming .message-bubble {
+  background: #161b22 !important;
+  color: #e5e7eb !important;
+  border-color: #30363d !important;
+}
+
+body.dark-mode .message-bubble-wrapper.incoming .sender-name {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .message-bubble-wrapper.incoming .message-time {
+  color: #6e7681 !important;
+}
+
+body.dark-mode .msg-avatar {
+  background: #21262d !important;
+  color: #9ca3af !important;
+}
+
+body.dark-mode .chat-reply-box {
+  background: #161b22 !important;
+  border-top-color: #30363d !important;
+}
+
+body.dark-mode .reply-input-bar {
+  background: #161b22 !important;
+}
+
+body.dark-mode .reply-input-field,
+body.dark-mode .chat-reply-box .form-control {
+  background-color: #0d1117 !important;
+  color: #ffffff !important;
+  border: 1px solid #30363d !important;
+}
+
+body.dark-mode .btn-attach-file,
+body.dark-mode .chat-reply-box .btn-light {
+  background-color: #21262d !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+body.dark-mode .attachment-bar {
+  background-color: #161b22 !important;
+  color: #c9d1d9 !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .unselected-state h5 {
+  color: #f3f4f6 !important;
+}
+
+body.dark-mode .unselected-state p {
+  color: #9ca3af !important;
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES (Post Reports & Comment Reports)
+   ========================================================= */
+body.dark-mode .tabs-bar {
+  background: #161b22 !important;
+  border: 1px solid #30363d !important;
+}
+
+body.dark-mode .tab-btn {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .tab-btn:hover {
+  background: rgba(0, 207, 213, 0.1) !important;
+  color: #00cfd5 !important;
+}
+
+body.dark-mode .tab-btn.active {
+  background: #21262d !important;
+  color: #00cfd5 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .search-input {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #f3f4f6 !important;
+}
+
+body.dark-mode .search-input::placeholder {
+  color: #8b949e !important;
+}
+
+body.dark-mode .search-input:focus {
+  border-color: #00cfd5 !important;
+  box-shadow: 0 0 0 3px rgba(0, 207, 213, 0.2) !important;
+}
+
+body.dark-mode .table-card {
+  background: #11161d !important;
+  border-color: #30363d !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .data-table thead tr {
+  background: #161b22 !important;
+}
+
+body.dark-mode .data-table th {
+  background: #161b22 !important;
+  color: #00cfd5 !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .table-row {
+  border-bottom-color: #21262d !important;
+}
+
+body.dark-mode .table-row:hover {
+  background: #161b22 !important;
+}
+
+body.dark-mode .data-table td {
+  color: #e5e7eb !important;
+  border-bottom-color: #21262d !important;
+}
+
+body.dark-mode .user-name {
+  color: #f3f4f6 !important;
+}
+
+body.dark-mode .user-id {
+  color: #8b949e !important;
+}
+
+body.dark-mode .comment-text {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .reason-text,
+body.dark-mode .reason-pill {
+  color: #c9d1d9 !important;
+}
+
+body.dark-mode .reason-pill {
+  background: #21262d !important;
+  border: 1px solid #30363d !important;
+}
+
+body.dark-mode .post-context-cell {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+
+body.dark-mode .post-owner {
+  color: #c9d1d9 !important;
+}
+
+body.dark-mode .date-text,
+body.dark-mode .date-cell {
+  color: #c9d1d9 !important;
+}
+
+body.dark-mode .time-cell {
+  color: #8b949e !important;
+}
+
+body.dark-mode .pagination-bar {
+  background: #161b22 !important;
+  border-top-color: #30363d !important;
+}
+
+body.dark-mode .pagination-info {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .page-btn {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+body.dark-mode .page-btn.active {
+  background: #00cfd5 !important;
+  border-color: #00cfd5 !important;
+  color: #0b0e14 !important;
+}
+
+body.dark-mode .modal-box {
+  background: #161b22 !important;
+  border: 1px solid #30363d !important;
+}
+
+body.dark-mode .modal-head {
+  background: #11161d !important;
+  border-bottom-color: #30363d !important;
+}
+
+body.dark-mode .modal-title-wrap h5 {
+  color: #f3f4f6 !important;
+}
+
+body.dark-mode .modal-body-custom {
+  background: #161b22 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .modal-footer-custom {
+  background: #11161d !important;
+  border-top-color: #30363d !important;
+}
+
+body.dark-mode .form-lbl {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .form-textarea {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   SEARCH INPUT RTL / LTR CLEARANCE & PADDING FIX
+   ========================================================= */
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-box i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+[dir="rtl"] .search-box i,
+html[dir="rtl"] .search-box i,
+body[dir="rtl"] .search-box i {
+  right: 14px !important;
+  left: auto !important;
+}
+
+[dir="rtl"] .search-input,
+[dir="rtl"] .search-box input,
+html[dir="rtl"] .search-input,
+html[dir="rtl"] .search-box input,
+body[dir="rtl"] .search-input,
+body[dir="rtl"] .search-box input {
+  padding-right: 46px !important;
+  padding-left: 16px !important;
+}
+
+[dir="ltr"] .search-box i,
+html[dir="ltr"] .search-box i,
+body[dir="ltr"] .search-box i {
+  left: 14px !important;
+  right: auto !important;
+}
+
+[dir="ltr"] .search-input,
+[dir="ltr"] .search-box input,
+html[dir="ltr"] .search-input,
+html[dir="ltr"] .search-box input,
+body[dir="ltr"] .search-input,
+body[dir="ltr"] .search-box input {
+  padding-left: 46px !important;
+  padding-right: 16px !important;
+}
+
+
+
+
 

@@ -163,52 +163,152 @@
 .messages-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .message-bubble-wrapper {
   display: flex;
+  align-items: flex-end;
+  gap: 10px;
   width: 100%;
 }
 
+/* Incoming (User) Message - Aligned Right in RTL */
 .message-bubble-wrapper.incoming {
+  flex-direction: row;
   justify-content: flex-start;
 }
 
-.message-bubble-wrapper.outgoing {
-  justify-content: flex-end;
-}
-
-.message-bubble {
-  max-width: 70%;
-  padding: 10px 16px;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-}
-
 .message-bubble-wrapper.incoming .message-bubble {
-  background: #ffffff;
-  color: #1a1a2e;
-  border: 1px solid #e5e7eb;
-  border-top-right-radius: 2px;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px 18px 18px 4px;
+  max-width: 70%;
+  padding: 12px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.message-bubble-wrapper.incoming .sender-name {
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.78rem;
+  margin-bottom: 4px;
+}
+
+.message-bubble-wrapper.incoming .message-time {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 4px;
+  text-align: start;
+}
+
+/* Outgoing (Official Support) Message - Aligned Left in RTL */
+.message-bubble-wrapper.outgoing {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .message-bubble-wrapper.outgoing .message-bubble {
   background: linear-gradient(135deg, #7a3ca0, #5b2d80);
   color: #ffffff;
-  border-top-left-radius: 2px;
+  border: none;
+  border-radius: 18px 18px 4px 18px;
+  max-width: 70%;
+  padding: 12px 18px;
+  box-shadow: 0 4px 14px rgba(122, 60, 160, 0.25);
 }
 
-.sender-name {
-  font-size: 0.75rem;
+.message-bubble-wrapper.outgoing .sender-name {
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
+  font-size: 0.78rem;
   margin-bottom: 4px;
-  opacity: 0.9;
+}
+
+.message-bubble-wrapper.outgoing .message-time {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4px;
+  text-align: end;
+}
+
+.message-content {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Message Avatars */
+.msg-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.msg-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.msg-avatar.support-avatar {
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(122, 60, 160, 0.3);
+  font-size: 1rem;
+}
+
+.avatar-fallback-sm {
+  font-size: 1.1rem;
+  color: #64748b;
 }
 
 .chat-reply-box {
   border-top: 1px solid #f0f0f0;
   background: #ffffff;
+}
+
+.reply-input-bar {
+  background: #ffffff;
+}
+
+.reply-input-field {
+  background: #f8f9fa;
+  color: #1a1a2e;
+  border-radius: 10px;
+}
+
+.btn-attach-file {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.btn-attach-file:hover {
+  background: #e9ecef;
+  color: #1a1a2e;
+}
+
+.attachment-bar {
+  background: #f8f9fa;
 }
 
 .btn-send {
@@ -233,3 +333,33 @@
 .unselected-state {
   margin: auto;
 }
+
+/* Dark Mode Overrides */
+:host-context(body.dark-mode) .page-title { color: #ffffff !important; }
+:host-context(body.dark-mode) .page-subtitle { color: #9ca3af !important; }
+:host-context(body.dark-mode) .chat-container { background: #11161d !important; border-color: #30363d !important; }
+:host-context(body.dark-mode) .chats-sidebar { background: #161b22 !important; border-inline-end-color: #30363d !important; }
+:host-context(body.dark-mode) .sidebar-search { border-bottom-color: #30363d !important; }
+:host-context(body.dark-mode) .sidebar-search .input-group-text,
+:host-context(body.dark-mode) .sidebar-search .form-control { background-color: #0d1117 !important; border-color: #30363d !important; color: #ffffff !important; }
+:host-context(body.dark-mode) .chat-item { border-bottom-color: #21262d !important; }
+:host-context(body.dark-mode) .chat-item:hover { background-color: #1c2128 !important; }
+:host-context(body.dark-mode) .chat-item.active { background-color: rgba(0, 207, 213, 0.15) !important; border-inline-start-color: #00cfd5 !important; }
+:host-context(body.dark-mode) .user-name { color: #f3f4f6 !important; }
+:host-context(body.dark-mode) .last-message { color: #9ca3af !important; }
+:host-context(body.dark-mode) .chat-main-area { background: #0d1117 !important; }
+:host-context(body.dark-mode) .chat-header { background: #161b22 !important; border-bottom-color: #30363d !important; }
+:host-context(body.dark-mode) .messages-body { background: #0b0e14 !important; }
+:host-context(body.dark-mode) .message-bubble-wrapper.incoming .message-bubble { background: #161b22 !important; color: #e5e7eb !important; border-color: #30363d !important; }
+:host-context(body.dark-mode) .message-bubble-wrapper.incoming .sender-name { color: #9ca3af !important; }
+:host-context(body.dark-mode) .message-bubble-wrapper.incoming .message-time { color: #6e7681 !important; }
+:host-context(body.dark-mode) .msg-avatar { background: #21262d !important; color: #9ca3af !important; }
+:host-context(body.dark-mode) .chat-reply-box { background: #161b22 !important; border-top-color: #30363d !important; }
+:host-context(body.dark-mode) .reply-input-bar { background: #161b22 !important; }
+:host-context(body.dark-mode) .reply-input-field { background-color: #0d1117 !important; color: #ffffff !important; border: 1px solid #30363d !important; }
+:host-context(body.dark-mode) .btn-attach-file { background-color: #21262d !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+:host-context(body.dark-mode) .attachment-bar { background-color: #161b22 !important; color: #c9d1d9 !important; border-bottom-color: #30363d !important; }
+:host-context(body.dark-mode) .unselected-state h5 { color: #f3f4f6 !important; }
+:host-context(body.dark-mode) .unselected-state p { color: #9ca3af !important; }
+
+

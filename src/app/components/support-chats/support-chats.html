@@ -80,8 +80,8 @@
                 {{ (chat.updated_at || chat.last_message_at | date:'shortTime') }}
               </span>
             </div>
-            <p class="last-message mb-1 text-muted">
-              {{ chat.last_message || chat.message || ('No messages yet' | translate) }}
+            <p class="last-message mb-1 text-muted text-truncate">
+              {{ getLastMessageText(chat) || ('No messages yet' | translate) }}
             </p>
             <div class="d-flex align-items-center gap-1" *ngIf="chat.department">
               <span class="badge bg-secondary-subtle text-secondary border px-2 py-0" style="font-size: 0.7rem;">
@@ -133,24 +133,41 @@
           <div
             *ngFor="let msg of messages"
             class="message-bubble-wrapper"
-            [class.outgoing]="msg.sender_type === 'official' || msg.is_official || msg.user_id === selectedChat.official_id"
-            [class.incoming]="msg.sender_type !== 'official' && !msg.is_official && msg.user_id !== selectedChat.official_id"
+            [class.outgoing]="isOutgoingMessage(msg)"
+            [class.incoming]="!isOutgoingMessage(msg)"
           >
-            <div class="message-bubble">
-              <div class="sender-name" *ngIf="msg.sender_name || msg.user?.name">
-                {{ msg.sender_name || msg.user?.name }}
+            <!-- Avatar for User (Incoming) -->
+            <div *ngIf="!isOutgoingMessage(msg)" class="msg-avatar">
+              <img *ngIf="selectedChat.user?.image" [src]="selectedChat.user.image" />
+              <div *ngIf="!selectedChat.user?.image" class="avatar-fallback-sm">
+                <i class="bi bi-person-fill"></i>
               </div>
-              <p class="message-content mb-1" *ngIf="msg.message || msg.content">
-                {{ msg.message || msg.content }}
+            </div>
+
+            <!-- Message Content Bubble -->
+            <div class="message-bubble">
+              <div class="sender-name">
+                <span *ngIf="!isOutgoingMessage(msg)">{{ msg.sender_name || msg.user?.name || selectedChat.user?.name || selectedChat.name || ('User' | translate) }}</span>
+                <span *ngIf="isOutgoingMessage(msg)">
+                  <i class="bi bi-headset me-1"></i> {{ 'Official Support' | translate }}
+                </span>
+              </div>
+              <p class="message-content mb-1" *ngIf="getMessageText(msg)">
+                {{ getMessageText(msg) }}
               </p>
               <div *ngIf="msg.file || msg.attachment" class="attachment-preview mb-1">
                 <a [href]="msg.file || msg.attachment" target="_blank" class="btn btn-sm btn-light border">
                   <i class="bi bi-paperclip me-1"></i> {{ 'View Attachment' | translate }}
                 </a>
               </div>
-              <div class="message-time text-end" style="font-size: 0.65rem; opacity: 0.75;">
+              <div class="message-time">
                 {{ (msg.created_at | date:'shortTime') }}
               </div>
+            </div>
+
+            <!-- Avatar for Support (Outgoing) -->
+            <div *ngIf="isOutgoingMessage(msg)" class="msg-avatar support-avatar">
+              <i class="bi bi-headset"></i>
             </div>
           </div>
 
@@ -162,18 +179,18 @@
 
       <!-- Reply Box -->
       <div *ngIf="selectedChat" class="chat-reply-box">
-        <div *ngIf="selectedFile" class="attachment-bar p-2 bg-light border-bottom d-flex align-items-center justify-content-between">
+        <div *ngIf="selectedFile" class="attachment-bar p-2 border-bottom d-flex align-items-center justify-content-between">
           <span class="small text-truncate"><i class="bi bi-file-earmark me-1"></i> {{ selectedFile.name }}</span>
           <button class="btn btn-sm btn-link text-danger p-0" (click)="removeSelectedFile()">&times;</button>
         </div>
-        <div class="d-flex align-items-center gap-2 p-3 bg-white">
-          <label class="btn btn-light btn-icon text-muted mb-0" title="Attach file">
+        <div class="reply-input-bar d-flex align-items-center gap-2 p-3">
+          <label class="btn-attach-file mb-0" title="Attach file">
             <i class="bi bi-paperclip fs-5"></i>
             <input type="file" (change)="onFileSelected($event)" hidden />
           </label>
           <input
             type="text"
-            class="form-control form-control-lg border-0 bg-light"
+            class="form-control form-control-lg border-0 reply-input-field"
             [placeholder]="'Type your reply as Official Support...' | translate"
             [(ngModel)]="replyText"
             (keyup.enter)="sendReply()"
