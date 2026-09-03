@@ -69,6 +69,10 @@ def githubResponseMessage() {
   ).trim()
 }
 
+def githubDeployIntended() {
+  return env.GITHUB_ENVIRONMENT && env.GITHUB_ENVIRONMENT != ''
+}
+
 def githubDeploymentIsTerminal() {
   return env.GITHUB_DEPLOYMENT_STATE in [
     'success',
@@ -78,8 +82,79 @@ def githubDeploymentIsTerminal() {
   ]
 }
 
+def githubCommitState(String deploymentState) {
+  if (deploymentState == 'in_progress') {
+    return 'pending'
+  }
+
+  if (deploymentState in ['success', 'failure', 'error']) {
+    return deploymentState
+  }
+
+  return ''
+}
+
+def githubCommitStatusContext() {
+  return "deploy/${env.GITHUB_ENVIRONMENT}"
+}
+
+def setGithubCommitStatus(String state, String description) {
+  if (!state || !githubDeployIntended() || !env.GIT_COMMIT) {
+    return
+  }
+
+  try {
+    withGithubToken {
+      withEnv([
+        "GH_STATE=${state}",
+        "GH_DESCRIPTION=${description.take(140)}",
+        "GH_CONTEXT=${githubCommitStatusContext()}",
+        "GH_LOG_URL=${env.BUILD_URL ?: ''}",
+        "GH_REF=${env.GIT_COMMIT}"
+      ]) {
+        sh '''
+          set -e
+          mkdir -p build
+
+          node -e '
+            const fs = require("fs");
+            fs.writeFileSync(
+              "build/github-request.json",
+              JSON.stringify({
+                state: process.env.GH_STATE,
+                description: process.env.GH_DESCRIPTION,
+                context: process.env.GH_CONTEXT,
+                target_url: process.env.GH_LOG_URL
+              })
+            );
+          '
+        '''
+      }
+
+      String httpCode = githubCurl(
+        'POST',
+        "/repos/${githubRepository()}/statuses/${env.GIT_COMMIT}"
+      )
+
+      if (httpCode != '201' && httpCode != '200') {
+        String apiMessage = githubResponseMessage()
+        error """
+GitHub commit status '${state}' failed (HTTP ${httpCode}).
+Response: ${apiMessage}
+"""
+      }
+
+      echo "GitHub commit status ${githubCommitStatusContext()}: ${state}"
+    }
+
+  } catch (err) {
+    echo "WARNING: Could not update GitHub commit status to ${state}: ${err}"
+    unstable("GitHub commit status could not be updated: ${err.message}")
+  }
+}
+
 def createGithubDeployment() {
-  if (!env.GITHUB_ENVIRONMENT || !env.GIT_COMMIT) {
+  if (env.GITHUB_DEPLOYMENT_ID || !githubDeployIntended() || !env.GIT_COMMIT) {
     return
   }
 
@@ -141,10 +216,19 @@ Response: ${apiMessage}
   } catch (err) {
     echo "WARNING: Could not record GitHub deployment status: ${err}"
     unstable("GitHub deployment status could not be recorded: ${err.message}")
+    setGithubCommitStatus(
+      'pending',
+      "Deploying ${env.GITHUB_ENVIRONMENT} from Jenkins #${env.BUILD_NUMBER}"
+    )
   }
 }
 
 def setGithubDeploymentStatus(String state, String description) {
+  setGithubCommitStatus(
+    githubCommitState(state),
+    description
+  )
+
   if (!env.GITHUB_DEPLOYMENT_ID) {
     return
   }
@@ -203,7 +287,7 @@ Response: ${apiMessage}
 }
 
 def finalizeGithubDeployment() {
-  if (!env.GITHUB_DEPLOYMENT_ID || githubDeploymentIsTerminal()) {
+  if (!githubDeployIntended() || githubDeploymentIsTerminal()) {
     return
   }
 
@@ -273,11 +357,13 @@ pipeline {
     /*
      * Same credential as haya-backend Jenkinsfile.
      * Checkout can stay on github-pat-readonly, but that PAT must also be
-     * allowed to write deployment statuses on app-haya/haya-frontend:
-     *   - classic: repo or repo_deployment
-     *   - fine-grained: Deployments Read and write on app-haya/haya-frontend
+     * allowed to write on app-haya/haya-frontend:
+     *   - classic: repo (covers repo_deployment and repo:status)
+     *   - fine-grained:
+     *       Deployments: Read and write
+     *       Commit statuses: Read and write
      *
-     * Statuses appear on the commit and under the repo Environments tab.
+     * Results appear on the commit (green/red) and Environments tab.
      */
     GITHUB_DEPLOYMENT_CREDENTIALS_ID = 'github-pat-readonly'
     GITHUB_API_URL = 'https://api.github.com'
@@ -363,6 +449,9 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
+        script {
+          createGithubDeployment()
+        }
       }
     }
 
@@ -552,7 +641,7 @@ GitHub deployment: ${env.GITHUB_DEPLOYMENT_ID ?: 'none'} (${env.GITHUB_DEPLOYMEN
       script {
         // Explicit failure path so GitHub is updated even if always/finalize
         // cannot see the final build result yet.
-        if (env.GITHUB_DEPLOYMENT_ID && !githubDeploymentIsTerminal()) {
+        if (githubDeployIntended() && !githubDeploymentIsTerminal()) {
           setGithubDeploymentStatus(
             'failure',
             "Jenkins ${env.GITHUB_ENVIRONMENT} deploy failed"
@@ -564,7 +653,7 @@ GitHub deployment: ${env.GITHUB_DEPLOYMENT_ID ?: 'none'} (${env.GITHUB_DEPLOYMEN
 
     aborted {
       script {
-        if (env.GITHUB_DEPLOYMENT_ID && !githubDeploymentIsTerminal()) {
+        if (githubDeployIntended() && !githubDeploymentIsTerminal()) {
           setGithubDeploymentStatus(
             'error',
             "Jenkins ${env.GITHUB_ENVIRONMENT} deploy was aborted"
