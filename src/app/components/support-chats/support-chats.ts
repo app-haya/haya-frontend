@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule, NgFor, NgIf, NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -21,7 +21,7 @@ import { SupportService } from '../../services/support.service';
   templateUrl: './support-chats.html',
   styleUrls: ['./support-chats.css']
 })
-export class SupportChats implements OnInit {
+export class SupportChats implements OnInit, OnDestroy {
   @ViewChild('chatScrollContainer') chatScrollContainer!: ElementRef;
 
   chats: any[] = [];
@@ -48,6 +48,7 @@ export class SupportChats implements OnInit {
   toastMessage: string = '';
   toastType: 'success' | 'danger' = 'success';
   toastTimeout: any = null;
+  autoRefreshTimer: any = null;
 
   constructor(
     private supportService: SupportService,
@@ -57,6 +58,57 @@ export class SupportChats implements OnInit {
   ngOnInit(): void {
     this.loadDepartments();
     this.loadChats(1);
+    this.startAutoRefresh();
+  }
+
+  ngOnDestroy(): void {
+    if (this.autoRefreshTimer) {
+      clearInterval(this.autoRefreshTimer);
+    }
+  }
+
+  startAutoRefresh(): void {
+    this.autoRefreshTimer = setInterval(() => {
+      this.refreshChatsSilently();
+    }, 5000);
+  }
+
+  refreshChatsSilently(): void {
+    this.supportService.getSupportChats(this.currentPage, 20, this.selectedDepartmentId || undefined).subscribe({
+      next: (res: any) => {
+        if (res && res.data) {
+          const paginatedData = res.data;
+          this.chats = Array.isArray(paginatedData.data) ? paginatedData.data : (Array.isArray(paginatedData) ? paginatedData : []);
+          this.currentPage = paginatedData.current_page || this.currentPage;
+          this.lastPage = paginatedData.last_page || 1;
+          this.totalChats = paginatedData.total !== undefined ? paginatedData.total : this.chats.length;
+          this.filterChats();
+
+          if (this.selectedChat && !this.sendingReply) {
+            const uuid = this.getChatUuid(this.selectedChat);
+            if (uuid) {
+              this.refreshMessagesSilently(uuid);
+            }
+          }
+        }
+      },
+      error: (err) => console.error('Silent chat refresh error:', err)
+    });
+  }
+
+  refreshMessagesSilently(chatUuid: string): void {
+    this.supportService.getChatMessages(chatUuid).subscribe({
+      next: (res: any) => {
+        const data = res.data || res.messages || res;
+        const rawList = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        const sorted = this.sortMessagesChronologically(rawList);
+        if (sorted.length !== this.messages.length || (sorted.length > 0 && sorted[sorted.length - 1]?.id !== this.messages[this.messages.length - 1]?.id)) {
+          this.messages = sorted;
+          this.scrollToBottom();
+        }
+      },
+      error: (err) => console.error('Silent messages refresh error:', err)
+    });
   }
 
   loadDepartments(): void {
@@ -121,7 +173,7 @@ export class SupportChats implements OnInit {
       return last;
     }
     if (typeof last === 'object') {
-      return last.text || last.message || last.content || last.body || (last.file || last.attachment ? '📎 [ملف]' : '');
+      return last.text || last.message || last.content || last.body || (last.file || last.attachment ? 'ًں“ژ [ظ…ظ„ظپ]' : '');
     }
     return '';
   }
