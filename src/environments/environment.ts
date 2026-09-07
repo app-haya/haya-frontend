@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://hayaapp.online/api'
+  apiUrl: 'https://dev-api.hayaapp.sa/api',
+  storageUrl: 'https://dev-api.hayaapp.sa'
 };

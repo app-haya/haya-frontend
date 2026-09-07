@@ -7,6 +7,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DealService } from '../../services/deal.service';
 import { NotificationService } from '../../services/notification.service';
 import { DashboardService } from '../../services/dashboard.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-deal-orders',
@@ -94,13 +95,13 @@ export class DealOrders implements OnInit {
     }
     
     if (cleanPath.startsWith('storage/')) {
-      return `https://hayaapp.online/${cleanPath}`;
+      return `${environment.storageUrl}/${cleanPath}`;
     }
     if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('deals_files/')) {
-      return `https://hayaapp.online/storage/${cleanPath}`;
+      return `${environment.storageUrl}/storage/${cleanPath}`;
     }
-    
-    return `https://hayaapp.online/storage/${cleanPath}`;
+
+    return `${environment.storageUrl}/storage/${cleanPath}`;
   }
 
   prevPage(): void {

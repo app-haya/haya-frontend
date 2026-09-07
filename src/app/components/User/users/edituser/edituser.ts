@@ -35,6 +35,11 @@ export class EditUser implements OnInit {
   userImageName: string = '';
   userImageUrl: string = '';
 
+  roles: string[] = ['user', 'creator', 'merchant', 'trader', 'governmental', 'haya_team', 'haya_official'];
+  currentRole: string = 'user';
+  selectedRole: string = 'user';
+  changingRole = false;
+
   interestsList: { id: number; name: string }[] = [
     { id: 1, name: 'Education' },
     { id: 2, name: 'Sports' },
@@ -209,6 +214,23 @@ export class EditUser implements OnInit {
       this.cities = [];
       this.userForm.patchValue({ city_id: '' });
     }
+  }
+
+  changeRole() {
+    if (!this.selectedRole || this.selectedRole === this.currentRole) return;
+
+    this.changingRole = true;
+    this.usersService.changeUserRole(this.userId, this.selectedRole).subscribe({
+      next: () => {
+        this.notification.success('Role updated successfully');
+        this.currentRole = this.selectedRole;
+        this.changingRole = false;
+      },
+      error: (err) => {
+        this.notification.error(err.error?.message || 'Failed to update role');
+        this.changingRole = false;
+      },
+    });
   }
 
   onSubmit() {
