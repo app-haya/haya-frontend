@@ -447,6 +447,12 @@ pipeline {
     }
 
     stage('Checkout') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         checkout scm
         script {
@@ -456,6 +462,12 @@ pipeline {
     }
 
     stage('Setup Node') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sh '''
           set -e
@@ -485,7 +497,7 @@ pipeline {
     stage('Install dependencies') {
       when {
         expression {
-          return !params.SKIP_INSTALL
+          return env.DEPLOY_ENV != 'none' && !params.SKIP_INSTALL
         }
       }
 
@@ -498,11 +510,17 @@ pipeline {
     }
 
     stage('Build') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         sh '''
           set -e
 
-          if [ "${ENVIRONMENT}" = "prod" ]; then
+          if [ "${DEPLOY_ENV}" = "prod" ]; then
             echo "Building for PRODUCTION (api.hayaapp.sa)"
             npm run build:prod
           else
@@ -527,6 +545,12 @@ pipeline {
     }
 
     stage('Deploy') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         script {
           createGithubDeployment()
@@ -581,6 +605,12 @@ pipeline {
     }
 
     stage('Verify deployment') {
+      when {
+        expression {
+          return env.DEPLOY_ENV != 'none'
+        }
+      }
+
       steps {
         script {
           try {
