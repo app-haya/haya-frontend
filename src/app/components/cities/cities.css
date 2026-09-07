@@ -87,18 +87,42 @@
   display: flex;
   gap: 15px;
   margin-top: 30px;
+  width: 100%;
 }
 
 .form-actions .btn {
   flex: 1;
-  padding: 12px;
+  padding: 12px 20px;
   border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-purple {
+  background: #7a3ca0;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-purple:hover {
+  background: #652d87;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(122, 60, 160, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-outline {
   background: #f8f9fa;
   border: 1px solid #ddd;
   color: #666;
+}
+
+.btn-outline:hover {
+  background: #e9ecef;
+  color: #333;
 }
 
 /* 🌙 PREMIUM DARK MODE 🌙 */
