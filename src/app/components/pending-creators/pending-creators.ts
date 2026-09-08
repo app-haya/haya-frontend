@@ -31,10 +31,12 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
     this.loading = true;
     this.userService.getPendingCreators(page, this.activeTab).subscribe({
       next: (res: any) => {
-        this.creators = res.data.data;
+        const rawData = res.data?.data || [];
+        // استبعاد المستخدم العادي وعرض صناع المحتوى فقط
+        this.creators = rawData.filter((c: any) => c.verified_method !== 'user');
         this.filteredCreators = [...this.creators];
-        this.currentPage = res.data.current_page;
-        this.lastPage = res.data.last_page;
+        this.currentPage = res.data?.current_page || 1;
+        this.lastPage = res.data?.last_page || 1;
         this.loading = false;
       },
       error: () => this.loading = false
