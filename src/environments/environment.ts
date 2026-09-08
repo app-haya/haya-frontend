@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://hayaapp.online/api'
+  apiUrl: 'https://hayaapp.sa/api'
 };

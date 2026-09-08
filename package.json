@@ -7,6 +7,8 @@
     "start": "ng serve",
     "build": "ng build --configuration sa-production",
     "build:dev": "ng build --configuration dev",
+    "build:prod": "ng build --configuration sa-production",
+    "build:sa": "ng build --configuration sa-production",
     "build:online": "ng build --configuration production",
     "vercel-build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
