@@ -18,18 +18,19 @@
 
 .nav-link {
   color: rgba(255, 255, 255, 0.7);
-  padding: 12px 20px;
+  padding: 10px 14px;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.05rem;
-  font-weight: 700; /* Made even thicker */
-  /* Increased font size for better readability */
+  gap: 10px;
+  font-size: 0.98rem;
+  font-weight: 600;
   transition: all 0.25s ease;
   border-left: 4px solid transparent;
   margin: 2px 0;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .nav-link:hover {
@@ -49,9 +50,9 @@
 
 /* Styling for child sub-menus list to show hierarchy */
 .nav-item.dropdown ul.nav {
-  margin-inline-start: 26px !important;
+  margin-inline-start: 14px !important;
   border-inline-start: 1.5px solid rgba(255, 255, 255, 0.15) !important;
-  padding-inline-start: 6px !important;
+  padding-inline-start: 4px !important;
 }
 
 :host-context(body.dark-mode) .nav-item.dropdown ul.nav {
@@ -59,13 +60,16 @@
 }
 
 .child-link {
-  padding: 8px 16px !important;
-  padding-inline-start: 12px !important;
-  font-size: 0.92rem !important;
+  padding: 6px 10px !important;
+  padding-inline-start: 8px !important;
+  font-size: 0.88rem !important;
   font-weight: 500 !important;
   color: rgba(255, 255, 255, 0.75) !important;
   border-left: none !important; /* Remove the parent left border */
   border-right: none !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.35 !important;
 }
 
 .child-link:hover {

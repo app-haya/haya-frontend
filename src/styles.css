@@ -193,18 +193,12 @@ body.dark-mode textarea {
 }
 
 /* 🔘 GLOBAL BUTTON OVERRIDES (Dark Mode) 🔘 */
+/* Solid Primary / Brand Buttons */
 body.dark-mode .btn-purple,
 body.dark-mode .btn-primary,
+body.dark-mode .btn-brand,
 body.dark-mode .btn-info,
-body.dark-mode .btn-success,
-body.dark-mode .btn-secondary,
-body.dark-mode .btn-light,
-body.dark-mode .btn-outline,
-body.dark-mode .btn-outline-secondary,
-body.dark-mode .btn-outline-primary,
-body.dark-mode .btn-outline-purple,
-body.dark-mode .btn-outline-info,
-body.dark-mode .btn-outline-success {
+body.dark-mode .btn-success {
   background-color: #00cfd5 !important;
   border-color: #00cfd5 !important;
   color: #0b0e14 !important;
@@ -213,20 +207,64 @@ body.dark-mode .btn-outline-success {
 
 body.dark-mode .btn-purple:hover,
 body.dark-mode .btn-primary:hover,
+body.dark-mode .btn-brand:hover,
 body.dark-mode .btn-info:hover,
-body.dark-mode .btn-success:hover,
-body.dark-mode .btn-secondary:hover,
-body.dark-mode .btn-light:hover,
-body.dark-mode .btn-outline:hover,
-body.dark-mode .btn-outline-secondary:hover,
-body.dark-mode .btn-outline-primary:hover,
-body.dark-mode .btn-outline-purple:hover,
-body.dark-mode .btn-outline-info:hover,
-body.dark-mode .btn-outline-success:hover {
+body.dark-mode .btn-success:hover {
   background-color: #00b8bc !important;
   border-color: #00b8bc !important;
   color: #0b0e14 !important;
   box-shadow: 0 0 15px rgba(0, 207, 213, 0.3) !important;
+}
+
+/* Primary / Purple Outline Buttons */
+body.dark-mode .btn-outline-primary,
+body.dark-mode .btn-outline-purple,
+body.dark-mode .btn-outline-info {
+  background-color: rgba(0, 207, 213, 0.1) !important;
+  border: 1px solid #00cfd5 !important;
+  color: #00cfd5 !important;
+  font-weight: 600 !important;
+}
+
+body.dark-mode .btn-outline-primary:hover,
+body.dark-mode .btn-outline-purple:hover,
+body.dark-mode .btn-outline-info:hover {
+  background-color: #00cfd5 !important;
+  border-color: #00cfd5 !important;
+  color: #0b0e14 !important;
+  box-shadow: 0 0 12px rgba(0, 207, 213, 0.3) !important;
+}
+
+/* Secondary / Light Buttons */
+body.dark-mode .btn-secondary,
+body.dark-mode .btn-light,
+body.dark-mode .btn-outline-secondary {
+  background-color: #21262d !important;
+  border: 1px solid #30363d !important;
+  color: #e5e7eb !important;
+  font-weight: 600 !important;
+}
+
+body.dark-mode .btn-secondary:hover,
+body.dark-mode .btn-light:hover,
+body.dark-mode .btn-outline-secondary:hover {
+  background-color: #30363d !important;
+  border-color: #484f58 !important;
+  color: #ffffff !important;
+}
+
+/* Danger Outline Buttons */
+body.dark-mode .btn-outline-danger {
+  background-color: rgba(248, 81, 73, 0.1) !important;
+  border: 1px solid #f85149 !important;
+  color: #f85149 !important;
+  font-weight: 600 !important;
+}
+
+body.dark-mode .btn-outline-danger:hover {
+  background-color: #f85149 !important;
+  border-color: #f85149 !important;
+  color: #ffffff !important;
 }
 
 /* 📄 GLOBAL TABLE & PAGINATION OVERRIDES (Dark Mode) 📄 */
@@ -329,14 +367,21 @@ body.dark-mode .icon-btn {
   color: #c9d1d9 !important;
 }
 
-body.dark-mode .btn-outline-primary {
-  color: #00cfd5 !important;
-  border-color: #00cfd5 !important;
+body.dark-mode .text-dark,
+body.dark-mode .text-black,
+body.dark-mode .text-body {
+  color: #f0f6fc !important;
 }
 
-body.dark-mode .btn-outline-primary:hover {
-  background-color: #00cfd5 !important;
-  color: #0b0e14 !important;
+body.dark-mode .text-purple,
+body.dark-mode .text-purple-link {
+  color: #00cfd5 !important;
+}
+
+body.dark-mode .bg-secondary-subtle {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .badge.bg-light {

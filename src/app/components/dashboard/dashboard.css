@@ -5,7 +5,7 @@
 }
 
 .sidebar-wrapper {
-  width: 250px;
+  width: 260px;
   background-color: rgba(122, 60, 160, 0.9);
   color: white;
   transition: width 0.3s ease, transform 0.3s ease;

@@ -25,6 +25,7 @@
       <div *ngIf="!item.children">
         <a [routerLink]="item.path"
            routerLinkActive="active"
+           [title]="item.name | translate"
            class="nav-link text-white d-flex align-items-center py-2">
           <i [class]="item.icon" class="me-2"></i>
           <span *ngIf="!isCollapsed">{{ item.name | translate }}</span>
@@ -34,6 +35,7 @@
       <div *ngIf="item.children" class="nav-item dropdown">
         <a 
           href="javascript:void(0)"
+          [title]="item.name | translate"
           class="nav-link text-white d-flex align-items-center py-2"
           (click)="toggleItem(item)">
           <i [class]="item.icon" class="me-2"></i>
@@ -48,6 +50,7 @@
                [queryParams]="child.queryParams || null"
                [routerLinkActiveOptions]="child.routerLinkActiveOptions || { exact: false }"
                routerLinkActive="active" 
+               [title]="child.name | translate"
                class="nav-link text-white py-1 d-flex align-items-center child-link">
               <i [class]="child.icon" class="me-2"></i>
               <span>{{ child.name | translate }}</span>

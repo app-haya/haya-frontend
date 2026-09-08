@@ -27,28 +27,28 @@ textarea {
     border-bottom: 1px solid rgba(0, 207, 213, 0.3) !important;
 }
 
-/* Balanced muted colors for dark mode */
+/* High-contrast colors for dark mode */
 :host-context(body.dark-mode) .fw-bold,
 :host-context(body.dark-mode) h4,
 :host-context(body.dark-mode) h5 {
-    color: #ccc !important;
+    color: #ffffff !important;
 }
 
 :host-context(body.dark-mode) .form-label,
 :host-context(body.dark-mode) label {
-    color: #999 !important;
+    color: #e5e7eb !important;
 }
 
 :host-context(body.dark-mode) .form-control,
 :host-context(body.dark-mode) textarea {
-    color: #aaa !important;
+    color: #ffffff !important;
     background-color: #161b22 !important;
     border-color: rgba(0, 207, 213, 0.2) !important;
 }
 
 :host-context(body.dark-mode) .small,
 :host-context(body.dark-mode) p {
-    color: #999 !important;
+    color: #9ca3af !important;
 }
 
 [dir="rtl"] .me-2 {
