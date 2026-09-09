@@ -117,19 +117,19 @@
             <!-- Verification Documents -->
             <td>
               <div class="d-flex flex-wrap gap-1">
-                <a *ngIf="creator.creator_profile_image" [href]="creator.creator_profile_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
+                <button type="button" *ngIf="creator.creator_profile_image" (click)="previewDocument(creator.creator_profile_image, 'Profile')" class="status-badge badge-purple-type text-decoration-none border-0" style="cursor: pointer;">
                   <i class="bi bi-person"></i> {{ 'Profile' | translate }}
-                </a>
-                <a *ngIf="creator.creator_document" [href]="creator.creator_document" target="_blank" class="status-badge badge-purple-type text-decoration-none">
+                </button>
+                <button type="button" *ngIf="creator.creator_document" (click)="previewDocument(creator.creator_document, 'Document')" class="status-badge badge-purple-type text-decoration-none border-0" style="cursor: pointer;">
                   <i class="bi bi-file-earmark"></i> {{ 'Document' | translate }}
-                </a>
+                </button>
                 <span *ngIf="!creator.creator_profile_image && !creator.creator_document">—</span>
               </div>
             </td>
 
             <!-- Links -->
             <td>
-              <div class="d-flex flex-wrap gap-1">
+              <div class="d-flex flex-wrap align-items-center gap-1">
                 <a *ngIf="creator.creator_verified_link" [href]="creator.creator_verified_link" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                   <i class="bi bi-link-45deg"></i> {{ 'Link 1' | translate }}
                 </a>
@@ -137,6 +137,14 @@
                   <i class="bi bi-link-45deg"></i> {{ 'Link 2' | translate }}
                 </a>
                 <span *ngIf="!creator.creator_verified_link && !creator.creator_verified_link_2">—</span>
+                <button
+                  class="btn btn-sm btn-link p-0 ms-1 text-muted"
+                  (click)="openEditLinksModal(creator)"
+                  [title]="'Edit Links' | translate"
+                  style="font-size: 0.9rem; line-height: 1;"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
               </div>
             </td>
             
@@ -321,7 +329,12 @@
 
         <!-- Verification Details -->
         <div class="detail-section">
-          <h6 class="section-title"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i> {{ 'Verification Details' | translate }}</h6>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="section-title m-0"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i> {{ 'Verification Details' | translate }}</h6>
+            <button type="button" class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 0.75rem;" (click)="openEditLinksModal(selectedCreator)">
+              <i class="bi bi-pencil-square me-1"></i> {{ 'Edit Links' | translate }}
+            </button>
+          </div>
           <div class="detail-grid">
             <div class="detail-row" *ngIf="selectedCreator.verified_method">
               <span class="detail-lbl">{{ 'Verified Method' | translate }}</span>
@@ -330,16 +343,16 @@
 
             <div class="detail-row" *ngIf="selectedCreator.creator_profile_image">
               <span class="detail-lbl">{{ 'Profile Image' | translate }}</span>
-              <a [href]="selectedCreator.creator_profile_image" target="_blank" class="attachment-link text-decoration-none">
+              <button type="button" (click)="previewDocument(selectedCreator.creator_profile_image, 'Profile Image')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
                 <i class="bi bi-person-bounding-box me-1"></i> {{ 'View' | translate }}
-              </a>
+              </button>
             </div>
 
             <div class="detail-row" *ngIf="selectedCreator.creator_document">
               <span class="detail-lbl">{{ 'Document' | translate }}</span>
-              <a [href]="selectedCreator.creator_document" target="_blank" class="attachment-link text-decoration-none">
+              <button type="button" (click)="previewDocument(selectedCreator.creator_document, 'Document')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
                 <i class="bi bi-file-earmark me-1"></i> {{ 'View' | translate }}
-              </a>
+              </button>
             </div>
 
             <div class="detail-row" *ngIf="selectedCreator.creator_verified_link">
@@ -417,9 +430,9 @@
             </div>
             <div class="detail-row" *ngIf="selectedCreator.verification_order.admin_attachment_url">
               <span class="detail-lbl">{{ 'Attachment' | translate }}</span>
-              <a [href]="selectedCreator.verification_order.admin_attachment_url" target="_blank" class="attachment-link">
+              <button type="button" (click)="previewDocument(selectedCreator.verification_order.admin_attachment_url, 'Attachment')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
                 <i class="bi bi-paperclip"></i> {{ 'View Attachment' | translate }}
-              </a>
+              </button>
             </div>
             <div class="detail-row" *ngIf="selectedCreator.verification_order.reviewed_by">
               <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
@@ -434,6 +447,94 @@
       </div>
       <div class="custom-modal-footer">
         <button type="button" class="btn btn-light" (click)="closeDetail()">{{ 'Close' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Links Modal -->
+  <div class="custom-modal" *ngIf="showEditLinksModal">
+    <div class="custom-modal-backdrop" (click)="closeEditLinksModal()"></div>
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="m-0 d-flex align-items-center gap-2">
+          <i class="bi bi-link-45deg text-primary"></i>
+          {{ 'Edit Creator Links' | translate }} ({{ currentEditCreator?.name }})
+        </h5>
+        <button type="button" class="btn-close" (click)="closeEditLinksModal()"></button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="mb-3">
+          <label class="form-label mb-1" style="font-size: 0.85rem; font-weight: 600;">
+            <i class="bi bi-link me-1"></i> {{ 'Link 1' | translate }}
+          </label>
+          <input
+            type="url"
+            class="form-control"
+            [(ngModel)]="editLink1"
+            placeholder="https://instagram.com/..."
+            style="background: #111827; color: #fff; border-color: #374151;"
+          />
+        </div>
+        <div class="mb-2">
+          <label class="form-label mb-1" style="font-size: 0.85rem; font-weight: 600;">
+            <i class="bi bi-link me-1"></i> {{ 'Link 2 (Optional)' | translate }}
+          </label>
+          <input
+            type="url"
+            class="form-control"
+            [(ngModel)]="editLink2"
+            placeholder="https://tiktok.com/@..."
+            style="background: #111827; color: #fff; border-color: #374151;"
+          />
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeEditLinksModal()">{{ 'Cancel' | translate }}</button>
+        <button type="button" class="btn btn-primary" [disabled]="savingLinks" (click)="submitEditLinks()">
+          <span *ngIf="savingLinks" class="spinner-border spinner-border-sm me-1"></span>
+          {{ 'Save Changes' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Preview Modal -->
+  <div class="custom-modal" style="z-index: 1070;" *ngIf="showDocumentPreview">
+    <div class="custom-modal-backdrop" (click)="closeDocumentPreview()"></div>
+    <div class="custom-modal-content" style="max-width: 850px; width: 95%;">
+      <div class="custom-modal-header">
+        <h5 class="m-0 d-flex align-items-center gap-2">
+          <i class="bi" [ngClass]="isPdf ? 'bi-file-earmark-pdf text-danger' : 'bi-image text-primary'"></i>
+          {{ previewTitle | translate }}
+        </h5>
+        <div class="d-flex align-items-center gap-2">
+          <a *ngIf="previewUrl" [href]="previewUrl" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2" [title]="'Open in new tab' | translate">
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+          <button type="button" class="btn-close" (click)="closeDocumentPreview()"></button>
+        </div>
+      </div>
+      <div class="custom-modal-body p-2 d-flex justify-content-center align-items-center" style="min-height: 350px; max-height: 75vh; overflow: auto; background: rgba(0,0,0,0.04);">
+        <!-- PDF View -->
+        <iframe
+          *ngIf="isPdf && safePreviewUrl"
+          [src]="safePreviewUrl"
+          style="width: 100%; height: 70vh; border: none; border-radius: 8px; background: #fff;"
+        ></iframe>
+
+        <!-- Image View -->
+        <img
+          *ngIf="!isPdf && previewUrl"
+          [src]="previewUrl"
+          [alt]="previewTitle"
+          style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);"
+        />
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeDocumentPreview()">{{ 'Close' | translate }}</button>
+        <a *ngIf="previewUrl" [href]="previewUrl" target="_blank" download class="btn btn-primary">
+          <i class="bi bi-download me-1"></i> {{ 'Download' | translate }}
+        </a>
       </div>
     </div>
   </div>

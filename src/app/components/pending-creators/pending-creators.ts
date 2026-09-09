@@ -1,5 +1,20 @@
 import { TranslateModule } from '@ngx-translate/core';
-import { Component, OnInit } from '@angular/core';import { UsersService } from '../../services/users.service';import { CommonModule } from '@angular/common';import { FormsModule } from '@angular/forms';import { NotificationService } from '../../services/notification.service';import { DashboardService } from '../../services/dashboard.service';@Component({  selector: 'app-pending-creators',  templateUrl: './pending-creators.html',  styleUrls: ['./pending-creators.css'],  standalone: true,  imports: [CommonModule, FormsModule, TranslateModule]})export class PendingCreators implements OnInit {
+import { Component, OnInit } from '@angular/core';
+import { UsersService } from '../../services/users.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../services/notification.service';
+import { DashboardService } from '../../services/dashboard.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+@Component({
+  selector: 'app-pending-creators',
+  templateUrl: './pending-creators.html',
+  styleUrls: ['./pending-creators.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule]
+})
+export class PendingCreators implements OnInit {
   creators: any[] = [];
   filteredCreators: any[] = [];
   loading: boolean = false;
@@ -13,10 +28,18 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   showDetailModal = false;
   selectedCreator: any = null;
 
+  // Document preview modal
+  showDocumentPreview = false;
+  previewUrl: string | null = null;
+  safePreviewUrl: SafeResourceUrl | null = null;
+  previewTitle = '';
+  isPdf = false;
+
   constructor(
     private userService: UsersService,
     private notification: NotificationService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -100,10 +123,16 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   }
 
   approve(id: number) {
-    this.userService.approveCreator(id).subscribe(() => {
-      this.loadPendingCreators(this.currentPage);
-      this.notification.success('Approved successfully!');
-      this.dashboardService.triggerRefresh();
+    this.userService.approveCreator(id).subscribe({
+      next: () => {
+        this.loadPendingCreators(this.currentPage);
+        this.notification.success('Approved successfully!');
+        this.dashboardService.triggerRefresh();
+      },
+      error: (err: any) => {
+        const msg = err?.error?.message || 'Approval failed';
+        this.notification.error(msg);
+      }
     });
   }
 
@@ -121,11 +150,17 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
 
   submitReject() {
     if (this.currentRejectId === null) return;
-    this.userService.rejectCreator(this.currentRejectId, this.rejectReason).subscribe(() => {
-      this.loadPendingCreators(this.currentPage);
-      this.notification.success('Rejected successfully!');
-      this.closeRejectModal();
-      this.dashboardService.triggerRefresh();
+    this.userService.rejectCreator(this.currentRejectId, this.rejectReason).subscribe({
+      next: () => {
+        this.loadPendingCreators(this.currentPage);
+        this.notification.success('Rejected successfully!');
+        this.closeRejectModal();
+        this.dashboardService.triggerRefresh();
+      },
+      error: (err: any) => {
+        const msg = err?.error?.message || 'Rejection failed';
+        this.notification.error(msg);
+      }
     });
   }
 
@@ -145,5 +180,67 @@ import { Component, OnInit } from '@angular/core';import { UsersService } from '
   closeDetail(): void {
     this.showDetailModal = false;
     this.selectedCreator = null;
+  }
+
+  showEditLinksModal = false;
+  currentEditCreator: any = null;
+  editLink1 = '';
+  editLink2 = '';
+  savingLinks = false;
+
+  openEditLinksModal(creator: any): void {
+    this.currentEditCreator = creator;
+    this.editLink1 = creator.creator_verified_link || '';
+    this.editLink2 = creator.creator_verified_link_2 || '';
+    this.showEditLinksModal = true;
+  }
+
+  closeEditLinksModal(): void {
+    this.showEditLinksModal = false;
+    this.currentEditCreator = null;
+    this.editLink1 = '';
+    this.editLink2 = '';
+    this.savingLinks = false;
+  }
+
+  submitEditLinks(): void {
+    if (!this.currentEditCreator) return;
+    this.savingLinks = true;
+    this.userService.updateCreatorLinks(this.currentEditCreator.id, this.editLink1, this.editLink2).subscribe({
+      next: (res: any) => {
+        const updated1 = res.data?.creator_verified_link ?? this.editLink1;
+        const updated2 = res.data?.creator_verified_link_2 ?? this.editLink2;
+        this.currentEditCreator.creator_verified_link = updated1;
+        this.currentEditCreator.creator_verified_link_2 = updated2;
+        if (this.selectedCreator && this.selectedCreator.id === this.currentEditCreator.id) {
+          this.selectedCreator.creator_verified_link = updated1;
+          this.selectedCreator.creator_verified_link_2 = updated2;
+        }
+        this.notification.success('Links updated successfully!');
+        this.closeEditLinksModal();
+      },
+      error: (err: any) => {
+        this.savingLinks = false;
+        const msg = err?.error?.message || 'Failed to update links';
+        this.notification.error(msg);
+      }
+    });
+  }
+
+  previewDocument(url: string | null | undefined, title: string = 'Document'): void {
+    if (!url) return;
+    this.previewUrl = url;
+    this.previewTitle = title;
+    this.isPdf = url.toLowerCase().includes('.pdf');
+    this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.showDocumentPreview = true;
+  }
+
+  closeDocumentPreview(): void {
+    this.showDocumentPreview = false;
+    this.previewUrl = null;
+    this.safePreviewUrl = null;
+    this.previewTitle = '';
+    this.isPdf = false;
   }
 }
