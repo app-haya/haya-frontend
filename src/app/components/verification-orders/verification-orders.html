@@ -129,20 +129,20 @@
                 <!-- Personal / Business -->
                 <div *ngIf="order.user.verified_method !== 'creator'">
                   <div class="d-flex gap-1 mt-1">
-                    <a *ngIf="order.user.verify_image" [href]="order.user.verify_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
+                    <button type="button" *ngIf="order.user.verify_image" (click)="previewDocument(order.user.verify_image, 'Verify Image')" class="status-badge badge-purple-type text-decoration-none border-0" style="cursor: pointer;">
                       <i class="bi bi-image"></i> {{ 'View' | translate }}
-                    </a>
+                    </button>
                   </div>
                 </div>
 
                 <!-- Creator -->
                 <div *ngIf="order.user.verified_method === 'creator'" class="d-flex flex-wrap gap-1">
-                  <a *ngIf="order.user.creator_profile_image" [href]="order.user.creator_profile_image" target="_blank" class="status-badge badge-purple-type text-decoration-none">
+                  <button type="button" *ngIf="order.user.creator_profile_image" (click)="previewDocument(order.user.creator_profile_image, 'Profile')" class="status-badge badge-purple-type text-decoration-none border-0" style="cursor: pointer;">
                     <i class="bi bi-person"></i> {{ 'Profile' | translate }}
-                  </a>
-                  <a *ngIf="order.user.creator_document" [href]="order.user.creator_document" target="_blank" class="status-badge badge-purple-type text-decoration-none">
+                  </button>
+                  <button type="button" *ngIf="order.user.creator_document" (click)="previewDocument(order.user.creator_document, 'Document')" class="status-badge badge-purple-type text-decoration-none border-0" style="cursor: pointer;">
                     <i class="bi bi-file-earmark"></i> {{ 'Doc' | translate }}
-                  </a>
+                  </button>
                   <a *ngIf="order.user.creator_verified_link" [href]="order.user.creator_verified_link" target="_blank" class="status-badge badge-purple-type text-decoration-none">
                     <i class="bi bi-link-45deg"></i> L1
                   </a>
@@ -384,9 +384,9 @@
 
           <div class="detail-row" *ngIf="selectedOrder.user.verify_image">
             <span class="detail-lbl">{{ 'Verify Image' | translate }}</span>
-            <a [href]="selectedOrder.user.verify_image" target="_blank" class="attachment-link text-decoration-none">
+            <button type="button" (click)="previewDocument(selectedOrder.user.verify_image, 'Verify Image')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
               <i class="bi bi-image me-1"></i> {{ 'View' | translate }}
-            </a>
+            </button>
           </div>
 
           <div class="detail-row" *ngIf="selectedOrder.user.commercial_register">
@@ -396,16 +396,16 @@
 
           <div class="detail-row" *ngIf="selectedOrder.user.creator_profile_image">
             <span class="detail-lbl">{{ 'Profile Image' | translate }}</span>
-            <a [href]="selectedOrder.user.creator_profile_image" target="_blank" class="attachment-link text-decoration-none">
+            <button type="button" (click)="previewDocument(selectedOrder.user.creator_profile_image, 'Profile Image')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
               <i class="bi bi-person-bounding-box me-1"></i> {{ 'View' | translate }}
-            </a>
+            </button>
           </div>
 
           <div class="detail-row" *ngIf="selectedOrder.user.creator_document">
             <span class="detail-lbl">{{ 'Document' | translate }}</span>
-            <a [href]="selectedOrder.user.creator_document" target="_blank" class="attachment-link text-decoration-none">
+            <button type="button" (click)="previewDocument(selectedOrder.user.creator_document, 'Document')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
               <i class="bi bi-file-earmark me-1"></i> {{ 'View' | translate }}
-            </a>
+            </button>
           </div>
 
           <div class="detail-row" *ngIf="selectedOrder.user.creator_verified_link">
@@ -478,9 +478,9 @@
           </div>
           <div class="detail-row" *ngIf="selectedOrder.admin_attachment_url">
             <span class="detail-lbl">{{ 'Attachment' | translate }}</span>
-            <a [href]="selectedOrder.admin_attachment_url" target="_blank" class="attachment-link">
+            <button type="button" (click)="previewDocument(selectedOrder.admin_attachment_url, 'Attachment')" class="attachment-link text-decoration-none border-0 bg-transparent p-0" style="cursor: pointer;">
               <i class="bi bi-paperclip"></i> {{ 'View Attachment' | translate }}
-            </a>
+            </button>
           </div>
           <div class="detail-row">
             <span class="detail-lbl">{{ 'Reviewed By' | translate }}</span>
@@ -496,6 +496,47 @@
     </div>
     <div class="modal-footer-custom">
       <button class="btn-cancel" (click)="closeDetail()">{{ 'Close' | translate }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DOCUMENT PREVIEW MODAL ===================== -->
+<div class="custom-modal" style="z-index: 1070;" *ngIf="showDocumentPreview">
+  <div class="custom-modal-backdrop" (click)="closeDocumentPreview()"></div>
+  <div class="custom-modal-content" style="max-width: 850px; width: 95%;">
+    <div class="custom-modal-header">
+      <h5 class="m-0 d-flex align-items-center gap-2">
+        <i class="bi" [ngClass]="isPdf ? 'bi-file-earmark-pdf text-danger' : 'bi-image text-primary'"></i>
+        {{ previewTitle | translate }}
+      </h5>
+      <div class="d-flex align-items-center gap-2">
+        <a *ngIf="previewUrl" [href]="previewUrl" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2" [title]="'Open in new tab' | translate">
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+        <button type="button" class="btn-close" (click)="closeDocumentPreview()"></button>
+      </div>
+    </div>
+    <div class="custom-modal-body p-2 d-flex justify-content-center align-items-center" style="min-height: 350px; max-height: 75vh; overflow: auto; background: rgba(0,0,0,0.04);">
+      <!-- PDF View -->
+      <iframe
+        *ngIf="isPdf && safePreviewUrl"
+        [src]="safePreviewUrl"
+        style="width: 100%; height: 70vh; border: none; border-radius: 8px; background: #fff;"
+      ></iframe>
+
+      <!-- Image View -->
+      <img
+        *ngIf="!isPdf && previewUrl"
+        [src]="previewUrl"
+        [alt]="previewTitle"
+        style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);"
+      />
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn btn-light" (click)="closeDocumentPreview()">{{ 'Close' | translate }}</button>
+      <a *ngIf="previewUrl" [href]="previewUrl" target="_blank" download class="btn btn-primary">
+        <i class="bi bi-download me-1"></i> {{ 'Download' | translate }}
+      </a>
     </div>
   </div>
 </div>
