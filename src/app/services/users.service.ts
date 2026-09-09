@@ -84,6 +84,14 @@ export class UsersService {
     return this.http.post(`${this.baseUrl}/creator/${id}/reject`, { reason }, { headers });
   }
 
+  updateCreatorLinks(id: number, link1: string, link2: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.baseUrl}/creator/${id}/links`, {
+      creator_verified_link: link1,
+      creator_verified_link_2: link2
+    }, { headers });
+  }
+
   getTopUsersWithNotes(page: number = 1, perPage: number = 30, month?: number, year?: number): Observable<any> {
     const headers = this.getHeaders();
     let url = `${this.pointsUrl}/top-with-notes?page=${page}&per_page=${perPage}`;

@@ -5,8 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { VerificationOrdersService } from '../../services/verification-orders.service';
 import { NotificationService } from '../../services/notification.service';
 import { DashboardService } from '../../services/dashboard.service';
-
 import { ThemeService } from '../../services/theme.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-verification-orders',
@@ -41,13 +41,19 @@ export class VerificationOrders implements OnInit {
   // Approve loading state per order
   approvingId: number | null = null;
 
-
+  // Document preview modal
+  showDocumentPreview = false;
+  previewUrl: string | null = null;
+  safePreviewUrl: SafeResourceUrl | null = null;
+  previewTitle = '';
+  isPdf = false;
 
   constructor(
     private svc: VerificationOrdersService,
     private notification: NotificationService,
     private dashboardService: DashboardService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -222,5 +228,22 @@ export class VerificationOrders implements OnInit {
       rejected: 'Rejected'
     };
     return map[status] || status;
+  }
+
+  previewDocument(url: string | null | undefined, title: string = 'Document'): void {
+    if (!url) return;
+    this.previewUrl = url;
+    this.previewTitle = title;
+    this.isPdf = url.toLowerCase().includes('.pdf');
+    this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.showDocumentPreview = true;
+  }
+
+  closeDocumentPreview(): void {
+    this.showDocumentPreview = false;
+    this.previewUrl = null;
+    this.safePreviewUrl = null;
+    this.previewTitle = '';
+    this.isPdf = false;
   }
 }
