@@ -103,6 +103,10 @@ def setGithubCommitStatus(String state, String description) {
     return
   }
 
+  if (env.GITHUB_COMMIT_STATUS_DISABLED == 'true') {
+    return
+  }
+
   try {
     withGithubToken {
       withEnv([
@@ -141,6 +145,8 @@ def setGithubCommitStatus(String state, String description) {
         error """
 GitHub commit status '${state}' failed (HTTP ${httpCode}).
 Response: ${apiMessage}
+The PAT needs Commit statuses: Read and write (or classic repo:status).
+This does not affect the deploy; GitHub Environments still update.
 """
       }
 
@@ -148,8 +154,8 @@ Response: ${apiMessage}
     }
 
   } catch (err) {
-    echo "WARNING: Could not update GitHub commit status to ${state}: ${err}"
-    unstable("GitHub commit status could not be updated: ${err.message}")
+    env.GITHUB_COMMIT_STATUS_DISABLED = 'true'
+    echo "WARNING: Skipping GitHub commit status updates for the rest of this build: ${err}"
   }
 }
 
@@ -356,14 +362,14 @@ pipeline {
 
     /*
      * Same credential as haya-backend Jenkinsfile.
-     * Checkout can stay on github-pat-readonly, but that PAT must also be
-     * allowed to write on app-haya/haya-frontend:
-     *   - classic: repo (covers repo_deployment and repo:status)
-     *   - fine-grained:
-     *       Deployments: Read and write
-     *       Commit statuses: Read and write
-     *
-     * Results appear on the commit (green/red) and Environments tab.
+     * Checkout can stay on github-pat-readonly. Deployments write is required
+     * on app-haya/haya-frontend:
+     *   - classic: repo or repo_deployment
+     *   - fine-grained: Deployments Read and write
+     * Commit statuses (commit green/red) need extra permission and are
+     * skipped with a warning if the PAT cannot write them:
+     *   - classic: repo:status
+     *   - fine-grained: Commit statuses Read and write
      */
     GITHUB_DEPLOYMENT_CREDENTIALS_ID = 'github-pat-readonly'
     GITHUB_API_URL = 'https://api.github.com'
