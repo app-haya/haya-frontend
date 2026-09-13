@@ -109,8 +109,8 @@
 
             <!-- Account Number -->
             <td>
-              <a *ngIf="deal.account_number" [href]="formatImageUrl(deal.account_number)" target="_blank" class="view-link-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event)">
-                <i class="bi bi-link-45deg"></i> {{ 'View' | translate }}
+              <a *ngIf="deal.account_number" href="javascript:void(0)" class="view-link-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event)">
+                <i class="bi bi-image"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.account_number" class="text-muted">—</span>
             </td>
@@ -136,7 +136,7 @@
 
             <!-- Invoice -->
             <td>
-              <a *ngIf="deal.invoice" [href]="formatImageUrl(deal.invoice)" target="_blank" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'Invoice Document', $event)">
+              <a *ngIf="deal.invoice" href="javascript:void(0)" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'Invoice Document', $event)">
                 <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.invoice" class="text-muted">—</span>
@@ -302,24 +302,21 @@
   <div class="modal-box image-preview-modal" (click)="$event.stopPropagation()">
     <div class="modal-head">
       <div class="modal-title-wrap">
-        <i class="bi bi-image text-purple"></i>
+        <i class="bi" [ngClass]="isPreviewPdf ? 'bi-file-earmark-pdf text-purple' : 'bi-image text-purple'"></i>
         <h5>{{ previewModalTitle | translate }}</h5>
       </div>
-      <button class="modal-close" (click)="closeImageModal()">
+      <button type="button" class="modal-close" (click)="closeImageModal()" [title]="'Close' | translate">
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body-custom image-preview-body">
       <div class="preview-img-container" [class.pdf-container]="isPreviewPdf">
-        <iframe *ngIf="isPreviewPdf" [src]="previewSafeUrl" class="preview-pdf-frame"></iframe>
-        <img *ngIf="!isPreviewPdf" [src]="previewImageUrl" alt="Document Preview" class="preview-img">
+        <iframe *ngIf="isPreviewPdf && previewSafeUrl" [src]="previewSafeUrl" class="preview-pdf-frame"></iframe>
+        <img *ngIf="!isPreviewPdf && previewImageUrl" [src]="previewImageUrl" [alt]="previewModalTitle" class="preview-img">
       </div>
     </div>
     <div class="modal-footer-custom">
-      <a [href]="previewImageUrl" target="_blank" class="btn-open-full">
-        <i class="bi bi-box-arrow-up-right"></i> {{ 'Open in new tab' | translate }}
-      </a>
-      <button class="btn-cancel" (click)="closeImageModal()">{{ 'Close' | translate }}</button>
+      <button type="button" class="btn-cancel" (click)="closeImageModal()">{{ 'Close' | translate }}</button>
     </div>
   </div>
 </div>

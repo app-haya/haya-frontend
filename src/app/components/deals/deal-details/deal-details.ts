@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -22,6 +22,14 @@ export class DealDetails implements OnInit {
 
   showInvoiceModal = false;
   safeInvoiceUrl: SafeResourceUrl | null = null;
+
+  // Image & Document preview modal
+  showImageModal = false;
+  previewImageUrl = '';
+  previewSafeUrl: SafeResourceUrl | null = null;
+  isPreviewPdf = false;
+  previewModalTitle = '';
+  rotationAngle = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -125,7 +133,8 @@ export class DealDetails implements OnInit {
 
   isPdf(url: string): boolean {
     if (!url) return false;
-    return this.formatImageUrl(url).toLowerCase().endsWith('.pdf');
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
@@ -138,13 +147,82 @@ export class DealDetails implements OnInit {
     return currentLang === 'ar' ? (obj.name_ar || obj.name_en || '—') : (obj.name_en || obj.name_ar || '—');
   }
 
+  openImageModal(url: string, title: string = '', event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!url) return;
+    const formattedUrl = this.formatImageUrl(url);
+    this.previewImageUrl = formattedUrl;
+    this.isPreviewPdf = this.isPdf(formattedUrl);
+    if (this.isPreviewPdf) {
+      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
+    } else {
+      this.previewSafeUrl = null;
+    }
+    this.previewModalTitle = title ? (this.translate.instant(title) || title) : '';
+    this.rotationAngle = 0;
+    this.showImageModal = true;
+  }
+
+  openDealImageModal(imgItem: any, index: number): void {
+    const url = this.getImageUrl(imgItem);
+    const label = this.translate.instant('Deal Image') || 'Deal Image';
+    this.openImageModal(url, `${label} #${index + 1}`);
+  }
+
+  rotateImage(): void {
+    this.rotationAngle = (this.rotationAngle + 90) % 360;
+  }
+
+  closeImageModal(): void {
+    this.showImageModal = false;
+    this.previewImageUrl = '';
+    this.previewSafeUrl = null;
+    this.isPreviewPdf = false;
+    this.previewModalTitle = '';
+    this.rotationAngle = 0;
+  }
+
   openInvoiceModal(url: string): void {
-    this.safeInvoiceUrl = this.getSafeUrl(url);
-    this.showInvoiceModal = true;
+    this.openImageModal(url, 'Invoice Document');
   }
 
   closeInvoiceModal(): void {
-    this.showInvoiceModal = false;
-    this.safeInvoiceUrl = null;
+    this.closeImageModal();
+  }
+
+  getImageUrl(item: any): string {
+    if (!item) return '';
+    if (typeof item === 'string') return item;
+    return item.image || item.url || item.path || '';
+  }
+
+  getDealImage(order?: any): string {
+    if (order?.deal?.images && order.deal.images.length > 0) {
+      return this.getImageUrl(order.deal.images[0]);
+    }
+    if (order?.deal?.image) {
+      return order.deal.image;
+    }
+    if (this.deal?.images && this.deal.images.length > 0) {
+      return this.getImageUrl(this.deal.images[0]);
+    }
+    if (this.deal?.image) {
+      return this.deal.image;
+    }
+    return '';
+  }
+
+  getDealDescription(order?: any): string {
+    return order?.deal?.description || this.deal?.description || '';
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapePress(): void {
+    if (this.showImageModal) {
+      this.closeImageModal();
+    }
   }
 }
