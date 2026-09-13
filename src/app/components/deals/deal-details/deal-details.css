@@ -486,6 +486,13 @@
   height: 180px;
   background: #f1f3f9;
   border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doc-preview-wrap:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .doc-img {
@@ -522,6 +529,8 @@
   padding: 9px 20px;
   background: #fff;
   color: #7a3ca0;
+  border: none;
+  cursor: pointer;
   border-radius: 10px;
   font-weight: 700;
   font-size: 0.85rem;
@@ -1260,27 +1269,179 @@
   gap: 16px;
 }
 
+.image-preview-modal,
 .invoice-modal {
-  max-width: 900px;
-  height: 85vh;
+  max-width: 750px;
+  width: 95%;
   display: flex;
   flex-direction: column;
 }
 
+.image-preview-body,
 .invoice-modal-body {
-  flex: 1;
-  padding: 0 !important;
-  overflow: hidden;
+  padding: 16px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
+.preview-img-container {
+  width: 100%;
+  max-height: 68vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 8px;
+}
+
+.preview-img-container.pdf-container {
+  height: 65vh;
+  padding: 0;
+  align-items: stretch;
+}
+
+.preview-pdf-frame,
 .invoice-iframe {
   width: 100%;
   height: 100%;
   border: none;
-  border-radius: 0 0 20px 20px;
+  border-radius: 12px;
 }
 
-/* Dark mode overrides for Modals */
+.preview-img {
+  max-width: 100%;
+  max-height: 62vh;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.preview-img:hover {
+  transform: scale(1.02);
+}
+
+.btn-rotate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-rotate:hover {
+  background: #ede9fe;
+  color: #7a3ca0;
+  border-color: #c4b5fd;
+}
+
+:host-context(body.dark-mode) .btn-rotate {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .btn-rotate:hover {
+  background: #30363d !important;
+  color: #00cfd5 !important;
+  border-color: #00cfd5 !important;
+}
+
+.modal-footer-custom {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 20px;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+.btn-cancel {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f3f4f6;
+}
+
+/* Deal Gallery */
+.deal-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+}
+
+.gallery-item-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gallery-item-wrap:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.gallery-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(122, 60, 160, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gallery-item-wrap:hover .gallery-overlay {
+  opacity: 1;
+}
+
+.gallery-overlay i {
+  font-size: 1.25rem;
+}
+
+/* Dark mode overrides for Modals & Gallery */
 :host-context(body.dark-mode) .modal-overlay {
   background: rgba(0, 0, 0, 0.75) !important;
 }
@@ -1307,4 +1468,106 @@
 :host-context(body.dark-mode) .modal-close:hover {
   background: #fee2e2 !important;
   color: #dc2626 !important;
+}
+
+:host-context(body.dark-mode) .image-preview-body,
+:host-context(body.dark-mode) .invoice-modal-body {
+  background: #0d1117 !important;
+}
+
+:host-context(body.dark-mode) .preview-img-container {
+  border-color: #30363d !important;
+  background: #161b22 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+:host-context(body.dark-mode) .modal-footer-custom {
+  background: #161b22 !important;
+  border-top-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .btn-cancel {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .btn-cancel:hover {
+  background: #30363d !important;
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .gallery-item-wrap {
+  border-color: #30363d !important;
+  background: #161b22 !important;
+}
+
+/* Deal Thumbnail & Description in Orders Table */
+.deal-thumb-cell {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  background: #f8fafc;
+  display: inline-block;
+  vertical-align: middle;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deal-thumb-cell:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.deal-table-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.deal-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(122, 60, 160, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.deal-thumb-cell:hover .deal-thumb-overlay {
+  opacity: 1;
+}
+
+.deal-desc-cell {
+  max-width: 200px;
+  min-width: 120px;
+  white-space: normal;
+}
+
+.deal-desc-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.82rem;
+  color: #4b5563;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+:host-context(body.dark-mode) .deal-thumb-cell {
+  border-color: #30363d !important;
+  background: #161b22 !important;
+}
+
+:host-context(body.dark-mode) .deal-desc-text {
+  color: #c9d1d9 !important;
 }
