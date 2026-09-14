@@ -231,8 +231,15 @@ export class PendingCreators implements OnInit {
     if (!url) return;
     this.previewUrl = url;
     this.previewTitle = title;
-    this.isPdf = url.toLowerCase().includes('.pdf');
-    this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.isPdf = url.toLowerCase().split('?')[0].includes('.pdf');
+    if (this.isPdf) {
+      const pdfEmbedUrl = (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1') || url.startsWith('blob:') || url.startsWith('data:'))
+        ? url
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
+    } else {
+      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
     this.showDocumentPreview = true;
   }
 

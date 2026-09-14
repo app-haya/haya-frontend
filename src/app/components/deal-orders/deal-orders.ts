@@ -134,7 +134,10 @@ export class DealOrders implements OnInit {
     this.previewImageUrl = formattedUrl;
     this.isPreviewPdf = this.isPdf(formattedUrl);
     if (this.isPreviewPdf) {
-      this.safeInvoiceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+      this.safeInvoiceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
     } else {
       this.safeInvoiceUrl = null;
     }

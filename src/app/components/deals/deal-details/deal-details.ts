@@ -138,7 +138,11 @@ export class DealDetails implements OnInit {
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.formatImageUrl(url));
+    const formattedUrl = this.formatImageUrl(url);
+    const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+      ? formattedUrl
+      : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
   }
 
   getLocalizedName(obj: any): string {
@@ -157,7 +161,10 @@ export class DealDetails implements OnInit {
     this.previewImageUrl = formattedUrl;
     this.isPreviewPdf = this.isPdf(formattedUrl);
     if (this.isPreviewPdf) {
-      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
     } else {
       this.previewSafeUrl = null;
     }
