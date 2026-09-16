@@ -47,7 +47,7 @@ export class TopUsersNotes implements OnInit {
     this.fetchUsers();
   }
 
-  fetchUsers() {
+  fetchUsers(page: number = 1) {
     this.loading = true;
     this.usersService.getTopUsersWithNotes(1, 30, this.selectedMonth, this.selectedYear).subscribe({
       next: (res: any) => {
@@ -68,43 +68,6 @@ export class TopUsersNotes implements OnInit {
     });
   }
 
-  goToPage(page: number) {
-    if (page < 1 || page > this.lastPage) return;
-    this.fetchUsers(page);
-  }
-
-  nextPage() {
-    if (this.currentPage < this.lastPage) {
-      this.goToPage(this.currentPage + 1);
-    }
-  }
-
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
-    }
-  }
-
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const maxVisiblePages = 5;
-    if (this.lastPage <= maxVisiblePages) {
-      for (let i = 1; i <= this.lastPage; i++) {
-        pages.push(i);
-      }
-    } else {
-      let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-      let endPage = startPage + maxVisiblePages - 1;
-      if (endPage > this.lastPage) {
-        endPage = this.lastPage;
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-      }
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-    }
-    return pages;
-  }
 
   openModal(item: any) {
     this.selectedUser = item;
