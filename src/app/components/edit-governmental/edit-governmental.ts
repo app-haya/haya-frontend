@@ -34,6 +34,9 @@ export class EditGovernmental implements OnInit {
   logoName: string = '';
   registerName: string = '';
 
+  storeLogoPreview: string | null = null;
+  commercialRegisterPreview: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private governmentalService: GovernmentalService,
@@ -55,26 +58,26 @@ export class EditGovernmental implements OnInit {
   initForm() {
     this.governmentalForm = this.fb.group({
       name: ['', Validators.required],
-      owner_name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
-      activity: ['', Validators.required],
-      country_id: ['', Validators.required],
-      city_id: ['', Validators.required],
+      owner_name: [''],
+      email: ['', Validators.email],
+      phone: [''],
+      activity: [''],
+      country_id: [''],
+      city_id: [''],
       sign_in_type: ['email'],
-      is_active: ['1', Validators.required],
-      account_type: ['governmental', Validators.required],
+      is_active: ['1'],
+      account_type: ['governmental'],
       interests: [[]],
       Store_logo: [null],
       commercial_register: [null],
       id_num: [''],
       birth_date: [''],
       expiration_date: [''],
-      is_private: [0, Validators.required],
-      verification: [1, Validators.required],
+      is_private: [0],
+      verification: [1],
       created_at: [''],
       updated_at: [''],
-      status: [1, Validators.required],
+      status: [1],
     });
   }
 
@@ -113,14 +116,16 @@ export class EditGovernmental implements OnInit {
           this.notification.error('Governmental not found');
           return;
         }
-        this.onCountryChange({ target: { value: governmental.country_id } });
+        if (governmental.country_id) {
+          this.onCountryChange({ target: { value: governmental.country_id } });
+        }
         this.governmentalForm.patchValue({
           ...governmental,
           interests: governmental.interests?.map((i: any) => i.id) || [],
           account_type: governmental.account_type || 'governmental',
         });
-        this.oldStoreLogo = governmental.Store_logo;
-        this.oldCommercialRegister = governmental.commercial_register;
+        this.oldStoreLogo = governmental.Store_logo || governmental.image_url || governmental.image || governmental.store_logo || null;
+        this.oldCommercialRegister = governmental.commercial_register || governmental.commercial_register_url || null;
       },
       error: () => {
         this.loading = false;
@@ -140,23 +145,55 @@ export class EditGovernmental implements OnInit {
     this.governmentalForm.patchValue({ interests: selected });
   }
 
+  formatImageUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (url.includes('/api/uploads/')) return url.replace('/api/uploads/', '/uploads/');
+      if (url.includes('/api/storage/')) return url.replace('/api/storage/', '/storage/');
+      return url;
+    }
+    let clean = url.trim();
+    if (clean.startsWith('/')) clean = clean.substring(1);
+    if (clean.startsWith('storage/')) return `https://hayaapp.online/${clean}`;
+    return `https://hayaapp.online/storage/${clean}`;
+  }
+
+  isPdf(url: string | null | undefined): boolean {
+    if (!url) return false;
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
+  }
+
   onFileChange(event: any, type: 'Store_logo' | 'commercial_register') {
     const file = event.target.files[0];
     if (file) {
       if (type === 'Store_logo') {
         this.storeLogo = file;
         this.logoName = file.name;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.storeLogoPreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
       }
       if (type === 'commercial_register') {
         this.commercialRegister = file;
         this.registerName = file.name;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.commercialRegisterPreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
       }
     }
   }
 
   onSubmit() {
-    if (this.governmentalForm.invalid) {
-      this.notification.error('Please fill all required fields');
+    if (this.loading) return;
+
+    if (!this.governmentalForm.value.name || !this.governmentalForm.value.name.toString().trim()) {
+      this.notification.error('Entity name is required');
       return;
     }
 
@@ -166,8 +203,8 @@ export class EditGovernmental implements OnInit {
     const formData = new FormData();
     Object.entries(formValue).forEach(([key, value]) => {
       if (key === 'interests') {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== null && value !== undefined) {
+        formData.append(key, JSON.stringify(value || []));
+      } else if (value !== null && value !== undefined && key !== 'Store_logo' && key !== 'commercial_register') {
         formData.append(key, value as any);
       }
     });

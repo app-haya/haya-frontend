@@ -161,16 +161,16 @@
               <div class="doc-slot">
                 <div class="doc-slot-label">
                   <i class="bi bi-person-badge"></i>
-                  Account Proof / Image
+                  {{ 'Account Proof' | translate }}
                 </div>
-                <div *ngIf="deal.account_number" class="doc-preview-wrap">
+                <div *ngIf="deal.account_number" class="doc-preview-wrap" (click)="openImageModal(deal.account_number, 'Account Proof')">
                   <iframe *ngIf="isPdf(deal.account_number)" [src]="getSafeUrl(deal.account_number)" class="doc-pdf-frame"></iframe>
                   <img *ngIf="!isPdf(deal.account_number)" [src]="formatImageUrl(deal.account_number)" alt="Account Proof" class="doc-img">
                   <div class="doc-overlay">
-                    <a [href]="formatImageUrl(deal.account_number)" target="_blank" class="doc-view-btn">
-                      <i class="bi bi-box-arrow-up-right"></i>
-                      {{ 'View Full' | translate }}
-                    </a>
+                    <button type="button" class="doc-view-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event)">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                      {{ 'View' | translate }}
+                    </button>
                   </div>
                 </div>
                 <div *ngIf="!deal.account_number" class="doc-empty">
@@ -185,14 +185,14 @@
                   <i class="bi bi-receipt"></i>
                   {{ 'Invoice Document' | translate }}
                 </div>
-                <div *ngIf="deal.invoice" class="doc-preview-wrap">
+                <div *ngIf="deal.invoice" class="doc-preview-wrap" (click)="openImageModal(deal.invoice, 'Invoice Document')">
                   <iframe *ngIf="isPdf(deal.invoice)" [src]="getSafeUrl(deal.invoice)" class="doc-pdf-frame"></iframe>
                   <img *ngIf="!isPdf(deal.invoice)" [src]="formatImageUrl(deal.invoice)" alt="Invoice" class="doc-img">
                   <div class="doc-overlay">
-                    <a [href]="formatImageUrl(deal.invoice)" target="_blank" class="doc-view-btn">
-                      <i class="bi bi-box-arrow-up-right"></i>
-                      {{ 'View Full' | translate }}
-                    </a>
+                    <button type="button" class="doc-view-btn" (click)="openImageModal(deal.invoice, 'Invoice Document', $event)">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                      {{ 'View' | translate }}
+                    </button>
                   </div>
                 </div>
                 <div *ngIf="!deal.invoice" class="doc-empty">
@@ -205,86 +205,25 @@
           </div>
         </div>
 
-        <!-- Participants Card -->
-        <div class="dd-card">
+        <!-- Deal Images Card (if deal has images) -->
+        <div class="dd-card" *ngIf="deal.images && deal.images.length > 0">
           <div class="dd-card-head">
-            <span class="card-head-icon"><i class="bi bi-people-fill"></i></span>
-            <h3>{{ 'Participants' | translate }}</h3>
-            <span class="head-count" *ngIf="orders.length > 0">{{ orders.length }}</span>
+            <span class="card-head-icon"><i class="bi bi-images"></i></span>
+            <h3>{{ 'Deal Images' | translate }}</h3>
+            <span class="head-count">{{ deal.images.length }}</span>
           </div>
-          <div class="dd-card-body p-0">
-
-            <div *ngIf="loadingOrders" class="participants-loading">
-              <div class="dd-spinner dd-spinner-sm"></div>
-              <span>{{ 'Loading participants...' | translate }}</span>
+          <div class="dd-card-body">
+            <div class="deal-gallery-grid">
+              <div *ngFor="let imgItem of deal.images; let idx = index" 
+                   class="gallery-item-wrap"
+                   (click)="openDealImageModal(imgItem, idx)">
+                <img [src]="formatImageUrl(getImageUrl(imgItem))" [alt]="'Deal Image ' + (idx + 1)" class="gallery-thumb-img" loading="lazy">
+                <div class="gallery-overlay">
+                  <i class="bi bi-arrows-fullscreen"></i>
+                  <span>{{ 'View' | translate }}</span>
+                </div>
+              </div>
             </div>
-
-            <div *ngIf="!loadingOrders && orders.length === 0" class="participants-empty">
-              <i class="bi bi-person-x"></i>
-              <p>{{ 'No participants yet' | translate }}</p>
-            </div>
-
-            <div *ngIf="!loadingOrders && orders.length > 0" class="participants-table-wrap">
-              <table class="participants-table">
-                <thead>
-                  <tr>
-                    <th>{{ 'Participant' | translate }}</th>
-                    <th>{{ 'Quantity' | translate }}</th>
-                    <th>{{ 'Price' | translate }}</th>
-                    <th>{{ 'Payment Status' | translate }}</th>
-                    <th>{{ 'Order Status' | translate }}</th>
-                    <th>{{ 'Invoice' | translate }}</th>
-                    <th>{{ 'Created At' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let order of orders">
-                    <td>
-                      <div class="p-user">
-                        <div class="p-info">
-                          <span class="p-name">{{ order.user.name }}</span>
-                          <span class="p-phone">{{ order.user.phone }}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="p-qty">{{ order.quantity }}</span></td>
-                    <td>
-                      <span class="p-price">{{ order.total_price | number }} <em>SAR</em></span>
-                    </td>
-                    <td>
-                      <span class="p-pay-badge" [ngClass]="{
-                        'pay-paid': order.payment_status === 'paid',
-                        'pay-pending': order.payment_status === 'pending',
-                        'pay-failed': order.payment_status === 'failed'
-                      }">
-                        {{ (order.payment_status | titlecase) | translate }}
-                      </span>
-                    </td>
-                    <td>
-                      <div class="p-status">
-                        <span class="p-status-dot" [ngClass]="{
-                          'pending': order.status === 'pending',
-                          'in-delivery': order.status === 'in delivery',
-                          'received': order.status === 'received',
-                          'cancelled': order.status === 'cancelled'
-                        }"></span>
-                        <span>{{ (order.status === 'pending' ? 'Pending' : order.status === 'in delivery' ? 'Out for Delivery' : order.status === 'received' ? 'Delivered' : 'Cancelled') | translate }}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <a *ngIf="order.invoice_url" href="javascript:void(0)" (click)="openInvoiceModal(order.invoice_url)" class="view-link-btn text-purple-link">
-                        <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
-                      </a>
-                      <span *ngIf="!order.invoice_url" class="text-muted">—</span>
-                    </td>
-                    <td>
-                      <span class="p-date">{{ order.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
           </div>
         </div>
 
@@ -393,6 +332,16 @@
                 <span class="meta-key">{{ 'Seller Type' | translate }}</span>
                 <span class="meta-val">{{ deal.seller_type || '—' }}</span>
               </div>
+              <div class="meta-item" *ngIf="deal.user || getSeller()">
+                <span class="meta-icon"><i class="bi bi-person-badge-fill"></i></span>
+                <span class="meta-key">{{ 'Seller' | translate }}</span>
+                <span class="meta-val">
+                  <span style="font-weight: 600;">{{ (deal.user || getSeller())?.name || '—' }}</span>
+                  <span *ngIf="(deal.user || getSeller())?.phone" style="display: block; font-size: 0.78rem; opacity: 0.75; margin-top: 2px;">
+                    {{ (deal.user || getSeller())?.phone }}
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -412,6 +361,117 @@
       <!-- /RIGHT COLUMN -->
 
     </div>
+    <!-- /dd-grid -->
+
+    <!-- ── FULL-WIDTH PARTICIPANTS SECTION ── -->
+    <div class="dd-participants-section">
+      <div class="dd-card dd-card-participants">
+        <div class="dd-card-head">
+          <span class="card-head-icon"><i class="bi bi-people-fill"></i></span>
+          <h3>{{ 'Participants' | translate }}</h3>
+          <span class="head-count" *ngIf="orders.length > 0">{{ orders.length }}</span>
+        </div>
+        <div class="dd-card-body p-0">
+
+          <div *ngIf="loadingOrders" class="participants-loading">
+            <div class="dd-spinner dd-spinner-sm"></div>
+            <span>{{ 'Loading participants...' | translate }}</span>
+          </div>
+
+          <div *ngIf="!loadingOrders && orders.length === 0" class="participants-empty">
+            <i class="bi bi-person-x"></i>
+            <p>{{ 'No participants yet' | translate }}</p>
+          </div>
+
+          <div *ngIf="!loadingOrders && orders.length > 0" class="participants-table-wrap">
+            <table class="participants-table">
+              <thead>
+                <tr>
+                  <th>{{ 'Buyer' | translate }}</th>
+                  <th>{{ 'Seller' | translate }}</th>
+                  <th>{{ 'Deal Image' | translate }}</th>
+                  <th>{{ 'Deal Description' | translate }}</th>
+                  <th>{{ 'Quantity' | translate }}</th>
+                  <th>{{ 'Price' | translate }}</th>
+                  <th>{{ 'Payment Status' | translate }}</th>
+                  <th>{{ 'Order Status' | translate }}</th>
+                  <th>{{ 'Invoice' | translate }}</th>
+                  <th>{{ 'Created At' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of orders">
+                  <!-- Buyer -->
+                  <td>
+                    <div class="p-user">
+                      <div class="p-info">
+                        <span class="p-name">{{ order.user?.name || '—' }}</span>
+                        <span class="p-phone">{{ order.user?.phone || '—' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <!-- Seller -->
+                  <td>
+                    <div class="p-user">
+                      <div class="p-info">
+                        <span class="p-name">{{ getSeller(order)?.name || '—' }}</span>
+                        <span class="p-phone">{{ getSeller(order)?.phone || '—' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="deal-thumb-cell" *ngIf="getDealImage(order)" (click)="openImageModal(getDealImage(order), 'Deal Image')">
+                      <img [src]="formatImageUrl(getDealImage(order))" alt="Deal Image" class="deal-table-thumb">
+                      <div class="deal-thumb-overlay"><i class="bi bi-arrows-fullscreen"></i></div>
+                    </div>
+                    <span *ngIf="!getDealImage(order)" class="text-muted">—</span>
+                  </td>
+                  <td>
+                    <div class="deal-desc-cell" [title]="getDealDescription(order)">
+                      <span class="deal-desc-text">{{ getDealDescription(order) || '—' }}</span>
+                    </div>
+                  </td>
+                  <td><span class="p-qty">{{ order.quantity }}</span></td>
+                  <td>
+                    <span class="p-price">{{ order.total_price | number }} <em>SAR</em></span>
+                  </td>
+                  <td>
+                    <span class="p-pay-badge" [ngClass]="{
+                      'pay-paid': order.payment_status === 'paid',
+                      'pay-pending': order.payment_status === 'pending',
+                      'pay-failed': order.payment_status === 'failed'
+                    }">
+                      {{ (order.payment_status | titlecase) | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="p-status">
+                      <span class="p-status-dot" [ngClass]="{
+                        'pending': order.status === 'pending',
+                        'in-delivery': order.status === 'in delivery',
+                        'received': order.status === 'received',
+                        'cancelled': order.status === 'cancelled'
+                      }"></span>
+                      <span>{{ (order.status === 'pending' ? 'Pending' : order.status === 'in delivery' ? 'Out for Delivery' : order.status === 'received' ? 'Delivered' : 'Cancelled') | translate }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a *ngIf="order.invoice_url" href="javascript:void(0)" (click)="openInvoiceModal(order.invoice_url)" class="view-link-btn text-purple-link">
+                      <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
+                    </a>
+                    <span *ngIf="!order.invoice_url" class="text-muted">—</span>
+                  </td>
+                  <td>
+                    <span class="p-date">{{ order.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Error State -->
@@ -424,20 +484,31 @@
 
 </div>
 
-<!-- Invoice Modal -->
-<div class="modal-overlay" *ngIf="showInvoiceModal" (click)="closeInvoiceModal()">
-  <div class="modal-box invoice-modal" (click)="$event.stopPropagation()">
+<!-- ===================== IMAGE / DOCUMENT PREVIEW MODAL ===================== -->
+<div class="modal-overlay image-preview-overlay" *ngIf="showImageModal" (click)="closeImageModal()">
+  <div class="modal-box image-preview-modal" (click)="$event.stopPropagation()">
     <div class="modal-head">
       <div class="modal-title-wrap">
-        <i class="bi bi-file-earmark-pdf text-purple-link" style="font-size: 1.5rem;"></i>
-        <h5>{{ 'Invoice' | translate }}</h5>
+        <i class="bi" [ngClass]="isPreviewPdf ? 'bi-file-earmark-pdf text-purple-link' : 'bi-image text-purple'"></i>
+        <h5>{{ previewModalTitle }}</h5>
       </div>
-      <button class="modal-close" (click)="closeInvoiceModal()">
-        <i class="bi bi-x-lg"></i>
-      </button>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button type="button" *ngIf="!isPreviewPdf" class="btn-rotate" (click)="rotateImage()" [title]="'Rotate' | translate">
+          <i class="bi bi-arrow-clockwise"></i> {{ 'Rotate' | translate }}
+        </button>
+        <button type="button" class="modal-close" (click)="closeImageModal()" [title]="'Close' | translate">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
     </div>
-    <div class="modal-body-custom invoice-modal-body">
-      <iframe *ngIf="safeInvoiceUrl" [src]="safeInvoiceUrl" class="invoice-iframe"></iframe>
+    <div class="modal-body-custom image-preview-body">
+      <div class="preview-img-container" [class.pdf-container]="isPreviewPdf">
+        <iframe *ngIf="isPreviewPdf && previewSafeUrl" [src]="previewSafeUrl" class="preview-pdf-frame"></iframe>
+        <img *ngIf="!isPreviewPdf && previewImageUrl" [src]="previewImageUrl" [alt]="previewModalTitle" class="preview-img" [style.transform]="'rotate(' + rotationAngle + 'deg)'">
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button type="button" class="btn-cancel" (click)="closeImageModal()">{{ 'Close' | translate }}</button>
     </div>
   </div>
 </div>

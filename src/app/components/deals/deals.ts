@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -175,15 +175,22 @@ export class Deals implements OnInit {
     });
   }
 
-  openImageModal(url: string, title: string, event: Event): void {
-    event.preventDefault();
+  openImageModal(url: string, title: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!url) return;
     const formattedUrl = this.formatImageUrl(url);
     this.previewImageUrl = formattedUrl;
     
     // Check if PDF
-    this.isPreviewPdf = formattedUrl.toLowerCase().endsWith('.pdf');
+    this.isPreviewPdf = this.isPdf(formattedUrl);
     if (this.isPreviewPdf) {
-      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
     } else {
       this.previewSafeUrl = null;
     }
@@ -192,12 +199,28 @@ export class Deals implements OnInit {
     this.showImageModal = true;
   }
 
+  isPdf(url: string): boolean {
+    if (!url) return false;
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
+  }
+
   closeImageModal(): void {
     this.showImageModal = false;
     this.previewImageUrl = '';
     this.previewSafeUrl = null;
     this.isPreviewPdf = false;
     this.previewModalTitle = '';
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapePress(): void {
+    if (this.showImageModal) {
+      this.closeImageModal();
+    }
+    if (this.showRejectModal) {
+      this.closeRejectModal();
+    }
   }
 
   formatImageUrl(url: string): string {

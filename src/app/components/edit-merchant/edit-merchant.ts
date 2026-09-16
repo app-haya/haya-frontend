@@ -34,6 +34,9 @@ export class EditMerchant implements OnInit {
   logoName: string = '';
   registerName: string = '';
 
+  storeLogoPreview: string | null = null;
+  commercialRegisterPreview: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private merchantService: MerchantService,
@@ -55,24 +58,24 @@ export class EditMerchant implements OnInit {
   initForm() {
     this.merchantForm = this.fb.group({
       name: ['', Validators.required],
-      owner_name: ['', Validators.required],
-      id_num: ['', Validators.required],
-      expiration_date: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      activity: ['', Validators.required],
-      phone: ['', Validators.required],
-      country_id: ['', Validators.required],
-      city_id: ['', Validators.required],
-      birth_date: ['', Validators.required],
+      owner_name: [''],
+      id_num: [''],
+      expiration_date: [''],
+      email: ['', Validators.email],
+      activity: [''],
+      phone: [''],
+      country_id: [''],
+      city_id: [''],
+      birth_date: [''],
       gender: ['1'],
-      is_private: [0, Validators.required],
+      is_private: [0],
       sign_in_type: ['email'],
-      is_active: ['1', Validators.required],
-      account_type: ['merchant', Validators.required],
+      is_active: ['1'],
+      account_type: ['merchant'],
       interests: [[]],
       Store_logo: [null],
       commercial_register: [null],
-      status: [1, Validators.required],
+      status: [1],
     });
   }
 
@@ -114,15 +117,17 @@ export class EditMerchant implements OnInit {
           return;
         }
         
-        this.oldStoreLogo = merchant.image_url;
-        this.oldCommercialRegister = merchant.commercial_register_url;
+        this.oldStoreLogo = merchant.image_url || merchant.Store_logo || merchant.store_logo || merchant.image || null;
+        this.oldCommercialRegister = merchant.commercial_register_url || merchant.commercial_register || null;
 
-        this.onCountryChange({ target: { value: merchant.country_id } });
+        if (merchant.country_id) {
+          this.onCountryChange({ target: { value: merchant.country_id } });
+        }
         
         this.merchantForm.patchValue({
           ...merchant,
           interests: merchant.interests?.map((i: any) => i.id) || [],
-          account_type: merchant.type || 'merchant',
+          account_type: merchant.type || merchant.account_type || 'merchant',
           status: merchant.status ?? 1,
           is_active: merchant.status?.toString() || '1'
         });
@@ -145,37 +150,69 @@ export class EditMerchant implements OnInit {
     this.merchantForm.patchValue({ interests: selected });
   }
 
+  formatImageUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (url.includes('/api/uploads/')) return url.replace('/api/uploads/', '/uploads/');
+      if (url.includes('/api/storage/')) return url.replace('/api/storage/', '/storage/');
+      return url;
+    }
+    let clean = url.trim();
+    if (clean.startsWith('/')) clean = clean.substring(1);
+    if (clean.startsWith('storage/')) return `https://hayaapp.online/${clean}`;
+    return `https://hayaapp.online/storage/${clean}`;
+  }
+
+  isPdf(url: string | null | undefined): boolean {
+    if (!url) return false;
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
+  }
+
   onFileChange(event: any, type: 'Store_logo' | 'commercial_register') {
     const file = event.target.files[0];
     if (file) {
       if (type === 'Store_logo') {
         this.storeLogo = file;
         this.logoName = file.name;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.storeLogoPreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
       }
       if (type === 'commercial_register') {
         this.commercialRegister = file;
         this.registerName = file.name;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.commercialRegisterPreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
       }
     }
   }
 
   onSubmit() {
-    if (this.merchantForm.invalid) {
-      this.notification.error('Please fill all required fields');
+    if (this.loading) return;
+
+    if (!this.merchantForm.value.name || !this.merchantForm.value.name.toString().trim()) {
+      this.notification.error('Merchant name is required');
       return;
     }
 
     const formValue = { ...this.merchantForm.value };
     formValue.id = this.merchantId;
-    formValue.gender = +formValue.gender;
-    formValue.is_active = +formValue.is_active;
-    formValue.status = +formValue.status;
+    if (formValue.gender !== null && formValue.gender !== undefined) formValue.gender = +formValue.gender;
+    if (formValue.is_active !== null && formValue.is_active !== undefined) formValue.is_active = +formValue.is_active;
+    if (formValue.status !== null && formValue.status !== undefined) formValue.status = +formValue.status;
 
     const formData = new FormData();
     Object.entries(formValue).forEach(([key, value]) => {
       if (key === 'interests') {
-        formData.append(key, JSON.stringify(value));
-      } else {
+        formData.append(key, JSON.stringify(value || []));
+      } else if (value !== null && value !== undefined && key !== 'Store_logo' && key !== 'commercial_register') {
         formData.append(key, value as any);
       }
     });
