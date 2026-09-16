@@ -21,6 +21,7 @@ export class Merchants implements OnInit {
   loading = true;
   currentPage = 1;
   lastPage = 1;
+  total = 0;
 
   constructor(
     private merchantService: MerchantService,
@@ -41,6 +42,7 @@ export class Merchants implements OnInit {
           this.filteredMerchants = this.merchants;
           this.currentPage = res.data.current_page;
           this.lastPage = res.data.last_page;
+          this.total = res.data.total ?? this.merchants.length;
         }
         this.loading = false;
       },

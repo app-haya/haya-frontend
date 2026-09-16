@@ -21,6 +21,7 @@ export class PendingCreators implements OnInit {
   searchTerm: string = '';
   currentPage = 1;
   lastPage = 1;
+  total = 0;
   showRejectModal = false;
   rejectReason = '';
   currentRejectId: number | null = null;
@@ -60,6 +61,7 @@ export class PendingCreators implements OnInit {
         this.filteredCreators = [...this.creators];
         this.currentPage = res.data?.current_page || 1;
         this.lastPage = res.data?.last_page || 1;
+        this.total = res.data?.total ?? this.creators.length;
         this.loading = false;
       },
       error: () => this.loading = false

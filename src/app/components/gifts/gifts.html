@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ gifts.length }} {{ (gifts.length === 1 ? 'Gift' : 'Gifts') | translate }}</span>
+      <span>{{ searchTerm ? (gifts.length + ' / ' + total) : total }} {{ (total === 1 ? 'Gift' : 'Gifts') | translate }}</span>
     </div>
   </div>
 

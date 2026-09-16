@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ filteredUsers.length }} {{ (filteredUsers.length === 1 ? 'User' : 'Users') | translate }}</span>
+      <span>{{ searchTerm ? (filteredUsers.length + ' / ' + total) : total }} {{ (total === 1 ? 'User' : 'Users') | translate }}</span>
     </div>
   </div>
 

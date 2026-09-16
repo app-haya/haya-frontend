@@ -20,6 +20,7 @@ export class PendingUsers implements OnInit {
   searchTerm: string = '';
   currentPage = 1;
   lastPage = 1;
+  total = 0;
 
   showRejectModal = false;
   rejectReason = '';
@@ -50,6 +51,7 @@ export class PendingUsers implements OnInit {
         this.filteredUsers = [...this.users];
         this.currentPage = res.data.current_page;
         this.lastPage = res.data.last_page;
+        this.total = res.data.total ?? this.users.length;
         this.loading = false;
       },
       error: () => {

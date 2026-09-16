@@ -70,6 +70,7 @@ export class Admins implements OnInit {
           this.filteredAdmins = [...this.admins];
           this.currentPage = res.data.current_page;
           this.lastPage = res.data.last_page;
+          this.total = res.data.total ?? this.admins.length;
         }
         this.loading = false;
       },

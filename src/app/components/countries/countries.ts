@@ -23,6 +23,7 @@ export class Countries implements OnInit {
   searchTerm = '';
   currentPage = 1;
   lastPage = 1;
+  total = 0;
 
   constructor(
     private locationService: LocationService,
@@ -42,6 +43,7 @@ export class Countries implements OnInit {
         this.filteredCountries = this.countries;
         this.currentPage = res?.data?.current_page || 1;
         this.lastPage = res?.data?.last_page || 1;
+        this.total = res?.data?.total ?? this.countries.length;
         this.loading = false;
       },
       error: (err) => {
