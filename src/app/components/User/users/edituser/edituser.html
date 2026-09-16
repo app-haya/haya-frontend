@@ -88,7 +88,7 @@
         <div class="row g-4">
           <div class="col-12 text-center mb-3" *ngIf="userImageUrl || userForm.value.image">
             <div class="image-preview-container">
-              <img [src]="userForm.value.image || userImageUrl" alt="User" />
+              <img [src]="formatImageUrl(userForm.value.image || userImageUrl)" alt="User" />
             </div>
             <p class="small text-muted mt-2">{{ 'Current Profile Image' | translate }}</p>
           </div>
@@ -118,7 +118,7 @@
       </div>
 
       <div class="text-center pt-4">
-        <button type="submit" class="submit-btn px-5 py-3 fs-5 w-100" [disabled]="loading || userForm.invalid">
+        <button type="submit" class="submit-btn px-5 py-3 fs-5 w-100" [disabled]="loading">
           <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
           {{ loading ? ('Updating...' | translate) : ('Update User Details' | translate) }}
         </button>

@@ -67,6 +67,10 @@ export class DealService {
       headers,
     });
   }
+  getDealById(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}admin/deals/${id}`, { headers });
+  }
   getDealOrders(id: number, page: number = 1): Observable<any> {
     const headers = this.getHeaders();
     return this.http.get(
