@@ -123,7 +123,26 @@
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">{{ 'Change Entity Logo' | translate }}</label>
+            <label class="form-label">{{ 'Entity Logo' | translate }}</label>
+            
+            <!-- Existing or New Logo Preview -->
+            <div class="mb-2" *ngIf="storeLogoPreview || oldStoreLogo">
+              <div class="d-flex align-items-center gap-3 p-2 border rounded-3" style="background-color: rgba(122,60,160,0.05);">
+                <img [src]="storeLogoPreview || formatImageUrl(oldStoreLogo)" alt="Entity Logo" class="rounded-2" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd;" />
+                <div class="flex-grow-1 overflow-hidden">
+                  <span class="badge mb-1" style="background-color: #7a3ca0; color: #fff; font-size: 0.72rem;">
+                    {{ storeLogoPreview ? ('New Selected' | translate) : ('Current Logo' | translate) }}
+                  </span>
+                  <div class="text-truncate small text-muted">
+                    {{ logoName || ('Existing Entity Logo' | translate) }}
+                  </div>
+                </div>
+                <a *ngIf="!storeLogoPreview && oldStoreLogo" [href]="formatImageUrl(oldStoreLogo)" target="_blank" class="btn btn-sm btn-outline-secondary" style="font-size: 0.75rem;">
+                  <i class="bi bi-box-arrow-up-right"></i> {{ 'View' | translate }}
+                </a>
+              </div>
+            </div>
+
             <div class="file-input-wrapper">
               <input type="file" class="form-control d-none" #logoInput (change)="onFileChange($event, 'Store_logo')" />
               <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="logoInput.click()">
@@ -134,7 +153,29 @@
           </div>
           
           <div class="col-md-6">
-            <label class="form-label">{{ 'Change Commercial Register' | translate }}</label>
+            <label class="form-label">{{ 'Commercial Register' | translate }}</label>
+
+            <!-- Existing or New Commercial Register Preview -->
+            <div class="mb-2" *ngIf="commercialRegisterPreview || oldCommercialRegister">
+              <div class="d-flex align-items-center gap-3 p-2 border rounded-3" style="background-color: rgba(122,60,160,0.05);">
+                <div *ngIf="isPdf(oldCommercialRegister) && !commercialRegisterPreview" class="d-flex align-items-center justify-content-center bg-white border rounded-2" style="width: 50px; height: 50px; color: #dc2626; font-size: 1.5rem;">
+                  <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <img *ngIf="commercialRegisterPreview || (!isPdf(oldCommercialRegister) && oldCommercialRegister)" [src]="commercialRegisterPreview || formatImageUrl(oldCommercialRegister)" alt="Commercial Register" class="rounded-2" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd;" />
+                <div class="flex-grow-1 overflow-hidden">
+                  <span class="badge mb-1" style="background-color: #7a3ca0; color: #fff; font-size: 0.72rem;">
+                    {{ commercialRegisterPreview ? ('New Selected' | translate) : ('Current Document' | translate) }}
+                  </span>
+                  <div class="text-truncate small text-muted">
+                    {{ registerName || ('Existing Commercial Register' | translate) }}
+                  </div>
+                </div>
+                <a *ngIf="!commercialRegisterPreview && oldCommercialRegister" [href]="formatImageUrl(oldCommercialRegister)" target="_blank" class="btn btn-sm btn-outline-secondary" style="font-size: 0.75rem;">
+                  <i class="bi bi-box-arrow-up-right"></i> {{ 'View' | translate }}
+                </a>
+              </div>
+            </div>
+
             <div class="file-input-wrapper">
               <input type="file" class="form-control d-none" #registerInput (change)="onFileChange($event, 'commercial_register')" />
               <button type="button" class="btn btn-outline-secondary w-100 py-3 border-0" (click)="registerInput.click()">

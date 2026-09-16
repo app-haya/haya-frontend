@@ -89,10 +89,15 @@
               </div>
             </td>
             <td>
-              <a [routerLink]="['/admin/deal-details', order.deal_id]" [state]="{ deal: order.deal }" class="view-link-btn text-purple-link" [title]="'Click to view deal details' | translate">
-                {{ order.deal?.title || '—' }}
-                <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; opacity: 0.85;"></i>
-              </a>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <a [routerLink]="['/admin/deal-details', order.deal_id]" [state]="{ deal: order.deal }" class="view-link-btn text-purple-link" [title]="'Click to view deal details' | translate" style="font-weight: 600;">
+                  {{ order.deal?.title || '—' }}
+                  <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; opacity: 0.85;"></i>
+                </a>
+                <span *ngIf="order.deal?.description" style="font-size: 0.78rem; color: #6b7280; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" [title]="order.deal?.description">
+                  {{ order.deal?.description }}
+                </span>
+              </div>
             </td>
             <td>
               <div class="amount-cell">
@@ -161,19 +166,25 @@
 </div>
 
 <!-- Invoice Modal -->
-<div class="modal-overlay" *ngIf="showInvoiceModal" (click)="closeInvoiceModal()">
-  <div class="modal-box invoice-modal" (click)="$event.stopPropagation()">
+<div class="modal-overlay image-preview-overlay" *ngIf="showInvoiceModal" (click)="closeInvoiceModal()">
+  <div class="modal-box image-preview-modal" (click)="$event.stopPropagation()">
     <div class="modal-head">
       <div class="modal-title-wrap">
-        <i class="bi bi-file-earmark-pdf text-purple-link" style="font-size: 1.5rem;"></i>
-        <h5>{{ 'Invoice' | translate }}</h5>
+        <i class="bi" [ngClass]="isPreviewPdf ? 'bi-file-earmark-pdf text-purple' : 'bi-image text-purple'"></i>
+        <h5>{{ previewModalTitle | translate }}</h5>
       </div>
-      <button class="modal-close" (click)="closeInvoiceModal()">
+      <button type="button" class="modal-close" (click)="closeInvoiceModal()" [title]="'Close' | translate">
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
-    <div class="modal-body-custom invoice-modal-body">
-      <iframe *ngIf="safeInvoiceUrl" [src]="safeInvoiceUrl" class="invoice-iframe"></iframe>
+    <div class="modal-body-custom image-preview-body">
+      <div class="preview-img-container" [class.pdf-container]="isPreviewPdf">
+        <iframe *ngIf="isPreviewPdf && safeInvoiceUrl" [src]="safeInvoiceUrl" class="preview-pdf-frame"></iframe>
+        <img *ngIf="!isPreviewPdf && previewImageUrl" [src]="previewImageUrl" [alt]="previewModalTitle" class="preview-img">
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button type="button" class="btn-cancel" (click)="closeInvoiceModal()">{{ 'Close' | translate }}</button>
     </div>
   </div>
 </div>

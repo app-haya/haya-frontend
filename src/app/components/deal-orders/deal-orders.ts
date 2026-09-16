@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -27,6 +27,9 @@ export class DealOrders implements OnInit {
 
   showInvoiceModal = false;
   safeInvoiceUrl: SafeResourceUrl | null = null;
+  previewImageUrl = '';
+  isPreviewPdf = false;
+  previewModalTitle = 'Invoice';
 
   constructor(
     private dealService: DealService,
@@ -125,13 +128,40 @@ export class DealOrders implements OnInit {
     return pages;
   }
 
-  openInvoiceModal(url: string): void {
-    this.safeInvoiceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.formatImageUrl(url));
+  openInvoiceModal(url: string, title: string = 'Invoice'): void {
+    if (!url) return;
+    const formattedUrl = this.formatImageUrl(url);
+    this.previewImageUrl = formattedUrl;
+    this.isPreviewPdf = this.isPdf(formattedUrl);
+    if (this.isPreviewPdf) {
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+      this.safeInvoiceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
+    } else {
+      this.safeInvoiceUrl = null;
+    }
+    this.previewModalTitle = title;
     this.showInvoiceModal = true;
   }
 
   closeInvoiceModal(): void {
     this.showInvoiceModal = false;
     this.safeInvoiceUrl = null;
+    this.previewImageUrl = '';
+    this.isPreviewPdf = false;
+  }
+
+  isPdf(url: string): boolean {
+    if (!url) return false;
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapePress(): void {
+    if (this.showInvoiceModal) {
+      this.closeInvoiceModal();
+    }
   }
 }

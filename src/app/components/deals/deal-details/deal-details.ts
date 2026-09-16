@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -23,6 +23,14 @@ export class DealDetails implements OnInit {
   showInvoiceModal = false;
   safeInvoiceUrl: SafeResourceUrl | null = null;
 
+  // Image & Document preview modal
+  showImageModal = false;
+  previewImageUrl = '';
+  previewSafeUrl: SafeResourceUrl | null = null;
+  isPreviewPdf = false;
+  previewModalTitle = '';
+  rotationAngle = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,15 +47,37 @@ export class DealDetails implements OnInit {
       this.deal = stateDeal;
       this.loading = false;
       this.fetchOrders();
+      if (!this.deal.user && this.deal.id) {
+        this.fetchDealDetails(this.deal.id);
+      }
     } else {
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
-        this.notification.error('Deal data lost on refresh. Navigating back...');
-        setTimeout(() => {
-          window.history.back();
-        }, 2000);
+        this.fetchDealDetails(+id);
       }
     }
+  }
+
+  fetchDealDetails(id: number): void {
+    this.dealService.getDealById(id).subscribe({
+      next: (res: any) => {
+        if (res.errorcode === '0' && res.data) {
+          this.deal = res.data;
+          this.loading = false;
+          if (this.orders.length === 0) {
+            this.fetchOrders();
+          }
+        }
+      },
+      error: () => {
+        if (!this.deal) {
+          this.notification.error('Deal data lost on refresh. Navigating back...');
+          setTimeout(() => {
+            window.history.back();
+          }, 2000);
+        }
+      }
+    });
   }
 
   fetchOrders() {
@@ -57,6 +87,25 @@ export class DealDetails implements OnInit {
       next: (response) => {
         if (response.errorcode === "0") {
           this.orders = response.data.data;
+          if ((!this.deal.user || !this.deal.user.name) && this.orders?.length > 0 && this.orders[0]?.deal?.user) {
+            this.deal.user = this.orders[0].deal.user;
+          }
+        }
+        // Fallback: If neither this.deal.user nor order.deal.user is present yet,
+        // search for orders with this deal title from getAllDealOrders (which has deal.user eager loaded)
+        if ((!this.deal.user || !this.deal.user.name) && (!this.orders[0]?.deal?.user)) {
+          this.dealService.getAllDealOrders(1, '', this.deal.title || '').subscribe({
+            next: (allRes: any) => {
+              const matchedOrder = allRes.data?.data?.find((o: any) => o.deal_id === this.deal.id && o.deal?.user);
+              if (matchedOrder?.deal?.user) {
+                this.deal.user = matchedOrder.deal.user;
+                this.orders.forEach(o => {
+                  if (!o.deal) o.deal = {};
+                  if (!o.deal.user) o.deal.user = matchedOrder.deal.user;
+                });
+              }
+            }
+          });
         }
         this.loadingOrders = false;
       },
@@ -125,11 +174,16 @@ export class DealDetails implements OnInit {
 
   isPdf(url: string): boolean {
     if (!url) return false;
-    return this.formatImageUrl(url).toLowerCase().endsWith('.pdf');
+    const clean = url.toLowerCase().split('?')[0].split('#')[0];
+    return clean.endsWith('.pdf');
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.formatImageUrl(url));
+    const formattedUrl = this.formatImageUrl(url);
+    const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+      ? formattedUrl
+      : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
   }
 
   getLocalizedName(obj: any): string {
@@ -138,13 +192,89 @@ export class DealDetails implements OnInit {
     return currentLang === 'ar' ? (obj.name_ar || obj.name_en || '—') : (obj.name_en || obj.name_ar || '—');
   }
 
+  openImageModal(url: string, title: string = '', event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!url) return;
+    const formattedUrl = this.formatImageUrl(url);
+    this.previewImageUrl = formattedUrl;
+    this.isPreviewPdf = this.isPdf(formattedUrl);
+    if (this.isPreviewPdf) {
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
+      this.previewSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
+    } else {
+      this.previewSafeUrl = null;
+    }
+    this.previewModalTitle = title ? (this.translate.instant(title) || title) : '';
+    this.rotationAngle = 0;
+    this.showImageModal = true;
+  }
+
+  openDealImageModal(imgItem: any, index: number): void {
+    const url = this.getImageUrl(imgItem);
+    const label = this.translate.instant('Deal Image') || 'Deal Image';
+    this.openImageModal(url, `${label} #${index + 1}`);
+  }
+
+  rotateImage(): void {
+    this.rotationAngle = (this.rotationAngle + 90) % 360;
+  }
+
+  closeImageModal(): void {
+    this.showImageModal = false;
+    this.previewImageUrl = '';
+    this.previewSafeUrl = null;
+    this.isPreviewPdf = false;
+    this.previewModalTitle = '';
+    this.rotationAngle = 0;
+  }
+
   openInvoiceModal(url: string): void {
-    this.safeInvoiceUrl = this.getSafeUrl(url);
-    this.showInvoiceModal = true;
+    this.openImageModal(url, 'Invoice Document');
   }
 
   closeInvoiceModal(): void {
-    this.showInvoiceModal = false;
-    this.safeInvoiceUrl = null;
+    this.closeImageModal();
+  }
+
+  getImageUrl(item: any): string {
+    if (!item) return '';
+    if (typeof item === 'string') return item;
+    return item.image || item.url || item.path || '';
+  }
+
+  getDealImage(order?: any): string {
+    if (order?.deal?.images && order.deal.images.length > 0) {
+      return this.getImageUrl(order.deal.images[0]);
+    }
+    if (order?.deal?.image) {
+      return order.deal.image;
+    }
+    if (this.deal?.images && this.deal.images.length > 0) {
+      return this.getImageUrl(this.deal.images[0]);
+    }
+    if (this.deal?.image) {
+      return this.deal.image;
+    }
+    return '';
+  }
+
+  getDealDescription(order?: any): string {
+    return order?.deal?.description || this.deal?.description || '';
+  }
+
+  getSeller(order?: any): any {
+    return order?.deal?.user || this.deal?.user || null;
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapePress(): void {
+    if (this.showImageModal) {
+      this.closeImageModal();
+    }
   }
 }
