@@ -47,15 +47,37 @@ export class DealDetails implements OnInit {
       this.deal = stateDeal;
       this.loading = false;
       this.fetchOrders();
+      if (!this.deal.user && this.deal.id) {
+        this.fetchDealDetails(this.deal.id);
+      }
     } else {
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
-        this.notification.error('Deal data lost on refresh. Navigating back...');
-        setTimeout(() => {
-          window.history.back();
-        }, 2000);
+        this.fetchDealDetails(+id);
       }
     }
+  }
+
+  fetchDealDetails(id: number): void {
+    this.dealService.getDealById(id).subscribe({
+      next: (res: any) => {
+        if (res.errorcode === '0' && res.data) {
+          this.deal = res.data;
+          this.loading = false;
+          if (this.orders.length === 0) {
+            this.fetchOrders();
+          }
+        }
+      },
+      error: () => {
+        if (!this.deal) {
+          this.notification.error('Deal data lost on refresh. Navigating back...');
+          setTimeout(() => {
+            window.history.back();
+          }, 2000);
+        }
+      }
+    });
   }
 
   fetchOrders() {
@@ -65,6 +87,25 @@ export class DealDetails implements OnInit {
       next: (response) => {
         if (response.errorcode === "0") {
           this.orders = response.data.data;
+          if ((!this.deal.user || !this.deal.user.name) && this.orders?.length > 0 && this.orders[0]?.deal?.user) {
+            this.deal.user = this.orders[0].deal.user;
+          }
+        }
+        // Fallback: If neither this.deal.user nor order.deal.user is present yet,
+        // search for orders with this deal title from getAllDealOrders (which has deal.user eager loaded)
+        if ((!this.deal.user || !this.deal.user.name) && (!this.orders[0]?.deal?.user)) {
+          this.dealService.getAllDealOrders(1, '', this.deal.title || '').subscribe({
+            next: (allRes: any) => {
+              const matchedOrder = allRes.data?.data?.find((o: any) => o.deal_id === this.deal.id && o.deal?.user);
+              if (matchedOrder?.deal?.user) {
+                this.deal.user = matchedOrder.deal.user;
+                this.orders.forEach(o => {
+                  if (!o.deal) o.deal = {};
+                  if (!o.deal.user) o.deal.user = matchedOrder.deal.user;
+                });
+              }
+            }
+          });
         }
         this.loadingOrders = false;
       },
@@ -224,6 +265,10 @@ export class DealDetails implements OnInit {
 
   getDealDescription(order?: any): string {
     return order?.deal?.description || this.deal?.description || '';
+  }
+
+  getSeller(order?: any): any {
+    return order?.deal?.user || this.deal?.user || null;
   }
 
   @HostListener('window:keydown.escape')

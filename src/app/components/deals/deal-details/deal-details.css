@@ -11,6 +11,10 @@
   background: #f4f6fb;
   color: #1e1e2e;
   animation: ddFadeIn 0.4s ease;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 @keyframes ddFadeIn {
@@ -38,9 +42,11 @@
 .dd-hero-inner {
   position: relative;
   z-index: 2;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 28px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 24px;
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: auto auto;
@@ -228,20 +234,26 @@
    BODY LAYOUT
    ════════════════════════════════════════ */
 .dd-body {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 28px 60px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 24px 50px;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 /* ── Stats Row ── */
 .dd-stats-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
   margin-top: -36px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   position: relative;
   z-index: 5;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .dd-stat-card {
@@ -308,9 +320,35 @@
 /* ── Grid ── */
 .dd-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
   align-items: start;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.dd-col-main {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dd-col-side {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dd-participants-section {
+  margin-top: 20px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* ════════════════════════════════════════
@@ -318,12 +356,15 @@
    ════════════════════════════════════════ */
 .dd-card {
   background: #fff;
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.05);
   border: 1px solid #eef0f7;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   overflow: hidden;
   transition: box-shadow 0.25s ease;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dd-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.09); }
@@ -572,13 +613,21 @@
 .participants-empty i { font-size: 2.5rem; opacity: 0.4; }
 .participants-empty p { margin: 0; font-size: 0.9rem; }
 
-.participants-table-wrap { overflow-x: auto; }
-
-.participants-table {
+.participants-table-wrap {
+  overflow-x: auto;
   width: 100%;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+:host ::ng-deep .content-area table.participants-table,
+.participants-table {
+  width: 100% !important;
+  min-width: 0 !important;
   border-collapse: collapse;
-  text-align: right;
-  font-size: 0.875rem;
+  text-align: center;
+  font-size: 0.83rem;
+  table-layout: auto;
 }
 
 .participants-table thead tr {
@@ -586,14 +635,15 @@
 }
 
 .participants-table th {
-  padding: 13px 16px;
-  font-size: 0.78rem;
+  padding: 12px 10px;
+  font-size: 0.76rem;
   font-weight: 700;
   color: #7a3ca0;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   border-bottom: 2px solid #ede8ff;
   white-space: nowrap;
+  text-align: center;
 }
 
 .participants-table tbody tr {
@@ -604,78 +654,104 @@
 .participants-table tbody tr:hover { background: #fdfbff; }
 
 .participants-table td {
-  padding: 13px 16px;
+  padding: 11px 8px;
   vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .p-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.p-avatar {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.p-avatar img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
-
-.p-avatar-letter {
-  width: 100%; height: 100%;
-  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.9rem;
-  display: flex; align-items: center; justify-content: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+  gap: 2px;
+  max-width: 145px;
 }
 
 .p-name {
-  display: block;
   font-weight: 700;
   color: #1e1e2e;
-  font-size: 0.875rem;
+  font-size: 0.82rem;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
 
 .p-phone {
-  display: block;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   color: #9ca3af;
+  font-family: inherit;
+  white-space: nowrap;
+  display: block;
+}
+
+.deal-thumb-cell {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  vertical-align: middle;
+  border: 1px solid #ede8ff;
+}
+
+.deal-table-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.deal-desc-cell {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.deal-desc-text {
+  font-size: 0.82rem;
+  color: #4b5563;
 }
 
 .p-qty {
   background: #f1f3f9;
   color: #374151;
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.85rem;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  display: inline-block;
 }
 
 .p-price {
-  font-weight: 700;
+  font-weight: 800;
   color: #1e1e2e;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .p-price em {
   font-style: normal;
   color: #9ca3af;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   margin-right: 2px;
 }
 
 .p-pay-badge {
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.74rem;
+  font-weight: 700;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .pay-paid    { background: #dcfce7; color: #15803d; }
@@ -683,11 +759,12 @@
 .pay-failed  { background: #fee2e2; color: #dc2626; }
 
 .p-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.85rem;
+  gap: 6px;
+  font-size: 0.8rem;
   color: #4b5563;
+  white-space: nowrap;
 }
 
 .p-status-dot {
@@ -921,9 +998,14 @@
 }
 
 .meta-val {
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: #1e1e2e;
+  text-align: left;
+  max-width: 155px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ─── Notes ─── */

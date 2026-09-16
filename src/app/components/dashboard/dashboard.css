@@ -74,7 +74,7 @@
   scrollbar-color: rgba(122, 60, 160, 0.7) rgba(0,0,0,0.05);
 }
 
-.content-area table {
+.content-area table:not(.participants-table) {
   min-width: 1000px;
 }
 
