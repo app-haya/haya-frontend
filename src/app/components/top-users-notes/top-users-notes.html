@@ -12,17 +12,24 @@
       </div>
     </div>
     
-    <!-- Year & Month Selects -->
-    <div class="d-flex gap-2 align-items-center">
-      <div>
-        <select class="header-select" [(ngModel)]="selectedYear" (change)="onDateChange()">
-          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-        </select>
+    <div class="d-flex gap-3 align-items-center flex-wrap">
+      <!-- Total Badge -->
+      <div class="total-badge" *ngIf="!loading">
+        <span>🏆 {{ users.length }} {{ (users.length === 1 ? 'Winner' : 'Winners') | translate }}</span>
       </div>
-      <div>
-        <select class="header-select" [(ngModel)]="selectedMonth" (change)="onDateChange()">
-          <option *ngFor="let month of months" [value]="month">{{ month }}</option>
-        </select>
+
+      <!-- Year & Month Selects -->
+      <div class="d-flex gap-2 align-items-center">
+        <div>
+          <select class="header-select" [(ngModel)]="selectedYear" (change)="onDateChange()">
+            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+          </select>
+        </div>
+        <div>
+          <select class="header-select" [(ngModel)]="selectedMonth" (change)="onDateChange()">
+            <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -110,22 +117,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination-bar" *ngIf="lastPage > 1">
-      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-      <button
-        class="page-btn"
-        *ngFor="let page of getPageNumbers()"
-        [class.active]="page === currentPage"
-        (click)="goToPage(page)"
-      >{{ page }}</button>
-      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
-        <i class="bi bi-chevron-left"></i>
-      </button>
     </div>
   </div>
 

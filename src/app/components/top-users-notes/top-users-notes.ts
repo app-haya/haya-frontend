@@ -44,18 +44,20 @@ export class TopUsersNotes implements OnInit {
 
   onDateChange() {
     this.currentPage = 1;
-    this.fetchUsers(this.currentPage);
+    this.fetchUsers();
   }
 
-  fetchUsers(page: number = 1) {
+  fetchUsers() {
     this.loading = true;
-    this.usersService.getTopUsersWithNotes(page, this.perPage, this.selectedMonth, this.selectedYear).subscribe({
+    this.usersService.getTopUsersWithNotes(1, 30, this.selectedMonth, this.selectedYear).subscribe({
       next: (res: any) => {
-        this.users = res.data || [];
-        this.currentPage = res.meta?.page || 1;
-        this.lastPage = res.meta?.total_pages || 1;
-        this.total = res.meta?.total || 0;
-        this.perPage = res.meta?.per_page || 30;
+        const rawData = res.data || [];
+        // Strictly display only the first 30 users (Top 30 Winners)
+        this.users = rawData.slice(0, 30);
+        this.currentPage = 1;
+        this.lastPage = 1;
+        this.total = this.users.length;
+        this.perPage = 30;
         this.loading = false;
       },
       error: (err: any) => {
