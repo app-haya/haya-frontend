@@ -63,14 +63,14 @@ export class EditUser implements OnInit {
   initForm() {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
-      gender: ['1', Validators.required],
-      birth_date: ['', Validators.required],
+      email: ['', Validators.email],
+      phone: [''],
+      gender: ['1'],
+      birth_date: [''],
       activity: [''],
       interests: [[]],
-      country_id: ['', Validators.required],
-      city_id: ['', Validators.required],
+      country_id: [''],
+      city_id: [''],
       is_private: ['0'],
       language: ['ar'],
       sign_in_type: ['normal'],
@@ -211,8 +211,27 @@ export class EditUser implements OnInit {
     }
   }
 
+  formatImageUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (url.includes('/api/uploads/')) return url.replace('/api/uploads/', '/uploads/');
+      if (url.includes('/api/storage/')) return url.replace('/api/storage/', '/storage/');
+      return url;
+    }
+    let clean = url.trim();
+    if (clean.startsWith('/')) clean = clean.substring(1);
+    if (clean.startsWith('storage/')) return `https://hayaapp.online/${clean}`;
+    return `https://hayaapp.online/storage/${clean}`;
+  }
+
   onSubmit() {
-    if (this.userForm.invalid) return;
+    if (this.loading) return;
+
+    if (!this.userForm.value.name || !this.userForm.value.name.toString().trim()) {
+      this.notification.error('Name is required');
+      return;
+    }
 
     const interests = this.userForm.value.interests || [];
     const interestsString = "['" + interests.join("','") + "']";
