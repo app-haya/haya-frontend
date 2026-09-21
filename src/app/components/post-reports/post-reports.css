@@ -310,6 +310,13 @@
   gap: 3px;
 }
 
+.reasons-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
 .reason-text {
   color: #4b5563;
   font-size: 0.8rem;
@@ -318,6 +325,53 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.more-reasons {
+  background: #f3f4f6;
+  color: #7a3ca0;
+  border-radius: 12px;
+  padding: 2px 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.reports-list-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-inline-end: 4px;
+}
+
+.report-card-item {
+  background: #fff;
+  border: 1px solid #fee2e2;
+  border-inline-start: 4px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.reporter-badge {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #7a3ca0;
+}
+
+.report-timestamp {
+  font-size: 0.74rem;
+  color: #9ca3af;
+}
+
+.report-reason-text {
+  font-size: 0.82rem;
+  color: #374151;
+  margin-top: 4px;
+  word-break: break-word;
 }
 
 .date-text {

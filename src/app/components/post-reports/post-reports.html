@@ -101,18 +101,18 @@
               <div class="user-cell">
                 <div class="user-avatar">
                   <img
-                    *ngIf="item.post?.user?.image || item.user?.image"
-                    [src]="item.post?.user?.image || item.user?.image"
-                    [alt]="item.post?.user?.name || item.user?.name"
+                    *ngIf="item.user?.image || item.post?.user?.image"
+                    [src]="item.user?.image || item.post?.user?.image"
+                    [alt]="item.user?.name || item.post?.user?.name || item.post?.owner"
                     class="avatar-img"
                   />
-                  <div *ngIf="!(item.post?.user?.image || item.user?.image)" class="avatar-placeholder">
+                  <div *ngIf="!(item.user?.image || item.post?.user?.image)" class="avatar-placeholder">
                     <i class="bi bi-person-fill"></i>
                   </div>
                 </div>
                 <div class="user-info">
-                  <span class="user-name">{{ item.post?.user?.name || item.post?.owner || item.user?.name || '—' }}</span>
-                  <span class="user-id">ID: #{{ item.post?.user?.id || item.user?.id || '—' }}</span>
+                  <span class="user-name">{{ item.user?.name || item.post?.user?.name || item.post?.owner || '—' }}</span>
+                  <span class="user-id">ID: #{{ item.user?.id || item.post?.user?.id || '—' }}</span>
                 </div>
               </div>
             </td>
@@ -123,11 +123,11 @@
                 <p class="comment-text" [title]="item.post?.content || item.content">
                   "{{ item.post?.content || item.content || '—' }}"
                 </p>
-                <div class="comment-flags" *ngIf="item.post?.is_hidden || item.post?.is_deleted">
+                <div class="comment-flags" *ngIf="item.post?.is_hidden || item.post?.is_deleted || item.post?.hidden_by_admin">
                   <span class="badge-flag danger" *ngIf="item.post?.is_deleted">
                     <i class="bi bi-trash"></i> {{ 'Deleted' | translate }}
                   </span>
-                  <span class="badge-flag warning" *ngIf="item.post?.is_hidden">
+                  <span class="badge-flag warning" *ngIf="item.post?.is_hidden || item.post?.hidden_by_admin">
                     <i class="bi bi-eye-slash"></i> {{ 'Hidden by Admin' | translate }}
                   </span>
                 </div>
@@ -137,9 +137,9 @@
             <!-- Interactions Stats -->
             <td class="text-center">
               <div class="d-flex justify-content-center gap-2 text-muted small">
-                <span title="Likes"><i class="bi bi-heart-fill text-danger me-1"></i>{{ item.post?.likes_count || 0 }}</span>
-                <span title="Comments"><i class="bi bi-chat-fill text-primary me-1"></i>{{ item.post?.comments_count || 0 }}</span>
-                <span title="Shares"><i class="bi bi-share-fill text-success me-1"></i>{{ item.post?.shares_count || 0 }}</span>
+                <span title="Likes"><i class="bi bi-heart-fill text-danger me-1"></i>{{ item.counts?.likes ?? item.post?.likes_count ?? 0 }}</span>
+                <span title="Comments"><i class="bi bi-chat-fill text-primary me-1"></i>{{ item.counts?.comments ?? item.post?.comments_count ?? 0 }}</span>
+                <span title="Shares"><i class="bi bi-share-fill text-success me-1"></i>{{ item.counts?.shares ?? item.post?.shares_count ?? 0 }}</span>
               </div>
             </td>
 
@@ -153,22 +153,30 @@
 
             <!-- Latest Reason -->
             <td>
-              <span class="reason-text" [title]="item.latest_reason || item.reason || (item.reports && item.reports[0]?.reason)">
-                {{ item.latest_reason || item.reason || (item.reports && item.reports[0]?.reason) || ('No reason provided' | translate) }}
+              <div class="reasons-cell" *ngIf="item.reports && item.reports.length > 0">
+                <span class="reason-text" [title]="item.reports[0]?.reason">
+                  {{ item.reports[0]?.reason || ('No reason provided' | translate) }}
+                </span>
+                <span class="more-reasons" *ngIf="item.reports.length > 1">
+                  +{{ item.reports.length - 1 }} {{ 'more' | translate }}
+                </span>
+              </div>
+              <span *ngIf="!item.reports || item.reports.length === 0" class="reason-text" [title]="item.latest_reason || item.reason">
+                {{ item.latest_reason || item.reason || ('No reason provided' | translate) }}
               </span>
             </td>
 
             <!-- Date -->
             <td>
               <span class="date-text">
-                {{ (item.created_at | date:'mediumDate') || '—' }}
+                {{ (item.reports && item.reports[0]?.created_at | date:'mediumDate') || (item.created_at | date:'mediumDate') || (item.post?.created_at | date:'mediumDate') || '—' }}
               </span>
             </td>
 
             <!-- Status -->
             <td>
-              <span class="status-badge" [ngClass]="item.status || 'pending'">
-                {{ (item.status || 'pending') | translate }}
+              <span class="status-badge" [ngClass]="item.status || activeTab || 'pending'">
+                {{ (item.status || activeTab || 'pending') | translate }}
               </span>
             </td>
 
@@ -315,7 +323,7 @@
         </div>
         <div>
           <h5 class="modal-title-custom">{{ 'Report Details' | translate }}</h5>
-          <p class="modal-subtitle-custom">ID: #{{ selectedItem.id }}</p>
+          <p class="modal-subtitle-custom">ID: #{{ selectedItem.post?.id || selectedItem.id }}</p>
         </div>
         <button class="btn-close-modal" (click)="closeDetail()">&times;</button>
       </div>
@@ -329,8 +337,29 @@
         <div class="detail-section mb-3">
           <h6 class="detail-label">{{ 'Creator Information' | translate }}</h6>
           <div class="detail-box">
-            <p class="mb-1"><strong>{{ 'Name' | translate }}:</strong> {{ selectedItem.post?.user?.name || selectedItem.user?.name || '—' }}</p>
-            <p class="mb-0"><strong>{{ 'Email' | translate }}:</strong> {{ selectedItem.post?.user?.email || selectedItem.user?.email || '—' }}</p>
+            <p class="mb-1"><strong>{{ 'Name' | translate }}:</strong> {{ selectedItem.user?.name || selectedItem.post?.user?.name || selectedItem.post?.owner || '—' }}</p>
+            <p class="mb-0" *ngIf="selectedItem.user?.email || selectedItem.post?.user?.email">
+              <strong>{{ 'Email' | translate }}:</strong> {{ selectedItem.user?.email || selectedItem.post?.user?.email }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Reports List -->
+        <div class="detail-section mb-3" *ngIf="selectedItem.reports && selectedItem.reports.length > 0">
+          <h6 class="detail-label text-danger">
+            <i class="bi bi-flag-fill me-1"></i>{{ 'Reports List' | translate }} ({{ selectedItem.reports.length }})
+          </h6>
+          <div class="reports-list-scroll">
+            <div class="report-card-item" *ngFor="let rep of selectedItem.reports">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="reporter-badge"><i class="bi bi-person-fill me-1"></i>{{ rep.reported_by || ('Anonymous' | translate) }}</span>
+                <span class="report-timestamp">{{ rep.created_at | date:'medium' }}</span>
+              </div>
+              <div class="report-reason-text">
+                <i class="bi bi-chat-left-dots-fill text-warning me-1"></i>
+                <strong>{{ 'Reason' | translate }}:</strong> {{ rep.reason || ('No reason provided' | translate) }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
