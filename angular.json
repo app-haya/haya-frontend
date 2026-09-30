@@ -106,11 +106,14 @@
               "sourceMap": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "sa-production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
+            "sa-production": {
+              "buildTarget": "haya:build:sa-production"
+            },
             "production": {
               "buildTarget": "haya:build:production"
             },

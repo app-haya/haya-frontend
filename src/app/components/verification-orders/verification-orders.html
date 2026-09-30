@@ -77,7 +77,7 @@
                 <div class="user-avatar">
                   <img
                     *ngIf="order.user?.image_url"
-                    [src]="order.user.image_url"
+                    [src]="formatImageUrl(order.user.image_url)"
                     [alt]="order.user?.name"
                     class="avatar-img"
                   />

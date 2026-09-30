@@ -6,6 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DealService } from '../../../services/deal.service';
 import { NotificationService } from '../../../services/notification.service';
 import { DashboardService } from '../../../services/dashboard.service';
+import { formatImageUrl, isPdf } from '../../../utils/image-helper';
 
 @Component({
   selector: 'app-deal-details',
@@ -141,41 +142,11 @@ export class DealDetails implements OnInit {
   }
 
   formatImageUrl(url: string): string {
-    if (!url) return '';
-    
-    // Check if it's already an absolute URL
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      if (url.includes('/api/uploads/')) {
-        return url.replace('/api/uploads/', '/uploads/');
-      }
-      if (url.includes('/api/storage/')) {
-        return url.replace('/api/storage/', '/storage/');
-      }
-      return url;
-    }
-    
-    let cleanPath = url.trim();
-    if (cleanPath.startsWith('/')) {
-      cleanPath = cleanPath.substring(1);
-    }
-    
-    // If the path already has "storage/"
-    if (cleanPath.startsWith('storage/')) {
-      return `https://hayaapp.online/${cleanPath}`;
-    }
-    // If it starts with "uploads/" or "deals_files/"
-    if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('deals_files/')) {
-      return `https://hayaapp.online/storage/${cleanPath}`;
-    }
-    
-    // Fallback: assume it is under storage/
-    return `https://hayaapp.online/storage/${cleanPath}`;
+    return formatImageUrl(url);
   }
 
   isPdf(url: string): boolean {
-    if (!url) return false;
-    const clean = url.toLowerCase().split('?')[0].split('#')[0];
-    return clean.endsWith('.pdf');
+    return isPdf(url);
   }
 
   getSafeUrl(url: string): SafeResourceUrl {

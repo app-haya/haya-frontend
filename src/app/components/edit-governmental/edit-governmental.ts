@@ -12,6 +12,7 @@ import { GovernmentalService } from '../../services/governmental.service';
 import { UsersService } from '../../services/users.service';
 import { InterestsService } from '../../services/interests.service';
 import { NotificationService } from '../../services/notification.service';
+import { formatImageUrl, isPdf } from '../../utils/image-helper';
 
 @Component({
   selector: 'app-edit-governmental',
@@ -146,23 +147,11 @@ export class EditGovernmental implements OnInit {
   }
 
   formatImageUrl(url: string | null | undefined): string {
-    if (!url) return '';
-    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      if (url.includes('/api/uploads/')) return url.replace('/api/uploads/', '/uploads/');
-      if (url.includes('/api/storage/')) return url.replace('/api/storage/', '/storage/');
-      return url;
-    }
-    let clean = url.trim();
-    if (clean.startsWith('/')) clean = clean.substring(1);
-    if (clean.startsWith('storage/')) return `https://hayaapp.online/${clean}`;
-    return `https://hayaapp.online/storage/${clean}`;
+    return formatImageUrl(url);
   }
 
   isPdf(url: string | null | undefined): boolean {
-    if (!url) return false;
-    const clean = url.toLowerCase().split('?')[0].split('#')[0];
-    return clean.endsWith('.pdf');
+    return isPdf(url);
   }
 
   onFileChange(event: any, type: 'Store_logo' | 'commercial_register') {

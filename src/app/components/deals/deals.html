@@ -109,7 +109,7 @@
 
             <!-- Account Number -->
             <td>
-              <a *ngIf="deal.account_number" href="javascript:void(0)" class="view-link-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event)">
+              <a *ngIf="deal.account_number" href="javascript:void(0)" class="view-link-btn" (click)="openImageModal(deal.account_number, 'Account Proof', $event, deal.id)">
                 <i class="bi bi-image"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.account_number" class="text-muted">—</span>
@@ -136,7 +136,7 @@
 
             <!-- Invoice -->
             <td>
-              <a *ngIf="deal.invoice" href="javascript:void(0)" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'Invoice Document', $event)">
+              <a *ngIf="deal.invoice" href="javascript:void(0)" class="view-link-btn text-purple-link" (click)="openImageModal(deal.invoice, 'Invoice Document', $event, deal.id)">
                 <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!deal.invoice" class="text-muted">—</span>

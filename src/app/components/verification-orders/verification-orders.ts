@@ -7,6 +7,7 @@ import { NotificationService } from '../../services/notification.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { ThemeService } from '../../services/theme.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { formatImageUrl, isPdf } from '../../utils/image-helper';
 
 @Component({
   selector: 'app-verification-orders',
@@ -230,18 +231,23 @@ export class VerificationOrders implements OnInit {
     return map[status] || status;
   }
 
+  formatImageUrl(url: string | null | undefined): string {
+    return formatImageUrl(url);
+  }
+
   previewDocument(url: string | null | undefined, title: string = 'Document'): void {
     if (!url) return;
-    this.previewUrl = url;
+    const formattedUrl = formatImageUrl(url);
+    this.previewUrl = formattedUrl;
     this.previewTitle = title;
-    this.isPdf = url.toLowerCase().split('?')[0].includes('.pdf');
+    this.isPdf = isPdf(formattedUrl);
     if (this.isPdf) {
-      const pdfEmbedUrl = (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1') || url.startsWith('blob:') || url.startsWith('data:'))
-        ? url
-        : `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+      const pdfEmbedUrl = (formattedUrl.startsWith('http://localhost') || formattedUrl.startsWith('http://127.0.0.1') || formattedUrl.startsWith('blob:') || formattedUrl.startsWith('data:'))
+        ? formattedUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(formattedUrl)}&embedded=true`;
       this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfEmbedUrl);
     } else {
-      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(formattedUrl);
     }
     this.showDocumentPreview = true;
   }

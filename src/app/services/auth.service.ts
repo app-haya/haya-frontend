@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { formatImageUrl } from '../utils/image-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +34,6 @@ export class AuthService {
     if (!urlOrFilename) return '';
     if (urlOrFilename.startsWith('data:image')) return urlOrFilename;
 
-    const apiDomainBase = environment.apiUrl.replace('/api', '').replace(/\/$/, '');
-
     if (
       urlOrFilename.includes('admin_images') ||
       urlOrFilename.includes('localhost') ||
@@ -42,15 +41,10 @@ export class AuthService {
       !urlOrFilename.startsWith('http')
     ) {
       const cleanFilename = urlOrFilename.split('/').pop() || urlOrFilename;
-      return `${apiDomainBase}/admin_images/${cleanFilename}`;
+      return formatImageUrl(`admin_images/${cleanFilename}`);
     }
 
-    let formatted = urlOrFilename;
-    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && formatted.startsWith('http://')) {
-      formatted = formatted.replace('http://', 'https://');
-    }
-
-    return formatted;
+    return formatImageUrl(urlOrFilename);
   }
 
   public setCurrentUser(user: any): void {

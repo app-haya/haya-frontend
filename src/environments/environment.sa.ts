@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://hayaapp.sa/api'
+  apiUrl: 'https://api.hayaapp.sa/api',
+  storageUrl: 'https://api.hayaapp.sa/storage',
+  serverName: 'sa'
 };

@@ -11,6 +11,7 @@ import {
 } from '@angular/forms';
 import { UsersService } from '../../../../services/users.service';
 import { NotificationService } from '../../../../services/notification.service';
+import { formatImageUrl } from '../../../../utils/image-helper';
 
 @Component({
   selector: 'app-edit-user',
@@ -212,17 +213,7 @@ export class EditUser implements OnInit {
   }
 
   formatImageUrl(url: string | null | undefined): string {
-    if (!url) return '';
-    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      if (url.includes('/api/uploads/')) return url.replace('/api/uploads/', '/uploads/');
-      if (url.includes('/api/storage/')) return url.replace('/api/storage/', '/storage/');
-      return url;
-    }
-    let clean = url.trim();
-    if (clean.startsWith('/')) clean = clean.substring(1);
-    if (clean.startsWith('storage/')) return `https://hayaapp.online/${clean}`;
-    return `https://hayaapp.online/storage/${clean}`;
+    return formatImageUrl(url);
   }
 
   onSubmit() {

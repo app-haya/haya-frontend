@@ -90,7 +90,7 @@
                 <div class="user-avatar">
                   <img
                     *ngIf="creator.image"
-                    [src]="creator.image"
+                    [src]="formatImageUrl(creator.image)"
                     [alt]="creator.name"
                     class="avatar-img"
                   />

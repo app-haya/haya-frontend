@@ -61,7 +61,7 @@
             <td>
               <img
                 *ngIf="user.image"
-                [src]="user.image"
+                [src]="formatImageUrl(user.image)"
                 alt="user"
                 class="profile-img"
               />

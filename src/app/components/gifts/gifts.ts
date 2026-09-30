@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GiftService } from '../../services/gift.service';
 import { NotificationService } from '../../services/notification.service';
 import { DialogService } from '../../services/dialog.service';
+import { formatImageUrl } from '../../utils/image-helper';
 
 @Component({
   selector: 'app-gifts',
@@ -208,13 +209,16 @@ export class Gifts implements OnInit {
   getImageUrl(gift: any): string {
     const path = gift.image || gift.icon || gift.image_url || gift.icon_url;
     if (!path) return 'assets/images/placeholder.png';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return formatImageUrl(path);
+    }
     
     // Removing leading slash if exists
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    
-    // Based on the server structure screenshot: storage/app/public/gifts/
-    return `https://hayaapp.online/storage/gifts/${cleanPath}`;
+    const finalPath = cleanPath.startsWith('storage/') || cleanPath.startsWith('gifts/')
+      ? cleanPath
+      : `gifts/${cleanPath}`;
+    return formatImageUrl(finalPath);
   }
 
   // Pagination
