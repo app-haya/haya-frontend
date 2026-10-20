@@ -28,6 +28,7 @@ export class DealOrders implements OnInit {
   total = 0;
   perPage = 20;
   orderStatusFilter = '';
+  selectedSellerId = '';
 
   // Monthly & Yearly Filter
   selectedMonth: number = 0; // 0 = All Months
@@ -121,13 +122,51 @@ export class DealOrders implements OnInit {
     this.loadOrders(1);
   }
 
+  get sellersList(): { id: string; name: string; type: string }[] {
+    const map = new Map<string, { id: string; name: string; type: string }>();
+    for (const order of this.orders) {
+      const seller = order.deal?.user;
+      if (seller && seller.id) {
+        const idStr = String(seller.id);
+        if (!map.has(idStr)) {
+          const type = order.deal?.seller_type || seller.type || (order.deal?.is_business == 1 ? 'business' : 'personal');
+          map.set(idStr, {
+            id: idStr,
+            name: seller.name || `تاجر #${seller.id}`,
+            type: type === 'business' ? 'business' : 'personal'
+          });
+        }
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+  }
+
+  getSelectedSeller(): { id: string; name: string; type: string } | null {
+    if (!this.selectedSellerId) return null;
+    return this.sellersList.find(s => s.id === this.selectedSellerId) || null;
+  }
+
+  onSellerFilterChange(): void {
+    this.applyMonthFilter();
+  }
+
   applyMonthFilter(): void {
     this.displayedOrders = this.orders.filter(order => {
-      if (!order.created_at) return true;
-      const d = new Date(order.created_at);
-      const matchesMonth = !this.selectedMonth || this.selectedMonth === 0 || (d.getMonth() + 1) === this.selectedMonth;
-      const matchesYear = !this.selectedYear || d.getFullYear() === Number(this.selectedYear);
-      return matchesMonth && matchesYear;
+      // Month & Year Filter
+      if (order.created_at) {
+        const d = new Date(order.created_at);
+        const matchesMonth = !this.selectedMonth || this.selectedMonth === 0 || (d.getMonth() + 1) === this.selectedMonth;
+        const matchesYear = !this.selectedYear || d.getFullYear() === Number(this.selectedYear);
+        if (!matchesMonth || !matchesYear) return false;
+      }
+      // Seller Filter
+      if (this.selectedSellerId) {
+        const sId = order.deal?.user?.id;
+        if (!sId || String(sId) !== String(this.selectedSellerId)) {
+          return false;
+        }
+      }
+      return true;
     });
   }
 
@@ -240,10 +279,14 @@ export class DealOrders implements OnInit {
       views: [{ rightToLeft: true, showGridLines: true }]
     });
 
+    const selectedSeller = this.getSelectedSeller();
+
     // 1. Title Banner (Row 1)
     ws.mergeCells('A1:Q1');
     const titleCell = ws.getCell('A1');
-    titleCell.value = 'منصة وتطبيق هيّا الرسمية — تقرير العمليات المالية والمبيعات وضريبة القيمة المضافة';
+    titleCell.value = selectedSeller
+      ? `منصة وتطبيق هيّا الرسمية — كشف حساب ومبيعات التاجر: ${selectedSeller.name}`
+      : 'منصة وتطبيق هيّا الرسمية — تقرير العمليات المالية والمبيعات وضريبة القيمة المضافة';
     titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
     titleCell.fill = {
@@ -256,7 +299,8 @@ export class DealOrders implements OnInit {
     // 2. Info Banner (Row 2)
     ws.mergeCells('A2:Q2');
     const infoCell = ws.getCell('A2');
-    infoCell.value = `الفترة المحددة: ${monthLabel} (${year})   |   إجمالي عدد الطلبات: ${totalOrders} طلب   |   تاريخ الإصدار: ${new Date().toLocaleString('ar-SA')}   |   العملة: ريال سعودي (SAR)`;
+    const sellerTag = selectedSeller ? `التاجر: ${selectedSeller.name} (${selectedSeller.type === 'business' ? 'حساب تجاري' : 'حساب شخصي'})   |   ` : '';
+    infoCell.value = `${sellerTag}الفترة المحددة: ${monthLabel} (${year})   |   إجمالي عدد الطلبات: ${totalOrders} طلب   |   تاريخ الإصدار: ${new Date().toLocaleString('ar-SA')}   |   العملة: ريال سعودي (SAR)`;
     infoCell.font = { name: 'Arial', size: 10.5, bold: true, color: { argb: 'FF4A1D6D' } };
     infoCell.alignment = { vertical: 'middle', horizontal: 'center' };
     infoCell.fill = {
@@ -555,7 +599,8 @@ export class DealOrders implements OnInit {
 
     // 9. Download file via Blob
     const monthTag = this.selectedMonth > 0 ? `شهر_${this.selectedMonth}` : 'جميع_الأشهر';
-    const fileName = `Haya_Orders_${year}_${monthTag}.xlsx`;
+    const sellerSlug = selectedSeller ? `_${selectedSeller.name.replace(/\s+/g, '_')}` : '';
+    const fileName = `Haya_Orders_${year}_${monthTag}${sellerSlug}.xlsx`;
 
     const buffer = await wb.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
@@ -582,6 +627,7 @@ export class DealOrders implements OnInit {
       return;
     }
 
+    const selectedSeller = this.getSelectedSeller();
     const monthLabel = this.getSelectedMonthLabel();
     const year = this.selectedYear;
     const totalOrders = this.displayedOrders.length;
@@ -1033,13 +1079,19 @@ export class DealOrders implements OnInit {
             <img src="${HAYA_LOGO_BASE64}" onerror="this.onerror=null; this.src='/images/haya-icon.svg';" alt="شعار تطبيق هيا" class="brand-logo" />
             <div class="brand-details">
               <div class="brand-tag">منصة وتطبيق هيّا الرسمية • Haya Platform & App</div>
-              <h1 class="brand-title">تقرير العمليات والمبيعات وضريبة القيمة المضافة</h1>
-              <div class="brand-compliance">كشف حساب مالي رسمي معتمد • مطابق لمتطلبات الفوترة والضرائب (ZATCA Standard)</div>
+              <h1 class="brand-title">${selectedSeller ? `كشف حساب مبيعات التاجر: ${selectedSeller.name}` : 'تقرير العمليات والمبيعات وضريبة القيمة المضافة'}</h1>
+              <div class="brand-compliance">${selectedSeller ? `سجل مبيعات معتمد لحساب ${selectedSeller.type === 'business' ? 'تجاري (ضريبة 15% وعمولة 2.5%)' : 'شخصي (معفى من الضريبة وعمولة 2.5%)'}` : 'كشف حساب مالي رسمي معتمد • مطابق لمتطلبات الفوترة والضرائب (ZATCA Standard)'}</div>
             </div>
           </div>
 
           <div class="meta-side">
             <div class="meta-card">
+              ${selectedSeller ? `
+              <div class="meta-row">
+                <span class="meta-lbl">التاجر / البائع:</span>
+                <span class="meta-val" style="color: #6d28d9; font-weight: 700;">${selectedSeller.name} (${selectedSeller.type === 'business' ? 'تجاري' : 'شخصي'})</span>
+              </div>
+              ` : ''}
               <div class="meta-row">
                 <span class="meta-lbl">رقم المرجع المالي:</span>
                 <span class="meta-val code">${reportRef}</span>

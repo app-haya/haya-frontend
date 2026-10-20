@@ -185,3 +185,237 @@ textarea.styled-input {
 [class*="dark-mode"] .add-deal-card {
   background-color: #161b22 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LIVE FINANCIAL PREVIEW CALCULATOR
+═══════════════════════════════════════════════════════════════ */
+.financial-preview-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(91, 46, 122, 0.04);
+}
+
+.f-prev-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.f-prev-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.f-prev-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(91, 46, 122, 0.12);
+  color: #5b2e7a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.f-prev-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 2px 0;
+}
+
+.f-prev-sub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.f-prev-account-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f-prev-account-badge.badge-biz {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.f-prev-account-badge.badge-pers {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.f-prev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.f-prev-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.f-prev-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.f-prev-box.box-total {
+  border-right: 4px solid #5b2e7a;
+}
+
+.f-prev-box.box-tax {
+  border-right: 4px solid #eab308;
+}
+
+.f-prev-box.box-exempt {
+  border-right: 4px solid #10b981;
+}
+
+.f-prev-box.box-haya {
+  border-right: 4px solid #7c3aed;
+}
+
+.f-prev-box.box-net {
+  border-right: 4px solid #059669;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+}
+
+.box-top-tag {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.box-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.box-val small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.net-val {
+  color: #059669;
+  font-size: 1.35rem;
+}
+
+.box-desc {
+  font-size: 0.73rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.desc-green {
+  color: #16a34a !important;
+  font-weight: 600;
+}
+
+.tag-rate {
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.tag-rate.tag-biz {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.tag-rate.tag-zero {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.tag-rate.tag-haya {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.tag-rate.tag-net {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.f-prev-notice {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.f-prev-notice.notice-biz {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+
+.f-prev-notice.notice-pers {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #166534;
+}
+
+/* Dark Mode Overrides for Financial Preview */
+:host-context(.dark-mode) .financial-preview-card,
+.dark-mode .financial-preview-card {
+  background-color: #0d1117 !important;
+  border-color: #30363d !important;
+}
+
+:host-context(.dark-mode) .f-prev-title,
+.dark-mode .f-prev-title {
+  color: #f0f6fc !important;
+}
+
+:host-context(.dark-mode) .f-prev-box,
+.dark-mode .f-prev-box {
+  background-color: #161b22 !important;
+  border-color: #30363d !important;
+}
+
+:host-context(.dark-mode) .box-val,
+.dark-mode .box-val {
+  color: #f0f6fc !important;
+}
+
+:host-context(.dark-mode) .f-prev-box.box-net,
+.dark-mode .f-prev-box.box-net {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, #161b22 100%) !important;
+}

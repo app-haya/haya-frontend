@@ -16,7 +16,7 @@
         <div class="row g-4">
           <div class="col-md-6">
             <label class="form-label">{{ 'User' | translate }}</label>
-            <select formControlName="user_id" class="form-select styled-input">
+            <select formControlName="user_id" (change)="onUserSelect($event)" class="form-select styled-input">
               <option value="">{{ 'Select User' | translate }}</option>
               <option *ngFor="let user of usersList" [value]="user.id">{{ user.name }}</option>
             </select>
@@ -56,7 +56,7 @@
           <div class="col-md-4">
             <label class="form-label">{{ 'Original Price' | translate }}</label>
             <div class="input-group">
-              <input type="number" formControlName="original_price" class="form-control styled-input" placeholder="0.00" />
+              <input type="number" formControlName="original_price" (input)="onOriginalPriceInput($event)" class="form-control styled-input" placeholder="0.00" />
               <span class="input-group-text bg-light border-start-0 styled-input h-auto">SAR</span>
             </div>
           </div>
@@ -70,6 +70,75 @@
           <div class="col-md-4">
             <label class="form-label">{{ 'Quantity' | translate }}</label>
             <input type="number" formControlName="quantity" class="form-control styled-input" placeholder="1" />
+          </div>
+        </div>
+
+        <!-- ── LIVE FINANCIAL EARNINGS CALCULATOR ── -->
+        <div class="financial-preview-card mt-4">
+          <div class="f-prev-header">
+            <div class="f-prev-title-wrap">
+              <span class="f-prev-icon"><i class="bi bi-calculator"></i></span>
+              <div>
+                <h6 class="f-prev-title">{{ 'تفاصيل الحسبة المالية والأرباح المتوقعة' }}</h6>
+                <p class="f-prev-sub">{{ 'تُحسب تلقائياً وبشكل فوري وفق سعر العرض ونوع الحساب' }}</p>
+              </div>
+            </div>
+            <div class="f-prev-account-badge" [class.badge-biz]="isBusiness()" [class.badge-pers]="!isBusiness()">
+              <i class="bi" [class.bi-shop]="isBusiness()" [class.bi-person-badge]="!isBusiness()"></i>
+              <span>{{ isBusiness() ? 'حساب تجاري (خاضع لضريبة 15% وعمولة هيا 2.5%)' : 'حساب شخصي (معفى من الضريبة وعمولة هيا 2.5% فقط)' }}</span>
+            </div>
+          </div>
+
+          <div class="f-prev-grid">
+            <!-- Box 1: Total Price -->
+            <div class="f-prev-box box-total">
+              <span class="box-label">{{ 'سعر العرض للمشتري' }}</span>
+              <div class="box-val">{{ getTotalPrice() | number:'1.2-2' }} <small>SAR</small></div>
+              <span class="box-desc">{{ 'المبلغ الإجمالي المعروض في تطبيق هيا' }}</span>
+            </div>
+
+            <!-- Box 2: VAT -->
+            <div class="f-prev-box box-tax" [class.box-exempt]="!isBusiness()">
+              <div class="box-top-tag">
+                <span class="box-label">{{ 'ضريبة القيمة المضافة (VAT)' }}</span>
+                <span class="tag-rate" [class.tag-biz]="isBusiness()" [class.tag-zero]="!isBusiness()">{{ getVatRate() }}%</span>
+              </div>
+              <div class="box-val">{{ getVatAmount() | number:'1.2-2' }} <small>SAR</small></div>
+              <span class="box-desc" *ngIf="isBusiness()">{{ '15% تُحوّل لحساب هيئة الزكاة والضريبة' }}</span>
+              <span class="box-desc desc-green" *ngIf="!isBusiness()">{{ 'معفى 0% — حساب أفراد شخصي' }}</span>
+            </div>
+
+            <!-- Box 3: Haya Fee -->
+            <div class="f-prev-box box-haya">
+              <div class="box-top-tag">
+                <span class="box-label">{{ 'عمولة تطبيق هيا' }}</span>
+                <span class="tag-rate tag-haya">2.5%</span>
+              </div>
+              <div class="box-val">{{ getHayaCommission() | number:'1.2-2' }} <small>SAR</small></div>
+              <span class="box-desc">{{ '2.5% نسبة تطبيق هيا من سعر الصفقة' }}</span>
+            </div>
+
+            <!-- Box 4: Net to Seller -->
+            <div class="f-prev-box box-net">
+              <div class="box-top-tag">
+                <span class="box-label">{{ 'صافي مستحقات البائع' }}</span>
+                <span class="tag-rate tag-net">{{ isBusiness() ? '82.5%' : '97.5%' }}</span>
+              </div>
+              <div class="box-val net-val">{{ getSellerNet() | number:'1.2-2' }} <small>SAR</small></div>
+              <span class="box-desc" *ngIf="isBusiness()">{{ 'المبلغ الصافي المحول لحساب التاجر بعد خصم الضريبة والعمولة' }}</span>
+              <span class="box-desc" *ngIf="!isBusiness()">{{ 'المبلغ الصافي المحول لحساب البائع بعد خصم عمولة هيا 2.5%' }}</span>
+            </div>
+          </div>
+
+          <!-- Bottom Notice Banner -->
+          <div class="f-prev-notice" [class.notice-biz]="isBusiness()" [class.notice-pers]="!isBusiness()">
+            <i class="bi bi-info-circle-fill"></i>
+            <span *ngIf="isBusiness()">
+              <strong>تنبيه مالي للبائع التجاري:</strong> عند إتمام عملية الشراء، سيتم اقتطاع <strong>15% ضريبة</strong> و <strong>2.5% عمولة هيا</strong>، ويصلك صافي <strong>82.5%</strong> من قيمة المبيعات.
+            </span>
+            <span *ngIf="!isBusiness()">
+              <strong>تنبيه مالي للبائع الشخصي:</strong> حسابك مسجل كـ <strong>حساب شخصي معفى من الضريبة (0%)</strong>؛ ستُخصم فقط <strong>2.5% عمولة هيا</strong>، ويصلك صافي <strong>97.5%</strong> من قيمة المبيعات.
+            </span>
           </div>
         </div>
       </div>
