@@ -123,6 +123,28 @@ export class Deals implements OnInit {
     );
   }
 
+  isCommercial(deal: any): boolean {
+    return deal?.seller_type === 'business' || deal?.is_business == 1;
+  }
+
+  getTaxRate(deal: any): number {
+    return this.isCommercial(deal) ? 15 : 0;
+  }
+
+  getTaxAmount(deal: any): number {
+    const total = Number(deal?.total_price) || 0;
+    return (total * this.getTaxRate(deal)) / 100;
+  }
+
+  getCommissionAmount(deal: any): number {
+    const total = Number(deal?.total_price) || 0;
+    return total * 0.025;
+  }
+
+  getSellerNetAmount(deal: any): number {
+    const total = Number(deal?.total_price) || 0;
+    return Math.max(0, total - this.getTaxAmount(deal) - this.getCommissionAmount(deal));
+  }
 
   approve(id: number): void {
     this.approvingId = id;

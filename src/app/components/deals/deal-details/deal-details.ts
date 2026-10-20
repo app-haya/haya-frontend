@@ -242,6 +242,57 @@ export class DealDetails implements OnInit {
     return order?.deal?.user || this.deal?.user || null;
   }
 
+  isCommercial(): boolean {
+    return this.deal?.seller_type === 'business' || this.deal?.is_business == 1;
+  }
+
+  getTaxRate(): number {
+    return this.isCommercial() ? 15 : 0;
+  }
+
+  getTaxAmount(): number {
+    const total = Number(this.deal?.total_price) || 0;
+    return (total * this.getTaxRate()) / 100;
+  }
+
+  getCommissionRate(): number {
+    return 2.5;
+  }
+
+  getCommissionAmount(): number {
+    const total = Number(this.deal?.total_price) || 0;
+    return total * 0.025;
+  }
+
+  getSellerNetAmount(): number {
+    const total = Number(this.deal?.total_price) || 0;
+    return Math.max(0, total - this.getTaxAmount() - this.getCommissionAmount());
+  }
+
+  isOrderCommercial(order: any): boolean {
+    const type = order?.deal?.seller_type || this.deal?.seller_type;
+    return type === 'business';
+  }
+
+  getOrderTaxRate(order: any): number {
+    return this.isOrderCommercial(order) ? 15 : 0;
+  }
+
+  getOrderTaxAmount(order: any): number {
+    const price = Number(order?.total_price) || 0;
+    return (price * this.getOrderTaxRate(order)) / 100;
+  }
+
+  getOrderCommissionAmount(order: any): number {
+    const price = Number(order?.total_price) || 0;
+    return price * 0.025;
+  }
+
+  getOrderSellerNetAmount(order: any): number {
+    const price = Number(order?.total_price) || 0;
+    return Math.max(0, price - this.getOrderTaxAmount(order) - this.getOrderCommissionAmount(order));
+  }
+
   @HostListener('window:keydown.escape')
   onEscapePress(): void {
     if (this.showImageModal) {

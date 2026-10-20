@@ -1611,7 +1611,27 @@ body[dir="ltr"] .search-box input {
   padding-right: 16px !important;
 }
 
+/* =========================================================
+   GLOBAL PRINT RULES (Suppress Sidebar & Dashboard Chrome)
+   ========================================================= */
+@media print {
+  app-sidebar,
+  app-navbar,
+  .sidebar-wrapper,
+  .navbar-wrapper,
+  .header-actions,
+  .btn-action-pdf,
+  .btn-action-excel,
+  .total-badge,
+  .pagination-bar,
+  .controls-row {
+    display: none !important;
+  }
 
-
-
+  body, html {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
 

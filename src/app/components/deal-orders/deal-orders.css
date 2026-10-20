@@ -1074,3 +1074,468 @@
   border: none;
   border-radius: 0 0 20px 20px;
 }
+
+/* =========================================================
+   ACTION BUTTONS (PDF & EXCEL)
+   ========================================================= */
+.btn-action-pdf,
+.btn-action-excel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-action-pdf {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+}
+
+.btn-action-pdf:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.4);
+}
+
+.btn-action-excel {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+}
+
+.btn-action-excel:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+/* =========================================================
+   MONTH FILTER NAVIGATION BAR
+   ========================================================= */
+.month-filter-container {
+  background: #ffffff;
+  border: 1px solid #eef0f7;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.month-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.m-filter-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-filter-title i {
+  color: #7a3ca0;
+}
+
+.year-filter-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.year-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.year-dropdown {
+  background: transparent;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #7a3ca0;
+  cursor: pointer;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.year-dropdown:focus {
+  outline: none;
+}
+
+.m-current-badge {
+  background: rgba(122, 60, 160, 0.1);
+  color: #7a3ca0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.month-pills-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.month-pills-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.month-pills-bar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.month-pill-btn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.month-pill-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.month-pill-btn.active {
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80);
+  color: #ffffff;
+  border-color: #7a3ca0;
+  box-shadow: 0 2px 8px rgba(122, 60, 160, 0.35);
+}
+
+/* =========================================================
+   MONTHLY FINANCIAL SUMMARY CARDS
+   ========================================================= */
+.monthly-stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 1200px) {
+  .monthly-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .monthly-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .monthly-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ms-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid #eef0f7;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+}
+
+.ms-card:hover {
+  transform: translateY(-2px);
+}
+
+.ms-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.ms-card-orders .ms-icon { background: #f3e8ff; color: #7a3ca0; }
+.ms-card-sales .ms-icon { background: #e0f2fe; color: #0284c7; }
+.ms-card-tax .ms-icon { background: #fef9c3; color: #ca8a04; }
+.ms-card-commission .ms-icon { background: #fae8ff; color: #a21caf; }
+.ms-card-net .ms-icon { background: #dcfce7; color: #16a34a; }
+
+.ms-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ms-label {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  white-space: nowrap;
+}
+
+.ms-val small {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: normal;
+}
+
+.val-green {
+  color: #15803d !important;
+}
+
+/* =========================================================
+   TABLE FINANCIAL DETAILS & TAGS
+   ========================================================= */
+.seller-type-mini-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 8px;
+}
+
+.badge-biz {
+  background: rgba(122, 60, 160, 0.12);
+  color: #7a3ca0;
+  border: 1px solid rgba(122, 60, 160, 0.25);
+}
+
+.badge-pers {
+  background: rgba(22, 163, 74, 0.12);
+  color: #16a34a;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.order-breakdown-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.ob-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ob-haya {
+  color: #7a3ca0;
+}
+
+.ob-tax {
+  color: #b45309;
+}
+
+.ob-exempt {
+  color: #16a34a;
+  opacity: 0.9;
+}
+
+.ob-net {
+  color: #15803d;
+  font-weight: 700;
+}
+
+/* =========================================================
+   PRINT / PDF STYLES
+   ========================================================= */
+.print-sales-report {
+  display: none;
+}
+
+@media print {
+  /* Hide UI components not wanted in PDF / print */
+  .page-header,
+  .month-filter-container,
+  .monthly-stats-row,
+  .controls-row,
+  .table-card,
+  .pagination-bar,
+  .image-preview-overlay,
+  app-sidebar,
+  app-navbar,
+  nav,
+  aside {
+    display: none !important;
+  }
+
+  body, html, .page-wrapper {
+    background: #ffffff !important;
+    color: #111111 !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    direction: rtl !important;
+  }
+
+  .print-sales-report {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .print-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #7a3ca0;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+  }
+
+  .print-brand-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #7a3ca0;
+    margin: 0;
+  }
+
+  .print-brand-sub {
+    font-size: 0.9rem;
+    color: #555555;
+    margin: 4px 0 0;
+  }
+
+  .print-meta-box {
+    text-align: left;
+    font-size: 0.85rem;
+    color: #333333;
+    line-height: 1.6;
+  }
+
+  .print-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .print-sum-box {
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: center;
+    background: #fdfdfd;
+  }
+
+  .print-sum-box span {
+    display: block;
+    font-size: 0.75rem;
+    color: #555555;
+    margin-bottom: 4px;
+  }
+
+  .print-sum-box strong {
+    font-size: 1rem;
+    color: #111111;
+  }
+
+  .print-sum-highlight {
+    background: #e8f5e9 !important;
+    border-color: #4caf50 !important;
+  }
+
+  .print-sum-highlight strong {
+    color: #2e7d32 !important;
+  }
+
+  .print-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+
+  .print-orders-table th,
+  .print-orders-table td {
+    border: 1px solid #dddddd;
+    padding: 6px 8px;
+    text-align: right;
+  }
+
+  .print-orders-table th {
+    background-color: #f3f0f7;
+    color: #333333;
+    font-weight: 700;
+  }
+
+  .print-orders-table tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  .print-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #888888;
+    border-top: 1px solid #eeeeee;
+    padding-top: 10px;
+  }
+}
+
+:host-context(body.dark-mode) .month-filter-container,
+:host-context(body.dark-mode) .ms-card {
+  background: #1c2128 !important;
+  border-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .m-filter-title,
+:host-context(body.dark-mode) .ms-val {
+  color: #f0f6fc !important;
+}
+
+:host-context(body.dark-mode) .month-pill-btn {
+  background: #22272e !important;
+  border-color: #373e47 !important;
+  color: #adbac7 !important;
+}
+
+:host-context(body.dark-mode) .month-pill-btn.active {
+  background: linear-gradient(135deg, #7a3ca0, #5b2d80) !important;
+  color: #ffffff !important;
+}

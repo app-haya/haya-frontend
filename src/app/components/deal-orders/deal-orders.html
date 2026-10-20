@@ -8,12 +8,111 @@
       </div>
       <div>
         <h4 class="page-title">{{ 'Deal Orders' | translate }}</h4>
-        <p class="page-subtitle">{{ 'Total Deal Orders' | translate }}</p>
+        <p class="page-subtitle">{{ 'مبيعات وطلبات الشراء والعمولات الشهرية' }}</p>
       </div>
     </div>
     <div class="header-actions">
+      <!-- PDF Button -->
+      <button type="button" class="btn-action-pdf" (click)="printOrDownloadPdf()" [title]="'تحميل وطباعة تقرير المبيعات PDF'">
+        <i class="bi bi-file-earmark-pdf-fill"></i>
+        <span>{{ 'تحميل / طباعة PDF' }}</span>
+      </button>
+
+      <!-- Excel Button -->
+      <button type="button" class="btn-action-excel" (click)="exportToExcel()" [title]="'تصدير الطلبات إلى ملف إكسل'">
+        <i class="bi bi-file-earmark-excel-fill"></i>
+        <span>{{ 'تصدير إكسل Excel' }}</span>
+      </button>
+
       <div class="total-badge" *ngIf="!loading">
-        <span>{{ total }} {{ 'entries' | translate }}</span>
+        <span>{{ displayedOrders.length }} {{ 'entries' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MONTH & YEAR FILTER NAVIGATION ── -->
+  <div class="month-filter-container">
+    <div class="month-filter-header">
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <span class="m-filter-title">
+          <i class="bi bi-calendar3"></i>
+          {{ 'تصفية المبيعات حسب الشهر والسنة:' }}
+        </span>
+
+        <!-- Year Selector Dropdown -->
+        <div class="year-filter-wrap">
+          <label class="year-label" for="yearSelect">
+            <i class="bi bi-calendar-event"></i>
+            {{ 'السنة:' }}
+          </label>
+          <select
+            id="yearSelect"
+            class="year-dropdown"
+            [(ngModel)]="selectedYear"
+            (change)="onYearChange()"
+          >
+            <option *ngFor="let y of yearsList" [value]="y">{{ y }}</option>
+          </select>
+        </div>
+      </div>
+
+      <span class="m-current-badge">
+        <i class="bi bi-funnel-fill"></i>
+        {{ getSelectedMonthLabel() }} ({{ selectedYear }})
+      </span>
+    </div>
+    <div class="month-pills-bar">
+      <button
+        type="button"
+        class="month-pill-btn"
+        *ngFor="let m of monthsList"
+        [class.active]="selectedMonth === m.value"
+        (click)="selectMonth(m.value)"
+      >
+        {{ m.labelAr }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY FINANCIAL SUMMARY CARDS ── -->
+  <div class="monthly-stats-row" *ngIf="!loading">
+    <div class="ms-card ms-card-orders">
+      <div class="ms-icon"><i class="bi bi-bag-check-fill"></i></div>
+      <div class="ms-body">
+        <span class="ms-label">{{ 'عدد طلبات ' + getSelectedMonthLabel() }}</span>
+        <span class="ms-val">{{ displayedOrders.length }} <small>{{ 'طلب' }}</small></span>
+      </div>
+    </div>
+
+    <div class="ms-card ms-card-sales">
+      <div class="ms-icon"><i class="bi bi-cash-stack"></i></div>
+      <div class="ms-body">
+        <span class="ms-label">{{ 'إجمالي المبيعات' }}</span>
+        <span class="ms-val">{{ getTotalSales() | number:'1.2-2' }} <small>SAR</small></span>
+      </div>
+    </div>
+
+    <div class="ms-card ms-card-tax">
+      <div class="ms-icon"><i class="bi bi-percent"></i></div>
+      <div class="ms-body">
+        <span class="ms-label">{{ 'إجمالي الضريبة (15%)' }}</span>
+        <span class="ms-val">{{ getTotalTax() | number:'1.2-2' }} <small>SAR</small></span>
+      </div>
+    </div>
+
+    <div class="ms-card ms-card-commission">
+      <div class="ms-icon"><i class="bi bi-award-fill"></i></div>
+      <div class="ms-body">
+        <span class="ms-label">{{ 'عمولة تطبيق هيا (2.5%)' }}</span>
+        <span class="ms-val">{{ getTotalHayaCommission() | number:'1.2-2' }} <small>SAR</small></span>
+      </div>
+    </div>
+
+    <div class="ms-card ms-card-net">
+      <div class="ms-icon"><i class="bi bi-wallet2"></i></div>
+      <div class="ms-body">
+        <span class="ms-label">{{ 'صافي مستحقات البائعين' }}</span>
+        <span class="ms-val val-green">{{ getTotalSellerNet() | number:'1.2-2' }} <small>SAR</small></span>
       </div>
     </div>
   </div>
@@ -67,7 +166,7 @@
             <th>{{ 'Buyer' | translate }}</th>
             <th>{{ 'Seller' | translate }}</th>
             <th>{{ 'Deal Title' | translate }}</th>
-            <th>{{ 'Price' | translate }} ({{ 'SAR' | translate }})</th>
+            <th>{{ 'السعر وتوزيع المبالغ' }} ({{ 'SAR' | translate }})</th>
             <th>{{ 'Payment Status' | translate }}</th>
             <th>{{ 'Order Status' | translate }}</th>
             <th>{{ 'Invoice' | translate }}</th>
@@ -75,40 +174,72 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of orders" class="table-row">
+          <tr *ngFor="let order of displayedOrders" class="table-row">
+            <!-- Buyer -->
             <td>
               <div class="title-cell">
                 <span class="deal-title-text" style="max-width: 150px;" [title]="order.user?.name || ''">{{ order.user?.name || '—' }}</span>
                 <span class="deal-id-tag">{{ order.user?.phone || '—' }}</span>
               </div>
             </td>
+
+            <!-- Seller -->
             <td>
               <div class="title-cell">
-                <span class="deal-title-text" style="max-width: 150px;" [title]="order.deal?.user?.name || ''">{{ order.deal?.user?.name || '—' }}</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="deal-title-text" style="max-width: 130px;" [title]="order.deal?.user?.name || ''">{{ order.deal?.user?.name || '—' }}</span>
+                  <span class="seller-type-mini-badge" [class.badge-biz]="isCommercial(order)" [class.badge-pers]="!isCommercial(order)">
+                    {{ isCommercial(order) ? 'تجاري' : 'شخصي' }}
+                  </span>
+                </div>
                 <span class="deal-id-tag">{{ order.deal?.user?.phone || '—' }}</span>
               </div>
             </td>
+
+            <!-- Deal Title -->
             <td>
               <div style="display: flex; flex-direction: column; gap: 2px;">
                 <a [routerLink]="['/admin/deal-details', order.deal_id]" [state]="{ deal: order.deal }" class="view-link-btn text-purple-link" [title]="'Click to view deal details' | translate" style="font-weight: 600;">
                   {{ order.deal?.title || '—' }}
                   <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; opacity: 0.85;"></i>
                 </a>
-                <span *ngIf="order.deal?.description" style="font-size: 0.78rem; color: #6b7280; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" [title]="order.deal?.description">
+                <span *ngIf="order.deal?.description" style="font-size: 0.78rem; color: #6b7280; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" [title]="order.deal?.description">
                   {{ order.deal?.description }}
                 </span>
               </div>
             </td>
+
+            <!-- Price & Financial Breakdown -->
             <td>
-              <div class="amount-cell">
-                <span class="amount-value">{{ order.total_price | number:'1.0-2' }}</span>
+              <div class="amount-cell" style="display: flex; flex-direction: column; gap: 2px; align-items: flex-start;">
+                <span class="amount-value" style="font-weight: 800; font-size: 0.95rem;">
+                  {{ order.total_price | number:'1.2-2' }} <small style="font-size: 0.75rem;">SAR</small>
+                </span>
+                <div class="order-breakdown-tags">
+                  <span class="ob-tag ob-haya" [title]="'عمولة تطبيق هيا 2.5%'">
+                    هيا (2.5%): {{ getOrderCommissionAmount(order) | number:'1.2-2' }}
+                  </span>
+                  <span class="ob-tag ob-tax" *ngIf="isCommercial(order)" [title]="'ضريبة القيمة المضافة 15%'">
+                    ضريبة (15%): {{ getOrderTaxAmount(order) | number:'1.2-2' }}
+                  </span>
+                  <span class="ob-tag ob-exempt" *ngIf="!isCommercial(order)" [title]="'حساب شخصي معفى من الضريبة'">
+                    ضريبة: معفى (0%)
+                  </span>
+                  <span class="ob-tag ob-net" [title]="'صافي مستحقات البائع'">
+                    صافي البائع: {{ getOrderSellerNetAmount(order) | number:'1.2-2' }}
+                  </span>
+                </div>
               </div>
             </td>
+
+            <!-- Payment Status -->
             <td>
               <span class="status-badge" [ngClass]="order.payment_status === 'paid' ? 'badge-approved' : 'badge-rejected'">
                 {{ (order.payment_status === 'paid' ? 'Paid' : 'Unpaid') | translate }}
               </span>
             </td>
+
+            <!-- Order Status -->
             <td>
               <span class="status-badge" [ngClass]="
                 order.status === 'pending'
@@ -122,23 +253,27 @@
                 {{ (order.status === 'pending' ? 'Pending' : order.status === 'in delivery' ? 'Out for Delivery' : order.status === 'received' ? 'Delivered' : 'Cancelled') | translate }}
               </span>
             </td>
+
+            <!-- Invoice -->
             <td>
               <a *ngIf="order.invoice_url" href="javascript:void(0)" (click)="openInvoiceModal(order.invoice_url)" class="view-link-btn text-purple-link">
                 <i class="bi bi-file-earmark-pdf"></i> {{ 'View' | translate }}
               </a>
               <span *ngIf="!order.invoice_url" class="text-muted">—</span>
             </td>
+
+            <!-- Created At -->
             <td>
               <span class="geo-id">{{ order.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
             </td>
           </tr>
 
           <!-- Empty State for Orders -->
-          <tr *ngIf="orders.length === 0">
+          <tr *ngIf="displayedOrders.length === 0">
             <td colspan="8" class="empty-state">
               <div class="empty-content">
                 <i class="bi bi-inbox"></i>
-                <p>{{ 'No matching orders found' | translate }}</p>
+                <p>{{ 'لا توجد طلبات شراء مسجلة في هذا الشهر' }}</p>
               </div>
             </td>
           </tr>
@@ -147,7 +282,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-bar" *ngIf="lastPage > 1">
+    <div class="pagination-bar" *ngIf="lastPage > 1 && selectedMonth === 0">
       <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -160,6 +295,83 @@
       <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
         <i class="bi bi-chevron-left"></i>
       </button>
+    </div>
+  </div>
+
+  <!-- ── PRINTABLE SALES REPORT (VISIBLE ONLY IN PRINT / PDF PREVIEW) ── -->
+  <div class="print-sales-report" id="print-sales-report">
+    <div class="print-report-header">
+      <div class="print-brand-box">
+        <h1 class="print-brand-title">تطبيق هيا | Haya App</h1>
+        <p class="print-brand-sub">تقرير مبيعات وطلبات الشراء والعمولات والضرائب</p>
+      </div>
+      <div class="print-meta-box">
+        <div><strong>الشهر المحدد:</strong> {{ getSelectedMonthLabel() }} ({{ selectedYear }})</div>
+        <div><strong>تاريخ الطباعة:</strong> {{ 'today' | date:'yyyy-MM-dd HH:mm' }}</div>
+      </div>
+    </div>
+
+    <div class="print-summary-grid">
+      <div class="print-sum-box">
+        <span>عدد الطلبات</span>
+        <strong>{{ displayedOrders.length }} طلب</strong>
+      </div>
+      <div class="print-sum-box">
+        <span>إجمالي المبيعات</span>
+        <strong>{{ getTotalSales() | number:'1.2-2' }} SAR</strong>
+      </div>
+      <div class="print-sum-box">
+        <span>إجمالي الضريبة (15%)</span>
+        <strong>{{ getTotalTax() | number:'1.2-2' }} SAR</strong>
+      </div>
+      <div class="print-sum-box">
+        <span>عمولة تطبيق هيا (2.5%)</span>
+        <strong>{{ getTotalHayaCommission() | number:'1.2-2' }} SAR</strong>
+      </div>
+      <div class="print-sum-box print-sum-highlight">
+        <span>صافي مستحقات البائعين</span>
+        <strong>{{ getTotalSellerNet() | number:'1.2-2' }} SAR</strong>
+      </div>
+    </div>
+
+    <table class="print-orders-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>عنوان الصفقة</th>
+          <th>البائع (نوع الحساب)</th>
+          <th>المشتري</th>
+          <th>السعر الإجمالي</th>
+          <th>عمولة هيا (2.5%)</th>
+          <th>الضريبة</th>
+          <th>صافي البائع</th>
+          <th>حالة الدفع</th>
+          <th>حالة الطلب</th>
+          <th>تاريخ الطلب</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of displayedOrders; let idx = index">
+          <td>{{ idx + 1 }}</td>
+          <td>{{ o.deal?.title || '—' }}</td>
+          <td>{{ o.deal?.user?.name || '—' }} ({{ isCommercial(o) ? 'تجاري' : 'شخصي' }})</td>
+          <td>{{ o.user?.name || '—' }}</td>
+          <td><strong>{{ o.total_price | number:'1.2-2' }}</strong></td>
+          <td>{{ getOrderCommissionAmount(o) | number:'1.2-2' }}</td>
+          <td>
+            <span *ngIf="isCommercial(o)">{{ getOrderTaxAmount(o) | number:'1.2-2' }} (15%)</span>
+            <span *ngIf="!isCommercial(o)">0.00 (معفى)</span>
+          </td>
+          <td><strong>{{ getOrderSellerNetAmount(o) | number:'1.2-2' }}</strong></td>
+          <td>{{ o.payment_status === 'paid' ? 'مدفوع' : 'غير مدفوع' }}</td>
+          <td>{{ o.status }}</td>
+          <td>{{ o.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="print-footer">
+      <span>تطبيق هيا — جميع الحقوق محفوظة © {{ selectedYear }}</span>
     </div>
   </div>
 

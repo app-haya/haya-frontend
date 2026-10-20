@@ -142,9 +142,18 @@
               <span *ngIf="!deal.invoice" class="text-muted">—</span>
             </td>
 
-            <!-- Tax Value -->
+            <!-- Tax Value & Financial Details -->
             <td>
-              <span class="tax-value">{{ deal.tax_value !== null ? deal.tax_value + '%' : '—' }}</span>
+              <div style="display: flex; flex-direction: column; gap: 3px;">
+                <span class="tax-value" [style.color]="isCommercial(deal) ? '#ca8a04' : '#16a34a'" style="font-weight: 700;">
+                  {{ getTaxRate(deal) }}%
+                  <span *ngIf="isCommercial(deal)" style="font-size: 0.72rem; font-weight: normal; opacity: 0.9;">({{ getTaxAmount(deal) | number:'1.0-2' }} SAR)</span>
+                  <span *ngIf="!isCommercial(deal)" style="font-size: 0.72rem; font-weight: normal; color: #16a34a;">(معفى)</span>
+                </span>
+                <span style="font-size: 0.72rem; color: #6b7280;">
+                  هيا (2.5%): {{ getCommissionAmount(deal) | number:'1.0-2' }} | صافي: {{ getSellerNetAmount(deal) | number:'1.0-2' }}
+                </span>
+              </div>
             </td>
 
             <!-- Country Name -->

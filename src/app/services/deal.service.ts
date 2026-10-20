@@ -78,14 +78,20 @@ export class DealService {
       { headers },
     );
   }
-  getAllDealOrders(page: number = 1, status: string = '', search: string = ''): Observable<any> {
+  getAllDealOrders(page: number = 1, status: string = '', search: string = '', month?: number | string, year?: number | string, perPage: number = 20): Observable<any> {
     const headers = this.getHeaders();
-    let url = `${this.apiUrl}admin/deals/orders?page=${page}`;
+    let url = `${this.apiUrl}admin/deals/orders?page=${page}&per_page=${perPage}`;
     if (status) {
       url += `&status=${encodeURIComponent(status)}`;
     }
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (month && Number(month) > 0) {
+      url += `&month=${encodeURIComponent(month)}`;
+    }
+    if (year) {
+      url += `&year=${encodeURIComponent(year)}`;
     }
     return this.http.get(url, { headers });
   }

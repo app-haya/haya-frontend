@@ -91,7 +91,10 @@
         <div class="stat-icon"><i class="bi bi-percent"></i></div>
         <div class="stat-body">
           <span class="stat-label">{{ 'Tax Value' | translate }}</span>
-          <span class="stat-value">{{ deal.tax_value || '0' }}%</span>
+          <span class="stat-value">
+            <span *ngIf="isCommercial()">15% <small style="font-size: 0.72rem; color: #ca8a04;">({{ getTaxAmount() | number:'1.0-2' }} SAR)</small></span>
+            <span *ngIf="!isCommercial()" style="color: #16a34a; font-size: 0.95rem;">0% ({{ 'Exempt' | translate }})</span>
+          </span>
         </div>
       </div>
       <div class="dd-stat-card dd-stat-cond">
@@ -99,6 +102,70 @@
         <div class="stat-body">
           <span class="stat-label">{{ 'Condition' | translate }}</span>
           <span class="stat-value">{{ (deal.is_new === 1 ? 'New' : 'Used') | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FINANCIAL PROFIT BREAKDOWN CARD ── -->
+    <div class="dd-card dd-financial-card">
+      <div class="dd-card-head" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="card-head-icon financial-icon"><i class="bi bi-cash-coin"></i></span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;">تفاصيل الحسبة المالية وتوزيع الأرباح</h3>
+            <span style="font-size: 0.8rem; color: #6b7280;">
+              {{ isCommercial() ? 'حساب تجاري: تخضع لضريبة القيمة المضافة 15% وعمولة تطبيق هيا 2.5%' : 'حساب شخصي (أفراد): معفى من الضريبة، وتخضع لعمولة تطبيق هيا 2.5% فقط' }}
+            </span>
+          </div>
+        </div>
+        <div class="account-type-pill" [ngClass]="isCommercial() ? 'pill-commercial' : 'pill-personal'">
+          <i class="bi" [ngClass]="isCommercial() ? 'bi-shop' : 'bi-person-check-fill'"></i>
+          <span>{{ (isCommercial() ? 'Commercial Account' : 'Personal Account') | translate }}</span>
+        </div>
+      </div>
+      <div class="dd-card-body">
+        <div class="financial-grid">
+          <!-- Total Price -->
+          <div class="f-box f-box-total">
+            <div class="f-box-head">
+              <span class="f-box-label">إجمالي سعر الصفقة</span>
+              <span class="f-box-icon"><i class="bi bi-wallet2"></i></span>
+            </div>
+            <div class="f-box-amount">{{ deal.total_price | number:'1.2-2' }} <small>SAR</small></div>
+            <div class="f-box-note">المبلغ المعروض في التطبيق</div>
+          </div>
+
+          <!-- Tax -->
+          <div class="f-box f-box-tax" [class.f-box-exempt]="!isCommercial()">
+            <div class="f-box-head">
+              <span class="f-box-label">ضريبة القيمة المضافة (VAT)</span>
+              <span class="f-rate-tag" [class.rate-tax]="isCommercial()" [class.rate-zero]="!isCommercial()">{{ getTaxRate() }}%</span>
+            </div>
+            <div class="f-box-amount">{{ getTaxAmount() | number:'1.2-2' }} <small>SAR</small></div>
+            <div class="f-box-note" *ngIf="isCommercial()">15% تُحوّل لحساب الضريبة</div>
+            <div class="f-box-note" *ngIf="!isCommercial()" style="color: #16a34a; font-weight: 600;">معفى — حساب شخصي للأفراد (0%)</div>
+          </div>
+
+          <!-- Haya Fee -->
+          <div class="f-box f-box-haya">
+            <div class="f-box-head">
+              <span class="f-box-label">عمولة تطبيق هيا</span>
+              <span class="f-rate-tag rate-haya">2.5%</span>
+            </div>
+            <div class="f-box-amount">{{ getCommissionAmount() | number:'1.2-2' }} <small>SAR</small></div>
+            <div class="f-box-note">2.5% نسبة تطبيق هيا من المبلغ</div>
+          </div>
+
+          <!-- Net to Seller -->
+          <div class="f-box f-box-seller">
+            <div class="f-box-head">
+              <span class="f-box-label">صافي مستحقات البائع</span>
+              <span class="f-rate-tag rate-seller">{{ isCommercial() ? '82.5%' : '97.5%' }}</span>
+            </div>
+            <div class="f-box-amount net-seller-amount">{{ getSellerNetAmount() | number:'1.2-2' }} <small>SAR</small></div>
+            <div class="f-box-note" *ngIf="isCommercial()">المبلغ المحول للتاجر بعد خصم الضريبة والعمولة</div>
+            <div class="f-box-note" *ngIf="!isCommercial()">المبلغ المحول للبائع بعد خصم عمولة هيا 2.5%</div>
+          </div>
         </div>
       </div>
     </div>
@@ -433,7 +500,15 @@
                   </td>
                   <td><span class="p-qty">{{ order.quantity }}</span></td>
                   <td>
-                    <span class="p-price">{{ order.total_price | number }} <em>SAR</em></span>
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                      <span class="p-price">{{ order.total_price | number:'1.0-2' }} <em>SAR</em></span>
+                      <span style="font-size: 0.72rem; color: #7a3ca0; font-weight: 600;">
+                        هيا (2.5%): {{ getOrderCommissionAmount(order) | number:'1.0-2' }}
+                      </span>
+                      <span style="font-size: 0.72rem; color: #16a34a; font-weight: 600;">
+                        صافي البائع: {{ getOrderSellerNetAmount(order) | number:'1.0-2' }}
+                      </span>
+                    </div>
                   </td>
                   <td>
                     <span class="p-pay-badge" [ngClass]="{
