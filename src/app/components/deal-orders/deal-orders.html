@@ -12,6 +12,23 @@
       </div>
     </div>
     <div class="header-actions">
+      <!-- Period Gregorian Date Badge -->
+      <div class="period-date-badge" *ngIf="!loading" [title]="'التاريخ الميلادي للفترة المحددة'">
+        <div class="period-date-icon">
+          <i class="bi bi-calendar3"></i>
+        </div>
+        <div class="period-date-info">
+          <span class="period-date-label">{{ 'التاريخ الميلادي للفترة:' }}</span>
+          <div class="period-date-range">
+            <span class="date-prefix">من</span>
+            <bdi class="date-val">{{ getGregorianStartDate() }}</bdi>
+            <span class="date-prefix">إلى</span>
+            <bdi class="date-val">{{ getGregorianEndDate() }}</bdi>
+            <span class="gregorian-mark">م</span>
+          </div>
+        </div>
+      </div>
+
       <!-- PDF Button -->
       <button type="button" class="btn-action-pdf" (click)="printOrDownloadPdf()" [title]="'تحميل وطباعة تقرير المبيعات PDF'">
         <i class="bi bi-file-earmark-pdf-fill"></i>
@@ -59,6 +76,7 @@
       <span class="m-current-badge">
         <i class="bi bi-funnel-fill"></i>
         {{ getSelectedMonthLabel() }} ({{ selectedYear }})
+        <span class="m-gregorian-inline">({{ getGregorianStartDate() }} — {{ getGregorianEndDate() }} م)</span>
         <ng-container *ngIf="getSelectedSeller()"> • {{ getSelectedSeller()?.name }}</ng-container>
       </span>
     </div>
@@ -326,6 +344,7 @@
       </div>
       <div class="print-meta-box">
         <div><strong>الشهر المحدد:</strong> {{ getSelectedMonthLabel() }} ({{ selectedYear }})</div>
+        <div><strong>التاريخ الميلادي للفترة:</strong> {{ getGregorianPeriodFormatted() }}</div>
         <div><strong>تاريخ الطباعة:</strong> {{ 'today' | date:'yyyy-MM-dd HH:mm' }}</div>
       </div>
     </div>

@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node init && ng serve",
     "start:sa": "ng serve --configuration sa-production",
     "start:online": "ng serve --configuration production",
-    "build": "ng build --configuration sa-production",
+    "build": "node init && ng build --configuration sa-production",
     "build:dev": "ng build --configuration dev",
     "build:prod": "ng build --configuration sa-production",
     "build:sa": "ng build --configuration sa-production",

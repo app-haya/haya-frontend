@@ -227,6 +227,35 @@ export class DealOrders implements OnInit {
     return found ? found.labelAr : 'جميع الأشهر';
   }
 
+  getGregorianStartDate(): string {
+    const year = Number(this.selectedYear) || new Date().getFullYear();
+    if (!this.selectedMonth || this.selectedMonth === 0) {
+      return `${year}/01/01`;
+    }
+    const m = Number(this.selectedMonth);
+    const mStr = String(m).padStart(2, '0');
+    return `${year}/${mStr}/01`;
+  }
+
+  getGregorianEndDate(): string {
+    const year = Number(this.selectedYear) || new Date().getFullYear();
+    if (!this.selectedMonth || this.selectedMonth === 0) {
+      return `${year}/12/31`;
+    }
+    const m = Number(this.selectedMonth);
+    const mStr = String(m).padStart(2, '0');
+    const lastDay = new Date(year, m, 0).getDate();
+    const lastDayStr = String(lastDay).padStart(2, '0');
+    return `${year}/${mStr}/${lastDayStr}`;
+  }
+
+  getGregorianPeriodFormatted(): string {
+    const isEn = this.translate?.currentLang === 'en';
+    const start = this.getGregorianStartDate();
+    const end = this.getGregorianEndDate();
+    return isEn ? `From ${start} to ${end}` : `من ${start} إلى ${end} م`;
+  }
+
   private async getLogoPngBase64(): Promise<string> {
     return new Promise((resolve) => {
       try {
@@ -300,7 +329,8 @@ export class DealOrders implements OnInit {
     ws.mergeCells('A2:Q2');
     const infoCell = ws.getCell('A2');
     const sellerTag = selectedSeller ? `التاجر: ${selectedSeller.name} (${selectedSeller.type === 'business' ? 'حساب تجاري' : 'حساب شخصي'})   |   ` : '';
-    infoCell.value = `${sellerTag}الفترة المحددة: ${monthLabel} (${year})   |   إجمالي عدد الطلبات: ${totalOrders} طلب   |   تاريخ الإصدار: ${new Date().toLocaleString('ar-SA')}   |   العملة: ريال سعودي (SAR)`;
+    const gregorianPeriod = this.getGregorianPeriodFormatted();
+    infoCell.value = `${sellerTag}الفترة المحددة: ${monthLabel} (${year}) [التاريخ الميلادي: ${gregorianPeriod}]   |   إجمالي عدد الطلبات: ${totalOrders} طلب   |   تاريخ الإصدار: ${new Date().toLocaleString('ar-SA')}   |   العملة: ريال سعودي (SAR)`;
     infoCell.font = { name: 'Arial', size: 10.5, bold: true, color: { argb: 'FF4A1D6D' } };
     infoCell.alignment = { vertical: 'middle', horizontal: 'center' };
     infoCell.fill = {
@@ -1099,6 +1129,10 @@ export class DealOrders implements OnInit {
               <div class="meta-row">
                 <span class="meta-lbl">الفترة المحددة:</span>
                 <span class="period-badge">${monthLabel} (${year})</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-lbl">التاريخ الميلادي للفترة:</span>
+                <span class="meta-val" style="font-weight: 700; color: #6d28d9;">${this.getGregorianPeriodFormatted()}</span>
               </div>
               <div class="meta-row">
                 <span class="meta-lbl">تاريخ الإصدار:</span>

@@ -58,6 +58,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .total-badge {
@@ -68,6 +69,92 @@
   font-size: 0.85rem;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(122, 60, 160, 0.3);
+}
+
+/* =========================================================
+   PERIOD GREGORIAN DATE BADGE
+   ========================================================= */
+.period-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.period-date-badge:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.period-date-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(122, 60, 160, 0.1);
+  color: #7a3ca0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.period-date-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.period-date-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: -0.2px;
+}
+
+.period-date-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.period-date-range .date-prefix {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.period-date-range .date-val {
+  font-family: inherit;
+  font-weight: 800;
+  color: #7a3ca0;
+  letter-spacing: 0.2px;
+}
+
+.period-date-range .gregorian-mark {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7a3ca0;
+  background: rgba(122, 60, 160, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-right: 2px;
+}
+
+.m-gregorian-inline {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #6d28d9;
+  margin-right: 6px;
+  letter-spacing: 0.2px;
 }
 
 .btn-add-deal {
@@ -714,6 +801,47 @@
   box-shadow: 0 2px 8px rgba(0, 207, 213, 0.3) !important;
 }
 
+:host-context(body.dark-mode) .period-date-badge {
+  background: rgba(17, 24, 39, 0.95) !important;
+  border-color: rgba(0, 207, 213, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 207, 213, 0.1) !important;
+}
+
+:host-context(body.dark-mode) .period-date-badge:hover {
+  border-color: #00cfd5 !important;
+  box-shadow: 0 4px 16px rgba(0, 207, 213, 0.25) !important;
+}
+
+:host-context(body.dark-mode) .period-date-icon {
+  background: rgba(0, 207, 213, 0.15) !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .period-date-label {
+  color: #94a3b8 !important;
+}
+
+:host-context(body.dark-mode) .period-date-range {
+  color: #f1f5f9 !important;
+}
+
+:host-context(body.dark-mode) .period-date-range .date-prefix {
+  color: #94a3b8 !important;
+}
+
+:host-context(body.dark-mode) .period-date-range .date-val {
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .period-date-range .gregorian-mark {
+  background: rgba(0, 207, 213, 0.2) !important;
+  color: #00cfd5 !important;
+}
+
+:host-context(body.dark-mode) .m-gregorian-inline {
+  color: #00cfd5 !important;
+}
+
 :host-context(body.dark-mode) .header-icon {
   background: linear-gradient(135deg, #00cfd5, #008f94) !important;
   color: #0b0e14 !important;
@@ -1187,10 +1315,14 @@
 .m-current-badge {
   background: rgba(122, 60, 160, 0.1);
   color: #7a3ca0;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .month-pills-bar {
