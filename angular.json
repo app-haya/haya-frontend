@@ -53,7 +53,11 @@
                   "maximumError": "200kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
               "outputHashing": "all",
               "fileReplacements": [
                 {
@@ -75,7 +79,11 @@
                   "maximumError": "200kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
               "outputHashing": "all",
               "fileReplacements": [
                 {
@@ -97,7 +105,11 @@
                   "maximumError": "200kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
               "outputHashing": "all"
             },
             "development": {
