@@ -36,6 +36,11 @@ export class CommentReportsService {
     return this.http.post(`${this.baseUrl}/${id}/hide`, body, { headers });
   }
 
+  markAsReviewed(id: number): Observable<any> {
+    const headers = this.getHeaders().set('Content-Type', 'application/json');
+    return this.http.post(`${this.baseUrl}/${id}/review`, {}, { headers });
+  }
+
   deleteComment(id: number, reason?: string): Observable<any> {
     const headers = this.getHeaders().set('Content-Type', 'application/json');
     const body: any = {};

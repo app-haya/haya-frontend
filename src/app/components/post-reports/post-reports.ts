@@ -136,6 +136,28 @@ export class PostReports implements OnInit {
     }
   }
 
+  // --- MARK AS REVIEWED ---
+  markAsReviewed(item: any): void {
+    if (!item) return;
+    const postId = item.post?.id || item.post_id || item.id;
+    this.actionLoadingId = postId;
+
+    this.postReportsService.markAsReviewed(postId).subscribe({
+      next: (res) => {
+        this.actionLoadingId = null;
+        this.showToast(this.translate.instant('Marked as reviewed successfully'), 'success');
+        this.loadReports(this.currentPage);
+      },
+      error: (err) => {
+        this.actionLoadingId = null;
+        console.error('Error marking report as reviewed:', err);
+        const errObj = err.error;
+        const msg = errObj?.message || this.translate.instant('Failed to mark as reviewed');
+        this.showToast(msg, 'danger');
+      }
+    });
+  }
+
   // --- HIDE POST MODAL ---
   openHideModal(item: any): void {
     this.selectedItem = item;

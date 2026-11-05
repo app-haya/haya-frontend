@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ total }} {{ (total === 1 ? 'Reported Comment' : 'Reported Comments') | translate }}</span>
+      <span>{{ total }}</span>
     </div>
   </div>
 
@@ -201,6 +201,17 @@
             <!-- Actions -->
             <td class="text-center">
               <div class="action-group">
+                <!-- Mark as Reviewed -->
+                <button
+                  *ngIf="activeTab === 'pending'"
+                  class="action-btn success-btn me-1"
+                  [disabled]="actionLoadingId === item.comment?.id"
+                  (click)="markAsReviewed(item)"
+                  [title]="'Mark as Reviewed' | translate"
+                >
+                  <i class="bi bi-check-circle"></i> {{ 'Mark as Reviewed' | translate }}
+                </button>
+
                 <!-- Details Button -->
                 <button
                   class="detail-btn me-1"

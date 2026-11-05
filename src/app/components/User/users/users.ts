@@ -36,17 +36,20 @@ export class Users implements OnInit {
     this.fetchUsers();
   }
 
+  private searchTimeout: any;
+
   fetchUsers(page: number = 1) {
     this.loading = true;
-    this.usersService.getAllUsers(page).subscribe({
+    this.currentPage = page;
+    this.usersService.getAllUsers(page, this.perPage, this.searchTerm).subscribe({
       next: (res: any) => {
         this.users = res.users?.data || [];
         this.filteredUsers = this.users;
         this.loading = false;
-        this.currentPage = res.users?.current_page || 1;
+        this.currentPage = res.users?.current_page || page;
         this.lastPage = res.users?.last_page || 1;
         this.total = res.users?.total || 0;
-        this.perPage = res.users?.per_page || 10;
+        this.perPage = res.users?.per_page || this.perPage;
         this.paginationLinks = res.users?.links || [];
       },
       error: (err) => {
@@ -58,12 +61,24 @@ export class Users implements OnInit {
   }
 
   search() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredUsers = this.users.filter(u =>
-      u.name?.toLowerCase().includes(term) ||
-      u.email?.toLowerCase().includes(term) ||
-      u.phone?.toLowerCase().includes(term)
-    );
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.currentPage = 1;
+      this.fetchUsers(1);
+    }, 350);
+  }
+
+  onPerPageChange() {
+    this.currentPage = 1;
+    this.fetchUsers(1);
+  }
+
+  clearSearch() {
+    if (this.searchTerm) {
+      this.searchTerm = '';
+      this.currentPage = 1;
+      this.fetchUsers(1);
+    }
   }
 
   deleteUser(id: number) {

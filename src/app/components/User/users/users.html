@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ searchTerm ? (filteredUsers.length + ' / ' + total) : total }} {{ (total === 1 ? 'User' : 'Users') | translate }}</span>
+      <span>{{ total }}</span>
     </div>
   </div>
 
@@ -26,7 +26,17 @@
         [placeholder]="'Search...' | translate"
         [(ngModel)]="searchTerm"
         (input)="search()"
+        (keyup.enter)="search()"
       />
+      <button
+        *ngIf="searchTerm"
+        type="button"
+        class="btn-clear-search"
+        (click)="clearSearch()"
+        [title]="'Clear' | translate"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
     <a [routerLink]="['/admin/adduser']" class="btn-add">
       <i class="bi bi-person-plus-fill"></i>
@@ -154,19 +164,41 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-bar" *ngIf="lastPage > 1">
-      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-      <button
-        class="page-btn"
-        *ngFor="let page of getPageNumbers()"
-        [class.active]="page === currentPage"
-        (click)="goToPage(page)"
-      >{{ page }}</button>
-      <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage">
-        <i class="bi bi-chevron-left"></i>
-      </button>
+    <div class="pagination-bar" *ngIf="!loading && total > 0">
+      <div class="pagination-controls-left">
+        <div class="per-page-wrapper">
+          <label for="perPageSelect" class="per-page-label">{{ 'Rows per page' | translate }}:</label>
+          <select
+            id="perPageSelect"
+            class="per-page-select"
+            [(ngModel)]="perPage"
+            (change)="onPerPageChange()"
+          >
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+            <option [ngValue]="100">100</option>
+          </select>
+        </div>
+        <div class="pagination-info">
+          {{ (currentPage - 1) * perPage + 1 }} - {{ Math.min(currentPage * perPage, total) }} {{ 'of' | translate }} {{ total }}
+        </div>
+      </div>
+
+      <div class="page-buttons" *ngIf="lastPage > 1">
+        <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1" [title]="'Previous' | translate">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          *ngFor="let page of getPageNumbers()"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+        >{{ page }}</button>
+        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === lastPage" [title]="'Next' | translate">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
     </div>
   </div>
 

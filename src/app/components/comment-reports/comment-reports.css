@@ -482,6 +482,17 @@
   box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
 }
 
+.success-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.success-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+}
+
 .detail-btn {
   display: inline-flex;
   align-items: center;

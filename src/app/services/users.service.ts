@@ -22,10 +22,19 @@ export class UsersService {
     });
   }
 
-  getAllUsers(page: number = 1, search: string = ''): Observable<any> {
-    let url = `${this.baseUrl}/all?page=${page}`;
-    if (search) {
-      url += `&search=${encodeURIComponent(search)}`;
+  getAllUsers(page: number = 1, perPageOrSearch: number | string = 10, search: string = ''): Observable<any> {
+    let perPage = 10;
+    let searchTerm = search;
+
+    if (typeof perPageOrSearch === 'string') {
+      searchTerm = perPageOrSearch;
+    } else if (typeof perPageOrSearch === 'number') {
+      perPage = perPageOrSearch;
+    }
+
+    let url = `${this.baseUrl}/all?page=${page}&per_page=${perPage}`;
+    if (searchTerm && searchTerm.trim()) {
+      url += `&search=${encodeURIComponent(searchTerm.trim())}`;
     }
     return this.http.get(url, { headers: this.getHeaders() });
   }

@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="total-badge" *ngIf="!loading">
-      <span>{{ total }} {{ (total === 1 ? 'Reported Post' : 'Reported Posts') | translate }}</span>
+      <span>{{ total }}</span>
     </div>
   </div>
 
@@ -175,14 +175,30 @@
 
             <!-- Status -->
             <td>
-              <span class="status-badge" [ngClass]="item.status || activeTab || 'pending'">
-                {{ (item.status || activeTab || 'pending') | translate }}
+              <span class="status-badge" [ngClass]="item.post?.is_deleted ? 'danger' : (item.post?.hidden_by_admin ? 'warning' : (item.status || activeTab || 'pending'))">
+                <ng-container *ngIf="item.post?.is_deleted">{{ 'Deleted' | translate }}</ng-container>
+                <ng-container *ngIf="!item.post?.is_deleted && item.post?.hidden_by_admin">{{ 'Hidden by Admin' | translate }}</ng-container>
+                <ng-container *ngIf="!item.post?.is_deleted && !item.post?.hidden_by_admin">
+                  {{ (item.status || activeTab || 'pending') | translate }}
+                </ng-container>
               </span>
             </td>
 
             <!-- Actions -->
             <td class="text-center">
               <div class="action-buttons">
+                <!-- Mark as Reviewed -->
+                <button
+                  *ngIf="activeTab === 'pending'"
+                  class="icon-btn success"
+                  [title]="'Mark as Reviewed' | translate"
+                  [disabled]="actionLoadingId === (item.post?.id || item.id)"
+                  (click)="markAsReviewed(item)"
+                >
+                  <i class="bi bi-check-circle"></i>
+                </button>
+
+                <!-- View Details -->
                 <button
                   class="icon-btn info"
                   [title]="'View Details' | translate"
@@ -190,16 +206,22 @@
                 >
                   <i class="bi bi-eye"></i>
                 </button>
+
+                <!-- Hide Post -->
                 <button
                   class="icon-btn warning"
                   [title]="'Hide Post' | translate"
+                  [disabled]="item.post?.is_deleted || item.post?.hidden_by_admin"
                   (click)="openHideModal(item)"
                 >
                   <i class="bi bi-eye-slash"></i>
                 </button>
+
+                <!-- Delete Post -->
                 <button
                   class="icon-btn danger"
                   [title]="'Delete Post' | translate"
+                  [disabled]="item.post?.is_deleted"
                   (click)="openDeleteModal(item)"
                 >
                   <i class="bi bi-trash"></i>
@@ -364,6 +386,14 @@
         </div>
       </div>
       <div class="modal-footer-custom">
+        <button
+          *ngIf="activeTab === 'pending'"
+          class="btn-action success me-2"
+          [disabled]="actionLoadingId === (selectedItem.post?.id || selectedItem.id)"
+          (click)="markAsReviewed(selectedItem); closeDetail()"
+        >
+          <i class="bi bi-check-circle me-1"></i> {{ 'Mark as Reviewed' | translate }}
+        </button>
         <button class="btn-cancel" (click)="closeDetail()">{{ 'Close' | translate }}</button>
       </div>
     </div>

@@ -138,6 +138,28 @@ export class CommentReports implements OnInit {
     }
   }
 
+  // --- MARK AS REVIEWED ---
+  markAsReviewed(item: any): void {
+    if (!item || !item.comment) return;
+    const commentId = item.comment.id;
+    this.actionLoadingId = commentId;
+
+    this.commentReportsService.markAsReviewed(commentId).subscribe({
+      next: (res) => {
+        this.actionLoadingId = null;
+        this.showToast(this.translate.instant('Marked as reviewed successfully'), 'success');
+        this.loadReports(this.currentPage);
+      },
+      error: (err) => {
+        this.actionLoadingId = null;
+        console.error('Error marking comment report as reviewed:', err);
+        const errObj = err.error;
+        const msg = errObj?.message || this.translate.instant('Failed to mark as reviewed');
+        this.showToast(msg, 'danger');
+      }
+    });
+  }
+
   // --- HIDE COMMENT MODAL ---
   openHideModal(item: any): void {
     this.selectedItem = item;
