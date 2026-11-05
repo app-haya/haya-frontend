@@ -204,31 +204,31 @@
                 <!-- Mark as Reviewed -->
                 <button
                   *ngIf="activeTab === 'pending'"
-                  class="action-btn success-btn me-1"
+                  class="action-btn success-btn"
                   [disabled]="actionLoadingId === item.comment?.id"
                   (click)="markAsReviewed(item)"
                   [title]="'Mark as Reviewed' | translate"
                 >
-                  <i class="bi bi-check-circle"></i> {{ 'Mark as Reviewed' | translate }}
+                  <i class="bi bi-check-circle"></i>
                 </button>
 
                 <!-- Details Button -->
                 <button
-                  class="detail-btn me-1"
+                  class="detail-btn"
                   (click)="openDetail(item)"
                   [title]="'View Details' | translate"
                 >
-                  <i class="bi bi-eye"></i> {{ 'View' | translate }}
+                  <i class="bi bi-eye"></i>
                 </button>
 
                 <!-- Hide Button -->
                 <button
-                  class="action-btn hide-btn me-1"
+                  class="action-btn hide-btn"
                   (click)="openHideModal(item)"
                   [disabled]="item.comment?.hidden_by_admin || item.comment?.is_deleted"
                   [title]="'Hide Comment' | translate"
                 >
-                  <i class="bi bi-eye-slash"></i> {{ 'Hide' | translate }}
+                  <i class="bi bi-eye-slash"></i>
                 </button>
 
                 <!-- Delete Button -->
@@ -238,7 +238,7 @@
                   [disabled]="item.comment?.is_deleted"
                   [title]="'Delete Comment' | translate"
                 >
-                  <i class="bi bi-trash3"></i> {{ 'Delete' | translate }}
+                  <i class="bi bi-trash3"></i>
                 </button>
               </div>
             </td>

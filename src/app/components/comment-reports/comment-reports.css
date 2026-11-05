@@ -444,20 +444,23 @@
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 11px;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   border: none;
   border-radius: 8px;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .action-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .hide-btn {
@@ -496,16 +499,19 @@
 .detail-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 11px;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   border: 1.5px solid #7a3ca0;
   border-radius: 8px;
   background: transparent;
   color: #7a3ca0;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .detail-btn:hover {
