@@ -973,5 +973,14 @@
     "Failed to update profile": "Failed to update profile",
     "Failed to load profile data": "Failed to load profile data",
     "Mark all as read": "Mark all as read",
-    "No notifications for your assigned modules": "No notifications for your assigned modules"
+    "No notifications for your assigned modules": "No notifications for your assigned modules",
+    "Click to view full content": "Click to view full content",
+    "Full Post Content": "Full Post Content",
+    "Full Comment Content": "Full Comment Content",
+    "Original Post Context": "Original Post Context",
+    "Report Reasons": "Report Reasons",
+    "Report Reasons Details": "Report Reasons Details",
+    "Copy Text": "Copy Text",
+    "Copied": "Copied",
+    "View Full Details": "View Full Details"
 }

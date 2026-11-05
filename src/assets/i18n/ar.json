@@ -973,5 +973,14 @@
     "Failed to update profile": "فشل تحديث الملف الشخصي",
     "Failed to load profile data": "فشل تحميل بيانات الملف الشخصي",
     "Mark all as read": "تحديد الكل كمقروء",
-    "No notifications for your assigned modules": "لا توجد إشعارات حالياً للأقسام المخصصة لك"
+    "No notifications for your assigned modules": "لا توجد إشعارات حالياً للأقسام المخصصة لك",
+    "Click to view full content": "اضغط لعرض المحتوى كاملاً",
+    "Full Post Content": "نص المنشور بالكامل",
+    "Full Comment Content": "محتوى التعليق بالكامل",
+    "Original Post Context": "سياق المنشور الأصلي",
+    "Report Reasons": "أسباب البلاغات",
+    "Report Reasons Details": "تفاصيل أسباب البلاغات",
+    "Copy Text": "نسخ النص",
+    "Copied": "تم النسخ",
+    "View Full Details": "عرض كافة التفاصيل"
 }

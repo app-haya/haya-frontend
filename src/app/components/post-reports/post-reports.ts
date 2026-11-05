@@ -39,6 +39,11 @@ export class PostReports implements OnInit {
   showHideModal: boolean = false;
   showDeleteModal: boolean = false;
   showDetailModal: boolean = false;
+  showContentModal: boolean = false;
+  contentModalTitle: string = '';
+  contentModalIcon: string = 'bi-file-earmark-text';
+  contentModalType: 'post' | 'reason' = 'post';
+  copySuccess: boolean = false;
   selectedItem: any = null;
   actionReason: string = '';
   modalLoading: boolean = false;
@@ -228,6 +233,42 @@ export class PostReports implements OnInit {
         this.showToast(msg, 'danger');
       }
     });
+  }
+
+  // --- CONTENT PREVIEW MODAL ---
+  openContentModal(type: 'post' | 'reason', item: any): void {
+    this.selectedItem = item;
+    this.contentModalType = type;
+    this.copySuccess = false;
+    if (type === 'post') {
+      this.contentModalTitle = this.translate.instant('Full Post Content');
+      this.contentModalIcon = 'bi-file-earmark-post-fill';
+    } else {
+      this.contentModalTitle = this.translate.instant('Report Reasons Details');
+      this.contentModalIcon = 'bi-flag-fill';
+    }
+    this.showContentModal = true;
+  }
+
+  closeContentModal(): void {
+    this.showContentModal = false;
+    this.copySuccess = false;
+  }
+
+  copyText(text: string): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      this.copySuccess = true;
+      setTimeout(() => { this.copySuccess = false; }, 2000);
+    });
+  }
+
+  viewFullDetailsFromContent(): void {
+    const item = this.selectedItem;
+    this.closeContentModal();
+    if (item) {
+      this.openDetail(item);
+    }
   }
 
   // --- DETAILS MODAL ---

@@ -39,6 +39,11 @@ export class CommentReports implements OnInit {
   showHideModal: boolean = false;
   showDeleteModal: boolean = false;
   showDetailModal: boolean = false;
+  showContentModal: boolean = false;
+  contentModalTitle: string = '';
+  contentModalIcon: string = 'bi-chat-square-quote-fill';
+  contentModalType: 'comment' | 'context' | 'reason' = 'comment';
+  copySuccess: boolean = false;
   selectedItem: any = null;
   actionReason: string = '';
   modalLoading: boolean = false;
@@ -230,6 +235,45 @@ export class CommentReports implements OnInit {
         this.showToast(msg, 'danger');
       }
     });
+  }
+
+  // --- CONTENT PREVIEW MODAL ---
+  openContentModal(type: 'comment' | 'context' | 'reason', item: any): void {
+    this.selectedItem = item;
+    this.contentModalType = type;
+    this.copySuccess = false;
+    if (type === 'comment') {
+      this.contentModalTitle = this.translate.instant('Full Comment Content');
+      this.contentModalIcon = 'bi-chat-square-quote-fill';
+    } else if (type === 'context') {
+      this.contentModalTitle = this.translate.instant('Original Post Context');
+      this.contentModalIcon = 'bi-file-post';
+    } else {
+      this.contentModalTitle = this.translate.instant('Report Reasons Details');
+      this.contentModalIcon = 'bi-flag-fill';
+    }
+    this.showContentModal = true;
+  }
+
+  closeContentModal(): void {
+    this.showContentModal = false;
+    this.copySuccess = false;
+  }
+
+  copyText(text: string): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      this.copySuccess = true;
+      setTimeout(() => { this.copySuccess = false; }, 2000);
+    });
+  }
+
+  viewFullDetailsFromContent(): void {
+    const item = this.selectedItem;
+    this.closeContentModal();
+    if (item) {
+      this.openDetail(item);
+    }
   }
 
   // --- DETAILS MODAL ---

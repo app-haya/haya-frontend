@@ -118,7 +118,7 @@
             </td>
 
             <!-- Post Content -->
-            <td>
+            <td class="clickable-cell" (click)="openContentModal('post', item)" [title]="'Click to view full content' | translate">
               <div class="comment-content-cell">
                 <p class="comment-text" [title]="item.post?.content || item.content">
                   "{{ item.post?.content || item.content || '—' }}"
@@ -152,7 +152,7 @@
             </td>
 
             <!-- Latest Reason -->
-            <td>
+            <td class="clickable-cell" (click)="openContentModal('reason', item)" [title]="'Click to view full content' | translate">
               <div class="reasons-cell" *ngIf="item.reports && item.reports.length > 0">
                 <span class="reason-text" [title]="item.reports[0]?.reason">
                   {{ item.reports[0]?.reason || ('No reason provided' | translate) }}
@@ -336,9 +336,127 @@
     </div>
   </div>
 
+  <!-- QUICK CONTENT PREVIEW MODAL -->
+  <div *ngIf="showContentModal && selectedItem" class="modal-backdrop-custom" (click)="closeContentModal()">
+    <div class="modal-card wide" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom" [ngClass]="contentModalType === 'post' ? 'info' : 'danger-header'">
+        <div class="modal-icon" [ngClass]="contentModalType === 'post' ? 'info' : 'danger'">
+          <i class="bi" [ngClass]="contentModalIcon"></i>
+        </div>
+        <div>
+          <h5 class="modal-title-custom">{{ contentModalTitle }}</h5>
+          <p class="modal-subtitle-custom">
+            ID: #{{ selectedItem.post?.id || selectedItem.id }}
+            <span *ngIf="selectedItem.user?.name || selectedItem.post?.user?.name || selectedItem.post?.owner">
+              • {{ selectedItem.user?.name || selectedItem.post?.user?.name || selectedItem.post?.owner }}
+            </span>
+          </p>
+        </div>
+        <button class="btn-close-modal" (click)="closeContentModal()">&times;</button>
+      </div>
+
+      <div class="modal-body-custom">
+        <!-- If viewing Post Content -->
+        <ng-container *ngIf="contentModalType === 'post'">
+          <div class="content-preview-container">
+            <div class="content-preview-header">
+              <div class="d-flex align-items-center gap-2">
+                <div class="user-avatar-sm">
+                  <img
+                    *ngIf="selectedItem.user?.image || selectedItem.post?.user?.image"
+                    [src]="selectedItem.user?.image || selectedItem.post?.user?.image"
+                    class="avatar-img"
+                  />
+                  <div *ngIf="!(selectedItem.user?.image || selectedItem.post?.user?.image)" class="avatar-placeholder-sm">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bold">{{ selectedItem.user?.name || selectedItem.post?.user?.name || selectedItem.post?.owner || '—' }}</div>
+                  <div class="text-muted small">ID: #{{ selectedItem.user?.id || selectedItem.post?.user?.id || '—' }}</div>
+                </div>
+              </div>
+              <button
+                class="btn-copy"
+                (click)="copyText(selectedItem.post?.content || selectedItem.content || '')"
+                [title]="'Copy Text' | translate"
+              >
+                <i class="bi" [ngClass]="copySuccess ? 'bi-check2 text-success' : 'bi-clipboard'"></i>
+                <span>{{ (copySuccess ? 'Copied' : 'Copy Text') | translate }}</span>
+              </button>
+            </div>
+
+            <div class="full-content-box">
+              {{ selectedItem.post?.content || selectedItem.content || ('No content available' | translate) }}
+            </div>
+
+            <!-- Also show latest reason below for context -->
+            <div class="mt-3 p-3 bg-light rounded-3 border" *ngIf="selectedItem.reports?.[0]?.reason || selectedItem.latest_reason || selectedItem.reason">
+              <div class="d-flex align-items-center gap-2 text-danger small fw-bold mb-1">
+                <i class="bi bi-flag-fill"></i>
+                <span>{{ 'Report Reason' | translate }}:</span>
+              </div>
+              <div class="small text-secondary">
+                {{ selectedItem.reports?.[0]?.reason || selectedItem.latest_reason || selectedItem.reason }}
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- If viewing Report Reasons -->
+        <ng-container *ngIf="contentModalType === 'reason'">
+          <div class="content-preview-container">
+            <!-- List of all reports -->
+            <div class="reports-list-scroll" *ngIf="selectedItem.reports && selectedItem.reports.length > 0">
+              <div class="report-card-item" *ngFor="let rep of selectedItem.reports">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="reporter-badge">
+                    <i class="bi bi-person-fill me-1"></i>{{ rep.reported_by || ('Anonymous' | translate) }}
+                  </span>
+                  <span class="report-timestamp">{{ rep.created_at | date:'medium' }}</span>
+                </div>
+                <div class="report-reason-text">
+                  <i class="bi bi-chat-left-dots-fill text-warning me-1"></i>
+                  <strong>{{ 'Reason' | translate }}:</strong> {{ rep.reason || ('No reason provided' | translate) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Fallback if no reports array -->
+            <div *ngIf="!selectedItem.reports || selectedItem.reports.length === 0" class="full-content-box reason-fallback">
+              <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                <i class="bi bi-flag-fill"></i>
+                <strong>{{ 'Report Reason' | translate }}:</strong>
+              </div>
+              <p class="mb-0">{{ selectedItem.latest_reason || selectedItem.reason || ('No reason provided' | translate) }}</p>
+            </div>
+
+            <!-- Post snippet for context -->
+            <div class="mt-3 p-3 bg-light rounded-3 border" *ngIf="selectedItem.post?.content || selectedItem.content">
+              <div class="d-flex align-items-center gap-2 text-primary small fw-bold mb-1">
+                <i class="bi bi-file-post"></i>
+                <span>{{ 'Post Content' | translate }}:</span>
+              </div>
+              <div class="small text-secondary text-truncate">
+                "{{ selectedItem.post?.content || selectedItem.content }}"
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button class="btn-action info me-2" (click)="viewFullDetailsFromContent()">
+          <i class="bi bi-eye me-1"></i> {{ 'View Full Details' | translate }}
+        </button>
+        <button class="btn-cancel" (click)="closeContentModal()">{{ 'Close' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
   <!-- DETAILS MODAL -->
-  <div *ngIf="showDetailModal && selectedItem" class="modal-backdrop-custom">
-    <div class="modal-card wide">
+  <div *ngIf="showDetailModal && selectedItem" class="modal-backdrop-custom" (click)="closeDetail()">
+    <div class="modal-card wide" (click)="$event.stopPropagation()">
       <div class="modal-header-custom info">
         <div class="modal-icon info">
           <i class="bi bi-file-earmark-text-fill"></i>
@@ -351,7 +469,17 @@
       </div>
       <div class="modal-body-custom">
         <div class="detail-section mb-3">
-          <h6 class="detail-label">{{ 'Post Content' | translate }}</h6>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="detail-label mb-0">{{ 'Post Content' | translate }}</h6>
+            <button
+              class="btn-copy-sm"
+              (click)="copyText(selectedItem.post?.content || selectedItem.content || '')"
+              [title]="'Copy Text' | translate"
+            >
+              <i class="bi" [ngClass]="copySuccess ? 'bi-check2 text-success' : 'bi-clipboard'"></i>
+              <span>{{ (copySuccess ? 'Copied' : 'Copy Text') | translate }}</span>
+            </button>
+          </div>
           <div class="detail-box font-mono">
             "{{ selectedItem.post?.content || selectedItem.content || '—' }}"
           </div>
@@ -382,6 +510,16 @@
                 <strong>{{ 'Reason' | translate }}:</strong> {{ rep.reason || ('No reason provided' | translate) }}
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Fallback Report Reason if no reports array -->
+        <div class="detail-section mb-3" *ngIf="(!selectedItem.reports || selectedItem.reports.length === 0) && (selectedItem.latest_reason || selectedItem.reason)">
+          <h6 class="detail-label text-danger">
+            <i class="bi bi-flag-fill me-1"></i>{{ 'Report Reason' | translate }}
+          </h6>
+          <div class="detail-box">
+            {{ selectedItem.latest_reason || selectedItem.reason }}
           </div>
         </div>
       </div>
