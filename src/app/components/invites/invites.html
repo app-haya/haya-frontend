@@ -43,20 +43,6 @@
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
-      <div>
-        <div class="stat-value">{{ stats.credited_invites }}</div>
-        <div class="stat-label">{{ 'Credited invites' | translate }}</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon amber"><i class="bi bi-slash-circle-fill"></i></div>
-      <div>
-        <div class="stat-value">{{ stats.over_limit_invites }}</div>
-        <div class="stat-label">{{ 'Over the monthly limit' | translate }}</div>
-      </div>
-    </div>
-    <div class="stat-card">
       <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
       <div>
         <div class="stat-value">{{ stats.active_inviters }}</div>
@@ -125,7 +111,6 @@
         <div class="panel-title small">{{ 'Current settings' | translate }}</div>
         <div class="setting-line"><span>{{ 'Points per invite' | translate }}</span><b>{{ stats.settings.points_per_invite }}</b></div>
         <div class="setting-line"><span>{{ 'Welcome points' | translate }}</span><b>{{ stats.settings.welcome_points }}</b></div>
-        <div class="setting-line"><span>{{ 'Monthly limit' | translate }}</span><b>{{ stats.settings.monthly_limit }}</b></div>
         <div class="setting-line">
           <span>{{ 'Milestones' | translate }}</span>
           <span class="milestone-list">
@@ -134,6 +119,7 @@
             </span>
           </span>
         </div>
+        <p class="setting-note">{{ 'Milestone bonuses: extra points when an inviter reaches this many invites' | translate }}</p>
       </div>
     </div>
   </div>
@@ -184,7 +170,6 @@
             <th>{{ 'Inviter' | translate }}</th>
             <th>{{ 'Invite code' | translate }}</th>
             <th class="text-center">{{ 'Invites count' | translate }}</th>
-            <th class="text-center">{{ 'Credited' | translate }}</th>
             <th class="text-center">{{ 'Invite points' | translate }}</th>
             <th class="text-center">{{ 'Highest milestone' | translate }}</th>
             <th>{{ 'Last invite' | translate }}</th>
@@ -197,13 +182,12 @@
             </td>
             <td><span *ngIf="row.code" class="code-chip">{{ row.code }}</span><span *ngIf="!row.code">—</span></td>
             <td class="text-center"><b>{{ row.invites_count }}</b></td>
-            <td class="text-center">{{ row.credited_count }}</td>
             <td class="text-center">{{ row.invite_points }}</td>
             <td class="text-center">{{ row.highest_milestone ?? '—' }}</td>
             <td><bdi class="date-text">{{ row.last_invite_at }}</bdi></td>
           </tr>
           <tr *ngIf="!rows.length">
-            <td colspan="7" class="empty-row">{{ 'No invites in this period' | translate }}</td>
+            <td colspan="6" class="empty-row">{{ 'No invites in this period' | translate }}</td>
           </tr>
         </tbody>
       </table>
@@ -222,7 +206,6 @@
             <th>{{ 'Invited user' | translate }}</th>
             <th>{{ 'Platform' | translate }}</th>
             <th class="text-center">{{ 'Inviter points' | translate }}</th>
-            <th>{{ 'Status' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -236,14 +219,9 @@
             </td>
             <td><span class="channel-badge" [ngClass]="channelClass(row.channel)">{{ channelLabel(row.channel) }}</span></td>
             <td class="text-center">{{ row.inviter_points }}</td>
-            <td>
-              <span class="status-badge" [ngClass]="row.over_limit ? 'over' : 'credited'">
-                {{ (row.over_limit ? 'Over the monthly limit' : 'Credited') | translate }}
-              </span>
-            </td>
           </tr>
           <tr *ngIf="!rows.length">
-            <td colspan="6" class="empty-row">{{ 'No invites in this period' | translate }}</td>
+            <td colspan="5" class="empty-row">{{ 'No invites in this period' | translate }}</td>
           </tr>
         </tbody>
       </table>
@@ -271,7 +249,6 @@
         <ng-container *ngIf="inviter">
           <div class="mini-stats">
             <div class="mini-stat"><b>{{ inviter.invites_count }}</b><span>{{ 'Invites count' | translate }}</span></div>
-            <div class="mini-stat"><b>{{ inviter.credited_count }}</b><span>{{ 'Credited' | translate }}</span></div>
             <div class="mini-stat"><b>{{ inviter.invite_points }}</b><span>{{ 'Invite points' | translate }}</span></div>
           </div>
 
