@@ -1,0 +1,249 @@
+<div class="page-wrapper">
+
+  <!-- Toast Notification -->
+  <div *ngIf="toastMessage" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast show align-items-center text-white border-0 shadow-lg" [ngClass]="toastType === 'success' ? 'bg-success' : 'bg-danger'" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+          <span>{{ toastMessage }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-pin-angle-fill"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Pinned Posts' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Pin one post to the top of the For You feed for everyone' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current Pin -->
+  <div class="pinned-card" [class.empty]="!pinned">
+    <div class="pinned-head">
+      <span class="pinned-label"><i class="bi bi-pin-angle-fill"></i> {{ 'Currently pinned' | translate }}</span>
+      <span *ngIf="pinned" class="time-chip" [class.forever]="!pinned.admin_pinned_until">
+        <i class="bi bi-clock"></i>
+        <ng-container *ngIf="pinned.admin_pinned_until">{{ 'Ends in' | translate }} {{ remaining }}</ng-container>
+        <ng-container *ngIf="!pinned.admin_pinned_until">{{ 'Until unpinned' | translate }}</ng-container>
+      </span>
+    </div>
+
+    <div *ngIf="pinnedLoading && !pinned" class="loading-state compact">
+      <div class="spinner-ring"></div>
+    </div>
+
+    <div *ngIf="!pinnedLoading && !pinned" class="empty-note">
+      <i class="bi bi-pin"></i>
+      {{ 'No post is pinned right now' | translate }}
+    </div>
+
+    <div *ngIf="pinned" class="pinned-body">
+      <ng-container *ngTemplateOutlet="postPreview; context: { $implicit: pinned }"></ng-container>
+      <div class="pinned-actions">
+        <a class="btn-copy-sm" [href]="postLink(pinned)" target="_blank" rel="noopener">
+          <i class="bi bi-box-arrow-up-right"></i> {{ 'Open post' | translate }}
+        </a>
+        <button class="btn-unpin" (click)="showUnpinModal = true">
+          <i class="bi bi-pin-angle"></i> {{ 'Unpin' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="action-bar">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by post ID, link, text or author...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      />
+    </div>
+    <span class="search-hint">{{ 'Tip: paste a post link to find it directly' | translate }}</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
+  </div>
+
+  <!-- Posts Table -->
+  <div *ngIf="!loading" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-post">{{ 'Post' | translate }}</th>
+            <th>{{ 'Author' | translate }}</th>
+            <th class="text-center">{{ 'Interactions' | translate }}</th>
+            <th>{{ 'Date' | translate }}</th>
+            <th class="text-center">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let post of posts" class="table-row" [class.is-pinned]="post.is_admin_pinned">
+            <td class="col-post">
+              <div class="post-cell">
+                <div class="post-thumb" *ngIf="post.media?.thumb_url; else noThumb">
+                  <img [src]="post.media.thumb_url" alt="" />
+                  <span *ngIf="post.media.type === 'video'" class="thumb-badge"><i class="bi bi-play-fill"></i></span>
+                  <span *ngIf="post.media.count > 1" class="thumb-count">+{{ post.media.count - 1 }}</span>
+                </div>
+                <ng-template #noThumb>
+                  <div class="post-thumb placeholder"><i class="bi bi-file-text"></i></div>
+                </ng-template>
+                <div class="post-text">
+                  <span class="post-id">#{{ post.id }} <span *ngIf="post.is_repost" class="repost-chip">{{ 'Repost' | translate }}</span></span>
+                  <p class="post-content">{{ post.content || ('No text' | translate) }}</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <img *ngIf="post.user?.image" [src]="post.user.image" [alt]="post.user?.name" class="avatar-img" />
+                  <div *ngIf="!post.user?.image" class="avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">
+                    {{ post.user?.name || '—' }}
+                    <i *ngIf="post.user?.is_verified" class="bi bi-patch-check-fill verified"></i>
+                  </span>
+                  <span class="user-id">#{{ post.user?.id }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="stat-inline"><i class="bi bi-heart"></i> {{ post.likes_count }}</span>
+              <span class="stat-inline"><i class="bi bi-chat"></i> {{ post.comments_count }}</span>
+            </td>
+            <td><bdi class="date-text">{{ post.created_at | date: 'yyyy-MM-dd HH:mm' }}</bdi></td>
+            <td class="text-center">
+              <span *ngIf="post.is_admin_pinned" class="status-badge pinned-badge">
+                <i class="bi bi-pin-angle-fill"></i> {{ 'Pinned' | translate }}
+              </span>
+              <button *ngIf="!post.is_admin_pinned" class="btn-pin" (click)="openPinModal(post)">
+                <i class="bi bi-pin-angle"></i> {{ 'Pin' | translate }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!posts.length">
+            <td colspan="5" class="empty-row">{{ 'No posts found' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-bar" *ngIf="total > 0">
+      <span class="pagination-info">{{ 'Total' | translate }}: {{ total }}</span>
+      <div class="pagination-controls" *ngIf="lastPage > 1">
+        <button class="page-btn" [disabled]="currentPage <= 1" (click)="loadPosts(currentPage - 1)">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button *ngFor="let p of getPageNumbers()" class="page-btn" [class.active]="p === currentPage" (click)="loadPosts(p)">{{ p }}</button>
+        <button class="page-btn" [disabled]="currentPage >= lastPage" (click)="loadPosts(currentPage + 1)">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pin Modal -->
+  <div *ngIf="showPinModal" class="modal-backdrop-custom" (click)="closePinModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <div class="modal-icon"><i class="bi bi-pin-angle-fill"></i></div>
+        <div>
+          <h5 class="modal-title-custom">{{ 'Pin post' | translate }}</h5>
+          <p class="modal-subtitle-custom">#{{ selectedPost?.id }} · {{ selectedPost?.user?.name }}</p>
+        </div>
+        <button class="btn-close-modal" (click)="closePinModal()">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <ng-container *ngTemplateOutlet="postPreview; context: { $implicit: selectedPost }"></ng-container>
+
+        <label class="form-label-custom mt-3">{{ 'Pin duration' | translate }}</label>
+        <div class="duration-grid">
+          <button
+            *ngFor="let option of durationOptions"
+            class="duration-btn"
+            [class.active]="selectedDuration === option.hours"
+            (click)="selectedDuration = option.hours"
+          >{{ option.label | translate }}</button>
+        </div>
+
+        <div *ngIf="pinned && pinned.id !== selectedPost?.id" class="replace-warning">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>{{ 'Only one post can be pinned. Pinning this one unpins post' | translate }} #{{ pinned.id }}.</span>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-cancel" (click)="closePinModal()">{{ 'Cancel' | translate }}</button>
+        <button class="btn-action pin" [disabled]="modalLoading" (click)="confirmPin()">
+          <span *ngIf="modalLoading" class="spinner-border spinner-border-sm"></span>
+          <i *ngIf="!modalLoading" class="bi bi-pin-angle-fill"></i>
+          {{ 'Pin' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unpin Modal -->
+  <div *ngIf="showUnpinModal" class="modal-backdrop-custom" (click)="showUnpinModal = false">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <div class="modal-icon"><i class="bi bi-pin-angle"></i></div>
+        <div>
+          <h5 class="modal-title-custom">{{ 'Unpin post' | translate }}</h5>
+          <p class="modal-subtitle-custom">#{{ pinned?.id }}</p>
+        </div>
+        <button class="btn-close-modal" (click)="showUnpinModal = false">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <p class="confirm-text">{{ 'The post will no longer appear at the top of the For You feed.' | translate }}</p>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-cancel" (click)="showUnpinModal = false">{{ 'Cancel' | translate }}</button>
+        <button class="btn-action danger" [disabled]="modalLoading" (click)="confirmUnpin()">
+          <span *ngIf="modalLoading" class="spinner-border spinner-border-sm"></span>
+          {{ 'Unpin' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared: post preview -->
+  <ng-template #postPreview let-post>
+    <div class="preview" *ngIf="post">
+      <div class="preview-thumb" *ngIf="post.media?.thumb_url">
+        <img [src]="post.media.thumb_url" alt="" />
+        <span *ngIf="post.media.type === 'video'" class="thumb-badge"><i class="bi bi-play-fill"></i></span>
+      </div>
+      <div class="preview-body">
+        <div class="preview-author">
+          <img *ngIf="post.user?.image" [src]="post.user.image" alt="" class="preview-avatar" />
+          <b>{{ post.user?.name }}</b>
+          <span class="post-id">#{{ post.id }}</span>
+        </div>
+        <p class="preview-content">{{ post.content || ('No text' | translate) }}</p>
+        <div class="preview-meta">
+          <span><i class="bi bi-heart"></i> {{ post.likes_count }}</span>
+          <span><i class="bi bi-chat"></i> {{ post.comments_count }}</span>
+          <bdi>{{ post.created_at | date: 'yyyy-MM-dd HH:mm' }}</bdi>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
