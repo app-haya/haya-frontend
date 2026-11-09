@@ -43,6 +43,7 @@ import { Loyalty } from './components/loyalty/loyalty';
 import { SendNotifications } from './components/send-notifications/send-notifications';
 import { CommentReports } from './components/comment-reports/comment-reports';
 import { PostReports } from './components/post-reports/post-reports';
+import { Invites } from './components/invites/invites';
 import { SupportDepartments } from './components/support-departments/support-departments';
 import { SupportChats } from './components/support-chats/support-chats';
 
@@ -135,6 +136,7 @@ export const routes: Routes = [
       { path: 'wallet', component: WalletTransactions, data: { role: 'wallet' } },
       { path: 'policy-settings', component: Settings, data: { role: 'settings' } },
       { path: 'top-users-notes', component: TopUsersNotes, data: { role: 'top30' } },
+      { path: 'invites', component: Invites, data: { role: 'invites' } },
       { path: 'loyalty', component: Loyalty, data: { role: 'loyalty' } },
       { path: 'send-notifications', component: SendNotifications, data: { role: 'notifications' } },
       { path: 'comment-reports', component: CommentReports, data: { role: 'reports' } },

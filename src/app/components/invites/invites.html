@@ -1,0 +1,381 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <div>
+        <h4 class="page-title">{{ 'Invites' | translate }}</h4>
+        <p class="page-subtitle">{{ 'Track friend invites, inviters and the points paid' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Date Range -->
+    <div class="range-bar">
+      <button class="preset-btn" (click)="setThisMonth()">{{ 'This month' | translate }}</button>
+      <button class="preset-btn" (click)="setLastDays(7)">{{ 'Last 7 days' | translate }}</button>
+      <button class="preset-btn" (click)="setLastDays(30)">{{ 'Last 30 days' | translate }}</button>
+      <div class="date-field">
+        <label>{{ 'From' | translate }}</label>
+        <input type="date" class="date-input" [(ngModel)]="from" (change)="onRangeChange()" />
+      </div>
+      <div class="date-field">
+        <label>{{ 'To' | translate }}</label>
+        <input type="date" class="date-input" [(ngModel)]="to" (change)="onRangeChange()" />
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-banner">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid" *ngIf="stats">
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="bi bi-people-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.invites }}</div>
+        <div class="stat-label">{{ 'Total invites' | translate }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.credited_invites }}</div>
+        <div class="stat-label">{{ 'Credited invites' | translate }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="bi bi-slash-circle-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.over_limit_invites }}</div>
+        <div class="stat-label">{{ 'Over the monthly limit' | translate }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.active_inviters }}</div>
+        <div class="stat-label">{{ 'Active inviters' | translate }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gray"><i class="bi bi-hourglass-split"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.unverified_registrations }}</div>
+        <div class="stat-label">{{ 'Started sign-up, OTP not confirmed' | translate }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="bi bi-coin"></i></div>
+      <div>
+        <div class="stat-value">{{ stats.points.total }}</div>
+        <div class="stat-label">{{ 'Points paid' | translate }}</div>
+        <div class="stat-sub">
+          {{ 'Invites count' | translate }} {{ stats.points.invites }} ·
+          {{ 'Milestones' | translate }} {{ stats.points.milestones }} ·
+          {{ 'Welcome' | translate }} {{ stats.points.welcome }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="statsLoading && !stats" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row" *ngIf="stats">
+    <div class="panel chart-panel">
+      <div class="panel-title">{{ 'Invites per day' | translate }}</div>
+      <div *ngIf="!stats.daily.length" class="empty-note">{{ 'No invites in this period' | translate }}</div>
+      <div *ngIf="stats.daily.length" class="bar-chart">
+        <div class="bar-col" *ngFor="let day of stats.daily" [title]="day.date + ': ' + day.invites">
+          <span class="bar-value">{{ day.invites }}</span>
+          <div class="bar" [style.height.%]="barHeight(day.invites)"></div>
+          <span class="bar-label">{{ day.date | slice: 5 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel channels-panel">
+      <div class="panel-title">{{ 'By platform' | translate }}</div>
+      <div class="channel-row">
+        <span class="channel-name"><i class="bi bi-android2"></i> Android</span>
+        <div class="channel-track"><div class="channel-fill android" [style.width.%]="channelPercent(stats.channels.android_deferred)"></div></div>
+        <span class="channel-count">{{ stats.channels.android_deferred }}</span>
+      </div>
+      <div class="channel-row">
+        <span class="channel-name"><i class="bi bi-apple"></i> iOS</span>
+        <div class="channel-track"><div class="channel-fill ios" [style.width.%]="channelPercent(stats.channels.ios_deferred)"></div></div>
+        <span class="channel-count">{{ stats.channels.ios_deferred }}</span>
+      </div>
+      <div class="channel-row">
+        <span class="channel-name"><i class="bi bi-question-circle"></i> {{ 'Unknown' | translate }}</span>
+        <div class="channel-track"><div class="channel-fill unknown" [style.width.%]="channelPercent(stats.channels.unknown)"></div></div>
+        <span class="channel-count">{{ stats.channels.unknown }}</span>
+      </div>
+
+      <div class="settings-box">
+        <div class="panel-title small">{{ 'Current settings' | translate }}</div>
+        <div class="setting-line"><span>{{ 'Points per invite' | translate }}</span><b>{{ stats.settings.points_per_invite }}</b></div>
+        <div class="setting-line"><span>{{ 'Welcome points' | translate }}</span><b>{{ stats.settings.welcome_points }}</b></div>
+        <div class="setting-line"><span>{{ 'Monthly limit' | translate }}</span><b>{{ stats.settings.monthly_limit }}</b></div>
+        <div class="setting-line">
+          <span>{{ 'Milestones' | translate }}</span>
+          <span class="milestone-list">
+            <span class="milestone-chip" *ngFor="let m of stats.settings.milestones">
+              <bdi>{{ m.count }} {{ 'invites' | translate }}: +{{ m.bonus_points }}</bdi>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'inviters'" (click)="switchTab('inviters')">
+      <i class="bi bi-trophy"></i>
+      {{ 'Top inviters' | translate }}
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'invites'" (click)="switchTab('invites')">
+      <i class="bi bi-list-ul"></i>
+      {{ 'All invites' | translate }}
+    </button>
+  </div>
+
+  <!-- Search / Filters -->
+  <div class="action-bar">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'Search by name, phone or invite code...' | translate"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      />
+    </div>
+    <select *ngIf="activeTab === 'invites'" class="filter-select" [(ngModel)]="channel" (change)="loadRows(1)">
+      <option value="">{{ 'All platforms' | translate }}</option>
+      <option value="android_deferred">Android</option>
+      <option value="ios_deferred">iOS</option>
+      <option value="unknown">{{ 'Unknown' | translate }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>{{ 'Loading...' | translate }}</p>
+  </div>
+
+  <!-- Inviters Table -->
+  <div *ngIf="!loading && activeTab === 'inviters'" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table inviters-table">
+        <thead>
+          <tr>
+            <th>{{ 'Inviter' | translate }}</th>
+            <th>{{ 'Invite code' | translate }}</th>
+            <th class="text-center">{{ 'Invites count' | translate }}</th>
+            <th class="text-center">{{ 'Credited' | translate }}</th>
+            <th class="text-center">{{ 'Invite points' | translate }}</th>
+            <th class="text-center">{{ 'Highest milestone' | translate }}</th>
+            <th>{{ 'Last invite' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows" class="table-row clickable" (click)="openInviter(row.inviter?.id)">
+            <td>
+              <ng-container *ngTemplateOutlet="userCell; context: { $implicit: row.inviter }"></ng-container>
+            </td>
+            <td><span *ngIf="row.code" class="code-chip">{{ row.code }}</span><span *ngIf="!row.code">—</span></td>
+            <td class="text-center"><b>{{ row.invites_count }}</b></td>
+            <td class="text-center">{{ row.credited_count }}</td>
+            <td class="text-center">{{ row.invite_points }}</td>
+            <td class="text-center">{{ row.highest_milestone ?? '—' }}</td>
+            <td><bdi class="date-text">{{ row.last_invite_at }}</bdi></td>
+          </tr>
+          <tr *ngIf="!rows.length">
+            <td colspan="7" class="empty-row">{{ 'No invites in this period' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-container *ngTemplateOutlet="pagination"></ng-container>
+  </div>
+
+  <!-- Invites Table -->
+  <div *ngIf="!loading && activeTab === 'invites'" class="table-card">
+    <div class="table-responsive">
+      <table class="data-table invites-table">
+        <thead>
+          <tr>
+            <th>{{ 'Date' | translate }}</th>
+            <th>{{ 'Inviter' | translate }}</th>
+            <th>{{ 'Invited user' | translate }}</th>
+            <th>{{ 'Platform' | translate }}</th>
+            <th class="text-center">{{ 'Inviter points' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows" class="table-row">
+            <td><bdi class="date-text">{{ row.created_at }}</bdi></td>
+            <td class="clickable-cell" (click)="openInviter(row.inviter?.id)">
+              <ng-container *ngTemplateOutlet="userCell; context: { $implicit: row.inviter }"></ng-container>
+            </td>
+            <td>
+              <ng-container *ngTemplateOutlet="userCell; context: { $implicit: row.invitee }"></ng-container>
+            </td>
+            <td><span class="channel-badge" [ngClass]="channelClass(row.channel)">{{ channelLabel(row.channel) }}</span></td>
+            <td class="text-center">{{ row.inviter_points }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="row.over_limit ? 'over' : 'credited'">
+                {{ (row.over_limit ? 'Over the monthly limit' : 'Credited') | translate }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="!rows.length">
+            <td colspan="6" class="empty-row">{{ 'No invites in this period' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-container *ngTemplateOutlet="pagination"></ng-container>
+  </div>
+
+  <!-- Inviter Details Modal -->
+  <div *ngIf="showInviter" class="modal-backdrop-custom" (click)="closeInviter()">
+    <div class="modal-card wide" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <div class="modal-icon"><i class="bi bi-person-lines-fill"></i></div>
+        <div>
+          <h5 class="modal-title-custom">{{ inviter?.user?.name || ('Inviter' | translate) }}</h5>
+          <p class="modal-subtitle-custom" *ngIf="inviter?.user">ID: #{{ inviter.user.id }} · <bdi dir="ltr">{{ inviter.user.phone }}</bdi></p>
+        </div>
+        <button class="btn-close-modal" (click)="closeInviter()">&times;</button>
+      </div>
+
+      <div class="modal-body-custom">
+        <div *ngIf="inviterLoading && !inviter" class="loading-state compact">
+          <div class="spinner-ring"></div>
+        </div>
+
+        <ng-container *ngIf="inviter">
+          <div class="mini-stats">
+            <div class="mini-stat"><b>{{ inviter.invites_count }}</b><span>{{ 'Invites count' | translate }}</span></div>
+            <div class="mini-stat"><b>{{ inviter.credited_count }}</b><span>{{ 'Credited' | translate }}</span></div>
+            <div class="mini-stat"><b>{{ inviter.invite_points }}</b><span>{{ 'Invite points' | translate }}</span></div>
+          </div>
+
+          <div class="detail-line" *ngIf="inviter.code">
+            <span class="detail-label">{{ 'Invite code' | translate }}</span>
+            <span class="code-chip">{{ inviter.code }}</span>
+          </div>
+          <div class="detail-line" *ngIf="inviter.invite_url">
+            <span class="detail-label">{{ 'Invite link' | translate }}</span>
+            <span class="link-text" [title]="inviter.invite_url">{{ inviter.invite_url }}</span>
+            <button class="btn-copy-sm" (click)="copyLink(inviter.invite_url)">
+              <i class="bi" [ngClass]="copySuccess ? 'bi-check2' : 'bi-clipboard'"></i>
+              {{ (copySuccess ? 'Copied' : 'Copy') | translate }}
+            </button>
+          </div>
+
+          <div class="detail-line" *ngIf="inviter.milestones?.length">
+            <span class="detail-label">{{ 'Milestones' | translate }}</span>
+            <span class="milestone-chip" *ngFor="let m of inviter.milestones">
+              <bdi>{{ m.count }} {{ 'invites' | translate }}: +{{ m.bonus_points }}</bdi>
+            </span>
+          </div>
+
+          <div class="panel-title small mt">{{ 'Invited users' | translate }}</div>
+          <div class="table-responsive">
+            <table class="data-table compact-table">
+              <thead>
+                <tr>
+                  <th>{{ 'Invited user' | translate }}</th>
+                  <th>{{ 'Platform' | translate }}</th>
+                  <th class="text-center">{{ 'Points' | translate }}</th>
+                  <th>{{ 'Date' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of inviter.invitees" class="table-row">
+                  <td><ng-container *ngTemplateOutlet="userCell; context: { $implicit: row.invitee }"></ng-container></td>
+                  <td><span class="channel-badge" [ngClass]="channelClass(row.channel)">{{ channelLabel(row.channel) }}</span></td>
+                  <td class="text-center">{{ row.inviter_points }}</td>
+                  <td><bdi class="date-text">{{ row.created_at }}</bdi></td>
+                </tr>
+                <tr *ngIf="!inviter.invitees?.length">
+                  <td colspan="4" class="empty-row">{{ 'No invites yet' | translate }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination-bar compact" *ngIf="inviterLastPage > 1">
+            <span class="pagination-info">{{ inviterPage }} / {{ inviterLastPage }}</span>
+            <div class="pagination-controls">
+              <button class="page-btn" [disabled]="inviterPage <= 1" (click)="loadInviter(inviter.user.id, inviterPage - 1)">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+              <button class="page-btn" [disabled]="inviterPage >= inviterLastPage" (click)="loadInviter(inviter.user.id, inviterPage + 1)">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <div *ngIf="!inviterLoading && !inviter" class="empty-note">{{ 'Failed to load inviter' | translate }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared: user cell -->
+  <ng-template #userCell let-user>
+    <div class="user-cell" *ngIf="user; else deletedUser">
+      <div class="user-avatar">
+        <img *ngIf="user.image" [src]="user.image" [alt]="user.name" class="avatar-img" />
+        <div *ngIf="!user.image" class="avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+      </div>
+      <div class="user-info">
+        <span class="user-name">
+          {{ user.name || '—' }}
+          <i *ngIf="user.is_verified" class="bi bi-patch-check-fill verified"></i>
+        </span>
+        <span class="user-id">#{{ user.id }} · <bdi dir="ltr">{{ user.phone || '—' }}</bdi></span>
+      </div>
+    </div>
+    <ng-template #deletedUser>
+      <span class="deleted-user">{{ 'Deleted account' | translate }}</span>
+    </ng-template>
+  </ng-template>
+
+  <!-- Shared: pagination -->
+  <ng-template #pagination>
+    <div class="pagination-bar" *ngIf="lastPage > 1 || total > 0">
+      <span class="pagination-info">{{ 'Total' | translate }}: {{ total }}</span>
+      <div class="pagination-controls" *ngIf="lastPage > 1">
+        <button class="page-btn" [disabled]="currentPage <= 1" (click)="loadRows(currentPage - 1)">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+          *ngFor="let p of getPageNumbers(lastPage, currentPage)"
+          class="page-btn"
+          [class.active]="p === currentPage"
+          (click)="loadRows(p)"
+        >{{ p }}</button>
+        <button class="page-btn" [disabled]="currentPage >= lastPage" (click)="loadRows(currentPage + 1)">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>

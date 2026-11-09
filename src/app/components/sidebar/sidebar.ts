@@ -45,6 +45,7 @@ export class Sidebar implements OnInit {
       ],
     },
     { name: 'Top Users Notes', icon: 'bi bi-trophy', path: '/admin/top-users-notes', perm: 'top30' },
+    { name: 'Invites', icon: 'bi bi-person-plus', path: '/admin/invites', perm: 'invites' },
     { name: 'Loyalty Management', icon: 'bi bi-award', path: '/admin/loyalty', perm: 'loyalty' },
     {
       name: 'Deals',
