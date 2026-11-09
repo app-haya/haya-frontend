@@ -53,19 +53,14 @@
       <div class="stat-icon gray"><i class="bi bi-hourglass-split"></i></div>
       <div>
         <div class="stat-value">{{ stats.unverified_registrations }}</div>
-        <div class="stat-label">{{ 'Started sign-up, OTP not confirmed' | translate }}</div>
+        <div class="stat-label">{{ 'Did not finish sign-up' | translate }}</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon gold"><i class="bi bi-coin"></i></div>
       <div>
-        <div class="stat-value">{{ stats.points.total }}</div>
-        <div class="stat-label">{{ 'Points paid' | translate }}</div>
-        <div class="stat-sub">
-          {{ 'Invites count' | translate }} {{ stats.points.invites }} ·
-          {{ 'Milestones' | translate }} {{ stats.points.milestones }} ·
-          {{ 'Welcome' | translate }} {{ stats.points.welcome }}
-        </div>
+        <div class="stat-value">{{ stats.points.invites + stats.points.milestones }}</div>
+        <div class="stat-label">{{ 'Total points' | translate }}</div>
       </div>
     </div>
   </div>
@@ -110,16 +105,6 @@
       <div class="settings-box">
         <div class="panel-title small">{{ 'Current settings' | translate }}</div>
         <div class="setting-line"><span>{{ 'Points per invite' | translate }}</span><b>{{ stats.settings.points_per_invite }}</b></div>
-        <div class="setting-line"><span>{{ 'Welcome points' | translate }}</span><b>{{ stats.settings.welcome_points }}</b></div>
-        <div class="setting-line">
-          <span>{{ 'Milestones' | translate }}</span>
-          <span class="milestone-list">
-            <span class="milestone-chip" *ngFor="let m of stats.settings.milestones">
-              <bdi>{{ m.count }} {{ 'invites' | translate }}: +{{ m.bonus_points }}</bdi>
-            </span>
-          </span>
-        </div>
-        <p class="setting-note">{{ 'Milestone bonuses: extra points when an inviter reaches this many invites' | translate }}</p>
       </div>
     </div>
   </div>
@@ -171,7 +156,6 @@
             <th>{{ 'Invite code' | translate }}</th>
             <th class="text-center">{{ 'Invites count' | translate }}</th>
             <th class="text-center">{{ 'Invite points' | translate }}</th>
-            <th class="text-center">{{ 'Highest milestone' | translate }}</th>
             <th>{{ 'Last invite' | translate }}</th>
           </tr>
         </thead>
@@ -183,11 +167,10 @@
             <td><span *ngIf="row.code" class="code-chip">{{ row.code }}</span><span *ngIf="!row.code">—</span></td>
             <td class="text-center"><b>{{ row.invites_count }}</b></td>
             <td class="text-center">{{ row.invite_points }}</td>
-            <td class="text-center">{{ row.highest_milestone ?? '—' }}</td>
             <td><bdi class="date-text">{{ row.last_invite_at }}</bdi></td>
           </tr>
           <tr *ngIf="!rows.length">
-            <td colspan="6" class="empty-row">{{ 'No invites in this period' | translate }}</td>
+            <td colspan="5" class="empty-row">{{ 'No invites in this period' | translate }}</td>
           </tr>
         </tbody>
       </table>
@@ -263,13 +246,6 @@
               <i class="bi" [ngClass]="copySuccess ? 'bi-check2' : 'bi-clipboard'"></i>
               {{ (copySuccess ? 'Copied' : 'Copy') | translate }}
             </button>
-          </div>
-
-          <div class="detail-line" *ngIf="inviter.milestones?.length">
-            <span class="detail-label">{{ 'Milestones' | translate }}</span>
-            <span class="milestone-chip" *ngFor="let m of inviter.milestones">
-              <bdi>{{ m.count }} {{ 'invites' | translate }}: +{{ m.bonus_points }}</bdi>
-            </span>
           </div>
 
           <div class="panel-title small mt">{{ 'Invited users' | translate }}</div>

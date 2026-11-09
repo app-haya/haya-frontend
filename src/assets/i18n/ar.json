@@ -1066,5 +1066,7 @@
     "hours": "ساعة",
     "minutes": "دقيقة",
     "No limit": "بدون حد",
-    "Milestone bonuses: extra points when an inviter reaches this many invites": "مكافآت الإنجاز: نقاط إضافية للداعي إذا وصل لهذا العدد من الدعوات"
+    "Milestone bonuses: extra points when an inviter reaches this many invites": "مكافآت الإنجاز: نقاط إضافية للداعي إذا وصل لهذا العدد من الدعوات",
+    "Total points": "إجمالي النقاط",
+    "Did not finish sign-up": "لم يكمل التسجيل"
 }
