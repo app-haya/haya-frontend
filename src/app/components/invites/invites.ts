@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InvitesService } from '../../services/invites.service';
 
-type Tab = 'inviters' | 'invites';
+type Tab = 'inviters' | 'invites' | 'allowed';
 
 @Component({
   selector: 'app-invites',
@@ -40,6 +40,17 @@ export class Invites implements OnInit, OnDestroy {
   inviterLastPage: number = 1;
   copySuccess: boolean = false;
 
+  // Who can invite
+  candidateTerm: string = '';
+  candidates: any[] = [];
+  candidatesLoading: boolean = false;
+  busyUserId: number | null = null;
+  removeTarget: any = null;
+  toastMessage: string = '';
+  toastType: 'success' | 'danger' = 'success';
+  private toastTimeout: any = null;
+  private candidateTimer: any = null;
+
   private searchTimer: any = null;
 
   constructor(
@@ -53,6 +64,8 @@ export class Invites implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.searchTimer);
+    clearTimeout(this.candidateTimer);
+    clearTimeout(this.toastTimeout);
   }
 
   // --- DATE RANGE ---
@@ -135,8 +148,7 @@ export class Invites implements OnInit, OnDestroy {
     this.currentPage = page;
 
     const filters = {
-      from: this.from,
-      to: this.to,
+      ...(this.activeTab === 'allowed' ? {} : { from: this.from, to: this.to }),
       search: this.searchTerm.trim(),
       page,
       per_page: this.perPage,
@@ -144,7 +156,9 @@ export class Invites implements OnInit, OnDestroy {
     };
     const request = this.activeTab === 'inviters'
       ? this.invitesService.getInviters(filters)
-      : this.invitesService.getInvites(filters);
+      : this.activeTab === 'invites'
+        ? this.invitesService.getInvites(filters)
+        : this.invitesService.getAllowed(filters);
 
     request.subscribe({
       next: (res: any) => {
@@ -171,6 +185,72 @@ export class Invites implements OnInit, OnDestroy {
       pages.push(i);
     }
     return pages;
+  }
+
+  // --- WHO CAN INVITE ---
+  onCandidateSearch(): void {
+    clearTimeout(this.candidateTimer);
+    const term = this.candidateTerm.trim();
+    if (term.length < 2) {
+      this.candidates = [];
+      return;
+    }
+    this.candidateTimer = setTimeout(() => {
+      this.candidatesLoading = true;
+      this.invitesService.searchCandidates(term).subscribe({
+        next: (res: any) => {
+          this.candidatesLoading = false;
+          this.candidates = this.isOk(res) && Array.isArray(res.data) ? res.data : [];
+        },
+        error: () => {
+          this.candidatesLoading = false;
+          this.candidates = [];
+        }
+      });
+    }, 400);
+  }
+
+  allowUser(user: any): void {
+    this.busyUserId = user.id;
+    this.invitesService.allow(user.id).subscribe({
+      next: () => {
+        this.busyUserId = null;
+        user.is_allowed = true;
+        this.showToast(this.translate.instant('Added to the invite list'), 'success');
+        this.loadRows(1);
+      },
+      error: (err) => {
+        this.busyUserId = null;
+        this.showToast(err?.error?.message || this.translate.instant('Something went wrong'), 'danger');
+      }
+    });
+  }
+
+  confirmRemove(): void {
+    const user = this.removeTarget;
+    if (!user) return;
+    this.busyUserId = user.id;
+    this.invitesService.disallow(user.id).subscribe({
+      next: () => {
+        this.busyUserId = null;
+        this.removeTarget = null;
+        const candidate = this.candidates.find((c) => c.id === user.id);
+        if (candidate) candidate.is_allowed = false;
+        this.showToast(this.translate.instant('Removed from the invite list'), 'success');
+        this.loadRows(this.currentPage);
+      },
+      error: (err) => {
+        this.busyUserId = null;
+        this.showToast(err?.error?.message || this.translate.instant('Something went wrong'), 'danger');
+      }
+    });
+  }
+
+  private showToast(message: string, type: 'success' | 'danger'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    clearTimeout(this.toastTimeout);
+    this.toastTimeout = setTimeout(() => (this.toastMessage = ''), 3500);
   }
 
   // --- INVITER DETAILS ---

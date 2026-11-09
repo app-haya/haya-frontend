@@ -1265,3 +1265,92 @@
   color: #9ca3af;
   line-height: 1.5;
 }
+
+.allow-panel {
+  margin-bottom: 16px;
+}
+
+.allow-note {
+  margin: -6px 0 12px;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.candidate-list {
+  margin-top: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.candidate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.candidate-row:last-child {
+  border-bottom: none;
+}
+
+.btn-add,
+.btn-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-add {
+  border: 1.5px solid #e9d5ff;
+  background: #faf5ff;
+  color: #7a3ca0;
+}
+
+.btn-add:hover:not(:disabled) {
+  background: #7a3ca0;
+  color: #fff;
+}
+
+.btn-remove {
+  border: 1.5px solid #fecaca;
+  background: #fff;
+  color: #dc2626;
+}
+
+.btn-remove:hover:not(:disabled) {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-add:disabled,
+.btn-remove:disabled,
+.btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-action.danger {
+  background: #dc2626;
+  box-shadow: none;
+}
+
+.confirm-text {
+  margin: 0;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+:host-context(body.dark-mode) .candidate-list { border-color: #30363d !important; }
+:host-context(body.dark-mode) .candidate-row { border-bottom-color: #21262d !important; }
+:host-context(body.dark-mode) .confirm-text,
+:host-context(body.dark-mode) .allow-note { color: #c9d1d9 !important; }

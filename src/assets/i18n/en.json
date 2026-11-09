@@ -1068,5 +1068,18 @@
     "No limit": "No limit",
     "Milestone bonuses: extra points when an inviter reaches this many invites": "Milestone bonuses: extra points when an inviter reaches this many invites",
     "Total points": "Total points",
-    "Did not finish sign-up": "Did not finish sign-up"
+    "Did not finish sign-up": "Did not finish sign-up",
+    "Who can invite": "Who can invite",
+    "Add someone who can invite": "Add someone who can invite",
+    "Only the people on this list can invite friends and earn points.": "Only the people on this list can invite friends and earn points.",
+    "Search users by name or phone...": "Search users by name or phone...",
+    "No users found": "No users found",
+    "On the list": "On the list",
+    "Added on": "Added on",
+    "Nobody can invite yet. Add people from the search above.": "Nobody can invite yet. Add people from the search above.",
+    "Remove from the invite list": "Remove from the invite list",
+    "They will not earn points for new invites. Points they already earned stay.": "They will not earn points for new invites. Points they already earned stay.",
+    "Added to the invite list": "Added to the invite list",
+    "Removed from the invite list": "Removed from the invite list",
+    "Something went wrong": "Something went wrong"
 }

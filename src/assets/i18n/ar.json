@@ -1068,5 +1068,18 @@
     "No limit": "بدون حد",
     "Milestone bonuses: extra points when an inviter reaches this many invites": "مكافآت الإنجاز: نقاط إضافية للداعي إذا وصل لهذا العدد من الدعوات",
     "Total points": "إجمالي النقاط",
-    "Did not finish sign-up": "لم يكمل التسجيل"
+    "Did not finish sign-up": "لم يكمل التسجيل",
+    "Who can invite": "المسموح لهم بالدعوة",
+    "Add someone who can invite": "أضف شخص يقدر يدعو",
+    "Only the people on this list can invite friends and earn points.": "بس الأشخاص اللي في هذي القائمة يقدرون يدعون أصدقاءهم ويكسبون نقاط.",
+    "Search users by name or phone...": "ابحث عن مستخدم بالاسم أو الجوال...",
+    "No users found": "ما لقينا مستخدمين",
+    "On the list": "موجود بالقائمة",
+    "Added on": "تاريخ الإضافة",
+    "Nobody can invite yet. Add people from the search above.": "ما فيه أحد يقدر يدعو للحين. أضف الأشخاص من البحث فوق.",
+    "Remove from the invite list": "إزالة من قائمة الدعوة",
+    "They will not earn points for new invites. Points they already earned stay.": "ما راح ياخذ نقاط على الدعوات الجديدة، والنقاط اللي أخذها قبل تبقى له.",
+    "Added to the invite list": "تمت الإضافة لقائمة الدعوة",
+    "Removed from the invite list": "تمت الإزالة من قائمة الدعوة",
+    "Something went wrong": "صار خطأ، حاول مرة ثانية"
 }

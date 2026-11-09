@@ -51,6 +51,24 @@ export class InvitesService {
     return this.http.get(`${this.baseUrl}/inviters`, { headers: this.getHeaders(), params: this.params(filters) });
   }
 
+  getAllowed(filters: InviteFilters): Observable<any> {
+    return this.http.get(`${this.baseUrl}/allowed`, { headers: this.getHeaders(), params: this.params(filters) });
+  }
+
+  searchCandidates(search: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/allowed/candidates`, { headers: this.getHeaders(), params: this.params({ search }) });
+  }
+
+  allow(userId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/allowed`, { user_id: userId }, {
+      headers: this.getHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  disallow(userId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/allowed/${userId}`, { headers: this.getHeaders() });
+  }
+
   getInviter(userId: number, page: number = 1, perPage: number = 10): Observable<any> {
     return this.http.get(`${this.baseUrl}/inviters/${userId}`, {
       headers: this.getHeaders(),
