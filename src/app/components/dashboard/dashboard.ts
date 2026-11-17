@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Navbar } from '../navbar/navbar';
 import { Sidebar } from '../sidebar/sidebar';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,11 +14,14 @@ import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   isCollapsed = false;
   isDarkMode = false;
+
+  constructor(private theme: ThemeService) {}
+
   ngOnInit() {
-    this.isDarkMode = localStorage.getItem('darkMode') !== 'false';
+    this.isDarkMode = this.theme.isDark();
     this.applyDarkMode(this.isDarkMode);
     if (window.innerWidth <= 768) {
       this.isCollapsed = true;

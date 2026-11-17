@@ -191,6 +191,7 @@
   padding: 8px 4px;
   vertical-align: middle;
   white-space: nowrap;
+  color: #374151;
 }
 
 /* Images */
@@ -359,4 +360,67 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES
+   ========================================================= */
+:host-context(body.dark-mode) .table-card {
+  background: #11161d !important;
+  border: 1px solid #30363d !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+:host-context(body.dark-mode) .data-table thead tr {
+  background: #161b22 !important;
+}
+
+:host-context(body.dark-mode) .data-table th {
+  background: #161b22 !important;
+  color: #00cfd5 !important;
+  border-bottom-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .table-row {
+  border-bottom-color: #21262d !important;
+}
+
+:host-context(body.dark-mode) .table-row:hover {
+  background: #161b22 !important;
+}
+
+:host-context(body.dark-mode) .data-table td {
+  color: #e5e7eb !important;
+  border-bottom-color: #21262d !important;
+}
+
+:host-context(body.dark-mode) .search-box .search-input {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #f3f4f6 !important;
+}
+
+:host-context(body.dark-mode) .page-title {
+  color: #ffffff !important;
+}
+
+:host-context(body.dark-mode) .page-subtitle {
+  color: #9ca3af !important;
+}
+
+:host-context(body.dark-mode) .pagination-bar {
+  background: #161b22 !important;
+  border-top-color: #30363d !important;
+}
+
+:host-context(body.dark-mode) .page-btn {
+  background: #0d1117 !important;
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+:host-context(body.dark-mode) .page-btn.active {
+  background: #00cfd5 !important;
+  border-color: #00cfd5 !important;
+  color: #0b0e14 !important;
 }

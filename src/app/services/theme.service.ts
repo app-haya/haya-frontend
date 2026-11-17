@@ -20,6 +20,10 @@ export class ThemeService {
     } else {
       document.body.classList.remove('dark-mode');
     }
+    const layout = document.querySelector('.dashboard-layout');
+    if (layout) {
+      layout.classList.toggle('dark-mode', this.dark);
+    }
   }
   isDark() {
     return this.dark;
