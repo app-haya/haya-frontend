@@ -371,6 +371,10 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 }
 
+:host-context(body.dark-mode) .data-table {
+  background-color: transparent !important;
+}
+
 :host-context(body.dark-mode) .data-table thead tr {
   background: #161b22 !important;
 }
@@ -382,6 +386,7 @@
 }
 
 :host-context(body.dark-mode) .table-row {
+  background-color: transparent !important;
   border-bottom-color: #21262d !important;
 }
 

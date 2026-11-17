@@ -80,32 +80,32 @@
   color: #374151;
 }
 
-body.dark-mode .pagination-bar {
+:host-context(body.dark-mode) .pagination-bar {
   background: #161b22;
   border-top-color: #30363d;
 }
 
-body.dark-mode .per-page-select {
+:host-context(body.dark-mode) .per-page-select {
   background: #0d1117;
   border-color: #30363d;
   color: #c9d1d9;
 }
 
-body.dark-mode .per-page-select:hover,
-body.dark-mode .per-page-select:focus {
+:host-context(body.dark-mode) .per-page-select:hover,
+:host-context(body.dark-mode) .per-page-select:focus {
   border-color: #00cfd5;
   box-shadow: 0 0 0 3px rgba(0, 207, 213, 0.15);
 }
 
-body.dark-mode .per-page-label,
-body.dark-mode .pagination-info {
+:host-context(body.dark-mode) .per-page-label,
+:host-context(body.dark-mode) .pagination-info {
   color: #9ca3af;
 }
 
-body.dark-mode .btn-clear-search {
+:host-context(body.dark-mode) .btn-clear-search {
   color: #6b7280;
 }
 
-body.dark-mode .btn-clear-search:hover {
+:host-context(body.dark-mode) .btn-clear-search:hover {
   color: #e5e7eb;
 }
